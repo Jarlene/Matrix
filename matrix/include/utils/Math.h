@@ -14,14 +14,19 @@
 #ifdef USE_MP
 #include <omp.h>
 #endif
+
+
 #ifdef USE_MKL
 #include <mkl.h>
 #include <mkl_cblas.h>
 #include <mkl_vsl.h>
 #include <mkl_vsl_functions.h>
-#elif USE_BLAS
+#elif defined(USE_BLAS)
 #include <cblas.h>
+#elif defined(USE_EIGEN)
+#include <eigen3/Eigen/Eigen>
 #endif
+
 
 
 namespace matrix {

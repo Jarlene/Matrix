@@ -8,7 +8,7 @@ if (USE_BLAS)
     else(WIN32)
         SET(BLAS_LIBRARIES "${BLAS_INSTALL_DIR}/lib/libopenblas.a")
     endif(WIN32)
-
+    INCLUDE_DIRECTORIES(${BLAS_INSTALL_DIR})
     ExternalProject_Add(
             OpenBLAS
             ${EXTERNAL_PROJECT_LOG_ARGS}
