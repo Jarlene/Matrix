@@ -3,3 +3,15 @@
 //
 
 #include "matrix/include/base/Array.h"
+
+namespace matrix {
+
+
+    Array::Array() {
+
+    }
+
+    Array::Array(const Array &array) {
+
+    }
+}

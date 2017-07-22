@@ -7,15 +7,17 @@
 
 namespace matrix {
 
+    template <class T, int dimension>
     class Tensor {
-
+    public:
+        Tensor();
     };
 
 
 
 
-
 }
+
 
 
 

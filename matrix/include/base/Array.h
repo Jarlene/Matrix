@@ -8,7 +8,9 @@
 namespace matrix {
 
     class Array {
-
+    public:
+        Array();
+        Array(const Array & array);
     };
 }
 

@@ -21,11 +21,13 @@ namespace matrix {
             }
         }
 
+        void reShape(const Shape &shape);
 
 
     private:
         int shape_[dimension];
     };
+
 
 
 

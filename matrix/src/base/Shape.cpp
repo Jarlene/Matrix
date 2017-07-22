@@ -6,9 +6,13 @@
 
 namespace matrix {
 
+    template <int dimension>
+    void Shape<dimension>::reShape(const Shape &shape) {
 
-
+    }
 
 
 
 }
+
+template class matrix::Shape<2>;

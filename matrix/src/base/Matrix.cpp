@@ -3,3 +3,11 @@
 //
 
 #include "matrix/include/base/Matrix.h"
+
+matrix::Matrix::Matrix() {
+
+}
+
+matrix::Matrix::Matrix(const matrix::Matrix &matrix) {
+
+}
