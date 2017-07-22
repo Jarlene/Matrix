@@ -9,7 +9,7 @@
 namespace matrix {
 
     template <class T, int dimension>
-    Tensor<T, dimension>::Tensor() {
+    Tensor<T, dimension>::Tensor(T *ptr, matrix::Shape<dimension> shape) {
 
     }
 

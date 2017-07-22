@@ -5,12 +5,14 @@
 #ifndef MATRIX_TENSOR_H
 #define MATRIX_TENSOR_H
 
+#include "Shape.h"
+
 namespace matrix {
 
     template <class T, int dimension>
     class Tensor {
     public:
-        Tensor();
+        Tensor(T *ptr, matrix::Shape<dimension> shape);
     };
 
 

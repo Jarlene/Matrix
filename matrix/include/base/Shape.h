@@ -6,7 +6,7 @@
 #define MATRIX_SHAPE_H
 
 
-#include <assert.h>
+#include <cassert>
 #include <iostream>
 
 namespace matrix {
@@ -14,15 +14,12 @@ namespace matrix {
     template <int dimension>
     class Shape {
     public:
-        Shape(const int* shape){
-        #pragma unroll
-            for (int i = 0; i < dimension; ++i) {
-                this->shape_[i] = shape[i];
-            }
-        }
+        Shape(const int* shape);
 
         void reShape(const Shape &shape);
 
+
+        const size_t size() const ;
 
     private:
         int shape_[dimension];
