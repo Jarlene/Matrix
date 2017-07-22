@@ -1,0 +1,45 @@
+IF(WIN32)
+    SET(HOST_SYSTEM "win32")
+ELSE(WIN32)
+    IF(APPLE)
+        EXEC_PROGRAM (sw_vers ARGS -productVersion OUTPUT_VARIABLE MACOSX_VERSION)
+        STRING(REGEX MATCH "[0-9]+.[0-9]+" VERSION "${MACOSX_VERSION}")
+        SET(MACOS_VERSION ${VERSION})
+        SET(HOST_SYSTEM "macosx")
+    ELSE(APPLE)
+
+        IF(EXISTS "/etc/issue")
+            FILE(READ "/etc/issue" LINUX_ISSUE)
+            IF(LINUX_ISSUE MATCHES "CentOS")
+                SET(HOST_SYSTEM "centos")
+            ELSEIF(LINUX_ISSUE MATCHES "Debian")
+                SET(HOST_SYSTEM "debian")
+            ELSEIF(LINUX_ISSUE MATCHES "Ubuntu")
+                SET(HOST_SYSTEM "ubuntu")
+            ELSEIF(LINUX_ISSUE MATCHES "Red Hat")
+                SET(HOST_SYSTEM "redhat")
+            ELSEIF(LINUX_ISSUE MATCHES "Fedora")
+                SET(HOST_SYSTEM "fedora")
+            ENDIF()
+        ENDIF(EXISTS "/etc/issue")
+
+        IF(EXISTS "/etc/redhat-release")
+            FILE(READ "/etc/redhat-release" LINUX_ISSUE)
+            IF(LINUX_ISSUE MATCHES "CentOS")
+                SET(HOST_SYSTEM "centos")
+            ENDIF()
+        ENDIF(EXISTS "/etc/redhat-release")
+
+        IF(NOT HOST_SYSTEM)
+            SET(HOST_SYSTEM ${CMAKE_SYSTEM_NAME})
+        ENDIF()
+
+    ENDIF(APPLE)
+ENDIF(WIN32)
+
+# query number of logical cores
+CMAKE_HOST_SYSTEM_INFORMATION(RESULT CPU_CORES QUERY NUMBER_OF_LOGICAL_CORES)
+
+MARK_AS_ADVANCED(HOST_SYSTEM CPU_CORES)
+
+add_definitions(-DCPU_CORES=${CPU_CORES})
