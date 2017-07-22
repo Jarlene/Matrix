@@ -4,9 +4,9 @@ if (USE_BLAS)
     SET(BLAS_INSTALL_DIR ${THIRD_PARTY_PATH}/install/OpenBLAS)
     SET(BLAS_INCLUDE_DIR "${BLAS_INSTALL_DIR}/include" CACHE PATH "openblas include directory." FORCE)
     IF(WIN32)
-        SET(BLAS_LIBRARIES "${BLAS_INSTALL_DIR}/lib/libOpenBLAS.lib")
+        SET(BLAS_LIBRARIES "${BLAS_INSTALL_DIR}/lib/libopenblas.lib")
     else(WIN32)
-        SET(BLAS_LIBRARIES "${BLAS_INSTALL_DIR}/lib/libOpenBLAS.a")
+        SET(BLAS_LIBRARIES "${BLAS_INSTALL_DIR}/lib/libopenblas.a")
     endif(WIN32)
 
     ExternalProject_Add(
