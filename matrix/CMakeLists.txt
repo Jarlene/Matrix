@@ -14,3 +14,5 @@ endforeach()
 
 set(SOURCE_FILES ${headList} ${srcList})
 add_library(Matrix STATIC ${SOURCE_FILES})
+add_dependencies(Matrix ${external_project_dependencies})
+target_link_libraries(Matrix ${external_libs})

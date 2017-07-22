@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD 14)
 option(USE_TEST "use gtest" ON)
 option(USE_GLOG "use glog" ON)
 option(USE_GFLAGS "use gflags" ON)
+option(USE_OPENMP "use openmp" ON)
 
 include_directories("${CMAKE_SOURCE_DIR}")
 set(THIRD_PARTY_PATH "${CMAKE_SOURCE_DIR}/third-party")
@@ -17,6 +18,7 @@ include(Dependencies)
 include(external/gtest)
 include(external/gflags)
 include(external/glog)
+include(external/openmp)
 
 
 

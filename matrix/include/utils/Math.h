@@ -1,5 +1,5 @@
 //
-// Created by 郑珊 on 2017/7/21.
+// Created by Jarlene on 2017/7/21.
 //
 
 #ifndef MATRIX_MATH_H
@@ -19,7 +19,7 @@
 #include <mkl_cblas.h>
 #include <mkl_vsl.h>
 #include <mkl_vsl_functions.h>
-#elif defined(USE_BLAS)
+#elif USE_BLAS
 #include <cblas.h>
 #endif
 
