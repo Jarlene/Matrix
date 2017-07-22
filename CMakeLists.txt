@@ -7,6 +7,8 @@ option(USE_TEST "use gtest" ON)
 option(USE_GLOG "use glog" ON)
 option(USE_GFLAGS "use gflags" ON)
 option(USE_OPENMP "use openmp" ON)
+option(USE_BLAS "use blas" OFF)
+option(USE_EIGEN "use eigen" ON)
 
 include_directories("${CMAKE_SOURCE_DIR}")
 set(THIRD_PARTY_PATH "${CMAKE_SOURCE_DIR}/third-party")
@@ -19,6 +21,8 @@ include(external/gtest)
 include(external/gflags)
 include(external/glog)
 include(external/openmp)
+include(external/blas)
+include(external/eigen)
 
 
 

@@ -7,7 +7,7 @@ if (USE_OPENMP)
     IF(WIN32)
         SET(OPENMP_LIBRARIES "${OPENMP_INSTALL_DIR}/lib/libopenmp.lib" CACHE FILEPATH "openmp library." FORCE)
     ELSE(WIN32)
-        SET(OPENMP_LIBRARIES "${OPENMP_INSTALL_DIR}/lib/libopenmp.a" CACHE FILEPATH "openmp library." FORCE)
+        SET(OPENMP_LIBRARIES "${OPENMP_INSTALL_DIR}/lib/libomp.dylib" CACHE FILEPATH "openmp library." FORCE)
     ENDIF(WIN32)
 
     INCLUDE_DIRECTORIES(${OPENMP_INCLUDE_DIR})
