@@ -1,36 +1,36 @@
 # OpenBlas
-if (USE_BLAS)
-    SET(Open_BLAS_INCLUDE_SEARCH_PATHS
-            /usr/include
-            /usr/include/openblas
-            /usr/include/openblas-base
-            /usr/local/include
-            /usr/local/include/openblas
-            /usr/local/include/openblas-base
-            /usr/local/OpenBLAS/include
-            /usr/local/opt/openblas/include
-            )
-
-    SET(Open_BLAS_LIB_SEARCH_PATHS
-            /lib/
-            /lib/openblas-base
-            /lib64/
-            /usr/lib
-            /usr/lib/openblas-base
-            /usr/lib64
-            /usr/local/lib
-            /usr/local/lib64
-            /usr/local/OpenBLAS/lib
-            /usr/local/opt/openblas/lib
-            )
-
-    FIND_PATH(OpenBLAS_INCLUDE_DIR NAMES cblas.h PATHS ${Open_BLAS_INCLUDE_SEARCH_PATHS})
-    FIND_LIBRARY(OpenBLAS_LIB NAMES openblas PATHS ${Open_BLAS_LIB_SEARCH_PATHS})
-
-    include_directories(${OpenBLAS_INCLUDE_DIR})
-    link_libraries(${OpenBLAS_LIB})
-    ADD_DEFINITIONS(-DUSE_BLAS)
-endif ()
+#if (USE_BLAS)
+#    SET(Open_BLAS_INCLUDE_SEARCH_PATHS
+#            /usr/include
+#            /usr/include/openblas
+#            /usr/include/openblas-base
+#            /usr/local/include
+#            /usr/local/include/openblas
+#            /usr/local/include/openblas-base
+#            /usr/local/OpenBLAS/include
+#            /usr/local/opt/openblas/include
+#            )
+#
+#    SET(Open_BLAS_LIB_SEARCH_PATHS
+#            /lib/
+#            /lib/openblas-base
+#            /lib64/
+#            /usr/lib
+#            /usr/lib/openblas-base
+#            /usr/lib64
+#            /usr/local/lib
+#            /usr/local/lib64
+#            /usr/local/OpenBLAS/lib
+#            /usr/local/opt/openblas/lib
+#            )
+#
+#    FIND_PATH(OpenBLAS_INCLUDE_DIR NAMES cblas.h PATHS ${Open_BLAS_INCLUDE_SEARCH_PATHS})
+#    FIND_LIBRARY(OpenBLAS_LIB NAMES openblas PATHS ${Open_BLAS_LIB_SEARCH_PATHS})
+#
+#    include_directories(${OpenBLAS_INCLUDE_DIR})
+#    link_libraries(${OpenBLAS_LIB})
+#    ADD_DEFINITIONS(-DUSE_BLAS)
+#endif ()
 
 #CUDA
 if (USE_CUDA)
