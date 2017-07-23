@@ -5,7 +5,7 @@ if (USE_OPENMP)
     SET(OPENMP_INCLUDE_DIR "${OPENMP_INSTALL_DIR}/include" CACHE PATH "glog include directory." FORCE)
 
     IF(WIN32)
-        SET(OPENMP_LIBRARIES "${OPENMP_INSTALL_DIR}/lib/libopenmp.lib" CACHE FILEPATH "openmp library." FORCE)
+        SET(OPENMP_LIBRARIES "${OPENMP_INSTALL_DIR}/lib/libomp.lib" CACHE FILEPATH "openmp library." FORCE)
     ELSE(WIN32)
         SET(OPENMP_LIBRARIES "${OPENMP_INSTALL_DIR}/lib/libomp.dylib" CACHE FILEPATH "openmp library." FORCE)
     ENDIF(WIN32)
@@ -21,7 +21,7 @@ if (USE_OPENMP)
             UPDATE_COMMAND  ""
             CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${OPENMP_INSTALL_DIR}
     )
-    LIST(APPEND external_project_dependencies glog)
-    LIST(APPEND external_libs ${GLOG_LIBRARIES})
+    LIST(APPEND external_project_dependencies openmp)
+    LIST(APPEND external_libs ${OPENMP_LIBRARIES})
     ADD_DEFINITIONS(-DUSE_MP)
 endif (USE_OPENMP)
