@@ -1,0 +1,29 @@
+if(USE_OPENCV)
+    INCLUDE(ExternalProject)
+    SET(OPENCV_SOURCES_DIR ${THIRD_PARTY_PATH}/opencv)
+    SET(OPENCV_INSTALL_DIR ${THIRD_PARTY_PATH}/install/opencv)
+    SET(OPENCV_INCLUDE_DIR "${OPENCV_INSTALL_DIR}/include" CACHE PATH "glog include directory." FORCE)
+
+    IF(WIN32)
+        SET(OPENCV_LIBRARIES "${OPENMP_INSTALL_DIR}/lib/libomp.lib" CACHE FILEPATH "openmp library." FORCE)
+    ELSE(WIN32)
+        SET(OPENCV_LIBRARIES "${OPENMP_INSTALL_DIR}/lib/libomp.dylib" CACHE FILEPATH "openmp library." FORCE)
+    ENDIF(WIN32)
+
+    INCLUDE_DIRECTORIES(${OPENCV_INCLUDE_DIR})
+
+
+    ExternalProject_Add(
+            opencv
+            ${EXTERNAL_PROJECT_LOG_ARGS}
+            GIT_REPOSITORY  "https://github.com/opencv/opencv.git"
+            GIT_TAG         "master"
+            PREFIX          ${OPENMP_SOURCES_DIR}
+            UPDATE_COMMAND  ""
+            INSTALL_DIR     ${OPENCV_INSTALL_DIR}
+            CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${OPENCV_INSTALL_DIR}
+    )
+    LIST(APPEND external_project_dependencies opencv)
+    LIST(APPEND external_libs ${OPENCV_LIBRARIES})
+    ADD_DEFINITIONS(-DUSE_OPENCV)
+endif(USE_OPENCV)

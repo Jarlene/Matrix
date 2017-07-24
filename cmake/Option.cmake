@@ -1,0 +1,7 @@
+option(USE_TEST "use gtest" ON)
+option(USE_GLOG "use glog" ON)
+option(USE_GFLAGS "use gflags" ON)
+option(USE_OPENMP "use openmp" ON)
+option(USE_BLAS "use blas" ON)
+option(USE_EIGEN "use eigen" ON)
+option(USE_OPENCV "use opencv" ON)
