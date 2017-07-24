@@ -247,6 +247,59 @@ namespace matrix {
                               long *Y, int incy) {
     }
 
+
+    /// Y=X
+    /// \tparam T
+    /// \param N
+    /// \param x
+    /// \param incx
+    /// \param y
+    /// \param incy
+    template <class T>
+    inline void CPUCopy(const int N, T* x, int incx, T* y, int incy);
+
+
+    template <>
+    inline void CPUCopy<float>(const int N, float* x, int incx, float* y, int incy) {
+        cblas_scopy(N, x, incx, y, incy);
+    }
+
+    template <>
+    inline void CPUCopy<double>(const int N, double* x, int incx, double* y, int incy) {
+        cblas_dcopy(N, x, incx, y, incy);
+    }
+
+
+    template <>
+    inline void CPUCopy<int>(const int N, int* x, int incx, int* y, int incy) {
+        int posx = 0;
+        int posy = 0;
+#ifdef USE_MP
+        omp_set_num_threads(CPU_CORES);
+#pragma omp parallel for
+#endif
+        for (int i = 0; i < N; ++i) {
+            y[posy] = x[posx];
+            posy += incy;
+            posx += incx;
+        }
+    }
+
+    template <>
+    inline void CPUCopy<long>(const int N, long* x, int incx, long* y, int incy) {
+        int posx = 0;
+        int posy = 0;
+#ifdef USE_MP
+        omp_set_num_threads(CPU_CORES);
+#pragma omp parallel for
+#endif
+        for (int i = 0; i < N; ++i) {
+            y[posy] = x[posx];
+            posy += incy;
+            posx += incx;
+        }
+    }
+
 }
 
 #endif //MATRIX_MATH_H
