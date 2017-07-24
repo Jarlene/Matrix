@@ -18,9 +18,8 @@ if(USE_OPENCV)
             ${EXTERNAL_PROJECT_LOG_ARGS}
             GIT_REPOSITORY  "https://github.com/opencv/opencv.git"
             GIT_TAG         "master"
-            PREFIX          ${OPENMP_SOURCES_DIR}
+            PREFIX          ${OPENCV_SOURCES_DIR}
             UPDATE_COMMAND  ""
-            INSTALL_DIR     ${OPENCV_INSTALL_DIR}
             CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${OPENCV_INSTALL_DIR}
     )
     LIST(APPEND external_project_dependencies opencv)
