@@ -16,5 +16,20 @@ int main() {
     for (int i = 0; i < 6; ++i) {
         std::cout<< c[i] << std::endl;
     }
+
+
+    std::cout<< "the core count is " << omp_get_max_threads() << std::endl;
+    double start = omp_get_wtime();//获取起始时间
+#pragma omp parallel for
+    for (int i = 0; i < 10000; i++) {
+        std::cout << " the index is " << i << ", the thread is " << omp_get_thread_num() << std::endl;
+    }
+    double end = omp_get_wtime();
+
+    std::cout<<"计算耗时为："<<end -start<<std::endl;
+
     return 1;
+
+
+
 }

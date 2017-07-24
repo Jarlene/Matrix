@@ -37,8 +37,17 @@ namespace matrix {
     template <>
     inline int checkArrayEqual<int>(const int * arr1, const int * arr2, const int dim) {
         for (int i = 0; i < dim; ++i) {
-
+            EXPECT_EQ(arr1[i], arr2[i]);
         }
+        return 0;
+    }
+
+    template <>
+    inline int checkArrayEqual<long>(const long * arr1, const long * arr2, const int dim) {
+        for (int i = 0; i < dim; ++i) {
+            EXPECT_EQ(arr1[i], arr2[i]);
+        }
+        return 0;
     }
 }
 #endif //MATRIX_TEST_H
