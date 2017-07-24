@@ -15,22 +15,32 @@ if (USE_BLAS)
 #            INSTALL_COMMAND "make install"
 #    )
 
+    SET(error_code 1)
     if (NOT EXISTS ${BLAS_SOURCES_DIR})
         message(STATUS "git clone opeb blas library")
         execute_process(
                 COMMAND  git clone https://github.com/xianyi/OpenBLAS.git ${BLAS_SOURCES_DIR}
+                RESULT_VARIABLE error_code
         )
     endif ()
 
+    if (NOT error_code)
+        MESSAGE(WARNING "git clone fail")
+        return()
+    endif ()
     if (NOT EXISTS ${BLAS_INSTALL_DIR})
+        SET(error_code 1)
         execute_process(
                 COMMAND make
                 WORKING_DIRECTORY ${BLAS_SOURCES_DIR}
+                RESULT_VARIABLE error_code
         )
-        execute_process(
-                COMMAND make install PREFIX=${BLAS_INSTALL_DIR}
-                WORKING_DIRECTORY ${BLAS_SOURCES_DIR}
-        )
+        if(NOT error_code)
+            execute_process(
+                    COMMAND make install PREFIX=${BLAS_INSTALL_DIR}
+                    WORKING_DIRECTORY ${BLAS_SOURCES_DIR}
+            )
+        endif()
     endif ()
     IF(WIN32)
         SET(BLAS_LIBRARIES "${BLAS_INSTALL_DIR}/lib/libopenblas.lib")
