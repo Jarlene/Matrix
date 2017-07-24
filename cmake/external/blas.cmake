@@ -24,9 +24,12 @@ if (USE_BLAS)
 
     if (NOT EXISTS ${BLAS_INSTALL_DIR})
         execute_process(
-                WORKING_DIRECTORY ${BLAS_SOURCES_DIR}
                 COMMAND make
+                WORKING_DIRECTORY ${BLAS_SOURCES_DIR}
+        )
+        execute_process(
                 COMMAND make install PREFIX=${BLAS_INSTALL_DIR}
+                WORKING_DIRECTORY ${BLAS_SOURCES_DIR}
         )
     endif ()
     IF(WIN32)
