@@ -21,6 +21,11 @@ Symbol LogisticRegression(Symbol input, int batchSize, int hideNum) {
 }
 
 
+Symbol Connvolution(Symbol input, int batchSize) {
+
+}
+
+
 
 int main() {
     int batchSize = 100;
