@@ -10,7 +10,8 @@
 namespace matrix {
 
     class BaseOperator : public Operator{
-
+    public:
+        int flatDimension();
     };
 }
 

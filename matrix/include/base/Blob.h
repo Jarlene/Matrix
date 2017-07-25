@@ -15,27 +15,20 @@ namespace matrix {
 
     struct Blob {
         void* ptr_ = nullptr;
-        Shape shape_;
-
-        std::function<void(void*)> destory = nullptr;
+        std::function<void(void*)> destroy = nullptr;
 
         ~Blob() {
-            if (destory != nullptr) {
-                destory(ptr_);
+            if (destroy != nullptr) {
+                destroy(ptr_);
             }
         }
 
 
         template <class T, int dimension>
-        Tensor<T,dimension> Generator() const {
-            return Tensor<T, dimension>(static_cast<T *>(ptr_), shape_);
+        Tensor<T, dimension> GeneratorTensor(const Shape<dimension> shape_) const {
+            return Tensor<T, dimension>(static_cast<T *>(ptr_), shape_, Shape<dimension>(nullptr));
         }
 
-        template <class T, int dimension>
-        Tensor<T, dimension> Generator(const Shape &other) const {
-            assert(this->shape_.size() == other.size());
-            return Tensor<T, dimension>(static_cast<T *>(ptr_), other);
-        }
 
         template <class T>
         const T &Get() const {

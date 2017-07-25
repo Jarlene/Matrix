@@ -4,3 +4,11 @@
 
 #include "matrix/include/utils/Math.h"
 #include "matrix/include/op/BaseOperator.h"
+
+namespace matrix {
+
+    int BaseOperator::flatDimension() {
+        return 0;
+    }
+}
+

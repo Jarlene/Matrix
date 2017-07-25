@@ -16,10 +16,13 @@ namespace matrix {
     public:
         Shape(const int* shape);
 
+        Shape(const Shape<dimension> &shape);
+
         void reShape(const Shape &shape);
 
-
         const size_t size() const ;
+
+        const int operator[](int idx) const ;
 
     private:
         int shape_[dimension];

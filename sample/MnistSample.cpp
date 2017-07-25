@@ -9,7 +9,5 @@
 using namespace matrix;
 
 int main() {
-    auto shape = ShapeN<4>(4,2,3,5);
-    std::cout<< "create a shape" << std::endl;
     return 0;
 }

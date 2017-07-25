@@ -3,15 +3,15 @@
 //
 
 #include <matrix/include/utils/Math.h>
+#include <matrix/include/utils/Logger.h>
+#include <matrix/include/utils/Time.h>
 #include <iostream>
+
 
 using namespace matrix;
 
-long getCurrentTime() {
-    struct timeval tv;
-    gettimeofday(&tv,NULL);
-    return tv.tv_sec * 1000 + tv.tv_usec / 1000;
-}
+
+const std::string filename = "RunTimeLog.log";
 
 int main() {
 
@@ -25,24 +25,19 @@ int main() {
         std::cout<< c[i] << std::endl;
     }
 
-
-    std::cout<< "the core count is " << omp_get_max_threads() << std::endl;
+    Logger::Global(filename)->Info("the core count is %d \n", omp_get_max_threads());
     start = getCurrentTime();
 #pragma omp parallel for
     for (int i = 0; i < 10000; i++) {
-        std::cout << " the index is " << i << ", the thread is " << omp_get_thread_num() << std::endl;
+        Logger::Global(filename)->Info(" the index is %d, the thread is %d \n", i, omp_get_thread_num());
     }
     end = getCurrentTime();
 
-    std::cout<<"计算耗时为："<<end -start<<std::endl;
+    Logger::Global(filename)->Info("计算耗时为：%d \n", end-start);
 
     omp_set_num_threads(CPU_CORES);
 #pragma omp parallel for
     for (int i = 0; i < 6; i++)
-        printf("i = %d, I am Thread %d\n", i, omp_get_thread_num());
-
-
-    std::cout << "the max threads is :" << omp_get_num_threads() << std::endl;
-
+        Logger::Global()->Info("i = %d, I am Thread %d\n", i, omp_get_thread_num());
     return 1;
 }
