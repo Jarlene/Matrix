@@ -159,7 +159,7 @@ namespace matrix {
         }
     }
 
-    Logger *Logger::Global(std::string &name) {
+    Logger *Logger::Global(const std::string &name) {
         static Logger logger(name);
         logger.ResetKillFatal(true);
         return &logger;

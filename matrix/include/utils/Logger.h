@@ -23,7 +23,7 @@ namespace matrix {
 
         static Logger* Global() ;
 
-        static Logger* Global(std::string &name);
+        static Logger* Global(const std::string &name);
 
         explicit Logger(LogLevel level = LogLevel::Info);
 
