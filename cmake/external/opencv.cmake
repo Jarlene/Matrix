@@ -20,7 +20,7 @@ if(USE_OPENCV)
             GIT_TAG         "master"
             PREFIX          ${OPENCV_SOURCES_DIR}
             UPDATE_COMMAND  ""
-            CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${OPENCV_INSTALL_DIR}
+            CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${OPENCV_INSTALL_DIR} -DWITH_CUDA=OFF -DWITH_CUFFT=OFF -DWITH_CUBLAS=OFF -DWITH_NVCUVID=OFF
     )
     LIST(APPEND external_project_dependencies opencv)
     LIST(APPEND external_libs ${OPENCV_LIBRARIES})
