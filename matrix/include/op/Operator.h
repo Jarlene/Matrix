@@ -8,7 +8,6 @@
 #include <map>
 #include "matrix/include/utils/Any.h"
 #include "matrix/include/base/Blob.h"
-#include "matrix/include/utils/Logger.h"
 namespace matrix {
 
     class Operator {
@@ -20,11 +19,7 @@ namespace matrix {
         template <class T>
         inline T getArgValue(const std::string & name, const T &default_value) {
             if (args.count(name)) {
-                try {
-                    return get(args.at(name));
-                } catch (...) {
-
-                }
+                return get<T>(args.at(name));
             }
             return default_value;
         }
@@ -37,7 +32,7 @@ namespace matrix {
 
         template <class T>
         inline T* Output(int idx) {
-            return output.at(idx)->GetMutable();
+            return output.at(idx)->GetMutable<T>();
         }
 
 

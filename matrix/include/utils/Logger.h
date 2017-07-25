@@ -20,6 +20,13 @@ namespace matrix {
 
     class Logger {
     public:
+
+        static Logger* Global() {
+            static Logger logger;
+            logger.ResetKillFatal(true);
+            return &logger;
+        }
+
         explicit Logger(LogLevel level = LogLevel::Info);
 
         explicit Logger(std::string filename, LogLevel level = LogLevel::Info);
