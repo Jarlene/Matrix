@@ -9,6 +9,8 @@
 #include <vector>
 #include "matrix/include/utils/Any.h"
 #include "matrix/include/base/Blob.h"
+#include "matrix/include/utils/OpRegistry.h"
+
 namespace matrix {
 
     class Operator {

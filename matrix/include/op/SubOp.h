@@ -14,4 +14,6 @@ namespace matrxi {
     };
 }
 
+INSTANTIATE_OPS(matrix::SubOp, sub);
+
 #endif //MATRIX_SUBOP_H

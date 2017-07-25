@@ -1,6 +1,8 @@
 //
 // Created by Jarlene on 2017/7/24.
 //
+#ifdef USE_OPENCV
+
 #include <opencv2/opencv.hpp>
 #include <matrix/include/utils/Logger.h>
 using namespace cv;
@@ -15,3 +17,5 @@ int main() {
 
     return 0;
 }
+
+#endif

@@ -15,4 +15,5 @@ namespace matrix {
 
 }
 
+INSTANTIATE_OPS(matrix::AddOp, add);
 #endif //MATRIX_ADDOP_H

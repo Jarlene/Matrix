@@ -14,4 +14,5 @@ namespace matrix {
     };
 }
 
+INSTANTIATE_OPS(matrix::DivOp, div);
 #endif //MATRIX_DIVOP_H

@@ -13,5 +13,5 @@ namespace matrix {
 
     };
 }
-
+INSTANTIATE_OPS(matrix::MulOp, mul);
 #endif //MATRIX_MULOP_H
