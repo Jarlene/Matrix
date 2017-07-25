@@ -6,6 +6,7 @@
 #define MATRIX_OPERATOR_H
 
 #include <map>
+#include <vector>
 #include "matrix/include/utils/Any.h"
 #include "matrix/include/base/Blob.h"
 namespace matrix {

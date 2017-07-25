@@ -9,12 +9,12 @@
 
 namespace matrix {
 
-    template <class T, int dimension>
+    template <class T>
     class Tensor {
     public:
-        Tensor(T *ptr, Shape <dimension> shape);
+        Tensor(T *ptr, const Shape &shape);
 
-        Tensor(const Tensor<T, dimension> &tensor);
+        Tensor(const Tensor<T> &tensor);
 
         const int Rank() const ;
 
@@ -23,7 +23,7 @@ namespace matrix {
 
     private:
         T * data_;
-        Shape<dimension> shape_;
+        Shape shape_;
 
     };
 

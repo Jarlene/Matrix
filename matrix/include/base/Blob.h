@@ -24,9 +24,9 @@ namespace matrix {
         }
 
 
-        template <class T, int dimension>
-        Tensor<T, dimension> GeneratorTensor(const Shape<dimension> shape_) const {
-            return Tensor<T, dimension>(static_cast<T *>(ptr_), shape_, Shape<dimension>(nullptr));
+        template <class T>
+        Tensor<T> GeneratorTensor(const Shape shape_) const {
+            return Tensor<T>(static_cast<T *>(ptr_), shape_);
         }
 
 

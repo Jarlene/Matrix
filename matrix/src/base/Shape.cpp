@@ -6,42 +6,37 @@
 
 namespace matrix {
 
-    template <int dimension>
-    void Shape<dimension>::reShape(const Shape<dimension> &s) {
+    void Shape::reShape(const Shape &s) {
 #pragma unroll
-        for (int i = 0; i < dimension; ++i) {
+        for (int i = 0; i < s.size(); ++i) {
             this->shape_[i] = s.shape_[i];
         }
     }
 
-    template <int dimension>
-    const size_t Shape<dimension>::size() const {
+    const size_t Shape::size() const {
         size_t total = 1;
 #pragma unroll
-        for (int i = 0; i < dimension; ++i) {
+        for (int i = 0; i < shape_.size(); ++i) {
             total *= shape_[i];
         }
         return total;
     }
 
-    template <int dimension>
-    Shape<dimension>::Shape(const int *shape) {
+    Shape::Shape(const int *shape) {
 #pragma unroll
-        for (int i = 0; i < dimension; ++i) {
+        for (int i = 0; i < shape_.size(); ++i) {
             this->shape_[i] = shape[i];
         }
     }
 
-    template <int dimension>
-    const int Shape<dimension>::operator[](int idx) const {
-        if (dimension > idx) {
+    const int Shape::operator[](int idx) const {
+        if (shape_.size() > idx) {
             return shape_[idx];
         }
         return 0;
     }
 
-    template <int dimension>
-    Shape<dimension>::Shape(const Shape<dimension> &shape) {
+    Shape::Shape(const Shape &shape) {
         this->shape_ = shape.shape_;
     }
 

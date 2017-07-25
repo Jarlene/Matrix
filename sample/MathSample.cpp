@@ -10,9 +10,6 @@
 
 using namespace matrix;
 
-
-const std::string filename = "RunTimeLog.log";
-
 int main() {
 
     long start, end;
@@ -22,18 +19,18 @@ int main() {
     float c[] = {0, 0, 0, 0, 0, 0};
     CPUGemm(NoTrans, NoTrans, 2, 3, 2, 1.0f, a, b, 0.0f, c);
     for (int i = 0; i < 6; ++i) {
-        std::cout<< c[i] << std::endl;
+       Logger::Global()->Info("%d\n",c[i]);
     }
 
-    Logger::Global(filename)->Info("the core count is %d \n", omp_get_max_threads());
+    Logger::Global()->Info("the core count is %d \n", omp_get_max_threads());
     start = getCurrentTime();
 #pragma omp parallel for
     for (int i = 0; i < 10000; i++) {
-        Logger::Global(filename)->Info(" the index is %d, the thread is %d \n", i, omp_get_thread_num());
+        Logger::Global()->Info(" the index is %d, the thread is %d \n", i, omp_get_thread_num());
     }
     end = getCurrentTime();
 
-    Logger::Global(filename)->Info("计算耗时为：%d \n", end-start);
+    Logger::Global()->Info("计算耗时为：%d \n", end-start);
 
     omp_set_num_threads(CPU_CORES);
 #pragma omp parallel for

@@ -300,6 +300,269 @@ namespace matrix {
         }
     }
 
+
+    ///
+    /// \tparam T
+    /// \param N
+    /// \param x
+    /// \param incx
+    /// \param y
+    /// \param incy
+    template <class T>
+    inline void CPUSwap(const int N, T * x, int incx, T *y, int incy );
+
+    template <>
+    inline void CPUSwap<float>(const int N, float * x, int incx, float *y, int incy ) {
+        cblas_sswap(N, x, incx, y, incy);
+    }
+
+    template <>
+    inline void CPUSwap<double>(const int N, double * x, int incx, double *y, int incy ) {
+        cblas_dswap(N, x, incx, y, incy);
+    }
+
+    template <class T>
+    inline void CPUSwap(const int N, T * x) {
+#ifdef USE_MP
+        omp_set_num_threads(CPU_CORES);
+#pragma omp parallel for
+#endif
+        for (int i = 0; i < N/2; ++i) {
+            std::swap(x[i], x[N-1-i]);
+        }
+    }
+
+
+
+
+    /// res = x'*y
+    /// \tparam T
+    /// \param N
+    /// \param x
+    /// \param y
+    /// \param res
+    template <class T>
+    inline void CPUDot(const int N, const T* x, const T* y, T& res);
+
+
+    template <>
+    inline void CPUDot<float>(const int N, const float* x, const float* y, float& res) {
+        res = cblas_sdot(N, x, 1, y, 1);
+    }
+
+    template <>
+    inline void CPUDot<double>(const int N, const double* x, const double* y, double& res) {
+        res = cblas_ddot(N, x, 1, y, 1);
+    }
+
+    template <>
+    inline void CPUDot<int>(const int N, const int* x, const int* y, int& res) {
+    }
+
+    template <>
+    inline void CPUDot<long>(const int N, const long* x, const long* y, long& res) {
+    }
+
+
+
+    template <class T>
+    inline void CPUAdd(const int N, const T *a, const T *b, T *y) {
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+        for (int i=0; i < N; ++i) {
+            y[i] = a[i] + b[i];
+        }
+    }
+
+
+    template <class T>
+    inline void CPUSub(const int N, const T *a, const T *b, T *y) {
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+        for (int i=0; i < N; ++i) {
+            y[i] = a[i] - b[i];
+        }
+    }
+
+
+    template <class T>
+    inline void CPUMul(const int N, const T *a, const T *b, T *y) {
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+        for (int i=0; i < N; ++i) {
+            y[i] = a[i] * b[i];
+        }
+    }
+
+
+    template <class T>
+    inline void CPUDiv(const int N, const T *a, const T *b, T *y) {
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+        for (int i=0; i < N; ++i) {
+            y[i] = a[i] / b[i];
+        }
+    }
+
+
+    template <class T>
+    inline void CPUTanh(const int N, const T *x, T *y) {
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+        for (int i=0; i < N; ++i) {
+            y[i] = (exp(x[i])-exp(-x[i]))/(exp(x[i]) + exp(-x[i]));
+        }
+    }
+
+
+    template <class T>
+    inline void CPUTanhGrad(const int N,  T*x, T *y,  T *z) {
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+        for (int i=0; i < N; ++i) {
+            z[i] = y[i] * (T(1) - x[i]*x[i]);
+        }
+    }
+
+
+    template <class T>
+    inline void Sigmoid(const int N,  T*x, T *y) {
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+        for (int i=0; i < N; ++i) {
+            y[i] = T(1)/(T(1) + exp(T(-1) * x[i]));
+        }
+    }
+
+
+    template <class T>
+    inline void SigmoidGrad(const int N, T *x, T *y,  T *z) {
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+        for (int i=0; i < N; ++i) {
+            z[i] = y[i] * x[i]*((T)1-x[i]);
+        }
+    }
+
+
+    template <class T>
+    inline void Relu(const int N, T *x, T *y) {
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+        for (int i=0; i < N; ++i) {
+            y[i] = (x[i]>(T)0 ? x[i] : 0);
+        }
+    }
+
+    template <class T>
+    inline void ReluGrad(const int N, T *dx, T *x, T* dy) {
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+        for (int i=0; i < N; ++i) {
+            dx[i] = (x[i] > (T)0 ? dy[i] : 0);
+        }
+    }
+
+
+
+    template <class T>
+    inline void Softmax(const int N, T* x, T* y) {
+        T max = x[0];
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+        for (int i=1; i<N; ++i) {
+            if (max < x[i]) {
+                max = x[i];
+            }
+        }
+
+        T sum = (T)0;
+
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+        for (int i=0; i<N; ++i) {
+            y[i] = std::exp(x[i] - max);
+            sum += y[i];
+        }
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+        for (int i=0; i<N; ++i) {
+            y[i] /= sum;
+        }
+    }
+
+
+    /// cross-entropy
+    /// \tparam T
+    /// \param N prediction data length
+    /// \param in1 prediction value
+    /// \param M real data length
+    /// \param in2 real value
+    /// \param out
+    template <class T>
+    inline void CrossEntropy(const int N, T *in1, const int M, T *in2, T *out) {
+        if (N == M) {
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+            for (int i = 0; i < N; ++i) {
+                out[0] += T(-1) * in2[i] * log(in1[i]);
+            }
+
+        } else {
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+            for (int i = 0; i < M; ++i) {
+                for (int j = 0; j < N / M; ++j) {
+                    out[0] += T(-1) * in2[i] * log(in1[i * M + j]);
+                }
+            }
+        }
+        out[0] /= N;
+    }
+
+
+    /// cross-entropy gradient
+    /// \tparam T
+    /// \param N prediction data length
+    /// \param in1 prediction value
+    /// \param M real data length
+    /// \param in2 real value
+    /// \param out
+    template <class T>
+    inline void CrossEntropyGrad(const int N, T *in1, const int M, T *in2, T *out) {
+        if (N == M) {
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+            for (int i = 0; i < N; ++i) {
+                out[i] = -in2[i] / in1[i];
+            }
+        } else {
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+            for (int i = 0; i < M; ++i) {
+                for (int j = 0; j < N / M; ++j) {
+                    out[i * M + j] = -in2[i] / std::log(in1[i * M + j]);
+                }
+            }
+        }
+    }
 }
 
 #endif //MATRIX_MATH_H

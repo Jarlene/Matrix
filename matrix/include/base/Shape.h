@@ -8,15 +8,15 @@
 
 #include <cassert>
 #include <iostream>
+#include <vector>
 
 namespace matrix {
 
-    template <int dimension>
     class Shape {
     public:
         Shape(const int* shape);
 
-        Shape(const Shape<dimension> &shape);
+        Shape(const Shape &shape);
 
         void reShape(const Shape &shape);
 
@@ -25,18 +25,17 @@ namespace matrix {
         const int operator[](int idx) const ;
 
     private:
-        int shape_[dimension];
+        std::vector<int> shape_;
     };
 
 
 
 
-    template <int dimension, typename... T>
-    inline Shape<dimension> ShapeN(T... args) {
+    template <typename... T>
+    inline Shape ShapeN(T... args) {
         const int dims = sizeof...(args);
-        assert(dims == dimension);
         int len[dims] = {args...};
-        Shape<dimension> shape(len);
+        Shape shape(len);
         return shape;
     }
 }
