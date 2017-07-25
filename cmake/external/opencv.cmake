@@ -5,9 +5,9 @@ if(USE_OPENCV)
     SET(OPENCV_INCLUDE_DIR "${OPENCV_INSTALL_DIR}/include" CACHE PATH "glog include directory." FORCE)
 
     IF(WIN32)
-        SET(OPENCV_LIBRARIES "${OPENMP_INSTALL_DIR}/lib/libopencv.lib" CACHE FILEPATH "opencv library." FORCE)
+        SET(OPENCV_LIBRARIES "${OPENCV_INSTALL_DIR}/lib/libopencv_core.lib" CACHE FILEPATH "opencv library." FORCE)
     ELSE(WIN32)
-        SET(OPENCV_LIBRARIES "${OPENMP_INSTALL_DIR}/lib/libopencv.dylib" CACHE FILEPATH "opencv library." FORCE)
+        SET(OPENCV_LIBRARIES "${OPENCV_INSTALL_DIR}/lib/libopencv_core.dylib" CACHE FILEPATH "opencv library." FORCE)
     ENDIF(WIN32)
 
     INCLUDE_DIRECTORIES(${OPENCV_INCLUDE_DIR})
