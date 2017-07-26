@@ -1,5 +1,5 @@
 //
-// Created by 郑珊 on 2017/7/22.
+// Created by Jarlene on 2017/7/22.
 //
 
 #ifndef MATRIX_MATRIXTYPE_H

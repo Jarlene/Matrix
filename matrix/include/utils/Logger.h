@@ -1,5 +1,5 @@
 //
-// Created by 郑珊 on 2017/7/24.
+// Created by Jarlene on 2017/7/24.
 //
 
 #ifndef MATRIX_LOGGING_H
