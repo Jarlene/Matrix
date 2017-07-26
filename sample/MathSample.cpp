@@ -5,8 +5,6 @@
 #include <matrix/include/utils/Math.h>
 #include <matrix/include/utils/Logger.h>
 #include <matrix/include/utils/Time.h>
-#include <iostream>
-
 
 using namespace matrix;
 
@@ -14,12 +12,17 @@ int main() {
 
     long start, end;
 
-    float a[] = {1, 2, 3, 4, 5, 6};
-    float b[] = {2, 3, 4, 5, 6, 7};
-    float c[] = {0, 0, 0, 0, 0, 0};
-    CPUGemm(NoTrans, NoTrans, 2, 3, 2, 1.0f, a, b, 0.0f, c);
-    for (int i = 0; i < 6; ++i) {
-       Logger::Global("log.log")->Info("%d\n",c[i]);
+    float a[] = {1, 2, 3,
+                 4, 5, 6};
+    float b[] = {2, 3,
+                 4, 5,
+                 6, 7};
+    float c[] = {0, 0,
+                 0, 0};
+    CPUGemm<float>(NoTrans, NoTrans, 2, 2, 3, 1.0f, a, b, 0.0f, c);
+
+    for (int i = 0; i < 4; ++i) {
+       Logger::Global("log.log")->Info("%f\n",c[i]);
     }
 
     Logger::Global("log.log")->Info("the core count is %d \n", omp_get_max_threads());

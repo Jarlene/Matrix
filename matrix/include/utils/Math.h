@@ -17,14 +17,22 @@
 
 
 #ifdef USE_MKL
+#ifndef BLAS
+#define BLAS
+#endif
 #include <mkl.h>
 #include <mkl_cblas.h>
 #include <mkl_vsl.h>
 #include <mkl_vsl_functions.h>
 #elif defined(USE_BLAS)
+#ifndef BLAS
+#define BLAS
+#endif
 #include <cblas.h>
 #elif defined(USE_EIGEN)
 #include <eigen3/Eigen/Eigen>
+using Eigen::MatrixXd;
+using namespace Eigen;
 #endif
 
 
@@ -62,6 +70,7 @@ namespace matrix {
                                const BlasTranspose TransB, const int M, const int N, const int K,
                                const float alpha, const float *A, const float *B, const float beta,
                                float *C) {
+#ifdef BLAS
         int lda = (TransA == NoTrans) ? K : M;
         int ldb = (TransB == NoTrans) ? N : K;
         CBLAS_TRANSPOSE Atrans, Btrans;
@@ -89,6 +98,17 @@ namespace matrix {
         }
         cblas_sgemm(CblasRowMajor, Atrans, Btrans, M, N, K, alpha, A, lda, B,
                     ldb, beta, C, N);
+#elif defined(USE_EIGEN)
+        int lda = (TransA == NoTrans) ? M : K; // A 的行
+        int ldb = (TransB == NoTrans) ? N : K; // B 的列
+        int aCol = (TransA == NoTrans) ? K : M; // A的列
+        float * a = const_cast<float*>(A);
+        float * b = const_cast<float*>(B);
+        Map<MatrixXf> aMatrix(a, lda,  aCol);
+        Map<MatrixXf> bMatrix(b, aCol, ldb) ;
+        Map<MatrixXf> cMatrix(C, lda, ldb);
+        cMatrix = alpha * aMatrix * bMatrix + beta * cMatrix;
+#endif
     }
 
     template <>
@@ -96,6 +116,7 @@ namespace matrix {
                                  const BlasTranspose TransB, const int M, const int N, const int K,
                                  const double alpha, const double *A, const double *B, const double beta,
                                  double *C) {
+#ifdef BLAS
         int lda = (TransA == NoTrans) ? K : M;
         int ldb = (TransB == NoTrans) ? N : K;
         CBLAS_TRANSPOSE Atrans, Btrans;
@@ -123,6 +144,17 @@ namespace matrix {
         }
         cblas_dgemm(CblasRowMajor, Atrans, Btrans, M, N, K, alpha, A, lda, B,
                     ldb, beta, C, N);
+#elif defined(USE_EIGEN)
+        int lda = (TransA == NoTrans) ? M : K; // A 的行
+        int ldb = (TransB == NoTrans) ? K : N; // B 的列
+        int aCol = (TransA == NoTrans) ? K : M; // A的列
+        double * a = const_cast<double*>(A);
+        double * b = const_cast<double*>(B);
+        Map<MatrixXd> aMatrix(a, lda, aCol);
+        Map<MatrixXd> bMatrix(b, aCol, ldb) ;
+        Map<MatrixXd> cMatrix(C, lda, ldb);
+        cMatrix = alpha * aMatrix * bMatrix + beta * cMatrix;
+#endif
     }
 
     template <>
@@ -130,7 +162,17 @@ namespace matrix {
                              const BlasTranspose TransB, const int M, const int N, const int K,
                              const int alpha, const int *A, const int *B, const int beta,
                              int *C) {
-
+#ifdef USE_EIGEN
+        int lda = (TransA == NoTrans) ? M : K; // A 的行
+        int ldb = (TransB == NoTrans) ? N : K; // B 的列
+        int aCol = (TransA == NoTrans) ? K : M; // A的列
+        int * a = const_cast<int*>(A);
+        int * b = const_cast<int*>(B);
+        Map<MatrixXi> aMatrix(a, lda,  aCol);
+        Map<MatrixXi> bMatrix(b, aCol, ldb) ;
+        Map<MatrixXi> cMatrix(C, lda, ldb);
+        cMatrix = alpha * aMatrix * bMatrix + beta * cMatrix;
+#endif
     }
 
     template <>
@@ -160,6 +202,7 @@ namespace matrix {
     inline void CPUGemv<float>(const BlasTranspose TransA, const int M, const int N,
                                const float alpha, const float *A, const float *x, const float beta,
                                float *y) {
+#ifdef BLAS
         CBLAS_TRANSPOSE Atrans;
         switch (TransA) {
             case NoTrans:
@@ -175,12 +218,23 @@ namespace matrix {
                 break;
         }
         cblas_sgemv(CblasRowMajor, Atrans, M, N, alpha, A, N, x, 1, beta, y, 1);
+#elif defined(USE_EIGEN)
+        int lda = (TransA == NoTrans)? M : N;
+        int cda = (TransA == NoTrans)? N : M;
+        float * a = const_cast<float*>(A);
+        float * xv = const_cast<float*>(x);
+        Map<MatrixXf> aMatrix(a, lda, cda);
+        Map<VectorXf> xVector(xv, cda);
+        Map<VectorXf> yVector(y, lda);
+        yVector = alpha * aMatrix * xVector + beta * yVector;
+#endif
     }
 
     template <>
     inline void CPUGemv<double>(const BlasTranspose TransA, const int M, const int N,
                                 const double alpha, const double *A, const double *x, const double beta,
                                 double *y) {
+#ifdef BLAS
         CBLAS_TRANSPOSE Atrans;
         switch (TransA) {
             case NoTrans:
@@ -196,6 +250,16 @@ namespace matrix {
                 break;
         }
         cblas_dgemv(CblasRowMajor, Atrans, M, N, alpha, A, N, x, 1, beta, y, 1);
+#elif defined(USE_EIGEN)
+        int lda = (TransA == NoTrans)? M : N;
+        int cda = (TransA == NoTrans)? N : M;
+        double * a = const_cast<double*>(A);
+        double * xv = const_cast<double*>(x);
+        Map<MatrixXd> aMatrix(a, lda, cda);
+        Map<VectorXd> xVector(xv, cda);
+        Map<VectorXd> yVector(y, lda);
+        yVector = alpha * aMatrix * xVector + beta * yVector;
+#endif
     }
 
 
@@ -203,7 +267,16 @@ namespace matrix {
     inline void CPUGemv<int>(const BlasTranspose TransA, const int M, const int N,
                              const int alpha, const int *A, const int *x, const int beta,
                              int *y) {
-
+#ifdef USE_EIGEN
+        int lda = (TransA == NoTrans)? M : N;
+        int cda = (TransA == NoTrans)? N : M;
+        int * a = const_cast<int*>(A);
+        int * xv = const_cast<int*>(x);
+        Map<MatrixXi> aMatrix(a, lda, cda);
+        Map<VectorXi> xVector(xv, cda);
+        Map<VectorXi> yVector(y, lda);
+        yVector = alpha * aMatrix * xVector + beta * yVector;
+#endif
     }
 
     template <>
@@ -228,23 +301,74 @@ namespace matrix {
     template <>
     inline void CPUAxpy<float>(const int N, const float alpha, const float *X, int incx,
                                float *Y, int incy) {
+#ifdef BLAS
         cblas_saxpy(N, alpha, X, incx, Y, incy);
+#else
+        int posx = 0;
+        int posy = 0;
+#ifdef USE_MP
+        omp_set_num_threads(CPU_CORES);
+#pragma omp parallel for
+#endif
+        for (int i = 0; i <N; ++i) {
+            Y[posy] += alpha * X[posx];
+            posx += incx;
+            posy += incy;
+        }
+#endif
     }
 
     template <>
     inline void CPUAxpy<double>(const int N, const double alpha, const double *X, int incx,
                                 double *Y, int incy) {
+#ifdef BLAS
         cblas_daxpy(N, alpha, X, incx, Y, incy);
+#else
+        int posx = 0;
+        int posy = 0;
+#ifdef USE_MP
+        omp_set_num_threads(CPU_CORES);
+#pragma omp parallel for
+#endif
+        for (int i = 0; i <N; ++i) {
+            Y[posy] += alpha * X[posx];
+            posx += incx;
+            posy += incy;
+        }
+#endif
     }
 
     template <>
     inline void CPUAxpy<int>(const int N, const int alpha, const int *X, int incx,
                              int *Y, int incy) {
+        int posx = 0;
+        int posy = 0;
+#ifdef USE_MP
+        omp_set_num_threads(CPU_CORES);
+#pragma omp parallel for
+#endif
+        for (int i = 0; i <N; ++i) {
+            Y[posy] += alpha * X[posx];
+            posx += incx;
+            posy += incy;
+
+        }
     }
 
     template <>
     inline void CPUAxpy<long>(const int N, const long alpha, const long *X, int incx,
                               long *Y, int incy) {
+        int posx = 0;
+        int posy = 0;
+#ifdef USE_MP
+        omp_set_num_threads(CPU_CORES);
+#pragma omp parallel for
+#endif
+        for (int i = 0; i <N; ++i) {
+            Y[posy] += alpha * X[posx];
+            posx += incx;
+            posy += incy;
+        }
     }
 
 
@@ -261,12 +385,40 @@ namespace matrix {
 
     template <>
     inline void CPUCopy<float>(const int N, float* x, int incx, float* y, int incy) {
+#ifdef BLAS
         cblas_scopy(N, x, incx, y, incy);
+#else
+        int posx = 0;
+        int posy = 0;
+#ifdef USE_MP
+        omp_set_num_threads(CPU_CORES);
+#pragma omp parallel for
+#endif
+        for (int i = 0; i < N; ++i) {
+            y[posy] = x[posx];
+            posy += incy;
+            posx += incx;
+        }
+#endif
     }
 
     template <>
     inline void CPUCopy<double>(const int N, double* x, int incx, double* y, int incy) {
+#ifdef BLAS
         cblas_dcopy(N, x, incx, y, incy);
+#else
+        int posx = 0;
+        int posy = 0;
+#ifdef USE_MP
+        omp_set_num_threads(CPU_CORES);
+#pragma omp parallel for
+#endif
+        for (int i = 0; i < N; ++i) {
+            y[posy] = x[posx];
+            posy += incy;
+            posx += incx;
+        }
+#endif
     }
 
 
@@ -313,12 +465,38 @@ namespace matrix {
 
     template <>
     inline void CPUSwap<float>(const int N, float * x, int incx, float *y, int incy ) {
+#ifdef BLAS
         cblas_sswap(N, x, incx, y, incy);
+#else
+        int posx = 0, posy = 0;
+#ifdef USE_MP
+        omp_set_num_threads(CPU_CORES);
+#pragma omp parallel for
+#endif
+        for (int i = 0; i < N; ++i) {
+            std::swap(x[posx], y[posy]);
+            posx += incx;
+            posy += incy;
+        }
+#endif
     }
 
     template <>
     inline void CPUSwap<double>(const int N, double * x, int incx, double *y, int incy ) {
+#ifdef BLAS
         cblas_dswap(N, x, incx, y, incy);
+#else
+        int posx = 0, posy = 0;
+#ifdef USE_MP
+        omp_set_num_threads(CPU_CORES);
+#pragma omp parallel for
+#endif
+        for (int i = 0; i < N; ++i) {
+            std::swap(x[posx], y[posy]);
+            posx += incx;
+            posy += incy;
+        }
+#endif
     }
 
     template <class T>
@@ -347,26 +525,60 @@ namespace matrix {
 
     template <>
     inline void CPUDot<float>(const int N, const float* x, const float* y, float& res) {
+#ifdef BLAS
         res = cblas_sdot(N, x, 1, y, 1);
+#else
+#ifdef USE_MP
+        omp_set_num_threads(CPU_CORES);
+#pragma omp parallel for
+#endif
+        for (int i = 0; i < N; ++i) {
+            res += x[i] * y[i];
+        }
+#endif
     }
 
     template <>
     inline void CPUDot<double>(const int N, const double* x, const double* y, double& res) {
+#ifdef BLAS
         res = cblas_ddot(N, x, 1, y, 1);
+#else
+#ifdef USE_MP
+        omp_set_num_threads(CPU_CORES);
+#pragma omp parallel for
+#endif
+        for (int i = 0; i < N; ++i) {
+            res += x[i] * y[i];
+        }
+#endif
     }
 
     template <>
     inline void CPUDot<int>(const int N, const int* x, const int* y, int& res) {
+#ifdef USE_MP
+        omp_set_num_threads(CPU_CORES);
+#pragma omp parallel for
+#endif
+        for (int i = 0; i < N; ++i) {
+            res += x[i] * y[i];
+        }
     }
 
     template <>
     inline void CPUDot<long>(const int N, const long* x, const long* y, long& res) {
+#ifdef USE_MP
+        omp_set_num_threads(CPU_CORES);
+#pragma omp parallel for
+#endif
+        for (int i = 0; i < N; ++i) {
+            res += x[i] * y[i];
+        }
     }
 
 
 
     template <class T>
-    inline void CPUAdd(const int N, const T *a, const T *b, T *y) {
+    inline void Add(const int N, const T *a, const T *b, T *y) {
 #ifdef USE_MP
 #pragma omp parallel for
 #endif
@@ -377,7 +589,7 @@ namespace matrix {
 
 
     template <class T>
-    inline void CPUSub(const int N, const T *a, const T *b, T *y) {
+    inline void Sub(const int N, const T *a, const T *b, T *y) {
 #ifdef USE_MP
 #pragma omp parallel for
 #endif
@@ -388,7 +600,7 @@ namespace matrix {
 
 
     template <class T>
-    inline void CPUMul(const int N, const T *a, const T *b, T *y) {
+    inline void Mul(const int N, const T *a, const T *b, T *y) {
 #ifdef USE_MP
 #pragma omp parallel for
 #endif
@@ -399,7 +611,7 @@ namespace matrix {
 
 
     template <class T>
-    inline void CPUDiv(const int N, const T *a, const T *b, T *y) {
+    inline void Div(const int N, const T *a, const T *b, T *y) {
 #ifdef USE_MP
 #pragma omp parallel for
 #endif
@@ -409,8 +621,13 @@ namespace matrix {
     }
 
 
+    /// tanh
+    /// \tparam T
+    /// \param N
+    /// \param x
+    /// \param y
     template <class T>
-    inline void CPUTanh(const int N, const T *x, T *y) {
+    inline void Tanh(const int N, const T *x, T *y) {
 #ifdef USE_MP
 #pragma omp parallel for
 #endif
@@ -420,8 +637,14 @@ namespace matrix {
     }
 
 
+    /// tanh gradient
+    /// \tparam T
+    /// \param N
+    /// \param x
+    /// \param y
+    /// \param z
     template <class T>
-    inline void CPUTanhGrad(const int N,  T*x, T *y,  T *z) {
+    inline void TanhGrad(const int N,  T*x, T *y,  T *z) {
 #ifdef USE_MP
 #pragma omp parallel for
 #endif
@@ -431,6 +654,11 @@ namespace matrix {
     }
 
 
+    /// sigmoid
+    /// \tparam T
+    /// \param N
+    /// \param x
+    /// \param y
     template <class T>
     inline void Sigmoid(const int N,  T*x, T *y) {
 #ifdef USE_MP
@@ -442,6 +670,12 @@ namespace matrix {
     }
 
 
+    /// sigmoid gradient
+    /// \tparam T
+    /// \param N
+    /// \param x
+    /// \param y
+    /// \param z
     template <class T>
     inline void SigmoidGrad(const int N, T *x, T *y,  T *z) {
 #ifdef USE_MP
@@ -453,6 +687,12 @@ namespace matrix {
     }
 
 
+
+    /// relu
+    /// \tparam T
+    /// \param N
+    /// \param x
+    /// \param y
     template <class T>
     inline void Relu(const int N, T *x, T *y) {
 #ifdef USE_MP
@@ -463,6 +703,12 @@ namespace matrix {
         }
     }
 
+    /// relu gradient
+    /// \tparam T
+    /// \param N
+    /// \param dx
+    /// \param x
+    /// \param dy
     template <class T>
     inline void ReluGrad(const int N, T *dx, T *x, T* dy) {
 #ifdef USE_MP
@@ -475,6 +721,11 @@ namespace matrix {
 
 
 
+    /// softmax
+    /// \tparam T
+    /// \param N
+    /// \param x
+    /// \param y
     template <class T>
     inline void Softmax(const int N, T* x, T* y) {
         T max = x[0];

@@ -9,25 +9,35 @@ using namespace Eigen;
 using namespace std;
 
 int main() {
-    MatrixXd m(2,2);
-    m(0,0) = 3;
-    m(1,0) = 2.5;
-    m(0,1) = -1;
-    m(1,1) = m(1,0) + m(0,1);
 
-    cout << m << endl;
+    //数组转矩阵
+    float *aMat = new float[20];
+    for (int i = 0; i < 20; i++) {
+        aMat[i] = rand() % 11;
+    }
+    //静态矩阵，编译时确定维数 Matrix<double,4,5>
+    Map<Matrix<float, 4, 5> > staMat(aMat);
 
 
+    //输出
+    std::cout << staMat << std::endl;
 
-    m = MatrixXd::Random(3,3);
-    m = (m + MatrixXd::Constant(3,3,1.2));
-    cout << "m =" << endl << m << endl;
-    VectorXd v(3);
-    v << 1, 2, 3;
+    const bool  aa = false;
+    
+    //动态矩阵，运行时确定 MatrixXd
+    int a = aa?4:5;
+    int b = aa?5:4;
+//    Map<MatrixXd> dymMat(aMat, a, b);
 
-    cout << v <<endl;
 
-    cout << "m * v =" << endl << m * v << endl;
+//    std::cout<< staMat << std::endl;
+//    std::cout<< dymMat << std::endl;
+
+//    auto  s = staMat * dymMat.transpose();
+
+    //输出，应该和上面一致
+
+//    std::cout<< s << std::endl;
 
     return 0;
 
