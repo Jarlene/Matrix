@@ -341,7 +341,7 @@ elseif(NOT IS_DIRECTORY "${ANDROID_NDK}/platforms/${ANDROID_PLATFORM}")
 elseif(NOT IS_DIRECTORY "${CMAKE_SYSROOT}")
 	message(FATAL_ERROR "Invalid Android ABI for platform ${ANDROID_PLATFORM}: ${ANDROID_ABI}.")
 endif()
-set(ANDROID_NDK_REVISION 12)
+set(ANDROID_NDK_REVISION 13)
 file(READ "${ANDROID_NDK}/source.properties" ANDROID_NDK_SOURCE_PROPERTIES)
 set(ANDROID_NDK_SOURCE_PROPERTIES_REGEX
 	"^Pkg\\.Desc = Android NDK\nPkg\\.Revision = ([0-9]+\\.[0-9]+\\.[0-9]+(-beta[0-9]+)?)\n$")

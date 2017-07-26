@@ -49,15 +49,3 @@ endif ()
 #if (JNI_FOUND)
 #    include_directories(${JNI_INCLUDE_DIRS})
 #endif()
-
-
-#OpenCv
-if (USE_OPENCV)
-    find_package(OpenCV QUIET COMPONENTS core highgui imgproc imgcodecs)
-    if (OpenCV_FOUND)
-        include_directories(${OpenCV_INCLUDE_DIRS})
-        link_libraries(${OpenCV_LIBRARIES})
-        add_definitions(-DUSE_OPENCV)
-    endif ()
-
-endif ()

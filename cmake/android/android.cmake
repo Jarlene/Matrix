@@ -8,4 +8,4 @@ set(ANDROID_NDK /Users/jarlene/Library/Android/sdk/ndk-bundle)
 set(ANDROID_TOOLCHAIN_NAME aarch64-linux-android-4.9)
 set(ANDROID_ABI armeabi #[[armeabi-v7a arm64-v8a x86 x86_64 mips MIPS64]])
 set(ANDROID_NATIVE_API_LEVEL android-24)
-set(CPACK_PACKAGE_INSTALL_DIRECTORY "/libs")
+#cmake -DCMAKE_TOOLCHAIN_FILE=/Users/jarlene/Code/Cpp/AI/Matrix/cmake/android/android.toolchain.cmake -DANDROID_STL=stlport_static -DANDROID_ABI="arm64-v8a" -DANDROID_NATIVE_API_LEVEL=android-24 -DANDROID_TOOLCHAIN_NAME=aarch64-linux-android-4.9 -DANDROID_NDK=/Users/jarlene/Library/Android/sdk/ndk-bundle ..
