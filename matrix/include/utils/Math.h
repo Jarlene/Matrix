@@ -29,10 +29,16 @@
 #define BLAS
 #endif
 #include <cblas.h>
-#elif defined(USE_EIGEN)
+#endif
+
+
+#ifdef USE_EIGEN
 #include <eigen3/Eigen/Eigen>
-using Eigen::MatrixXd;
 using namespace Eigen;
+template <class T>
+using EigenMatrix = Map<Matrix<T, Dynamic, Dynamic, RowMajor>>;
+template <class T>
+using EigenVector = Map<Matrix<T, Dynamic, 1>>;
 #endif
 
 
@@ -104,9 +110,9 @@ namespace matrix {
         int aCol = (TransA == NoTrans) ? K : M; // A的列
         float * a = const_cast<float*>(A);
         float * b = const_cast<float*>(B);
-        Map<MatrixXf> aMatrix(a, lda,  aCol);
-        Map<MatrixXf> bMatrix(b, aCol, ldb) ;
-        Map<MatrixXf> cMatrix(C, lda, ldb);
+        EigenMatrix<float> aMatrix(a, lda,  aCol);
+        EigenMatrix<float> bMatrix(b, aCol, ldb) ;
+        EigenMatrix<float> cMatrix(C, lda, ldb);
         cMatrix = alpha * aMatrix * bMatrix + beta * cMatrix;
 #endif
     }
@@ -150,9 +156,9 @@ namespace matrix {
         int aCol = (TransA == NoTrans) ? K : M; // A的列
         double * a = const_cast<double*>(A);
         double * b = const_cast<double*>(B);
-        Map<MatrixXd> aMatrix(a, lda, aCol);
-        Map<MatrixXd> bMatrix(b, aCol, ldb) ;
-        Map<MatrixXd> cMatrix(C, lda, ldb);
+        EigenMatrix<double> aMatrix(a, lda, aCol);
+        EigenMatrix<double> bMatrix(b, aCol, ldb) ;
+        EigenMatrix<double> cMatrix(C, lda, ldb);
         cMatrix = alpha * aMatrix * bMatrix + beta * cMatrix;
 #endif
     }
@@ -168,9 +174,9 @@ namespace matrix {
         int aCol = (TransA == NoTrans) ? K : M; // A的列
         int * a = const_cast<int*>(A);
         int * b = const_cast<int*>(B);
-        Map<MatrixXi> aMatrix(a, lda,  aCol);
-        Map<MatrixXi> bMatrix(b, aCol, ldb) ;
-        Map<MatrixXi> cMatrix(C, lda, ldb);
+        EigenMatrix<int> aMatrix(a, lda,  aCol);
+        EigenMatrix<int> bMatrix(b, aCol, ldb) ;
+        EigenMatrix<int> cMatrix(C, lda, ldb);
         cMatrix = alpha * aMatrix * bMatrix + beta * cMatrix;
 #endif
     }
@@ -223,9 +229,9 @@ namespace matrix {
         int cda = (TransA == NoTrans)? N : M;
         float * a = const_cast<float*>(A);
         float * xv = const_cast<float*>(x);
-        Map<MatrixXf> aMatrix(a, lda, cda);
-        Map<VectorXf> xVector(xv, cda);
-        Map<VectorXf> yVector(y, lda);
+        EigenMatrix<float> aMatrix(a, lda, cda);
+        EigenVector<float> xVector(xv, cda);
+        EigenVector<float> yVector(y, lda);
         yVector = alpha * aMatrix * xVector + beta * yVector;
 #endif
     }
@@ -255,9 +261,9 @@ namespace matrix {
         int cda = (TransA == NoTrans)? N : M;
         double * a = const_cast<double*>(A);
         double * xv = const_cast<double*>(x);
-        Map<MatrixXd> aMatrix(a, lda, cda);
-        Map<VectorXd> xVector(xv, cda);
-        Map<VectorXd> yVector(y, lda);
+        EigenMatrix<double> aMatrix(a, lda, cda);
+        EigenVector<double> xVector(xv, cda);
+        EigenVector<double> yVector(y, lda);
         yVector = alpha * aMatrix * xVector + beta * yVector;
 #endif
     }
@@ -272,9 +278,9 @@ namespace matrix {
         int cda = (TransA == NoTrans)? N : M;
         int * a = const_cast<int*>(A);
         int * xv = const_cast<int*>(x);
-        Map<MatrixXi> aMatrix(a, lda, cda);
-        Map<VectorXi> xVector(xv, cda);
-        Map<VectorXi> yVector(y, lda);
+        EigenMatrix<int> aMatrix(a, lda, cda);
+        EigenVector<int> xVector(xv, cda);
+        EigenVector<int> yVector(y, lda);
         yVector = alpha * aMatrix * xVector + beta * yVector;
 #endif
     }
