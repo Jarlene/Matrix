@@ -11,6 +11,12 @@
 #include "matrix/include/base/Blob.h"
 #include "matrix/include/utils/OpRegistry.h"
 
+
+#define DISABLE_COPY_AND_ASSIGN(classname)                         \
+private:                                                            \
+  classname(const classname&) = delete;                              \
+  classname& operator=(const classname&) = delete;
+
 namespace matrix {
 
     class Operator {
@@ -38,6 +44,14 @@ namespace matrix {
             return output.at(idx)->GetMutable<T>();
         }
 
+        inline const std::vector<Blob> Inputs() const {
+            return input;
+        }
+
+        inline const std::vector<Blob*> Outputs() const {
+            return output;
+        }
+
 
         virtual bool Run();
 
@@ -51,6 +65,15 @@ namespace matrix {
         std::vector<Blob*> output;
     };
 
+
+    class State {
+    public:
+        ~State() {
+            clear();
+        }
+
+        virtual void clear();
+    };
 }
 
 

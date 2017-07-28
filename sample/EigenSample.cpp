@@ -18,27 +18,31 @@ int main() {
     //静态矩阵，编译时确定维数 Matrix<double,4,5>
     Map<Matrix<float, 4, 5> > staMat(aMat);
 
-
     //输出
     std::cout << staMat << std::endl;
 
-    const bool  aa = false;
-    
-    //动态矩阵，运行时确定 MatrixXd
-    int a = aa?4:5;
-    int b = aa?5:4;
-//    Map<MatrixXd> dymMat(aMat, a, b);
+    float a[] = {1, 2, 3,
+                 4, 5, 6};
+    float b[] = {2, 3,
+                 4, 5,
+                 6, 7};
+    float *c = new float[4];
 
 
-//    std::cout<< staMat << std::endl;
-//    std::cout<< dymMat << std::endl;
 
-//    auto  s = staMat * dymMat.transpose();
 
-    //输出，应该和上面一致
 
-//    std::cout<< s << std::endl;
+    Map<Matrix<float, 2, 3, RowMajor>> am(a);
+    Map<Matrix<float, 3, 2, RowMajor>> bm(b);
+    Map<Matrix<float, 2, 2, RowMajor>> cm(c);
 
+    cout << am << endl;
+    cout << bm << endl;
+
+
+    cm = am * bm;
+    std::cout << cm << std::endl;
+//
     return 0;
 
 }

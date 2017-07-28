@@ -9,11 +9,11 @@
 
 namespace matrix {
 
-    class AddOp : public BaseOperator {
+    template <class T, class Context>
+    class AddOp : public BaseOperator<Context> {
 
     };
 
 }
 
-INSTANTIATE_OPS(matrix::AddOp, add);
 #endif //MATRIX_ADDOP_H

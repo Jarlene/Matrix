@@ -17,8 +17,7 @@ int main() {
     float b[] = {2, 3,
                  4, 5,
                  6, 7};
-    float c[] = {0, 0,
-                 0, 0};
+    float *c = new float[4];
     CPUGemm<float>(NoTrans, NoTrans, 2, 2, 3, 1.0f, a, b, 0.0f, c);
 
     for (int i = 0; i < 4; ++i) {

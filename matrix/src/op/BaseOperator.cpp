@@ -6,8 +6,6 @@
 
 namespace matrix {
 
-    int BaseOperator::flatDimension() {
-        return 0;
-    }
+
 }
 

@@ -9,11 +9,10 @@
 
 namespace matrxi {
 
-    class SubOp : public BaseOperator {
+    template <class T, class Context>
+    class SubOp : public BaseOperator<Context> {
 
     };
 }
-
-INSTANTIATE_OPS(matrix::SubOp, sub);
 
 #endif //MATRIX_SUBOP_H

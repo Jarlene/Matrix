@@ -9,10 +9,10 @@
 
 namespace matrix {
 
-    class DivOp : public BaseOperator {
+    template <class T, class Context>
+    class DivOp : public BaseOperator<Context> {
 
     };
 }
 
-INSTANTIATE_OPS(matrix::DivOp, div);
 #endif //MATRIX_DIVOP_H

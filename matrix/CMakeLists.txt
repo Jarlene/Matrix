@@ -13,6 +13,7 @@ foreach(source_file ${header_files})
 endforeach()
 
 set(SOURCE_FILES ${headList} ${srcList})
-add_library(Matrix STATIC ${SOURCE_FILES})
+add_library(Matrix SHARED ${SOURCE_FILES})
+SET_TARGET_PROPERTIES(Matrix PROPERTIES OUTPUT_NAME "Matrix" CLEAN_DIRECT_OUTPUT 1 SUFFIX ".so")
 add_dependencies(Matrix ${external_project_dependencies})
 target_link_libraries(Matrix ${external_libs})

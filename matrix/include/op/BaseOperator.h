@@ -9,9 +9,25 @@
 
 namespace matrix {
 
+    template <class Context>
     class BaseOperator : public Operator{
     public:
-        int flatDimension();
+        BaseOperator() {}
+
+        virtual bool Run() {
+
+        }
+
+        virtual void AsyncRun() {
+
+        }
+
+        virtual bool RunOnDevice() = 0;
+
+        ~BaseOperator() noexcept  {
+
+        }
+        DISABLE_COPY_AND_ASSIGN(BaseOperator);
     };
 }
 

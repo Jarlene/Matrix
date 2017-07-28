@@ -19,10 +19,10 @@
   template class classname<double>; \
   template class classname<int>; \
   template class classname<long>; \
-  static int m_float_##name = matrix::OpManager::Global()->RegisterOp(CON_STR(name, float), std::make_shared<classname<float>>()); \
-  static int m_double_##name = matrix::OpManager::Global()->RegisterOp(CON_STR(name, double), std::make_shared<classname<double>>()); \
-  static int m_int_##name = matrix::OpManager::Global()->RegisterOp(CON_STR(name, int), std::make_shared<classname<int>>()); \
-  static int m_long_##name = matrix::OpManager::Global()->RegisterOp(CON_STR(name, long), std::make_shared<classname<long>>()); \
+  static int m_float_##name = matrix::OpRegistry::Global()->RegisterOp(CON_STR(name, float), std::make_shared<classname<float>>()); \
+  static int m_double_##name = matrix::OpRegistry::Global()->RegisterOp(CON_STR(name, double), std::make_shared<classname<double>>()); \
+  static int m_int_##name = matrix::OpRegistry::Global()->RegisterOp(CON_STR(name, int), std::make_shared<classname<int>>()); \
+  static int m_long_##name = matrix::OpRegistry::Global()->RegisterOp(CON_STR(name, long), std::make_shared<classname<long>>()); \
 
 
 namespace matrix {

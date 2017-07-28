@@ -9,9 +9,9 @@
 
 namespace matrix {
 
-    class MulOp : public BaseOperator{
+    template <class T, class Context>
+    class MulOp : public BaseOperator<Context>{
 
     };
 }
-INSTANTIATE_OPS(matrix::MulOp, mul);
 #endif //MATRIX_MULOP_H
