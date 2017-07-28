@@ -22,10 +22,10 @@ namespace matrix {
         return total;
     }
 
-    Shape::Shape(const int *shape) {
+    Shape::Shape(const int *shape, const int dim) {
 #pragma unroll
-        for (int i = 0; i < shape_.size(); ++i) {
-            this->shape_[i] = shape[i];
+        for (int i = 0; i < dim; ++i) {
+            this->shape_.push_back(shape[i]);
         }
     }
 
@@ -34,6 +34,15 @@ namespace matrix {
             return shape_[idx];
         }
         return 0;
+    }
+
+    Shape &Shape::operator=(const Shape &other) {
+        this->shape_.clear();
+#pragma unroll
+        for (int i: other.shape_) {
+            shape_.push_back(i);
+        }
+        return *this;
     }
 
     Shape::Shape(const Shape &shape) {

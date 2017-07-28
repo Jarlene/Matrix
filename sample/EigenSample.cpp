@@ -4,8 +4,10 @@
 
 #include <eigen3/Eigen/Dense>
 #include <iostream>
+#include <matrix/include/base/Tensor.h>
 using Eigen::MatrixXd;
 using namespace Eigen;
+using namespace matrix;
 using namespace std;
 
 int main() {
@@ -42,7 +44,10 @@ int main() {
 
     cm = am * bm;
     std::cout << cm << std::endl;
-//
+
+    auto A = TensorN(a,2,3);
+    auto B = TensorN(b,3,2);
+    A.print();
     return 0;
 
 }

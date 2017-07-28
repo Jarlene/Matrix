@@ -14,11 +14,13 @@ namespace matrix {
 
     class Shape {
     public:
-        Shape(const int* shape);
+        Shape(const int* shape, const int dim);
 
         Shape(const Shape &shape);
 
         void reShape(const Shape &shape);
+
+        Shape& operator=(const Shape& other);
 
         const size_t size() const ;
 
@@ -35,7 +37,7 @@ namespace matrix {
     inline Shape ShapeN(T... args) {
         const int dims = sizeof...(args);
         int len[dims] = {args...};
-        Shape shape(len);
+        Shape shape(len, dims);
         return shape;
     }
 }
