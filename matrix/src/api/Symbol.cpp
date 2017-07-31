@@ -6,9 +6,7 @@
 
 
 namespace matrix {
-    Symbol::Symbol() {
 
-    }
 
     Symbol::Symbol(const Symbol &symbol) {
 

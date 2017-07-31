@@ -11,19 +11,13 @@
 namespace matrix {
     class PlaceHolderSymbol : public Symbol {
     public:
-        static PlaceHolderSymbol Create(const std::string &name, const Shape &shape);
-        void FeedData(void *ptr);
+        static Symbol Create(const std::string &name, const Shape &shape);
+        void FillData(void *ptr);
     };
 
 
 
-    PlaceHolderSymbol PlaceHolderSymbol::Create(const std::string &name, const Shape &shape) {
-        return PlaceHolderSymbol();
-    }
 
-    void PlaceHolderSymbol::FeedData(void *ptr) {
-
-    }
 }
 
 #endif //MATRIX_PLACEHOLDERSYMBOL_H

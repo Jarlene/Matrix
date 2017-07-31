@@ -11,7 +11,7 @@
 
 namespace matrix {
 
-    enum FilteType {
+    enum MatrixType {
         kInvalid = -1,
         kInt = 0,
         kLong,

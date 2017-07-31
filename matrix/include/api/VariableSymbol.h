@@ -7,18 +7,17 @@
 
 #include "Symbol.h"
 #include "matrix/include/base/Shape.h"
+#include "MatrixType.h"
 
 namespace matrix {
 
     class VariableSymbol : public Symbol {
     public:
-        static Symbol Create(const std::string &name, const Shape &shape);
+        static Symbol Create(const std::string &name, const Shape &shape, const MatrixType &type = kFloat);
+        void FillData(void * ptr);
     };
 
 
-    Symbol matrix::VariableSymbol::Create(const std::string &name, const matrix::Shape &shape) {
-        return matrix::Symbol();
-    }
 }
 
 #endif //MATRIX_VARIABLESYMBOL_H

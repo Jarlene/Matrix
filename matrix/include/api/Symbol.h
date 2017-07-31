@@ -12,7 +12,6 @@
 namespace matrix {
     class Symbol {
     public:
-        Symbol();
 
         Symbol(const Symbol &symbol);
 
