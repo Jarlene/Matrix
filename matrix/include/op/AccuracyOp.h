@@ -10,10 +10,26 @@
 
 namespace matrix {
 
-    template <class T, class Context>
-    class AccuracyOp : public BaseOperator<Context> {
+    class AccuracyParam {
 
     };
+
+    template <class T, class Context>
+    class AccuracyOp : public BaseOperator<Context> {
+    public:
+        explicit AccuracyOp(AccuracyParam &param);
+
+        virtual bool RunOnDevice() override ;
+
+    private:
+    DISABLE_COPY_AND_ASSIGN(AccuracyOp);
+    };
+
+
+
+
+    template <typename Context>
+    Operator* CreateOp(AccuracyParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out);
 }
 
 

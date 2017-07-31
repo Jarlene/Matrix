@@ -7,6 +7,8 @@
 
 #include <map>
 #include <vector>
+#include "matrix/include/api/MatrixType.h"
+#include "matrix/include/utils/Logger.h"
 #include "matrix/include/utils/Any.h"
 #include "matrix/include/base/Blob.h"
 #include "matrix/include/utils/OpRegistry.h"
@@ -16,6 +18,38 @@
 private:                                                            \
   classname(const classname&) = delete;                              \
   classname& operator=(const classname&) = delete;
+
+
+#define TYPE_SWITCH(type, DType, ...)         \
+     switch(type) {                            \
+          case  MatrixType::kInt:  \
+            {                   \
+               typedef int DType; \
+               {__VA_ARGS__}      \
+            }                     \
+              break;               \
+          case  MatrixType::kLong:  \
+            {                   \
+               typedef long DType; \
+               {__VA_ARGS__}      \
+            }                     \
+              break;               \
+          case  MatrixType::kFloat:  \
+            {                   \
+               typedef float DType; \
+               {__VA_ARGS__}      \
+            }                     \
+              break;               \
+          case  MatrixType::kDouble:  \
+            {                   \
+               typedef double DType; \
+               {__VA_ARGS__}      \
+            }                     \
+              break;               \
+          default:             \
+               Logger::Global()->Fatal("switch type error %d", type); \
+               break;       \
+     }                          \
 
 namespace matrix {
 
@@ -74,6 +108,14 @@ namespace matrix {
 
         virtual void clear();
     };
+
+    class Parameter {
+
+    };
+
+
+
+
 }
 
 

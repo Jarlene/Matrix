@@ -15,7 +15,8 @@ namespace matrix {
         BaseOperator() {}
 
         virtual bool Run() {
-
+            Logger::Global()->Fatal("not impletention");
+            return false;
         }
 
         virtual void AsyncRun() {

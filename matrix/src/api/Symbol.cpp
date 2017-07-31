@@ -9,7 +9,7 @@ namespace matrix {
 
 
     Symbol::Symbol(const Symbol &symbol) {
-
+        this->opHandler = symbol.opHandler;
     }
 
     Symbol::Symbol(const std::string &name) {

@@ -6,7 +6,6 @@
 #define MATRIX_ANY_H
 
 
-#include <type_traits>
 #include <typeinfo>
 #include <type_traits>
 #include <utility>

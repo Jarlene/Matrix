@@ -5,6 +5,7 @@
 #include <eigen3/Eigen/Dense>
 #include <iostream>
 #include <matrix/include/base/Tensor.h>
+#include <matrix/include/utils/Optional.h>
 using Eigen::MatrixXd;
 using namespace Eigen;
 using namespace matrix;

@@ -52,6 +52,20 @@ namespace matrix {
         kAvg
     };
 
+    enum Phase {
+        TRAIN = 0,
+        TEST
+    };
+
+    struct cpu {
+        RunMode mode = RunMode::kCpu;
+        Phase phase;
+    };
+
+    struct gpu {
+        RunMode mode = RunMode::kGpu;
+        Phase phase;
+    };
 
 }
 

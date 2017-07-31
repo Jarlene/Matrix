@@ -38,6 +38,9 @@ namespace matrix {
 
         Symbol operator/(const Symbol &symbol);
 
+    private:
+        void * opHandler;
+
     };
 }
 
