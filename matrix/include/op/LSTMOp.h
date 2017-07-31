@@ -5,14 +5,14 @@
 #ifndef MATRIX_LSTMOP_H
 #define MATRIX_LSTMOP_H
 
-#include "BaseOperator.h"
+#include "Operator.h"
 #include "../base/Tensor.h"
 
 namespace matrix {
 
 
     template <class T, class Context>
-    class LSTMOp : public BaseOperator<Context> {
+    class LSTMOp : public Operator {
     public:
 
 

@@ -5,12 +5,12 @@
 #ifndef MATRIX_FULLCONNECTEDOP_H
 #define MATRIX_FULLCONNECTEDOP_H
 
-#include "BaseOperator.h"
+#include "Operator.h"
 
 namespace matrix {
 
     template <class T, class Context>
-    class FullConnectedOp : public BaseOperator<Context> {
+    class FullConnectedOp : public Operator {
 
     };
 }

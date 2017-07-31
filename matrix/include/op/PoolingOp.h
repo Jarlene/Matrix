@@ -5,12 +5,12 @@
 #ifndef MATRIX_POOLOP_H
 #define MATRIX_POOLOP_H
 
-#include "BaseOperator.h"
+#include "Operator.h"
 
 namespace matrix {
 
     template <class T, class Context>
-    class PoolingOp : public BaseOperator {
+    class PoolingOp : public Operator {
 
     };
 }

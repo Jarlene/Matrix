@@ -6,12 +6,12 @@
 #define MATRIX_LOSSOP_H
 
 
-#include "BaseOperator.h"
+#include "Operator.h"
 
 namespace matrix {
 
     template <class T, class Context>
-    class LossOp : public BaseOperator {
+    class LossOp : public Operator {
 
     };
 

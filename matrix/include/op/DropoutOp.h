@@ -5,12 +5,12 @@
 #ifndef MATRIX_DROPOUTOP_H
 #define MATRIX_DROPOUTOP_H
 
-#include "BaseOperator.h"
+#include "Operator.h"
 
 namespace matrix {
 
     template <class T, class Context>
-    class DropoutOp : public BaseOperator {
+    class DropoutOp : public Operator {
 
     };
 }

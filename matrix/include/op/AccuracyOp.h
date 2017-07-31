@@ -5,7 +5,7 @@
 #ifndef MATRIX_ACCURACYOP_H
 #define MATRIX_ACCURACYOP_H
 
-#include "BaseOperator.h"
+#include "Operator.h"
 
 
 namespace matrix {
@@ -15,9 +15,15 @@ namespace matrix {
     };
 
     template <class T, class Context>
-    class AccuracyOp : public BaseOperator<Context> {
+    class AccuracyOp : public Operator {
     public:
         explicit AccuracyOp(AccuracyParam &param);
+
+        virtual bool Run() override ;
+
+        virtual void AsyncRun() override ;
+
+        virtual ~AccuracyOp();
 
         virtual bool RunOnDevice() override ;
 

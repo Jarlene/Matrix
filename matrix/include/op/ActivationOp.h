@@ -5,12 +5,12 @@
 #ifndef MATRIX_ACTIVATIONOP_H
 #define MATRIX_ACTIVATIONOP_H
 
-#include "BaseOperator.h"
+#include "Operator.h"
 
 namespace matrix {
 
     template <class T, class Context>
-    class ActivationOp : public BaseOperator<Context> {
+    class ActivationOp : public Operator {
 
     };
 }

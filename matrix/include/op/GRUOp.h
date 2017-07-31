@@ -5,12 +5,12 @@
 #ifndef MATRIX_GRUOP_H
 #define MATRIX_GRUOP_H
 
-#include "BaseOperator.h"
+#include "Operator.h"
 
 namespace matrix {
 
     template <class T, class Context>
-    class GRUOp : public BaseOperator<Context> {
+    class GRUOp : public Operator {
 
     };
 }

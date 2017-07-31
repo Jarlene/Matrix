@@ -5,12 +5,12 @@
 #ifndef MATRIX_SUBOP_H
 #define MATRIX_SUBOP_H
 
-#include "BaseOperator.h"
+#include "Operator.h"
 
 namespace matrxi {
 
     template <class T, class Context>
-    class SubOp : public BaseOperator<Context> {
+    class SubOp : public Operator {
 
     };
 }

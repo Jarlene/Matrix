@@ -16,7 +16,21 @@ namespace matrix {
     template <class T, class Context>
     bool AccuracyOp<T, Context>::RunOnDevice() {
         return false;
-    };
+    }
+
+    template <class T, class Context>
+    bool AccuracyOp<T, Context>::Run() {
+        return true;
+    }
+
+    template <class T, class Context>
+    void AccuracyOp<T, Context>::AsyncRun() {
+    }
+
+    template <class T, class Context>
+    AccuracyOp<T, Context>::~AccuracyOp() {
+
+    }
 
 
     template <>
@@ -24,6 +38,15 @@ namespace matrix {
         Operator *op = nullptr;
         TYPE_SWITCH(type, DType, {
             op = new AccuracyOp<DType, cpu>(param);
+        })
+        return op;
+    }
+
+    template <>
+    Operator* CreateOp<gpu>(AccuracyParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out) {
+        Operator *op = nullptr;
+        TYPE_SWITCH(type, DType, {
+            op = new AccuracyOp<DType, gpu>(param);
         })
         return op;
     }

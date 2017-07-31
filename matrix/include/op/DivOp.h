@@ -5,12 +5,12 @@
 #ifndef MATRIX_DIVOP_H
 #define MATRIX_DIVOP_H
 
-#include "BaseOperator.h"
+#include "Operator.h"
 
 namespace matrix {
 
     template <class T, class Context>
-    class DivOp : public BaseOperator<Context> {
+    class DivOp : public Operator {
 
     };
 }

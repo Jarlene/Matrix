@@ -86,11 +86,13 @@ namespace matrix {
             return output;
         }
 
+        virtual ~Operator() ;
 
         virtual bool Run();
 
-
         virtual void AsyncRun();
+
+        virtual bool RunOnDevice() = 0;
 
 
     private:
