@@ -86,7 +86,9 @@ namespace matrix {
             return output;
         }
 
-        virtual ~Operator() ;
+        virtual ~Operator() noexcept {
+
+        }
 
         virtual bool Run();
 

@@ -27,7 +27,6 @@ namespace matrix {
 
         virtual bool RunOnDevice() override ;
 
-    private:
     DISABLE_COPY_AND_ASSIGN(AccuracyOp);
     };
 
