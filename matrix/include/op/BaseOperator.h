@@ -15,7 +15,7 @@ namespace matrix {
         BaseOperator() {}
 
         virtual bool Run() {
-            Logger::Global()->Fatal("not impletention");
+            Logger::Global()->Fatal("not Implementation");
             return false;
         }
 
