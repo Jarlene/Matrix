@@ -55,6 +55,15 @@ namespace matrix {
 
     class Operator {
     public:
+
+        Operator() {
+
+        }
+
+        virtual ~Operator() {
+
+        }
+
         inline bool HasArg(const std::string &name) {
             return args.count(name) > 0;
         }
@@ -86,13 +95,14 @@ namespace matrix {
             return output;
         }
 
-        virtual ~Operator() noexcept {
 
+        virtual bool Run() {
+            return false;
         }
 
-        virtual bool Run();
+        virtual void AsyncRun() {
 
-        virtual void AsyncRun();
+        }
 
         virtual bool RunOnDevice() = 0;
 
