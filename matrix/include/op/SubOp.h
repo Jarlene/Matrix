@@ -7,12 +7,31 @@
 
 #include "Operator.h"
 
-namespace matrxi {
+namespace matrix {
+
+    class SubParam : Parameter {
+
+    };
 
     template <class T, class Context>
     class SubOp : public Operator {
+    public:
+        explicit SubOp(SubParam &param);
 
+        virtual bool Run() override ;
+
+        virtual void AsyncRun() override ;
+
+        virtual ~SubOp();
+
+        virtual bool RunOnDevice() override ;
+
+    DISABLE_COPY_AND_ASSIGN(SubOp);
     };
+
+    template <typename Context>
+    Operator* CreateOp(SubParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out);
+
 }
 
 #endif //MATRIX_SUBOP_H

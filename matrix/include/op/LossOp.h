@@ -10,10 +10,28 @@
 
 namespace matrix {
 
-    template <class T, class Context>
-    class LossOp : public Operator {
+    class LossParam : Parameter {
 
     };
+
+    template <class T, class Context>
+    class LossOp : public Operator {
+    public:
+        explicit LossOp(LossParam &param);
+
+        virtual bool Run() override ;
+
+        virtual void AsyncRun() override ;
+
+        virtual ~LossOp();
+
+        virtual bool RunOnDevice() override ;
+
+    DISABLE_COPY_AND_ASSIGN(LossOp);
+    };
+
+    template <typename Context>
+    Operator* CreateOp(LossParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out);
 
 }
 

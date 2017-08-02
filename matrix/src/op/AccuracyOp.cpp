@@ -42,12 +42,4 @@ namespace matrix {
         return op;
     }
 
-    template <>
-    Operator* CreateOp<gpu>(AccuracyParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out) {
-        Operator *op = nullptr;
-        TYPE_SWITCH(type, DType, {
-            op = new AccuracyOp<DType, gpu>(param);
-        })
-        return op;
-    }
 }

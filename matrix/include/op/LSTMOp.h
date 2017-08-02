@@ -10,10 +10,24 @@
 
 namespace matrix {
 
+    class LSTMParam : Parameter {
+
+    };
 
     template <class T, class Context>
     class LSTMOp : public Operator {
     public:
+        explicit LSTMOp(LSTMParam &param);
+
+        virtual bool Run() override ;
+
+        virtual void AsyncRun() override ;
+
+        virtual ~LSTMOp();
+
+        virtual bool RunOnDevice() override ;
+
+    DISABLE_COPY_AND_ASSIGN(LSTMOp);
 
 
     };
@@ -27,6 +41,10 @@ namespace matrix {
         Tensor<T> delth, deltc, deltx, delta; // bp
         virtual void clear();
     };
+
+
+    template <typename Context>
+    Operator* CreateOp(LSTMParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out);
 
 }
 

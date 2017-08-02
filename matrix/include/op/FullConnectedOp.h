@@ -9,10 +9,30 @@
 
 namespace matrix {
 
-    template <class T, class Context>
-    class FullConnectedOp : public Operator {
+
+    class FullConnectedParam : Parameter {
 
     };
+
+    template <class T, class Context>
+    class FullConnectedOp : public Operator {
+    public:
+        explicit FullConnectedOp(FullConnectedParam &param);
+
+        virtual bool Run() override ;
+
+        virtual void AsyncRun() override ;
+
+        virtual ~FullConnectedOp();
+
+        virtual bool RunOnDevice() override ;
+
+    DISABLE_COPY_AND_ASSIGN(FullConnectedOp);
+    };
+
+    template <typename Context>
+    Operator* CreateOp(FullConnectedParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out);
+
 }
 
 #endif //MATRIX_FULLCONNECTEDOP_H

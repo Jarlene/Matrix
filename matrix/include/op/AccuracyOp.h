@@ -10,7 +10,7 @@
 
 namespace matrix {
 
-    class AccuracyParam {
+    class AccuracyParam : Parameter {
 
     };
 

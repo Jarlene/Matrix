@@ -1,5 +1,5 @@
 //
-// Created by 郑珊 on 2017/7/28.
+// Created by Jarlene on 2017/7/28.
 //
 
 #ifndef MATRIX_GRUOP_H
@@ -9,10 +9,29 @@
 
 namespace matrix {
 
-    template <class T, class Context>
-    class GRUOp : public Operator {
+    class GRUParam : Parameter {
 
     };
+
+    template <class T, class Context>
+    class GRUOp : public Operator {
+    public:
+        explicit GRUOp(GRUParam &param);
+
+        virtual bool Run() override ;
+
+        virtual void AsyncRun() override ;
+
+        virtual ~GRUOp();
+
+        virtual bool RunOnDevice() override ;
+
+    DISABLE_COPY_AND_ASSIGN(GRUOp);
+    };
+
+    template <typename Context>
+    Operator* CreateOp(GRUParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out);
+
 }
 
 #endif //MATRIX_GRUOP_H
