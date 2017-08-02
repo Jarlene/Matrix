@@ -14,10 +14,19 @@
 #include "matrix/include/utils/OpRegistry.h"
 
 
+#define SAME_FUNCTION(classname)  \
+public:                           \
+explicit classname##Op(classname##Param &param); \
+virtual bool Run() override ; \
+virtual void AsyncRun() override ; \
+virtual ~classname##Op(); \
+virtual bool RunOnDevice() override ; \
+
+
 #define DISABLE_COPY_AND_ASSIGN(classname)                         \
 private:                                                            \
-  classname(const classname&) = delete;                              \
-  classname& operator=(const classname&) = delete;
+  classname##Op(const classname##Op&) = delete;                              \
+  classname##Op& operator=(const classname##Op&) = delete;
 
 
 #define TYPE_SWITCH(type, DType, ...)         \

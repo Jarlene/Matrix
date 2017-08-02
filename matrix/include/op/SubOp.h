@@ -15,18 +15,8 @@ namespace matrix {
 
     template <class T, class Context>
     class SubOp : public Operator {
-    public:
-        explicit SubOp(SubParam &param);
-
-        virtual bool Run() override ;
-
-        virtual void AsyncRun() override ;
-
-        virtual ~SubOp();
-
-        virtual bool RunOnDevice() override ;
-
-    DISABLE_COPY_AND_ASSIGN(SubOp);
+    SAME_FUNCTION(Sub);
+    DISABLE_COPY_AND_ASSIGN(Sub);
     };
 
     template <typename Context>

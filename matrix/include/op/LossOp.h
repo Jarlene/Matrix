@@ -16,18 +16,8 @@ namespace matrix {
 
     template <class T, class Context>
     class LossOp : public Operator {
-    public:
-        explicit LossOp(LossParam &param);
-
-        virtual bool Run() override ;
-
-        virtual void AsyncRun() override ;
-
-        virtual ~LossOp();
-
-        virtual bool RunOnDevice() override ;
-
-    DISABLE_COPY_AND_ASSIGN(LossOp);
+    SAME_FUNCTION(Loss);
+    DISABLE_COPY_AND_ASSIGN(Loss);
     };
 
     template <typename Context>

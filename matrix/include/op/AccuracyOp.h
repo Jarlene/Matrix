@@ -16,18 +16,8 @@ namespace matrix {
 
     template <class T, class Context>
     class AccuracyOp : public Operator {
-    public:
-        explicit AccuracyOp(AccuracyParam &param);
-
-        virtual bool Run() override ;
-
-        virtual void AsyncRun() override ;
-
-        virtual ~AccuracyOp();
-
-        virtual bool RunOnDevice() override ;
-
-    DISABLE_COPY_AND_ASSIGN(AccuracyOp);
+    SAME_FUNCTION(Accuracy);
+    DISABLE_COPY_AND_ASSIGN(Accuracy);
     };
 
 

@@ -15,18 +15,8 @@ namespace matrix {
 
     template <class T, class Context>
     class GRUOp : public Operator {
-    public:
-        explicit GRUOp(GRUParam &param);
-
-        virtual bool Run() override ;
-
-        virtual void AsyncRun() override ;
-
-        virtual ~GRUOp();
-
-        virtual bool RunOnDevice() override ;
-
-    DISABLE_COPY_AND_ASSIGN(GRUOp);
+    SAME_FUNCTION(GRU);
+    DISABLE_COPY_AND_ASSIGN(GRU);
     };
 
     template <typename Context>

@@ -15,18 +15,8 @@ namespace matrix {
 
     template <class T, class Context>
     class PoolingOp : public Operator {
-    public:
-        explicit PoolingOp(PoolingParam &param);
-
-        virtual bool Run() override ;
-
-        virtual void AsyncRun() override ;
-
-        virtual ~PoolingOp();
-
-        virtual bool RunOnDevice() override ;
-
-    DISABLE_COPY_AND_ASSIGN(PoolingOp);
+    SAME_FUNCTION(Pooling);
+    DISABLE_COPY_AND_ASSIGN(Pooling);
     };
 
     template <typename Context>

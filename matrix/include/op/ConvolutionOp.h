@@ -15,18 +15,8 @@ namespace matrix {
 
     template <class T, class Context>
     class ConvolutionOp : public Operator {
-    public:
-        explicit ConvolutionOp(ConvolutionParam &param);
-
-        virtual bool Run() override ;
-
-        virtual void AsyncRun() override ;
-
-        virtual ~ConvolutionOp();
-
-        virtual bool RunOnDevice() override ;
-
-    DISABLE_COPY_AND_ASSIGN(ConvolutionOp);
+    SAME_FUNCTION(Convolution);
+    DISABLE_COPY_AND_ASSIGN(Convolution);
     };
 
     template <typename Context>

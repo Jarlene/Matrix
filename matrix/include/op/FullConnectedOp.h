@@ -16,18 +16,8 @@ namespace matrix {
 
     template <class T, class Context>
     class FullConnectedOp : public Operator {
-    public:
-        explicit FullConnectedOp(FullConnectedParam &param);
-
-        virtual bool Run() override ;
-
-        virtual void AsyncRun() override ;
-
-        virtual ~FullConnectedOp();
-
-        virtual bool RunOnDevice() override ;
-
-    DISABLE_COPY_AND_ASSIGN(FullConnectedOp);
+    SAME_FUNCTION(FullConnected);
+    DISABLE_COPY_AND_ASSIGN(FullConnected);
     };
 
     template <typename Context>

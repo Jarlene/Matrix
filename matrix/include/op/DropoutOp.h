@@ -15,18 +15,8 @@ namespace matrix {
 
     template <class T, class Context>
     class DropoutOp : public Operator {
-    public:
-        explicit DropoutOp(DropoutParam &param);
-
-        virtual bool Run() override ;
-
-        virtual void AsyncRun() override ;
-
-        virtual ~DropoutOp();
-
-        virtual bool RunOnDevice() override ;
-
-    DISABLE_COPY_AND_ASSIGN(DropoutOp);
+    SAME_FUNCTION(Dropout);
+    DISABLE_COPY_AND_ASSIGN(Dropout);
     };
 
     template <typename Context>

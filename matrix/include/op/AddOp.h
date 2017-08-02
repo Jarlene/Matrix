@@ -15,18 +15,8 @@ namespace matrix {
 
     template <class T, class Context>
     class AddOp : public Operator {
-    public:
-        explicit AddOp(AddParam &param);
-
-        virtual bool Run() override ;
-
-        virtual void AsyncRun() override ;
-
-        virtual ~AddOp();
-
-        virtual bool RunOnDevice() override ;
-
-    DISABLE_COPY_AND_ASSIGN(AddOp);
+    SAME_FUNCTION(Add);
+    DISABLE_COPY_AND_ASSIGN(Add);
     };
 
 
