@@ -13,6 +13,8 @@ namespace matrix {
     class Symbol {
     public:
 
+        Symbol() = default;
+
         Symbol(const Symbol &symbol);
 
         explicit Symbol(const std::string &name);
