@@ -7,12 +7,19 @@
 
 #include <map>
 #include <vector>
+#include "matrix/include/utils/Math.h"
 #include "matrix/include/api/MatrixType.h"
 #include "matrix/include/utils/Logger.h"
 #include "matrix/include/utils/Any.h"
 #include "matrix/include/base/Blob.h"
 #include "matrix/include/utils/OpRegistry.h"
 
+
+#define INPUT_TAG(first, ...)  \
+  enum InputTags {first = 0, __VA_ARGS__} \
+
+#define OUTPUT_TAG(first, ...)  \
+  enum InputTags {first = 0, __VA_ARGS__} \
 
 #define SAME_FUNCTION(classname)  \
 public:                           \

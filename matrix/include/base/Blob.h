@@ -31,8 +31,13 @@ namespace matrix {
 
 
         template <class T>
-        const T &Get() const {
+        const T &GetInstance() const {
             return *static_cast<T*>(ptr_);
+        }
+
+        template <class T>
+        const T * Get() const {
+            return static_cast<T*>(ptr_);
         }
 
         template <class T>

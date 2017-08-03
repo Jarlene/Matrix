@@ -9,18 +9,27 @@ namespace matrix {
 
     template <class T, class Context>
     AddOp<T, Context>::AddOp(matrix::AddParam &param) {
-
+        this->in = param.in;
+        this->inShape = param.inShape;
+        this->out = param.out;
     }
 
 
     template <class T, class Context>
     bool AddOp<T, Context>::Run() {
-        return Operator::Run();
+        int size = inShape.at(INPUT1).size();
+        Add(size,  in.at(INPUT1). template Get<T>(), in.at(INPUT2). template Get<T>(), out. template GetMutable<T>());
+        return true;
+
     }
 
     template <class T, class Context>
     void AddOp<T, Context>::AsyncRun() {
-        Operator::AsyncRun();
+        if (context.mode == RunMode::kCpu) {
+            Run();
+        } else if (context.mode == RunMode::kGpu) {
+            RunOnDevice();
+        }
     }
 
     template <class T, class Context>
