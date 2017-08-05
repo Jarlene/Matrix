@@ -8,17 +8,17 @@ namespace matrix {
 
 
     template <class T, class Context>
-    AddOp<T, Context>::AddOp(matrix::AddParam &param) {
-        this->in = param.in;
-        this->inShape = param.inShape;
-        this->out = param.out;
+    AddOp<T, Context>::AddOp(matrix::AddParam &param) : inShape(param.inShape) , outShape(param.outShape){
+        this->input.insert(input.end(), param.in.end(), param.in.end());
+        this->output.push_back(param.out);
+        InferShape();
     }
 
 
     template <class T, class Context>
     bool AddOp<T, Context>::Run() {
-        int size = inShape.at(INPUT1).size();
-        Add(size,  in.at(INPUT1). template Get<T>(), in.at(INPUT2). template Get<T>(), out. template GetMutable<T>());
+        int size = inShape.Size();
+        Add(size,  Inputs().at(INPUT1). template Get<T>(), Inputs().at(INPUT2). template Get<T>(), output.at(0)-> template GetMutable<T>());
         return true;
 
     }
@@ -42,12 +42,18 @@ namespace matrix {
         return false;
     }
 
+    template <class T, class Context>
+    bool AddOp<T, Context>::InferShape() {
+        this->outShape.reShape(this->inShape);
+        return false;
+    }
+
 
 
     template <>
-    Operator* CreateOp<cpu>(AddParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out) {
+    Operator* CreateOp<cpu>(AddParam &param) {
         Operator *op = nullptr;
-        TYPE_SWITCH(type, DType, {
+        TYPE_SWITCH(param.type, DType, {
             op = new AddOp<DType, cpu>(param);
         })
         return op;

@@ -9,8 +9,8 @@
 
 namespace matrix {
 
-    class DivParam : Parameter {
-
+    struct  DivParam : public Parameter {
+        DivParam(MatrixType matrixType);
     };
 
     template <class T, class Context>

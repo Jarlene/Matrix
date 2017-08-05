@@ -10,8 +10,8 @@
 
 namespace matrix {
 
-    class LSTMParam : Parameter {
-
+    struct LSTMParam : public Parameter {
+        LSTMParam(MatrixType matrixType);
     };
 
     template <class T, class Context>

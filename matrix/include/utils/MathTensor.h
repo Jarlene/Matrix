@@ -1,0 +1,65 @@
+//
+// Created by 郑珊 on 2017/8/5.
+//
+
+#ifndef MATRIX_MATHTENSOR_H
+#define MATRIX_MATHTENSOR_H
+
+#include <cassert>
+#include "matrix/include/base/Tensor.h"
+#include "Math.h"
+
+namespace matrix {
+
+
+    template <class T>
+    void MatrixMul(const Tensor<T> &a, const bool ATran,  const Tensor<T> &b, const bool BTran, Tensor<T> &c, T beta = T(0)) {
+        assert(a.GetShape()[0] == c.GetShape()[0]);
+        assert(a.GetShape()[1] == b.GetShape()[0]);
+        assert(b.GetShape()[1] == c.GetShape()[1]);
+
+        int m = ATran ? a.GetShape()[1] : a.GetShape()[0];
+        int n = BTran ? b.GetShape()[0] : b.GetShape()[1];
+        int k = ATran ? a.GetShape()[0] : a.GetShape()[1];
+        CPUGemm<T>(ATran ? Trans : NoTrans, BTran ? Trans : NoTrans, m, n, k,
+                   T(1), a.Data(), b.Data(), beta, c.MutableData());
+    }
+
+
+    template <class T>
+    void MatrixMulVector(const Tensor<T> &a, const bool ATran, const Tensor<T> &b, Tensor<T> &c, T beta = T(0)) {
+        assert(a.Rank() == 2);
+        assert((b.Rank() == 1 || (b.Rank() == 2 && b.GetShape()[1] == 1)));
+        assert((ATran? a.GetShape()[0] == b.GetShape()[0] : a.GetShape()[1] == b.GetShape()[0]));
+        int m = ATran? a.GetShape()[1] : a.GetShape()[0];
+        int n = ATran? a.GetShape()[0] : a.GetShape()[1];
+        CPUGemv<T>(ATran? Trans: NoTrans, m, n, T(1), a.Data(), b.Data(), beta, c.MutableData());
+    }
+
+
+    template <class T>
+    void Add(const Tensor<T> &a, const Tensor<T> &b, Tensor<T> &c) {
+        assert(a.GetShape() == b.GetShape());
+        assert(a.GetShape() == c.GetShape());
+        int size = a.Size();
+        Add<T>(size, a.Data(), b.Data(), c.MutableData());
+
+    }
+
+
+
+    template <class T>
+    void Sub(Tensor<T> &a, Tensor<T> &b, Tensor<T> &c) {
+        assert(a.GetShape() == b.GetShape());
+        assert(a.GetShape() == c.GetShape());
+        int size = a.Size();
+        Sub<T>(size, a.Data(), b.Data(), c.MutableData());
+    }
+
+
+
+
+
+}
+
+#endif //MATRIX_MATHTENSOR_H

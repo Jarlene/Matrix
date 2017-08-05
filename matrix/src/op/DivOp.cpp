@@ -31,6 +31,11 @@ namespace matrix {
         return false;
     }
 
+    template <class T, class Context>
+    bool DivOp<T, Context>::InferShape() {
+        return false;
+    }
+
 
     template <>
     Operator* CreateOp<cpu>(DivParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out) {
@@ -39,5 +44,9 @@ namespace matrix {
             op = new DivOp<DType, cpu>(param);
         })
         return op;
+    }
+
+    DivParam::DivParam(MatrixType matrixType) : Parameter(matrixType) {
+
     }
 }

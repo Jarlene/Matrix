@@ -14,6 +14,8 @@ namespace matrix {
 
     class Shape {
     public:
+        Shape() = default;
+
         Shape(const int* shape, const int dim);
 
         Shape(const Shape &shape);
@@ -22,7 +24,11 @@ namespace matrix {
 
         Shape& operator=(const Shape& other);
 
-        const size_t size() const ;
+        const bool operator==(const Shape& shape) const;
+
+        const size_t Rank() const ;
+
+        const size_t Size() const ;
 
         const int operator[](int idx) const ;
 

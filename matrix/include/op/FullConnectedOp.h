@@ -10,8 +10,8 @@
 namespace matrix {
 
 
-    class FullConnectedParam : Parameter {
-
+    struct  FullConnectedParam : public Parameter {
+        FullConnectedParam(MatrixType matrixType);
     };
 
     template <class T, class Context>

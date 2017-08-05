@@ -31,6 +31,11 @@ namespace matrix {
         return false;
     }
 
+    template <class T, class Context>
+    bool FullConnectedOp<T, Context>::InferShape() {
+        return false;
+    }
+
 
     template <>
     Operator* CreateOp<cpu>(FullConnectedParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out) {
@@ -41,4 +46,7 @@ namespace matrix {
         return op;
     }
 
+    FullConnectedParam::FullConnectedParam(MatrixType matrixType) : Parameter(matrixType) {
+
+    }
 }

@@ -9,8 +9,8 @@
 
 namespace matrix {
 
-    class DropoutParam : Parameter{
-
+    struct  DropoutParam : public Parameter{
+        DropoutParam(MatrixType matrixType);
     };
 
     template <class T, class Context>

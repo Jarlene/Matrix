@@ -9,11 +9,14 @@
 
 namespace matrix {
 
-    class AddParam : Parameter {
-    public:
-        std::vector<Shape> inShape;
+    struct AddParam : public Parameter {
+        AddParam(MatrixType matrixType) : Parameter(matrixType) {
+        }
+
+        Shape inShape;
+        Shape outShape;
         std::vector<Blob> in;
-        Blob out;
+        Blob* out;
     };
 
     template <class T, class Context>
@@ -23,14 +26,13 @@ namespace matrix {
         INPUT_TAG(INPUT1, INPUT2);
     private:
         Context context;
-        std::vector<Shape> inShape;
-        std::vector<Blob> in;
-        Blob out;
+        Shape inShape;
+        Shape outShape;
     };
 
 
     template <typename Context>
-    Operator* CreateOp(AddParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out);
+    Operator* CreateOp(AddParam &param);
 
 
 

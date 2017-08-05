@@ -32,6 +32,11 @@ namespace matrix {
 
     }
 
+    template <class T, class Context>
+    bool AccuracyOp<T, Context>::InferShape() {
+        return false;
+    }
+
 
     template <>
     Operator* CreateOp<cpu>(AccuracyParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out) {
@@ -42,4 +47,7 @@ namespace matrix {
         return op;
     }
 
+    AccuracyParam::AccuracyParam(MatrixType matrixType) : Parameter(matrixType) {
+
+    }
 }

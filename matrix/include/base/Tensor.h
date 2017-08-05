@@ -23,13 +23,20 @@ namespace matrix {
         }
 
         const size_t Rank() const  {
-            return shape_.size();
+            return this->shape_.Rank();
         }
 
         const size_t Size() const  {
-            return this->shape_.size();
+            return this->shape_.Size();
         }
 
+        const T *Data() const {
+            return data_;
+        }
+
+        T* MutableData() {
+            return data_;
+        }
 
         Tensor &operator=(const Tensor<T> other) {
             shape_ = other.shape_;
@@ -37,11 +44,9 @@ namespace matrix {
             return *this;
         }
 
-        void print() {
-            for (int i = 0; i < Size(); ++i) {
-                std::cout << i << "-->" << data_[i];
-            }
-            std::cout << std::endl;
+
+        const Shape &GetShape() const {
+            return shape_;
         }
 
     private:

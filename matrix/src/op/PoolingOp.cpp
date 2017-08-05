@@ -32,6 +32,11 @@ namespace matrix {
     }
 
 
+    template <class T, class Context>
+    bool PoolingOp<T, Context>::InferShape() {
+        return false;
+    }
+
     template <>
     Operator* CreateOp<cpu>(PoolingParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out) {
         Operator *op = nullptr;
@@ -39,5 +44,9 @@ namespace matrix {
             op = new PoolingOp<DType, cpu>(param);
         })
         return op;
+    }
+
+    PoolingParam::PoolingParam(MatrixType matrixType) : Parameter(matrixType) {
+
     }
 }

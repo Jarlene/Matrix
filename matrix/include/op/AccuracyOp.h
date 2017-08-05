@@ -10,7 +10,8 @@
 
 namespace matrix {
 
-    class AccuracyParam : Parameter {
+    struct AccuracyParam : public Parameter {
+        AccuracyParam(MatrixType matrixType);
 
     };
 

@@ -33,6 +33,11 @@ namespace matrix {
         return false;
     }
 
+    template <class T, class Context>
+    bool ConvolutionOp<T, Context>::InferShape() {
+        return false;
+    }
+
     template <>
     Operator* CreateOp<cpu>(ConvolutionParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out) {
         Operator *op = nullptr;
@@ -40,5 +45,9 @@ namespace matrix {
             op = new ConvolutionOp<DType, cpu>(param);
         })
         return op;
+    }
+
+    ConvolutionParam::ConvolutionParam(MatrixType matrixType) : Parameter(matrixType) {
+
     }
 }

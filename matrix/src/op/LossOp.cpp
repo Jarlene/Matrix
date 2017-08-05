@@ -32,6 +32,12 @@ namespace matrix {
         return false;
     }
 
+
+    template <class T, class Context>
+    bool LossOp<T, Context>::InferShape() {
+        return false;
+    }
+
     template <>
     Operator* CreateOp<cpu>(LossParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out) {
         Operator *op = nullptr;
@@ -41,4 +47,7 @@ namespace matrix {
         return op;
     }
 
+    LossParam::LossParam(MatrixType matrixType) : Parameter(matrixType) {
+
+    }
 }

@@ -10,8 +10,8 @@
 
 namespace matrix {
 
-    class ActivationParam : public Parameter {
-
+    struct ActivationParam : public Parameter {
+        ActivationParam(MatrixType matrixType);
     };
 
     template <class T, class Context>

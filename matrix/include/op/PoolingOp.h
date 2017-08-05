@@ -9,8 +9,8 @@
 
 namespace matrix {
 
-    class PoolingParam : Parameter {
-
+    struct PoolingParam : public Parameter {
+        PoolingParam(MatrixType matrixType);
     };
 
     template <class T, class Context>

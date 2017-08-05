@@ -7,7 +7,7 @@
 
 #include <map>
 #include <vector>
-#include "matrix/include/utils/Math.h"
+#include "matrix/include/utils/MathTensor.h"
 #include "matrix/include/api/MatrixType.h"
 #include "matrix/include/utils/Logger.h"
 #include "matrix/include/utils/Any.h"
@@ -28,6 +28,7 @@ virtual bool Run() override ; \
 virtual void AsyncRun() override ; \
 virtual ~classname##Op(); \
 virtual bool RunOnDevice() override ; \
+virtual bool InferShape() override; \
 
 
 #define DISABLE_COPY_AND_ASSIGN(classname)                         \
@@ -120,10 +121,14 @@ namespace matrix {
 
         }
 
+        virtual bool  InferShape() {
+            return false;
+        }
+
         virtual bool RunOnDevice() = 0;
 
 
-    private:
+    protected:
         std::map<std::string, Any> args;
         std::vector<Blob> input;
         std::vector<Blob*> output;
@@ -139,7 +144,12 @@ namespace matrix {
         virtual void clear();
     };
 
-    class Parameter {
+    struct Parameter {
+
+        MatrixType  type;
+        Parameter(MatrixType matrixType): type(matrixType) {
+
+        }
 
     };
 

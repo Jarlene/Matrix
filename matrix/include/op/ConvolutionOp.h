@@ -9,8 +9,8 @@
 
 namespace matrix {
 
-    class ConvolutionParam : Parameter {
-
+    struct ConvolutionParam : public Parameter {
+        ConvolutionParam(MatrixType matrixType);
     };
 
     template <class T, class Context>

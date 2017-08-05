@@ -9,8 +9,8 @@
 
 namespace matrix {
 
-    class GRUParam : Parameter {
-
+    struct  GRUParam : public Parameter {
+        GRUParam(MatrixType matrixType);
     };
 
     template <class T, class Context>

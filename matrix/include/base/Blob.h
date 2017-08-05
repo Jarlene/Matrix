@@ -14,6 +14,15 @@ namespace matrix {
 
 
     struct Blob {
+
+        Blob(void *data) : ptr_(data) {
+
+        }
+
+        Blob(void *data, std::function<void(void*)> func) : ptr_(data), destroy(func) {
+
+        }
+
         void* ptr_ = nullptr;
         std::function<void(void*)> destroy = nullptr;
 

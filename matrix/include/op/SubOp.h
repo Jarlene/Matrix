@@ -9,8 +9,8 @@
 
 namespace matrix {
 
-    class SubParam : Parameter {
-
+    struct SubParam : public Parameter {
+        SubParam(MatrixType matrixType);
     };
 
     template <class T, class Context>

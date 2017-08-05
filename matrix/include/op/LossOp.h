@@ -10,8 +10,8 @@
 
 namespace matrix {
 
-    class LossParam : Parameter {
-
+    struct LossParam : public Parameter {
+        LossParam(MatrixType matrixType);
     };
 
     template <class T, class Context>
