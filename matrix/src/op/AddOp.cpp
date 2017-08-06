@@ -8,8 +8,10 @@ namespace matrix {
 
 
     template <class T, class Context>
-    AddOp<T, Context>::AddOp(matrix::AddParam &param) : inShape(param.inShape) , outShape(param.outShape){
-        this->input.insert(input.end(), param.in.end(), param.in.end());
+    AddOp<T, Context>::AddOp(matrix::AddParam &param) {
+        this->inShape.reShape(param.inShape);
+        this->outShape.reShape(param.outShape);
+        this->input.insert(input.end(), param.in.begin(), param.in.end());
         this->output.push_back(param.out);
         InferShape();
     }
@@ -17,8 +19,10 @@ namespace matrix {
 
     template <class T, class Context>
     bool AddOp<T, Context>::Run() {
-        int size = inShape.Size();
-        Add(size,  Inputs().at(INPUT1). template Get<T>(), Inputs().at(INPUT2). template Get<T>(), output.at(0)-> template GetMutable<T>());
+        Tensor<T> t1 = Inputs()[INPUT1]. template GeneratorTensor<T>(inShape);
+        Tensor<T> t2 = Inputs()[INPUT2]. template GeneratorTensor<T>(inShape);
+        Tensor<T> out = Outputs()[OUT]-> template GeneratorTensor<T>(outShape);
+        Add(t1, t2, out);
         return true;
 
     }

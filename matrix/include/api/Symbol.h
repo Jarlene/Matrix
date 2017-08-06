@@ -6,7 +6,9 @@
 #define MATRIX_SYMBOL_H
 
 #include <string>
+#include <unordered_map>
 #include "matrix/include/utils/Any.h"
+#include "matrix/include/base/Node.h"
 
 
 namespace matrix {
@@ -41,8 +43,7 @@ namespace matrix {
         Symbol operator/(const Symbol &symbol);
 
     private:
-        void * opHandler;
-
+       NodePtr nodePtr;
     };
 }
 

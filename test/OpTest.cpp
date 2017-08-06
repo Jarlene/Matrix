@@ -27,7 +27,7 @@ namespace matrix {
             Blob blob(res);
             param.out = &blob;
 
-            auto op = CreateOp(param);
+            auto op = CreateOp<cpu>(param);
 
 
 

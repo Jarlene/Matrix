@@ -9,26 +9,32 @@ namespace matrix {
 
 
     Symbol::Symbol(const Symbol &symbol) {
-        this->opHandler = symbol.opHandler;
+        this->nodePtr = symbol.nodePtr;
     }
 
     Symbol::Symbol(const std::string &name) {
-
+        nodePtr = Node::create();
+        nodePtr->opName = name;
     }
 
     Symbol &Symbol::SetInput(const std::string &name, const Symbol &symbol) {
+        this->nodePtr->inputs.push_back(symbol.nodePtr);
+        symbol.nodePtr->outputs.push_back(std::weak_ptr<Node>(this->nodePtr));
         return *this;
     }
 
     Symbol &Symbol::SetParam(const std::string &name, const Any &value) {
+        this->nodePtr->params[name] = value;
         return *this;
     }
 
     Symbol &Symbol::Build() {
+        this->nodePtr->Build();
         return *this;
     }
 
     Symbol &Symbol::operator=(const Symbol &symbol) {
+        this->nodePtr = symbol.nodePtr;
         return *this;
     }
 

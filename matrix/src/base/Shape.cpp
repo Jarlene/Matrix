@@ -7,16 +7,14 @@
 namespace matrix {
 
     void Shape::reShape(const Shape &s) {
-#pragma unroll
-        for (int i = 0; i < s.Size(); ++i) {
-            this->shape_[i] = s.shape_[i];
-        }
+        this->shape_.clear();
+        this->shape_.insert(shape_.begin(), s.shape_.begin(), s.shape_.end());
     }
 
     const size_t Shape::Size() const {
         size_t total = 1;
 #pragma unroll
-        for (int i = 0; i < shape_.size(); ++i) {
+        for (int i = 0; i < Rank(); ++i) {
             total *= shape_[i];
         }
         return total;

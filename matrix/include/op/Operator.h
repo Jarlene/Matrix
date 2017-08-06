@@ -19,7 +19,7 @@
   enum InputTags {first = 0, __VA_ARGS__} \
 
 #define OUTPUT_TAG(first, ...)  \
-  enum InputTags {first = 0, __VA_ARGS__} \
+  enum OutputTags {first = 0, __VA_ARGS__} \
 
 #define SAME_FUNCTION(classname)  \
 public:                           \

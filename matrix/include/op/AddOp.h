@@ -24,6 +24,7 @@ namespace matrix {
     SAME_FUNCTION(Add);
     DISABLE_COPY_AND_ASSIGN(Add);
         INPUT_TAG(INPUT1, INPUT2);
+        OUTPUT_TAG(OUT);
     private:
         Context context;
         Shape inShape;

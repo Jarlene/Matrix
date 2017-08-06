@@ -58,13 +58,13 @@ namespace matrix {
     };
 
     struct cpu {
-        RunMode mode = RunMode::kCpu;
-        Phase phase;
+        const static RunMode mode = RunMode::kCpu;
+        const static int kDevice = 0;
     };
 
     struct gpu {
-        RunMode mode = RunMode::kGpu;
-        Phase phase;
+        const static RunMode mode = RunMode::kGpu;
+        const static int kDevice = 0;
     };
 
 }
