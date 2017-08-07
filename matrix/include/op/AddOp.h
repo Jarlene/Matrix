@@ -36,6 +36,13 @@ namespace matrix {
     Operator* CreateOp(AddParam &param);
 
 
+    class AddOpProp : public OperatorProperty {
+    public:
+        virtual void InferShape(std::vector<Shape> *inShape, std::vector<Shape> *outShape) const;
+        virtual Operator* CreateOperator(std::vector<Shape> *inShape, std::vector<Shape> *outShape) const ;
+    private:
+        AddParam param;
+    };
 
 }
 

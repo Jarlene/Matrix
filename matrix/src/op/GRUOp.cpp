@@ -31,10 +31,7 @@ namespace matrix {
 
     }
 
-    template <class T, class Context>
-    bool GRUOp<T, Context>::InferShape() {
-        return false;
-    }
+
 
     template <>
     Operator* CreateOp<cpu>(GRUParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out) {

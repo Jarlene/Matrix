@@ -32,10 +32,7 @@ namespace matrix {
 
     }
 
-    template <class T, class Context>
-    bool MulOp<T, Context>::InferShape() {
-        return false;
-    }
+
 
     template <>
     Operator* CreateOp<cpu>(MulParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out) {

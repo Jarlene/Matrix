@@ -31,10 +31,7 @@ namespace matrix {
 
     }
 
-    template <class T, class Context>
-    bool LSTMOp<T, Context>::InferShape() {
-        return false;
-    }
+
 
     template <>
     Operator* CreateOp<cpu>(LSTMParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out) {

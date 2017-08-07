@@ -14,7 +14,4 @@ namespace matrix {
         return symbol;
     }
 
-    void VariableSymbol::FillData(void *ptr) {
-
-    }
 }

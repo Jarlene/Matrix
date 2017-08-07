@@ -7,7 +7,7 @@
 namespace matrix {
     static size_t index = 0;
 
-    NodePtr Node::create() {
+    NodePtr Node::Create() {
         return std::make_shared<Node>();
     }
 
@@ -18,12 +18,22 @@ namespace matrix {
     }
 
     NodePtr Node::GetGradNode(int input_index, NodePtr &pre, NodePtr &preGrad) {
-        auto t = Node::create();
-
+        auto t = Node::Create();
+        t->isBackward = true;
+        t->opName = "grad_" + this->opName;
+        t->params["input_idx"] = input_index;
+        t->inputs.push_back(preGrad);
+        t->inputs.push_back(pre);
+        t->inputs.insert(t->inputs.end(), pre->inputs.begin(), pre->inputs.end());
+        for (auto &it : pre->params) {
+            t->params.insert(it);
+        }
+        t->Build();
         return t;
     }
 
     void Node::Build() {
+
 
     }
 

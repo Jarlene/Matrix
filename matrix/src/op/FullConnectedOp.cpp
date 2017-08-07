@@ -31,10 +31,7 @@ namespace matrix {
         return false;
     }
 
-    template <class T, class Context>
-    bool FullConnectedOp<T, Context>::InferShape() {
-        return false;
-    }
+
 
 
     template <>

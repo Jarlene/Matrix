@@ -26,6 +26,8 @@ namespace matrix {
 
         OpPtr op_;
 
+        bool isBackward = false;
+
         std::vector<NodePtr> inputs;
 
         std::vector<NodeWeakPtr> outputs;
@@ -34,7 +36,7 @@ namespace matrix {
 
         void Build();
         NodePtr  GetGradNode(int input_index, NodePtr &pre, NodePtr &preGrad);
-        static NodePtr create();
+        static NodePtr Create();
 
     };
 }

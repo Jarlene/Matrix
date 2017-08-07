@@ -31,10 +31,6 @@ namespace matrix {
     }
 
 
-    template <class T, class Context>
-    bool SubOp<T, Context>::InferShape() {
-        return false;
-    }
 
     template <>
     Operator* CreateOp<cpu>(SubParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out) {

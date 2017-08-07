@@ -32,10 +32,6 @@ namespace matrix {
     }
 
 
-    template <class T, class Context>
-    bool DropoutOp<T, Context>::InferShape() {
-        return false;
-    }
 
     template <>
     Operator* CreateOp<cpu>(DropoutParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out) {

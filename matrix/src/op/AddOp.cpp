@@ -46,11 +46,6 @@ namespace matrix {
         return false;
     }
 
-    template <class T, class Context>
-    bool AddOp<T, Context>::InferShape() {
-        this->outShape.reShape(this->inShape);
-        return false;
-    }
 
 
 
@@ -61,5 +56,14 @@ namespace matrix {
             op = new AddOp<DType, cpu>(param);
         })
         return op;
+    }
+
+    Operator *AddOpProp::CreateOperator(std::vector<Shape> *inShape, std::vector<Shape> *outShape) const {
+        InferShape(inShape, outShape);
+        return CreateOp<cpu>(param);
+    }
+
+    void AddOpProp::InferShape(std::vector<Shape> *inShape, std::vector<Shape> *outShape) const {
+
     }
 }

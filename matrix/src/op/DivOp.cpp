@@ -31,10 +31,7 @@ namespace matrix {
         return false;
     }
 
-    template <class T, class Context>
-    bool DivOp<T, Context>::InferShape() {
-        return false;
-    }
+
 
 
     template <>

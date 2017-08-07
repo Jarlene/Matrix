@@ -29,7 +29,11 @@ namespace matrix {
 
     class Operator;
 
+    struct Parameter;
+
     using OpPtr = std::shared_ptr<Operator>;
+
+    using ParamPtr = std::shared_ptr<Parameter>;
 
     class OpRegistry {
     public:
@@ -44,6 +48,7 @@ namespace matrix {
 
     private:
         std::unordered_map<std::string, OpPtr> opMap;
+        std::unordered_map<std::string, ParamPtr> paramMap;
     };
 
 

@@ -15,6 +15,9 @@
 #include "matrix/include/utils/OpRegistry.h"
 
 
+#define BIND_DISPATCH(Method, ...) \
+  return Method<cpu>(__VA_ARGS__); \
+
 #define INPUT_TAG(first, ...)  \
   enum InputTags {first = 0, __VA_ARGS__} \
 
@@ -28,7 +31,6 @@ virtual bool Run() override ; \
 virtual void AsyncRun() override ; \
 virtual ~classname##Op(); \
 virtual bool RunOnDevice() override ; \
-virtual bool InferShape() override; \
 
 
 #define DISABLE_COPY_AND_ASSIGN(classname)                         \
@@ -154,6 +156,14 @@ namespace matrix {
     };
 
 
+
+    class OperatorProperty {
+    public:
+        virtual void InferShape(std::vector<Shape> *inShape, std::vector<Shape> *outShape) const = 0;
+        virtual Operator* CreateOperator(std::vector<Shape> *inShape, std::vector<Shape> *outShape) const {
+            return nullptr;
+        }
+    };
 
 
 }

@@ -11,8 +11,14 @@
 namespace matrix {
     class PlaceHolderSymbol : public Symbol {
     public:
-        static Symbol Create(const std::string &name, const Shape &shape);
-        void FillData(void *ptr);
+        static Symbol Create(const std::string &name, const Shape &shape, const MatrixType &type = kFloat);
+
+
+        template <class T>
+        void Fill(T *ptr) {
+
+        }
+
     };
 
 

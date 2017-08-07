@@ -13,7 +13,7 @@ namespace matrix {
     }
 
     Symbol::Symbol(const std::string &name) {
-        nodePtr = Node::create();
+        nodePtr = Node::Create();
         nodePtr->opName = name;
     }
 

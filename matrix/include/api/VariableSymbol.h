@@ -14,7 +14,11 @@ namespace matrix {
     class VariableSymbol : public Symbol {
     public:
         static Symbol Create(const std::string &name, const Shape &shape, const MatrixType &type = kFloat);
-        void FillData(void * ptr);
+
+        template <class T>
+        void Fill(T * ptr) {
+
+        }
     };
 
 
