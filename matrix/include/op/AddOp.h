@@ -19,27 +19,26 @@ namespace matrix {
         Blob* out;
     };
 
-    template <class T, class Context>
+    template <class T, class xpu>
     class AddOp : public Operator {
     SAME_FUNCTION(Add);
     DISABLE_COPY_AND_ASSIGN(Add);
         INPUT_TAG(INPUT1, INPUT2);
         OUTPUT_TAG(OUT);
     private:
-        Context context;
         Shape inShape;
         Shape outShape;
     };
 
 
-    template <typename Context>
+    template <typename xpu>
     Operator* CreateOp(AddParam &param);
 
 
     class AddOpProp : public OperatorProperty {
     public:
         virtual void InferShape(std::vector<Shape> *inShape, std::vector<Shape> *outShape) const;
-        virtual Operator* CreateOperator(std::vector<Shape> *inShape, std::vector<Shape> *outShape) const ;
+        virtual Operator* CreateOperator(Context context,std::vector<Shape> *inShape, std::vector<Shape> *outShape) const ;
     private:
         AddParam param;
     };

@@ -48,7 +48,7 @@ int main() {
 
     auto A = TensorN(a,2,3);
     auto B = TensorN(b,3,2);
-    A.print();
+//    A.print();
     return 0;
 
 }

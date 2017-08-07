@@ -36,10 +36,10 @@ namespace matrix {
 
 
     template <>
-    Operator* CreateOp<cpu>(ConvolutionParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out) {
+    Operator* CreateOp<CPU>(ConvolutionParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out) {
         Operator *op = nullptr;
         TYPE_SWITCH(type, DType, {
-            op = new ConvolutionOp<DType, cpu>(param);
+            op = new ConvolutionOp<DType, CPU>(param);
         })
         return op;
     }

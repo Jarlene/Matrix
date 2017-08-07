@@ -15,8 +15,15 @@
 #include "matrix/include/utils/OpRegistry.h"
 
 
-#define BIND_DISPATCH(Method, ...) \
-  return Method<cpu>(__VA_ARGS__); \
+#define BIND_DISPATCH(Method, ...)               \
+   if (context.mode == RunMode::kCpu) {          \
+      return Method<CPU>(__VA_ARGS__);            \
+   } else if (context.mode == RunMode::kGpu) {       \
+      return Method<GPU>(__VA_ARGS__);              \
+   } else {                                            \
+      return Method<CPU>(__VA_ARGS__);               \
+   }
+
 
 #define INPUT_TAG(first, ...)  \
   enum InputTags {first = 0, __VA_ARGS__} \
@@ -160,7 +167,7 @@ namespace matrix {
     class OperatorProperty {
     public:
         virtual void InferShape(std::vector<Shape> *inShape, std::vector<Shape> *outShape) const = 0;
-        virtual Operator* CreateOperator(std::vector<Shape> *inShape, std::vector<Shape> *outShape) const {
+        virtual Operator* CreateOperator(Context context, std::vector<Shape> *inShape, std::vector<Shape> *outShape) const {
             return nullptr;
         }
     };

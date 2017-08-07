@@ -36,10 +36,10 @@ namespace matrix {
 
 
     template <>
-    Operator* CreateOp<cpu>(AccuracyParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out) {
+    Operator* CreateOp<CPU>(AccuracyParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out) {
         Operator *op = nullptr;
         TYPE_SWITCH(type, DType, {
-            op = new AccuracyOp<DType, cpu>(param);
+            op = new AccuracyOp<DType, CPU>(param);
         })
         return op;
     }

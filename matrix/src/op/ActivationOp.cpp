@@ -34,10 +34,10 @@ namespace matrix {
 
 
     template <>
-    Operator* CreateOp<cpu>(ActivationParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out) {
+    Operator* CreateOp<CPU>(ActivationParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out) {
         Operator *op = nullptr;
         TYPE_SWITCH(type, DType, {
-            op = new ActivationOp<DType, cpu>(param);
+            op = new ActivationOp<DType, CPU>(param);
         })
         return op;
     }

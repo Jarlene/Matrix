@@ -7,8 +7,8 @@
 namespace matrix {
 
 
-    template <class T, class Context>
-    AddOp<T, Context>::AddOp(matrix::AddParam &param) {
+    template <class T, class xpu>
+    AddOp<T, xpu>::AddOp(matrix::AddParam &param) {
         this->inShape.reShape(param.inShape);
         this->outShape.reShape(param.outShape);
         this->input.insert(input.end(), param.in.begin(), param.in.end());
@@ -17,8 +17,8 @@ namespace matrix {
     }
 
 
-    template <class T, class Context>
-    bool AddOp<T, Context>::Run() {
+    template <class T, class xpu>
+    bool AddOp<T, xpu>::Run() {
         Tensor<T> t1 = Inputs()[INPUT1]. template GeneratorTensor<T>(inShape);
         Tensor<T> t2 = Inputs()[INPUT2]. template GeneratorTensor<T>(inShape);
         Tensor<T> out = Outputs()[OUT]-> template GeneratorTensor<T>(outShape);
@@ -27,22 +27,22 @@ namespace matrix {
 
     }
 
-    template <class T, class Context>
-    void AddOp<T, Context>::AsyncRun() {
-        if (context.mode == RunMode::kCpu) {
+    template <class T, class xpu>
+    void AddOp<T, xpu>::AsyncRun() {
+        if (xpu::mode == RunMode::kCpu) {
             Run();
-        } else if (context.mode == RunMode::kGpu) {
+        } else if (xpu::mode == RunMode::kGpu) {
             RunOnDevice();
         }
     }
 
-    template <class T, class Context>
-    AddOp<T, Context>::~AddOp() {
+    template <class T, class xpu>
+    AddOp<T, xpu>::~AddOp() {
 
     }
 
-    template <class T, class Context>
-    bool AddOp<T, Context>::RunOnDevice() {
+    template <class T, class xpu>
+    bool AddOp<T, xpu>::RunOnDevice() {
         return false;
     }
 
@@ -50,20 +50,29 @@ namespace matrix {
 
 
     template <>
-    Operator* CreateOp<cpu>(AddParam &param) {
+    Operator* CreateOp<CPU>(AddParam &param) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
-            op = new AddOp<DType, cpu>(param);
+            op = new AddOp<DType, CPU>(param);
         })
         return op;
     }
 
-    Operator *AddOpProp::CreateOperator(std::vector<Shape> *inShape, std::vector<Shape> *outShape) const {
+    template <>
+    Operator* CreateOp<GPU>(AddParam &param) {
+        Operator *op = nullptr;
+        TYPE_SWITCH(param.type, DType, {
+            op = new AddOp<DType, GPU>(param);
+        })
+        return op;
+    }
+
+    Operator *AddOpProp::CreateOperator(Context context, std::vector<Shape> *inShape, std::vector<Shape> *outShape) const {
         InferShape(inShape, outShape);
-        return CreateOp<cpu>(param);
+        BIND_DISPATCH(CreateOp, param);
     }
 
     void AddOpProp::InferShape(std::vector<Shape> *inShape, std::vector<Shape> *outShape) const {
-
+        outShape->at(0).reShape(inShape->at(0));
     }
 }

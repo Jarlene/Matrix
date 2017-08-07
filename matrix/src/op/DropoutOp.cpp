@@ -34,10 +34,10 @@ namespace matrix {
 
 
     template <>
-    Operator* CreateOp<cpu>(DropoutParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out) {
+    Operator* CreateOp<CPU>(DropoutParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out) {
         Operator *op = nullptr;
         TYPE_SWITCH(type, DType, {
-            op = new DropoutOp<DType, cpu>(param);
+            op = new DropoutOp<DType, CPU>(param);
         })
         return op;
     }

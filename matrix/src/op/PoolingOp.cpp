@@ -34,10 +34,10 @@ namespace matrix {
 
 
     template <>
-    Operator* CreateOp<cpu>(PoolingParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out) {
+    Operator* CreateOp<CPU>(PoolingParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out) {
         Operator *op = nullptr;
         TYPE_SWITCH(type, DType, {
-            op = new PoolingOp<DType, cpu>(param);
+            op = new PoolingOp<DType, CPU>(param);
         })
         return op;
     }
