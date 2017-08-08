@@ -95,11 +95,22 @@ namespace matrix {
         }
 
         template <class T>
-        inline T getArgValue(const std::string & name, const T &default_value) {
+        inline T GetArgValue(const std::string & name, const T &default_value) {
             if (args.count(name)) {
                 return get<T>(args.at(name));
             }
             return default_value;
+        }
+
+        template <class T>
+        inline T GetArgValue(const std::string & name) {
+            if (args.count(name)) {
+                return get<T>(args.at(name));
+            }
+
+            Logger::Global()->Fatal("can not find arg name");
+            T t;
+            return t;
         }
 
 

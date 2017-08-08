@@ -9,8 +9,8 @@ namespace matrix {
 
     template <class T, class xpu>
     AddOp<T, xpu>::AddOp(matrix::AddParam &param) {
-        this->inShape.reShape(param.inShape);
-        this->outShape.reShape(param.outShape);
+        this->args["input_shape"] = param.inShapes;
+        this->args["output_shape"] = param.outShape;
         this->input.insert(input.end(), param.in.begin(), param.in.end());
         this->output.push_back(param.out);
     }
@@ -18,8 +18,13 @@ namespace matrix {
 
     template <class T, class xpu>
     bool AddOp<T, xpu>::Run() {
-        Tensor<T> t1 = Inputs()[INPUT1]. template GeneratorTensor<T>(inShape);
-        Tensor<T> t2 = Inputs()[INPUT2]. template GeneratorTensor<T>(inShape);
+        std::vector<Shape> inShapes = GetArgValue<std::vector<Shape>>("input_shape");
+        if (inShapes.size() < 2) {
+            Logger::Global()->Fatal("input shape size less then 2");
+        }
+        Shape outShape = GetArgValue<Shape>("output_shape");
+        Tensor<T> t1 = Inputs()[INPUT1]. template GeneratorTensor<T>(inShapes.at(0));
+        Tensor<T> t2 = Inputs()[INPUT2]. template GeneratorTensor<T>(inShapes.at(1));
         Tensor<T> out = Outputs()[OUT]-> template GeneratorTensor<T>(outShape);
         Add(t1, t2, out);
         return true;
@@ -78,7 +83,7 @@ namespace matrix {
         InferShape(inShape, outShape);
         param->out = &output.at(0);
         param->in = input;
-        param->inShape = inShape.at(0);
+        param->inShapes = inShape;
         param->outShape = outShape.at(0);
         BIND_DISPATCH(CreateOp, *param);
     }

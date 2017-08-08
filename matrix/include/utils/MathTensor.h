@@ -8,6 +8,7 @@
 #include <cassert>
 #include "matrix/include/base/Tensor.h"
 #include "Math.h"
+#include "Logger.h"
 
 namespace matrix {
 
@@ -39,10 +40,15 @@ namespace matrix {
 
     template <class T>
     void Add(const Tensor<T> &a, const Tensor<T> &b, Tensor<T> &c) {
-        assert(a.GetShape() == b.GetShape());
         assert(a.GetShape() == c.GetShape());
         int size = a.Size();
-        Add<T>(size, a.Data(), b.Data(), c.MutableData());
+        if (a.GetShape() == b.GetShape()) {
+            Add<T>(size, a.Data(), b.Data(), c.MutableData());
+        } else if (a.GetShape()[0] == b.GetShape()[0] && b.Rank() == 1) {
+            Add<T>(a.GetShape()[0], a.GetShape()[1], a.Data(), b.Data(), c.MutableData());
+        } else {
+            Logger::Global()->Fatal("not support add method now");
+        }
 
     }
 

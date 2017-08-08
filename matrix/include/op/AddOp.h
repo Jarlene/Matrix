@@ -13,7 +13,7 @@ namespace matrix {
         AddParam(MatrixType matrixType) : Parameter(matrixType) {
         }
 
-        Shape inShape;
+        std::vector<Shape> inShapes;
         Shape outShape;
         std::vector<Blob> in;
         Blob* out;
@@ -25,9 +25,6 @@ namespace matrix {
     DISABLE_COPY_AND_ASSIGN(Add);
         INPUT_TAG(INPUT1, INPUT2);
         OUTPUT_TAG(OUT);
-    private:
-        Shape inShape;
-        Shape outShape;
     };
 
 

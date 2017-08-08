@@ -582,6 +582,17 @@ namespace matrix {
     }
 
 
+    template <class T>
+    inline void Add(const int N, const int M, const T *a,  const T *b, T *y) {
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+        for (int i = 0; i < N; ++i) {
+            for (int j = 0; j < M; ++j) {
+                y[i * M +j] = a[i * M +j] + b[i];
+            }
+        }
+    }
 
     template <class T>
     inline void Add(const int N, const T *a, const T *b, T *y) {
