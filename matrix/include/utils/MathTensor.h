@@ -47,7 +47,7 @@ namespace matrix {
         } else if (a.GetShape()[0] == b.GetShape()[0] && b.Rank() == 1) {
             Add<T>(a.GetShape()[0], a.GetShape()[1], a.Data(), b.Data(), c.MutableData());
         } else {
-            Logger::Global()->Fatal("not support add method now");
+            Logger::Global()->Fatal("not support add method now \n");
         }
 
     }

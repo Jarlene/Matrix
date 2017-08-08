@@ -34,6 +34,7 @@ namespace matrix {
 
             std::vector<Shape> inShape;
             inShape.push_back(shape);
+            inShape.push_back(shape);
             std::vector<Shape> outShape;
             outShape.push_back(shape);
 

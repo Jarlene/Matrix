@@ -20,7 +20,7 @@ namespace matrix {
     bool AddOp<T, xpu>::Run() {
         std::vector<Shape> inShapes = GetArgValue<std::vector<Shape>>("input_shape");
         if (inShapes.size() < 2) {
-            Logger::Global()->Fatal("input shape size less then 2");
+            Logger::Global()->Fatal("input shape size less then 2 \n");
         }
         Shape outShape = GetArgValue<Shape>("output_shape");
         Tensor<T> t1 = Inputs()[INPUT1]. template GeneratorTensor<T>(inShapes.at(0));
