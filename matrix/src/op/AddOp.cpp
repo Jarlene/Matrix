@@ -9,10 +9,12 @@ namespace matrix {
 
     template <class T, class xpu>
     AddOp<T, xpu>::AddOp(matrix::AddParam &param) {
-        this->args["input_shape"] = param.inShapes;
-        this->args["output_shape"] = param.outShape;
-        this->input.insert(input.end(), param.in.begin(), param.in.end());
-        this->output.push_back(param.out);
+        this->args["input_shape"] = param.inputShapes;
+        this->args["output_shape"] = param.outShapes;
+        this->input.insert(input.end(), param.inputs.begin(), param.inputs.end());
+        for (Blob b : param.inputs) {
+            this->output.push_back(&b);
+        }
     }
 
 
@@ -22,10 +24,10 @@ namespace matrix {
         if (inShapes.size() < 2) {
             Logger::Global()->Fatal("input shape size less then 2 \n");
         }
-        Shape outShape = GetArgValue<Shape>("output_shape");
+        std::vector<Shape> outShapes = GetArgValue<std::vector<Shape>>("output_shape");
         Tensor<T> t1 = Inputs()[INPUT1]. template GeneratorTensor<T>(inShapes.at(0));
         Tensor<T> t2 = Inputs()[INPUT2]. template GeneratorTensor<T>(inShapes.at(1));
-        Tensor<T> out = Outputs()[OUT]-> template GeneratorTensor<T>(outShape);
+        Tensor<T> out = Outputs()[OUT]-> template GeneratorTensor<T>(outShapes.at(0));
         Add(t1, t2, out);
         return true;
 
@@ -81,10 +83,10 @@ namespace matrix {
 
     Operator *AddOpProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output, std::vector<Shape> &inShape, std::vector<Shape> &outShape) {
         InferShape(inShape, outShape);
-        param->out = &output.at(0);
-        param->in = input;
-        param->inShapes = inShape;
-        param->outShape = outShape.at(0);
+        param->outputs = output;
+        param->inputs = input;
+        param->inputShapes = inShape;
+        param->outShapes = outShape;
         BIND_DISPATCH(CreateOp, *param);
     }
 

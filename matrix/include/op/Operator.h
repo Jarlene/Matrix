@@ -169,6 +169,10 @@ namespace matrix {
 
         }
 
+        std::vector<Blob> inputs;
+        std::vector<Shape> inputShapes;
+        std::vector<Blob> outputs;
+        std::vector<Shape> outShapes;
     };
 
 

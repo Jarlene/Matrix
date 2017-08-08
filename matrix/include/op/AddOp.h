@@ -13,10 +13,6 @@ namespace matrix {
         AddParam(MatrixType matrixType) : Parameter(matrixType) {
         }
 
-        std::vector<Shape> inShapes;
-        Shape outShape;
-        std::vector<Blob> in;
-        Blob* out;
     };
 
     template <class T, class xpu>
