@@ -24,7 +24,16 @@ namespace matrix {
 
         std::string opName;
 
-        OpPtr op_;
+        Operator* op;
+
+        Context context;
+
+        std::vector<Shape> inputShapes;
+
+        std::vector<Shape> outputShapes;
+
+
+        void* data_;
 
         bool isBackward = false;
 
