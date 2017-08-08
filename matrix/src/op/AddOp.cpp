@@ -13,7 +13,6 @@ namespace matrix {
         this->outShape.reShape(param.outShape);
         this->input.insert(input.end(), param.in.begin(), param.in.end());
         this->output.push_back(param.out);
-        InferShape();
     }
 
 
@@ -67,12 +66,30 @@ namespace matrix {
         return op;
     }
 
-    Operator *AddOpProp::CreateOperator(Context context, std::vector<Shape> *inShape, std::vector<Shape> *outShape) const {
-        InferShape(inShape, outShape);
-        BIND_DISPATCH(CreateOp, param);
+    AddOpProp::AddOpProp(const MatrixType type)  {
+        param = new AddParam(type);
     }
 
-    void AddOpProp::InferShape(std::vector<Shape> *inShape, std::vector<Shape> *outShape) const {
-        outShape->at(0).reShape(inShape->at(0));
+    AddOpProp::AddOpProp() {
+        param = new AddParam(MatrixType::kFloat);
     }
+
+    Operator *AddOpProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output, std::vector<Shape> &inShape, std::vector<Shape> &outShape) {
+        InferShape(inShape, outShape);
+        param->out = &output.at(0);
+        param->in = input;
+        param->inShape = inShape.at(0);
+        param->outShape = outShape.at(0);
+        BIND_DISPATCH(CreateOp, *param);
+    }
+
+    void AddOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape) {
+        outShape.at(0).reShape(inShape.at(0));
+    }
+
+    AddOpProp::~AddOpProp() {
+        delete param;
+    }
+
+
 }

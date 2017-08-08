@@ -12,7 +12,7 @@
 #include "matrix/include/utils/Logger.h"
 #include "matrix/include/utils/Any.h"
 #include "matrix/include/base/Blob.h"
-#include "matrix/include/utils/OpRegistry.h"
+#include "matrix/include/utils/Registry.h"
 
 
 #define BIND_DISPATCH(Method, ...)               \
@@ -130,9 +130,7 @@ namespace matrix {
 
         }
 
-        virtual bool  InferShape() {
-            return false;
-        }
+
 
         virtual bool RunOnDevice() = 0;
 
@@ -166,8 +164,9 @@ namespace matrix {
 
     class OperatorProperty {
     public:
-        virtual void InferShape(std::vector<Shape> *inShape, std::vector<Shape> *outShape) const = 0;
-        virtual Operator* CreateOperator(Context context, std::vector<Shape> *inShape, std::vector<Shape> *outShape) const {
+        OperatorProperty() = default;
+        virtual void InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape)  = 0;
+        virtual Operator* CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output, std::vector<Shape> &inShape, std::vector<Shape> &outShape) {
             return nullptr;
         }
     };

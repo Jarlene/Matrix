@@ -37,12 +37,18 @@ namespace matrix {
 
     class AddOpProp : public OperatorProperty {
     public:
-        virtual void InferShape(std::vector<Shape> *inShape, std::vector<Shape> *outShape) const;
-        virtual Operator* CreateOperator(Context context,std::vector<Shape> *inShape, std::vector<Shape> *outShape) const ;
+        AddOpProp();
+        AddOpProp(const MatrixType type);
+        ~AddOpProp();
+        virtual void InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape);
+        virtual Operator* CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output, std::vector<Shape> &inShape, std::vector<Shape> &outShape) ;
     private:
-        AddParam param;
+        AddParam* param;
     };
 
 }
+
+REGISTER_OP_PROPERTY(add, AddOpProp);
+
 
 #endif //MATRIX_ADDOP_H

@@ -2,19 +2,19 @@
 // Created by Jarlene on 2017/7/25.
 //
 
-#include "matrix/include/utils/OpRegistry.h"
+#include "matrix/include/utils/Registry.h"
 
 namespace matrix {
 
 
-    int OpRegistry::RegisterOp(const std::string &name, const OpPtr op) {
+    int Registry::RegisterOp(const std::string &name, const OpPtr op) {
         if (opMap.count(name) == 0) {
             opMap[name] = op;
         }
         return 0;
     }
 
-    const OpPtr OpRegistry::GetOp(const std::string &name) const {
+    const OpPtr Registry::GetOp(const std::string &name) const {
         if (opMap.count(name)) {
             return opMap.at(name);
         }

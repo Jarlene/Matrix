@@ -8,7 +8,7 @@
 #include <unordered_map>
 #include <vector>
 #include "matrix/include/utils/Any.h"
-#include "matrix/include/utils/OpRegistry.h"
+#include "matrix/include/utils/Registry.h"
 
 namespace matrix {
     struct Node;

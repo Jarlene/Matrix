@@ -20,19 +20,27 @@ namespace matrix {
 
             float res[] = {0, 0, 0, 0, 0, 0};
 
-            AddParam param(MatrixType::kFloat);
-            param.inShape = ShapeN(2, 3);
+            OpPtr pro =  Registry::Global()->GetOp("add");
 
-            param.in = {Blob(a), Blob(b)};
-            Blob blob(res);
-            param.out = &blob;
+            Context context;
+            context.mode = RunMode::kCpu;
+            context.phase = Phase::TEST;
+            Shape shape = ShapeN(2, 3);
+            std::vector<Blob> inputs;
+            std::vector<Blob> outputs;
+            inputs.push_back(Blob(a));
+            inputs.push_back(Blob(b));
+            outputs.push_back(Blob(res));
 
-            auto op = CreateOp<CPU>(param);
+            std::vector<Shape> inShape;
+            inShape.push_back(shape);
+            std::vector<Shape> outShape;
+            outShape.push_back(shape);
 
-
+            Operator* op = pro->CreateOperator(context, inputs, outputs, inShape, outShape);
 
             op->AsyncRun();
-            int dim = param.inShape.Size();
+            int dim = shape.Size();
             checkArrayEqual<float>(c, res, dim);
 
         }
