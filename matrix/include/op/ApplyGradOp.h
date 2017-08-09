@@ -1,5 +1,5 @@
 //
-// Created by 郑珊 on 2017/8/9.
+// Created by  Jarlene on 2017/8/9.
 //
 
 #ifndef MATRIX_APPLYGRADOP_H

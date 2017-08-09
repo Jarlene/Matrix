@@ -24,6 +24,12 @@ namespace matrix {
 
         Shape& operator=(const Shape& other);
 
+        bool isConstant();
+
+        bool isVector();
+
+        bool isMatrix();
+
         const bool operator==(const Shape& shape) const;
 
         const size_t Rank() const ;

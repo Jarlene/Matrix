@@ -102,7 +102,9 @@ namespace matrix {
     }
 
     void FullConnectedOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape) {
-
+        assert(inShape.size() >= 2);
+        assert(outShape.size() >= 1);
+        ProduceMulOpShape(inShape, outShape.at[0]);
     }
 
     Operator *FullConnectedOpProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,

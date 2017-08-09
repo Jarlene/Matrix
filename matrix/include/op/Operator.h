@@ -13,7 +13,7 @@
 #include "matrix/include/utils/Any.h"
 #include "matrix/include/base/Blob.h"
 #include "matrix/include/utils/Registry.h"
-
+#include "matrix/include/utils/ProduceShape.h"
 
 #define BIND_DISPATCH(Method, ...)               \
    if (context.mode == RunMode::kCpu) {          \

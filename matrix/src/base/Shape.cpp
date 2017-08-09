@@ -64,4 +64,16 @@ namespace matrix {
         return true;
     }
 
+    bool Shape::isConstant() {
+        return Rank() == 1 && Size() == 1;
+    }
+
+    bool Shape::isVector() {
+        return Rank() == 1 && Size() > 1;
+    }
+
+    bool Shape::isMatrix() {
+        return Rank() == 2;
+    }
+
 }
