@@ -120,15 +120,15 @@ namespace matrix {
         }
 
         template <class T>
-        inline T* Output(int idx) {
-            return output.at(idx)->GetMutable<T>();
+        inline T Output(int idx) {
+            return output.at(idx).GetMutable<T>();
         }
 
         inline const std::vector<Blob> Inputs() const {
             return input;
         }
 
-        inline const std::vector<Blob*> Outputs() const {
+        inline const std::vector<Blob> Outputs() const {
             return output;
         }
 
@@ -149,7 +149,9 @@ namespace matrix {
     protected:
         std::map<std::string, Any> args;
         std::vector<Blob> input;
-        std::vector<Blob*> output;
+        std::vector<Blob> output;
+        std::vector<Shape> inputShapes;
+        std::vector<Shape> outputShapes;
     };
 
 

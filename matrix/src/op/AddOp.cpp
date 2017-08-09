@@ -9,25 +9,23 @@ namespace matrix {
 
     template <class T, class xpu>
     AddOp<T, xpu>::AddOp(matrix::AddParam &param) {
-        this->args["input_shape"] = param.inputShapes;
-        this->args["output_shape"] = param.outShapes;
+        this->inputShapes = param.inputShapes;
+        this->outputShapes = param.outShapes;
         this->input.insert(input.end(), param.inputs.begin(), param.inputs.end());
-        for (Blob b : param.inputs) {
-            this->output.push_back(&b);
+        for (Blob b : param.outputs) {
+            this->output.push_back(b);
         }
     }
 
 
     template <class T, class xpu>
     bool AddOp<T, xpu>::Run() {
-        std::vector<Shape> inShapes = GetArgValue<std::vector<Shape>>("input_shape");
-        if (inShapes.size() < 2) {
+        if (inputShapes.size() < 2) {
             Logger::Global()->Fatal("input shape size less then 2 \n");
         }
-        std::vector<Shape> outShapes = GetArgValue<std::vector<Shape>>("output_shape");
-        Tensor<T> t1 = Inputs()[INPUT1]. template GeneratorTensor<T>(inShapes.at(0));
-        Tensor<T> t2 = Inputs()[INPUT2]. template GeneratorTensor<T>(inShapes.at(1));
-        Tensor<T> out = Outputs()[OUT]-> template GeneratorTensor<T>(outShapes.at(0));
+        Tensor<T> t1 = Inputs()[INPUT1]. template GeneratorTensor<T>(inputShapes.at(0));
+        Tensor<T> t2 = Inputs()[INPUT2]. template GeneratorTensor<T>(inputShapes.at(1));
+        Tensor<T> out = Outputs()[OUT]. template GeneratorTensor<T>(outputShapes.at(0));
         Add(t1, t2, out);
         return true;
 
