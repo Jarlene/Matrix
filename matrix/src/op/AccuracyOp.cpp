@@ -10,7 +10,10 @@ namespace matrix {
 
     template <class T, class Context>
     AccuracyOp<T, Context>::AccuracyOp(AccuracyParam &param) {
-
+        this->outputShapes = param.outShapes;
+        this->output = param.outputs;
+        this->input = param.inputs;
+        this->inputShapes = param.inputShapes;
     }
 
     template <class T, class Context>
@@ -25,6 +28,13 @@ namespace matrix {
 
     template <class T, class Context>
     void AccuracyOp<T, Context>::AsyncRun() {
+        if (Context::mode == RunMode::kCpu) {
+            Run();
+        } else if (Context::mode == RunMode::kGpu){
+            if (!RunOnDevice()) {
+                Run();
+            }
+        }
     }
 
     template <class T, class Context>
@@ -67,7 +77,10 @@ namespace matrix {
     }
 
     void AccuracyOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape) {
-
+        if (outShape.size() < 1) {
+            Logger::Global()->Fatal("AccuracyOp  must has output shape. \n");
+        }
+        outShape.at(0).reShape(ShapeN(1));
     }
 
     Operator *AccuracyOpProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,

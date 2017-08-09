@@ -36,7 +36,9 @@ namespace matrix {
         if (xpu::mode == RunMode::kCpu) {
             Run();
         } else if (xpu::mode == RunMode::kGpu) {
-            RunOnDevice();
+            if (!RunOnDevice()) {
+                Run();
+            }
         }
     }
 
