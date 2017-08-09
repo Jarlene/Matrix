@@ -30,7 +30,7 @@ namespace matrix {
             return SetParam(name, Any(value));
         }
 
-        Symbol &Build();
+//        Symbol &Build();
 
         Symbol &operator=(const Symbol &symbol);
 

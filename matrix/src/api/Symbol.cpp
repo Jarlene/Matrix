@@ -28,10 +28,10 @@ namespace matrix {
         return *this;
     }
 
-    Symbol &Symbol::Build() {
-        this->nodePtr->Build();
-        return *this;
-    }
+//    Symbol &Symbol::Build() {
+//        this->nodePtr->Build();
+//        return *this;
+//    }
 
     Symbol &Symbol::operator=(const Symbol &symbol) {
         this->nodePtr = symbol.nodePtr;
@@ -41,32 +41,32 @@ namespace matrix {
     Symbol Symbol::operator+(const Symbol &symbol) {
         auto s = Symbol("add")
                 .SetInput("first", *this)
-                .SetInput("second", symbol)
-                .Build();
+                .SetInput("second", symbol);
+//                .Build();
         return s;
     }
 
     Symbol Symbol::operator-(const Symbol &symbol) {
         auto s = Symbol("sub")
                 .SetInput("first", *this)
-                .SetInput("second", symbol)
-                .Build();
+                .SetInput("second", symbol);
+//                .Build();
         return s;
     }
 
     Symbol Symbol::operator*(const Symbol &symbol) {
         auto s = Symbol("mul")
                 .SetInput("first", *this)
-                .SetInput("second", symbol)
-                .Build();
+                .SetInput("second", symbol);
+//                .Build();
         return s;
     }
 
     Symbol Symbol::operator/(const Symbol &symbol) {
         auto s = Symbol("div")
                 .SetInput("first", *this)
-                .SetInput("second", symbol)
-                .Build();
+                .SetInput("second", symbol);
+//                .Build();
         return s;
     }
 

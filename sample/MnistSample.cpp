@@ -38,13 +38,11 @@ int main() {
 
     auto loss = Symbol("crossEntropy")
             .SetInput("logistic", symbol)
-            .SetInput("y", label)
-            .Build();
+            .SetInput("y", label);
 
     auto prediction = Symbol("prediction")
             .SetInput("logistic", symbol)
-            .SetInput("y", label)
-            .Build();
+            .SetInput("y", label);
 
 
     return 0;
