@@ -43,6 +43,10 @@ namespace matrix {
         Symbol operator/(const Symbol &symbol);
 
     protected:
+        friend class Graph;
+        const NodePtr &GetNode() const ;
+
+    protected:
        NodePtr nodePtr;
     };
 }

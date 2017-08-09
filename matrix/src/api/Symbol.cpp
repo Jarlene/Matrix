@@ -70,5 +70,8 @@ namespace matrix {
         return s;
     }
 
+    const NodePtr &Symbol::GetNode() const {
+        return nodePtr;
+    }
 }
 

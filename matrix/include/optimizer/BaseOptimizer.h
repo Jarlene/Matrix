@@ -31,7 +31,7 @@ namespace matrix {
         virtual void Reset() {}
 
     protected:
-        std::unordered_map<>
+//        std::unordered_map<>
     };
 
 }

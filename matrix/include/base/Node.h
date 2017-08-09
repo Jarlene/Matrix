@@ -32,6 +32,7 @@ namespace matrix {
 
         Shape outputShapes;
 
+        bool isVariable;
 
         void* data_;
 

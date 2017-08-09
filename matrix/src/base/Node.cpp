@@ -28,7 +28,6 @@ namespace matrix {
         for (auto &it : pre->params) {
             t->params.insert(it);
         }
-        t->Build();
         return t;
     }
 
