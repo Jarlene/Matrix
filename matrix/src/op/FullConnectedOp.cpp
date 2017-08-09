@@ -8,17 +8,40 @@ namespace matrix {
 
     template <class T, class Context>
     FullConnectedOp<T, Context>::FullConnectedOp(FullConnectedParam &param) {
-
+        this->output = param.outputs;
+        this->outputShapes = param.outShapes;
+        this->input = param.inputs;
+        this->inputShapes = param.inputShapes;
+        this->args = param.args;
     }
 
     template <class T, class Context>
     bool FullConnectedOp<T, Context>::Run() {
-        return Operator::Run();
+        if (Inputs().size() == 2) {
+            Tensor<T> data = Inputs()[DATA]. template GeneratorTensor<T>(inputShapes.at(DATA));
+            Tensor<T> weight = Inputs()[WEIGHT]. template GeneratorTensor<T>(inputShapes.at(WEIGHT));
+            Tensor<T> out = Outputs()[OUT]. template GeneratorTensor<T>(outputShapes.at(OUT));
+            MatrixMul<T>(data, false, weight, false, out);
+        } else if (Inputs().size() == 3) {
+            Tensor<T> data = Inputs()[DATA]. template GeneratorTensor<T>(inputShapes.at(DATA));
+            Tensor<T> weight = Inputs()[WEIGHT]. template GeneratorTensor<T>(inputShapes.at(WEIGHT));
+            Tensor<T> bias = Inputs()[BIAS]. template GeneratorTensor<T>(inputShapes.at(BIAS));
+            Tensor<T> out = Outputs()[OUT]. template GeneratorTensor<T>(outputShapes.at(OUT));
+            MatrixMul<T>(data, false, weight, false, out);
+            Add<T>(out, bias, out);
+        }
+        return true;
     }
 
     template <class T, class Context>
     void FullConnectedOp<T, Context>::AsyncRun() {
-        Operator::AsyncRun();
+        if (Context::mode == RunMode::kCpu) {
+            Run();
+        } else {
+            if (!RunOnDevice()) {
+                Run();
+            }
+        }
     }
 
     template <class T, class Context>

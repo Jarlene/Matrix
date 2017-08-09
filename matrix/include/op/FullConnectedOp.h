@@ -18,6 +18,8 @@ namespace matrix {
     class FullConnectedOp : public Operator {
     SAME_FUNCTION(FullConnected);
     DISABLE_COPY_AND_ASSIGN(FullConnected);
+        INPUT_TAG(DATA, WEIGHT, BIAS);
+        OUTPUT_TAG(OUT);
     };
 
     template <typename Context>

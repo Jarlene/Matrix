@@ -51,6 +51,7 @@ Symbol Connvolution(Symbol &input, Symbol &label, int batchSize) {
 
 int main() {
     int batchSize = 100;
+    int epochSize = 200;
     auto input = PlaceHolderSymbol::Create("x", ShapeN(batchSize, 784));
     auto label = PlaceHolderSymbol::Create("label", ShapeN(batchSize));
     auto symbol = LogisticRegression(input, batchSize, 128);
@@ -70,7 +71,10 @@ int main() {
     context.mode = kCpu;
 
     auto executor = std::make_shared<Executor>(loss, context);
-    executor->runSync();
+
+    for (int i = 0; i < epochSize; ++i) {
+        executor->runSync();
+    }
 
     return 0;
 }
