@@ -7,8 +7,14 @@ endforeach()
 
 # src files
 set(srcList "")
-file(GLOB_RECURSE header_files src/*.cpp src/*.cc)
-foreach(source_file ${header_files})
+
+if (USE_CUDA)
+    file(GLOB_RECURSE src_files src/*.cu)
+else()
+    file(GLOB_RECURSE src_files src/*.cpp src/*.cc)
+endif ()
+
+foreach(source_file ${src_files})
     list(APPEND srcList ${source_file})
 endforeach()
 
