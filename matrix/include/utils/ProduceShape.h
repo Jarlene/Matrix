@@ -11,7 +11,7 @@
 
 namespace matrix {
 
-    void static ProduceMulOpShape(std::vector<Shape> &input, Shape &out) {
+    inline void static ProduceMulOpShape(std::vector<Shape> &input, Shape &out) {
 
 
         assert(input.size() >= 2);
