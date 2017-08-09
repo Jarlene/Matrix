@@ -10,7 +10,9 @@
 namespace matrix {
 
     struct ConvolutionParam : public Parameter {
-        ConvolutionParam(MatrixType matrixType);
+        ConvolutionParam(MatrixType matrixType) : Parameter(matrixType) {
+
+        }
     };
 
     template <class T, class Context>
@@ -20,7 +22,18 @@ namespace matrix {
     };
 
     template <typename Context>
-    Operator* CreateOp(ConvolutionParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out);
+    Operator* CreateOp(ConvolutionParam &param);
+
+    class ConvolutionOpProp : public OperatorProperty {
+    public:
+        ConvolutionOpProp();
+        ConvolutionOpProp(const MatrixType type);
+        ~ConvolutionOpProp();
+        virtual void InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape);
+        virtual Operator* CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output, std::vector<Shape> &inShape, std::vector<Shape> &outShape) ;
+    private:
+        ConvolutionParam* param;
+    };
 
 }
 
