@@ -44,4 +44,5 @@ namespace matrix {
 }
 
 
+REGISTER_OP_PROPERTY(accuracy, AccuracyOpProp);
 #endif //MATRIX_ACCURACYOP_H

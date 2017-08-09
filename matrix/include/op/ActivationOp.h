@@ -6,12 +6,13 @@
 #define MATRIX_ACTIVATIONOP_H
 
 #include "Operator.h"
-#include "AccuracyOp.h"
 
 namespace matrix {
 
     struct ActivationParam : public Parameter {
-        ActivationParam(MatrixType matrixType);
+        ActivationParam(MatrixType matrixType) : Parameter(matrixType) {
+
+        }
     };
 
     template <class T, class Context>
@@ -22,9 +23,21 @@ namespace matrix {
 
 
     template <typename Context>
-    Operator* CreateOp(ActivationParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out);
+    Operator* CreateOp(ActivationParam &param);
 
+    class ActivationOpProp : public OperatorProperty {
+    public:
+        ActivationOpProp();
+        ActivationOpProp(const MatrixType type);
+        ~ActivationOpProp();
+        virtual void InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape);
+        virtual Operator* CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output, std::vector<Shape> &inShape, std::vector<Shape> &outShape) ;
+    private:
+        ActivationParam* param;
+    };
 
 }
+
+REGISTER_OP_PROPERTY(activation, ActivationOpProp);
 
 #endif //MATRIX_ACTIVATIONOP_H

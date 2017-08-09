@@ -30,7 +30,7 @@ namespace matrix {
 
         std::vector<Shape> inputShapes;
 
-        std::vector<Shape> outputShapes;
+        Shape outputShapes;
 
 
         void* data_;

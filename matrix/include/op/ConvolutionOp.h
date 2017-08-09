@@ -37,4 +37,6 @@ namespace matrix {
 
 }
 
+REGISTER_OP_PROPERTY(convolution, ConvolutionOpProp);
+
 #endif //MATRIX_CONVOLUTIONOP_H

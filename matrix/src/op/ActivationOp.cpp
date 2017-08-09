@@ -34,15 +34,49 @@ namespace matrix {
 
 
     template <>
-    Operator* CreateOp<CPU>(ActivationParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out) {
+    Operator* CreateOp<CPU>(ActivationParam &param) {
         Operator *op = nullptr;
-        TYPE_SWITCH(type, DType, {
+        TYPE_SWITCH(param.type, DType, {
             op = new ActivationOp<DType, CPU>(param);
         })
         return op;
     }
 
-    ActivationParam::ActivationParam(MatrixType matrixType) : Parameter(matrixType) {
+    template <>
+    Operator* CreateOp<GPU>(ActivationParam &param) {
+        Operator *op = nullptr;
+        TYPE_SWITCH(param.type, DType, {
+            op = new ActivationOp<DType, GPU>(param);
+        })
+        return op;
+    }
 
+
+
+
+    ActivationOpProp::ActivationOpProp() {
+        param = new ActivationParam(kFloat);
+    }
+
+    ActivationOpProp::ActivationOpProp(const MatrixType type) {
+        param = new ActivationParam(type);
+    }
+
+    ActivationOpProp::~ActivationOpProp() {
+        delete param;
+    }
+
+    void ActivationOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape) {
+
+    }
+
+    Operator *ActivationOpProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
+                                               std::vector<Shape> &inShape, std::vector<Shape> &outShape) {
+        InferShape(inShape, outShape);
+        param->inputs = input;
+        param->outputs = output;
+        param->inputShapes = inShape;
+        param->outShapes = outShape;
+        BIND_DISPATCH(CreateOp, *param);
     }
 }

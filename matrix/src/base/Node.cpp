@@ -39,13 +39,11 @@ namespace matrix {
         std::vector<Blob> outputs;
         for(NodePtr node : this->inputs) {
             inputs.push_back(Blob(node->data_));
+            inputShapes.push_back(node->outputShapes);
         }
-
-        for(NodeWeakPtr node : this->outputs) {
-            outputs.push_back(Blob(node.lock()->data_));
-        }
-
-        op = opPtr->CreateOperator(this->context, inputs, outputs, inputShapes, outputShapes);
+        std::vector<Shape> out;
+        out.push_back(outputShapes);
+        op = opPtr->CreateOperator(this->context, inputs, outputs, inputShapes, out);
 
     }
 
