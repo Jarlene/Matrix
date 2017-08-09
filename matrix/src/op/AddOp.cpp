@@ -81,12 +81,15 @@ namespace matrix {
         param = new AddParam(MatrixType::kFloat);
     }
 
-    Operator *AddOpProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output, std::vector<Shape> &inShape, std::vector<Shape> &outShape) {
+    Operator *AddOpProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
+                                        std::vector<Shape> &inShape, std::vector<Shape> &outShape,
+                                        std::map<std::string, Any> &args) {
         InferShape(inShape, outShape);
         param->outputs = output;
         param->inputs = input;
         param->inputShapes = inShape;
         param->outShapes = outShape;
+        param->args = args;
         BIND_DISPATCH(CreateOp, *param);
     }
 

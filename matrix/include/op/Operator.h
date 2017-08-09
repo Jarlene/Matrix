@@ -5,7 +5,7 @@
 #ifndef MATRIX_OPERATOR_H
 #define MATRIX_OPERATOR_H
 
-#include <unordered_map>
+#include <map>
 #include <vector>
 #include "matrix/include/utils/MathTensor.h"
 #include "matrix/include/api/MatrixType.h"
@@ -147,7 +147,7 @@ namespace matrix {
 
 
     protected:
-        std::unordered_map<std::string, Any> args;
+        std::map<std::string, Any> args;
         std::vector<Blob> input;
         std::vector<Blob> output;
         std::vector<Shape> inputShapes;
@@ -175,7 +175,7 @@ namespace matrix {
         std::vector<Shape> inputShapes;
         std::vector<Blob> outputs;
         std::vector<Shape> outShapes;
-        std::unordered_map<std::string, Any> args;
+        std::map<std::string, Any> args;
     };
 
 
@@ -184,7 +184,9 @@ namespace matrix {
     public:
         OperatorProperty() = default;
         virtual void InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape)  = 0;
-        virtual Operator* CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output, std::vector<Shape> &inShape, std::vector<Shape> &outShape) {
+        virtual Operator* CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
+                                         std::vector<Shape> &inShape, std::vector<Shape> &outShape,
+                                         std::map<std::string, Any> &args) {
             return nullptr;
         }
     };

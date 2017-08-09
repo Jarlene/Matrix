@@ -72,12 +72,14 @@ namespace matrix {
     }
 
     Operator *LSTMOpProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
-                                         std::vector<Shape> &inShape, std::vector<Shape> &outShape) {
+                                         std::vector<Shape> &inShape, std::vector<Shape> &outShape,
+                                         std::map<std::string, Any> &args) {
         InferShape(inShape, outShape);
         param->inputs = input;
         param->outputs = output;
         param->inputShapes = inShape;
         param->outShapes = outShape;
+        param->args = args;
         BIND_DISPATCH(CreateOp, *param);
     }
 }

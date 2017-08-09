@@ -30,7 +30,9 @@ namespace matrix {
         DivOpProp(const MatrixType &type);
         ~DivOpProp();
         virtual void InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape);
-        virtual Operator* CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output, std::vector<Shape> &inShape, std::vector<Shape> &outShape) ;
+        virtual Operator* CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
+                                         std::vector<Shape> &inShape, std::vector<Shape> &outShape,
+                                         std::map<std::string, Any> &args) ;
     private:
         DivParam* param;
     };
