@@ -44,6 +44,8 @@ namespace matrix {
 
         std::map<std::string, Any> params;
 
+        long getMemorySize();
+
         void Build();
         NodePtr  GetGradNode(int input_index, NodePtr &pre, NodePtr &preGrad);
         static NodePtr Create();

@@ -46,4 +46,8 @@ namespace matrix {
 
     }
 
+    long Node::getMemorySize() {
+        return 0;
+    }
+
 }
