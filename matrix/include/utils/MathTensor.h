@@ -1,5 +1,5 @@
 //
-// Created by 郑珊 on 2017/8/5.
+// Created by Jarlene on 2017/8/5.
 //
 
 #ifndef MATRIX_MATHTENSOR_H
