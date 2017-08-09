@@ -5,7 +5,7 @@
 #ifndef MATRIX_NODE_H
 #define MATRIX_NODE_H
 #include <string>
-#include <unordered_map>
+#include <map>
 #include <vector>
 #include "matrix/include/utils/Any.h"
 #include "matrix/include/utils/Registry.h"
@@ -41,7 +41,7 @@ namespace matrix {
 
         std::vector<NodeWeakPtr> outputs;
 
-        std::unordered_map<std::string, Any> params;
+        std::map<std::string, Any> params;
 
         void Build();
         NodePtr  GetGradNode(int input_index, NodePtr &pre, NodePtr &preGrad);

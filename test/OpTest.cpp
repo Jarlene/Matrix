@@ -38,7 +38,9 @@ namespace matrix {
             std::vector<Shape> outShape;
             outShape.push_back(shape);
 
-            Operator* op = pro->CreateOperator(context, inputs, outputs, inShape, outShape);
+            std::map<std::string, Any> params;
+
+            Operator* op = pro->CreateOperator(context, inputs, outputs, inShape, outShape, params);
 
             op->AsyncRun();
             int dim = shape.Size();

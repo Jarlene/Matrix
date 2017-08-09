@@ -43,7 +43,7 @@ namespace matrix {
         }
         std::vector<Shape> out;
         out.push_back(outputShapes);
-        op = opPtr->CreateOperator(this->context, inputs, outputs, inputShapes, out);
+        op = opPtr->CreateOperator(this->context, inputs, outputs, inputShapes, out, params);
 
     }
 
