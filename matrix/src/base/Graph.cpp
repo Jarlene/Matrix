@@ -2,6 +2,7 @@
 // Created by Jarlene on 2017/8/9.
 //
 
+#include "matrix/include/executor/GraphAlgorithm.h"
 #include "matrix/include/base/Graph.h"
 #include "matrix/include/store/MemoryManager.h"
 
@@ -51,11 +52,55 @@ namespace matrix {
     }
 
     void Graph::Optimize() {
-
+        Unique();
     }
 
     void Graph::AllocateGraph(const std::vector<NodePtr> &fetch) {
+        GraphAlgorithm colorGraph;
+        colorGraph.Coloring(*this, graphColor_, fetch);
 
+        std::map<int, size_t> colorSize;
+
+        std::unordered_map<int, std::vector<int>> colors;
+
+        for (auto &it : graphColor_) {
+            int color = it.second;
+            colors[color].push_back(it.first);
+        }
+
+        for (auto &it : colors) {
+            auto vec = it.second;
+            long maxSize = 0;
+            for (int id : vec) {
+                auto node = GetNode(id);
+                if (maxSize < node->getMemorySize()) {
+                    maxSize = node->getMemorySize();
+                }
+            }
+            colorSize[it.first] = maxSize;
+        }
+        MemoryManager::Global()->GetCpuMemoryPool()->staticAllocate(colorSize);
+        for (auto &it : graphColor_) {
+            auto node = GetNode(it.first);
+            int color = it.second;
+            if (node->data_ == nullptr) {
+                node->data_= MemoryManager::Global()->GetCpuMemoryPool()->getMemory(color);
+            }
+        }
+        for (auto &item : nodes_) {
+
+
+            if (item->data_ == nullptr && item->op != nullptr) {
+                size_t m = item->getMemorySize();
+                if (m > 0) {
+                    item->data_ = MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(m);
+                } else {
+                    Logger::Global()->Info("%s not in memory", item->opName.c_str());
+                }
+
+            }
+        }
+        MemoryManager::Global()->GetCpuMemoryPool()->PrintMemory();
     }
 
     void Graph::SaveVariableData(std::string &file) {
@@ -77,6 +122,9 @@ namespace matrix {
     void Graph::Unique() {
         sort(nodes_.begin(), nodes_.end());
         nodes_.erase(unique(nodes_.begin(), nodes_.end()), nodes_.end());
+        for(NodePtr node : nodes_) {
+            node->Build();
+        }
     }
 
     void Graph::GeneratorGradNodes(const Symbol &symbol) {
@@ -84,6 +132,7 @@ namespace matrix {
         auto out = symbol.GetNode();
         auto ones = Node::Create();
         ones->opName = "variable";
+        ones->nodeName = "ones";
         ones->outputShapes = out->outputShapes;
         ones->params["constant"] = 1;
         gradMap[out] = ones;
@@ -97,6 +146,7 @@ namespace matrix {
             int index = 0;
             for (auto &item : pre->inputs) {
                 auto grad_node = item->GetGradNode(index, pre, gradMap[pre]);
+                gradMap[item] = grad_node;
                 auto it = std::find(stack.begin(), stack.end(), item);
                 if (it == stack.end()) {
                     stack.push_back(item);
@@ -119,7 +169,8 @@ namespace matrix {
             auto applyGradNode = Node::Create();
             applyGradNode->inputs.push_back(it.first);
             applyGradNode->inputs.push_back(it.second);
-            applyGradNode->opName= "applyGrad";
+            applyGradNode->opName = "applyGrad";
+            applyGradNode->nodeName = it.first->nodeName + "_apply_" + it.second->nodeName;
             applyGradNode->params["learning_rate"] = 0.001f;
             applyGradNode->params["apply_mode"] = kMomentum;
             applyGradNode->params["momentum_factor"] = 0.9f;

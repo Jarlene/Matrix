@@ -11,6 +11,8 @@ namespace matrix {
         auto symbol = VariableSymbol("variable");
         symbol.nodePtr->outputShapes = shape;
         symbol.nodePtr->context.type = type;
+        symbol.nodePtr->nodeName = name;
+        symbol.nodePtr->isVariable = true;
         return symbol;
     }
 

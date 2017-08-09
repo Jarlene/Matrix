@@ -20,6 +20,7 @@ namespace matrix {
     Symbol &Symbol::SetInput(const std::string &name, const Symbol &symbol) {
         this->nodePtr->inputs.push_back(symbol.nodePtr);
         symbol.nodePtr->outputs.push_back(std::weak_ptr<Node>(this->nodePtr));
+        symbol.nodePtr->nodeName = name;
         return *this;
     }
 

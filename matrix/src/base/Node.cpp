@@ -21,10 +21,16 @@ namespace matrix {
         auto t = Node::Create();
         t->isBackward = true;
         t->opName = "grad_" + this->opName;
+        t->nodeName = "grad_" + this->nodeName;
         t->params["input_idx"] = input_index;
         t->inputs.push_back(preGrad);
         t->inputs.push_back(pre);
-        t->inputs.insert(t->inputs.end(), pre->inputs.begin(), pre->inputs.end());
+        pre->outputs.push_back(std::weak_ptr<Node>(t));
+        preGrad->outputs.push_back(std::weak_ptr<Node>(t));
+        for(NodePtr ptr : pre->inputs) {
+            t->inputs.push_back(ptr);
+            ptr->outputs.push_back(std::weak_ptr<Node>(t));
+        }
         for (auto &it : pre->params) {
             t->params.insert(it);
         }
@@ -33,7 +39,9 @@ namespace matrix {
 
     void Node::Build() {
         OpPtr opPtr = Registry::Global()->GetOp(this->opName);
-
+        if (opPtr == nullptr) {
+            return;
+        }
         std::vector<Blob> inputs;
         std::vector<Blob> outputs;
         for(NodePtr node : this->inputs) {

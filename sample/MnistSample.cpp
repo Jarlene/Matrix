@@ -6,6 +6,8 @@
 #include <matrix/include/api/VariableSymbol.h>
 #include <matrix/include/api/PlaceHolderSymbol.h>
 #include <matrix/include/models/AlexNet.h>
+#include <matrix/include/executor/Executor.h>
+
 using namespace matrix;
 
 
@@ -16,8 +18,8 @@ Symbol LogisticRegression(Symbol input, int batchSize, int hideNum) {
 
     auto y1 = Symbol("fullConnected")
             .SetInput("x", input)
-            .SetInput("w", w1)
-            .SetInput("b", b1);
+            .SetInput("w1", w1)
+            .SetInput("b1", b1);
 
     auto act1 = Symbol("activation")
             .SetInput("y1", y1)
@@ -27,9 +29,9 @@ Symbol LogisticRegression(Symbol input, int batchSize, int hideNum) {
     auto b2 = VariableSymbol::Create("b2", ShapeN(batchSize));
 
     auto y2 = Symbol("fullConnected")
-            .SetInput("x", act1)
-            .SetInput("w", w2)
-            .SetInput("b", b2);
+            .SetInput("act1", act1)
+            .SetInput("w2", w2)
+            .SetInput("b2", b2);
 
     auto out = Symbol("output")
             .SetInput("y2", y2)
@@ -62,6 +64,13 @@ int main() {
             .SetInput("logistic", symbol)
             .SetInput("y", label);
 
+    Context context;
+    context.type = kFloat;
+    context.phase = TRAIN;
+    context.mode = kCpu;
+
+    auto executor = std::make_shared<Executor>(loss, context);
+    executor->runSync();
 
     return 0;
 }
