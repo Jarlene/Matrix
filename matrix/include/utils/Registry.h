@@ -15,8 +15,8 @@
 
 
 #define REGISTER_OP_PROPERTY(name, classname, ...) \
-     const matrix::OpPtr op = std::make_shared<matrix::classname>(__VA_ARGS__); \
-     int name##_##classname = matrix::Registry::Global()->RegisterOp(STR(name), op); \
+     const matrix::OpPtr op_##name = std::make_shared<matrix::classname>(__VA_ARGS__); \
+     int name##_##classname = matrix::Registry::Global()->RegisterOp(STR(name), op_##name); \
 
 namespace matrix {
 
