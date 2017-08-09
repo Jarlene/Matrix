@@ -35,6 +35,11 @@ namespace matrix {
         kMSE
     };
 
+    enum OutputMode {
+        kSoftmax = 0,
+
+    };
+
     enum ApplyGradMode {
         kSGD = 0,
         kMomentum,
