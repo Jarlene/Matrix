@@ -83,9 +83,9 @@ namespace matrix {
         std::map<NodePtr, NodePtr> gradMap;
         auto out = symbol.GetNode();
         auto ones = Node::Create();
-        ones->opName = "constant";
+        ones->opName = "variable";
         ones->outputShapes = out->outputShapes;
-        ones->params["value"] = 1.0;
+        ones->params["constant"] = 1;
         gradMap[out] = ones;
 
         std::vector<NodePtr> stack;
