@@ -5,8 +5,7 @@
 #include <matrix/include/api/Symbol.h>
 #include <matrix/include/api/VariableSymbol.h>
 #include <matrix/include/api/PlaceHolderSymbol.h>
-#include <matrix/include/api/ConstantSymbol.h>
-
+#include <matrix/include/models/AlexNet.h>
 using namespace matrix;
 
 
@@ -40,10 +39,10 @@ Symbol LogisticRegression(Symbol input, int batchSize, int hideNum) {
 }
 
 
-Symbol Connvolution(Symbol input, int batchSize) {
-    int a = 2;
-    auto symbol = ConstantSymbol::Create<int>("constant", a);
-    return Symbol("");
+Symbol Connvolution(Symbol &input, Symbol &label, int batchSize) {
+
+    auto symbol = AlexSymbol(input, label);
+    return symbol;
 }
 
 
