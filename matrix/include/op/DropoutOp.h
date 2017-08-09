@@ -20,7 +20,7 @@ namespace matrix {
     };
 
     template <typename xpu>
-    Operator* CreateOp(DropoutParam &param);
+    Operator* CreateOp(DropoutParam &param, long *size);
 
 
     class DropoutOpProp : public OperatorProperty {

@@ -34,19 +34,29 @@ namespace matrix {
 
 
     template <>
-    Operator* CreateOp<CPU>(GRUParam &param) {
+    Operator* CreateOp<CPU>(GRUParam &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new GRUOp<DType, CPU>(param);
+            int shape = 0;
+            for (Shape s : param.outShapes) {
+                shape += s.Size();
+            }
+            *size = sizeof(DType) * shape;
         })
         return op;
     }
 
     template <>
-    Operator* CreateOp<GPU>(GRUParam &param) {
+    Operator* CreateOp<GPU>(GRUParam &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new GRUOp<DType, GPU>(param);
+            int shape = 0;
+            for (Shape s : param.outShapes) {
+                shape += s.Size();
+            }
+            *size = sizeof(DType) * shape;
         })
         return op;
     }
@@ -80,6 +90,6 @@ namespace matrix {
         param->inputShapes = inShape;
         param->outShapes = outShape;
         param->args = args;
-        BIND_DISPATCH(CreateOp, *param);
+        BIND_DISPATCH(CreateOp, *param, &memorySize);
     }
 }

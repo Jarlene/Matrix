@@ -20,7 +20,7 @@ namespace matrix {
     };
 
     template <typename xpu>
-    Operator* CreateOp(PoolingParam &param);
+    Operator* CreateOp(PoolingParam &param, long *size);
 
 
     class PoolingOpProp : public OperatorProperty {

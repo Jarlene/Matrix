@@ -34,7 +34,7 @@ namespace matrix {
 
 
     template <typename Context>
-    Operator* CreateOp(LSTMParam &param);
+    Operator* CreateOp(LSTMParam &param, long *size);
 
 
     class LSTMOpProp : public OperatorProperty {

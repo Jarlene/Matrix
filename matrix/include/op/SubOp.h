@@ -20,7 +20,7 @@ namespace matrix {
     };
 
     template <typename xpu>
-    Operator* CreateOp(SubParam &param);
+    Operator* CreateOp(SubParam &param, long *size);
 
 
     class SubOpProp : public OperatorProperty {

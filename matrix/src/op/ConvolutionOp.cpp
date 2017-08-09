@@ -36,19 +36,29 @@ namespace matrix {
 
 
     template <>
-    Operator* CreateOp<CPU>(ConvolutionParam &param) {
+    Operator* CreateOp<CPU>(ConvolutionParam &param, long* size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new ConvolutionOp<DType, CPU>(param);
+            int shape = 0;
+            for (Shape s : param.outShapes) {
+                shape += s.Size();
+            }
+            *size = sizeof(DType) * shape;
         })
         return op;
     }
 
     template <>
-    Operator* CreateOp<GPU>(ConvolutionParam &param) {
+    Operator* CreateOp<GPU>(ConvolutionParam &param, long* size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new ConvolutionOp<DType, GPU>(param);
+            int shape = 0;
+            for (Shape s : param.outShapes) {
+                shape += s.Size();
+            }
+            *size = sizeof(DType) * shape;
         })
         return op;
     }
@@ -78,6 +88,6 @@ namespace matrix {
         param->inputShapes = inShape;
         param->outShapes = outShape;
         param->args = args;
-        BIND_DISPATCH(CreateOp, *param);
+        BIND_DISPATCH(CreateOp, *param, &memorySize);
     }
 }

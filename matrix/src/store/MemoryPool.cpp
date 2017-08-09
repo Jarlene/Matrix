@@ -90,6 +90,6 @@ namespace matrix {
     }
 
     void MemoryPool::PrintMemory() {
-      Logger::Global()->Info("the all memory is %f MB", (poolMemorySize_ * 1.0f)/(1024 * 1024));
+      Logger::Global()->Info("the all memory is %f MB \n", (poolMemorySize_ * 1.0f)/(1024 * 1024));
     }
 }

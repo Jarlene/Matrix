@@ -38,6 +38,8 @@ namespace matrix {
 
         void* data_;
 
+        long memorySize;
+
         bool isBackward = false;
 
         std::vector<NodePtr> inputs;

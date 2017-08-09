@@ -21,7 +21,7 @@ namespace matrix {
     };
 
     template <typename Context>
-    Operator* CreateOp(FullConnectedParam &param);
+    Operator* CreateOp(FullConnectedParam &param, long *size);
 
 
     class FullConnectedOpProp : public OperatorProperty {

@@ -35,19 +35,29 @@ namespace matrix {
 
 
     template <>
-    Operator* CreateOp<CPU>(FullConnectedParam &param) {
+    Operator* CreateOp<CPU>(FullConnectedParam &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new FullConnectedOp<DType, CPU>(param);
+            int shape = 0;
+            for (Shape s : param.outShapes) {
+                shape += s.Size();
+            }
+            *size = sizeof(DType) * shape;
         })
         return op;
     }
 
     template <>
-    Operator* CreateOp<GPU>(FullConnectedParam &param) {
+    Operator* CreateOp<GPU>(FullConnectedParam &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new FullConnectedOp<DType, GPU>(param);
+            int shape = 0;
+            for (Shape s : param.outShapes) {
+                shape += s.Size();
+            }
+            *size = sizeof(DType) * shape;
         })
         return op;
     }
@@ -81,7 +91,7 @@ namespace matrix {
         param->inputShapes = inShape;
         param->outShapes = outShape;
         param->args = args;
-        BIND_DISPATCH(CreateOp, *param);
+        BIND_DISPATCH(CreateOp, *param, &memorySize);
     }
 
 }

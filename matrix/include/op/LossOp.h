@@ -21,7 +21,7 @@ namespace matrix {
     };
 
     template <typename Context>
-    Operator* CreateOp(LossParam &param);
+    Operator* CreateOp(LossParam &param, long *size);
 
 
     class LossOpProp : public OperatorProperty {

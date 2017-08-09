@@ -21,7 +21,7 @@ namespace matrix {
 
 
     template <typename xpu>
-    Operator* CreateOp(DivParam &param);
+    Operator* CreateOp(DivParam &param, long *size);
 
 
     class DivOpProp : public OperatorProperty {

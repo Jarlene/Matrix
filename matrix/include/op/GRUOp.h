@@ -20,7 +20,7 @@ namespace matrix {
     };
 
     template <typename Context>
-    Operator* CreateOp(GRUParam &param);
+    Operator* CreateOp(GRUParam &param, long *size);
 
 
     class GRUOpProp : public OperatorProperty {

@@ -25,7 +25,7 @@ namespace matrix {
 
 
     template <typename xpu>
-    Operator* CreateOp(PredictionParam &param);
+    Operator* CreateOp(PredictionParam &param, long *size);
 
 
 

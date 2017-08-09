@@ -189,6 +189,13 @@ namespace matrix {
                                          std::map<std::string, Any> &args) {
             return nullptr;
         }
+
+        long GetMemorySize() {
+            return memorySize;
+        }
+
+    protected:
+        long memorySize = 0;
     };
 
 

@@ -28,7 +28,7 @@ namespace matrix {
 
 
     template <typename xpu>
-    Operator* CreateOp(AccuracyParam &param);
+    Operator* CreateOp(AccuracyParam &param, long *size);
 
 
     class AccuracyOpProp : public OperatorProperty {

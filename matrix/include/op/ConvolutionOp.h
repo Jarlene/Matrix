@@ -22,7 +22,7 @@ namespace matrix {
     };
 
     template <typename Context>
-    Operator* CreateOp(ConvolutionParam &param);
+    Operator* CreateOp(ConvolutionParam &param, long *size);
 
     class ConvolutionOpProp : public OperatorProperty {
     public:

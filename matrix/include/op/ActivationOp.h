@@ -23,7 +23,7 @@ namespace matrix {
 
 
     template <typename Context>
-    Operator* CreateOp(ActivationParam &param);
+    Operator* CreateOp(ActivationParam &param, long *size);
 
     class ActivationOpProp : public OperatorProperty {
     public:

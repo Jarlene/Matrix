@@ -24,7 +24,7 @@ namespace matrix {
     };
 
     template <typename Context>
-    Operator* CreateOp(MulParam &param);
+    Operator* CreateOp(MulParam &param, long *size);
 
 
     class MulOpProp : public OperatorProperty {

@@ -95,7 +95,7 @@ namespace matrix {
                 if (m > 0) {
                     item->data_ = MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(m);
                 } else {
-                    Logger::Global()->Info("%s not in memory", item->opName.c_str());
+                    Logger::Global()->Info("%s not in memory \n", item->nodeName.c_str());
                 }
 
             }
