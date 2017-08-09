@@ -58,7 +58,7 @@ namespace matrix {
         param = new VariableParam(kFloat);
     }
 
-    VariableOpProp::VariableOpProp(const MatrixType type) {
+    VariableOpProp::VariableOpProp(const MatrixType &type) {
         param = new VariableParam(type);
     }
 
@@ -67,7 +67,9 @@ namespace matrix {
     }
 
     void VariableOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape) {
-
+        if (outShape.size() == 0) {
+            Logger::Global()->Fatal("variable input shapes must lager then 0\n");
+        }
     }
 
     Operator *VariableOpProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,

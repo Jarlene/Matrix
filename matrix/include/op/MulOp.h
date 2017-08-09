@@ -30,7 +30,7 @@ namespace matrix {
     class MulOpProp : public OperatorProperty {
     public:
         MulOpProp();
-        MulOpProp(const MatrixType type);
+        MulOpProp(const MatrixType &type);
         ~MulOpProp();
         virtual void InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape);
         virtual Operator* CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output, std::vector<Shape> &inShape, std::vector<Shape> &outShape) ;

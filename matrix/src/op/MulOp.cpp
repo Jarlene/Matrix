@@ -57,7 +57,7 @@ namespace matrix {
         param = new MulParam(kFloat);
     }
 
-    MulOpProp::MulOpProp(const MatrixType type) {
+    MulOpProp::MulOpProp(const MatrixType &type) {
         param = new MulParam(type);
     }
 

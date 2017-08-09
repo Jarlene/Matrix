@@ -58,7 +58,7 @@ namespace matrix {
         param = new ActivationParam(kFloat);
     }
 
-    ActivationOpProp::ActivationOpProp(const MatrixType type) {
+    ActivationOpProp::ActivationOpProp(const MatrixType &type) {
         param = new ActivationParam(type);
     }
 

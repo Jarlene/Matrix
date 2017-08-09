@@ -34,15 +34,50 @@ namespace matrix {
 
 
     template <>
-    Operator* CreateOp<CPU>(GRUParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out) {
+    Operator* CreateOp<CPU>(GRUParam &param) {
         Operator *op = nullptr;
-        TYPE_SWITCH(type, DType, {
+        TYPE_SWITCH(param.type, DType, {
             op = new GRUOp<DType, CPU>(param);
+        })
+        return op;
+    }
+
+    template <>
+    Operator* CreateOp<GPU>(GRUParam &param) {
+        Operator *op = nullptr;
+        TYPE_SWITCH(param.type, DType, {
+            op = new GRUOp<DType, GPU>(param);
         })
         return op;
     }
 
     GRUParam::GRUParam(MatrixType matrixType) : Parameter(matrixType) {
 
+    }
+
+    GRUOpProp::GRUOpProp() {
+        param = new GRUParam(kFloat);
+    }
+
+    GRUOpProp::GRUOpProp(const MatrixType &type) {
+        param = new GRUParam(type);
+    }
+
+    GRUOpProp::~GRUOpProp() {
+        delete param;
+    }
+
+    void GRUOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape) {
+
+    }
+
+    Operator *GRUOpProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
+                                        std::vector<Shape> &inShape, std::vector<Shape> &outShape) {
+        InferShape(inShape, outShape);
+        param->inputs = input;
+        param->outputs = output;
+        param->inputShapes = inShape;
+        param->outShapes = outShape;
+        BIND_DISPATCH(CreateOp, *param);
     }
 }

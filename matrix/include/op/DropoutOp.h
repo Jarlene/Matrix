@@ -19,9 +19,21 @@ namespace matrix {
     DISABLE_COPY_AND_ASSIGN(Dropout);
     };
 
-    template <typename Context>
-    Operator* CreateOp(DropoutParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out);
+    template <typename xpu>
+    Operator* CreateOp(DropoutParam &param);
 
+
+    class DropoutOpProp : public OperatorProperty {
+    public:
+        DropoutOpProp();
+        DropoutOpProp(const MatrixType &type);
+        ~DropoutOpProp();
+        virtual void InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape);
+        virtual Operator* CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output, std::vector<Shape> &inShape, std::vector<Shape> &outShape) ;
+    private:
+        DropoutParam* param;
+    };
 }
+REGISTER_OP_PROPERTY(dropout, DropoutOpProp);
 
 #endif //MATRIX_DROPOUTOP_H

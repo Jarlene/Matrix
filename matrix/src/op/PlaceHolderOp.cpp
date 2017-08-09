@@ -58,7 +58,7 @@ namespace matrix {
         param = new PlaceHolderParam(kFloat);
     }
 
-    PlaceHolderOpProp::PlaceHolderOpProp(const MatrixType type) {
+    PlaceHolderOpProp::PlaceHolderOpProp(const MatrixType &type) {
         param = new PlaceHolderParam(type);
     }
 

@@ -34,7 +34,7 @@ namespace matrix {
     class AccuracyOpProp : public OperatorProperty {
     public:
         AccuracyOpProp();
-        AccuracyOpProp(const MatrixType type);
+        AccuracyOpProp(const MatrixType &type);
         ~AccuracyOpProp();
         virtual void InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape);
         virtual Operator* CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output, std::vector<Shape> &inShape, std::vector<Shape> &outShape) ;

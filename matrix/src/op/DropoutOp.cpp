@@ -34,10 +34,19 @@ namespace matrix {
 
 
     template <>
-    Operator* CreateOp<CPU>(DropoutParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out) {
+    Operator* CreateOp<CPU>(DropoutParam &param) {
         Operator *op = nullptr;
-        TYPE_SWITCH(type, DType, {
+        TYPE_SWITCH(param.type, DType, {
             op = new DropoutOp<DType, CPU>(param);
+        })
+        return op;
+    }
+
+    template <>
+    Operator* CreateOp<GPU>(DropoutParam &param) {
+        Operator *op = nullptr;
+        TYPE_SWITCH(param.type, DType, {
+            op = new DropoutOp<DType, GPU>(param);
         })
         return op;
     }
@@ -45,4 +54,32 @@ namespace matrix {
     DropoutParam::DropoutParam(MatrixType matrixType) : Parameter(matrixType) {
 
     }
+
+    DropoutOpProp::DropoutOpProp() {
+        param = new DropoutParam(kFloat);
+    }
+
+    DropoutOpProp::DropoutOpProp(const MatrixType &type) {
+        param = new DropoutParam(type);
+    }
+
+    DropoutOpProp::~DropoutOpProp() {
+        delete param;
+    }
+
+    void DropoutOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape) {
+
+    }
+
+    Operator *DropoutOpProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
+                                            std::vector<Shape> &inShape, std::vector<Shape> &outShape) {
+        InferShape(inShape, outShape);
+        param->inputs = input;
+        param->outputs = output;
+        param->inputShapes = inShape;
+        param->outShapes = outShape;
+        BIND_DISPATCH(CreateOp, *param);
+    }
+
+
 }

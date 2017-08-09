@@ -34,15 +34,50 @@ namespace matrix {
 
 
     template <>
-    Operator* CreateOp<CPU>(LSTMParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out) {
+    Operator* CreateOp<CPU>(LSTMParam &param) {
         Operator *op = nullptr;
-        TYPE_SWITCH(type, DType, {
+        TYPE_SWITCH(param.type, DType, {
             op = new LSTMOp<DType, CPU>(param);
+        })
+        return op;
+    }
+
+    template <>
+    Operator* CreateOp<GPU>(LSTMParam &param) {
+        Operator *op = nullptr;
+        TYPE_SWITCH(param.type, DType, {
+            op = new LSTMOp<DType, GPU>(param);
         })
         return op;
     }
 
     LSTMParam::LSTMParam(MatrixType matrixType) : Parameter(matrixType) {
 
+    }
+
+    LSTMOpProp::LSTMOpProp() {
+        param = new LSTMParam(kFloat);
+    }
+
+    LSTMOpProp::LSTMOpProp(const MatrixType &type) {
+        param = new LSTMParam(type);
+    }
+
+    LSTMOpProp::~LSTMOpProp() {
+        delete param;
+    }
+
+    void LSTMOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape) {
+
+    }
+
+    Operator *LSTMOpProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
+                                         std::vector<Shape> &inShape, std::vector<Shape> &outShape) {
+        InferShape(inShape, outShape);
+        param->inputs = input;
+        param->outputs = output;
+        param->inputShapes = inShape;
+        param->outShapes = outShape;
+        BIND_DISPATCH(CreateOp, *param);
     }
 }

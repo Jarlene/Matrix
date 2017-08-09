@@ -42,7 +42,7 @@ namespace matrix {
 
         Symbol operator/(const Symbol &symbol);
 
-    private:
+    protected:
        NodePtr nodePtr;
     };
 }

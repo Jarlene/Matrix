@@ -21,8 +21,21 @@ namespace matrix {
     };
 
     template <typename Context>
-    Operator* CreateOp(FullConnectedParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out);
+    Operator* CreateOp(FullConnectedParam &param);
 
+
+    class FullConnectedOpProp : public OperatorProperty {
+    public:
+        FullConnectedOpProp();
+        FullConnectedOpProp(const MatrixType &type);
+        ~FullConnectedOpProp();
+        virtual void InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape);
+        virtual Operator* CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output, std::vector<Shape> &inShape, std::vector<Shape> &outShape) ;
+    private:
+        FullConnectedParam* param;
+    };
 }
+
+REGISTER_OP_PROPERTY(fullConnected, FullConnectedOpProp);
 
 #endif //MATRIX_FULLCONNECTEDOP_H

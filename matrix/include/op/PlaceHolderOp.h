@@ -33,7 +33,7 @@ namespace matrix {
     class PlaceHolderOpProp : public OperatorProperty {
     public:
         PlaceHolderOpProp();
-        PlaceHolderOpProp(const MatrixType type);
+        PlaceHolderOpProp(const MatrixType &type);
         ~PlaceHolderOpProp();
         virtual void InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape);
         virtual Operator* CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output, std::vector<Shape> &inShape, std::vector<Shape> &outShape) ;

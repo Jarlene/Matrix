@@ -20,8 +20,19 @@ namespace matrix {
     };
 
     template <typename Context>
-    Operator* CreateOp(GRUParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out);
+    Operator* CreateOp(GRUParam &param);
 
+
+    class GRUOpProp : public OperatorProperty {
+    public:
+        GRUOpProp();
+        GRUOpProp(const MatrixType &type);
+        ~GRUOpProp();
+        virtual void InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape);
+        virtual Operator* CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output, std::vector<Shape> &inShape, std::vector<Shape> &outShape) ;
+    private:
+        GRUParam* param;
+    };
 }
-
+REGISTER_OP_PROPERTY(gru, GRUOpProp);
 #endif //MATRIX_GRUOP_H

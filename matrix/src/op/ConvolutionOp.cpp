@@ -57,7 +57,7 @@ namespace matrix {
         param = new ConvolutionParam(kFloat);
     }
 
-    ConvolutionOpProp::ConvolutionOpProp(const MatrixType type) {
+    ConvolutionOpProp::ConvolutionOpProp(const MatrixType &type) {
         param = new ConvolutionParam(type);
     }
 

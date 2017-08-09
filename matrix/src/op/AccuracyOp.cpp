@@ -68,7 +68,7 @@ namespace matrix {
 
     }
 
-    AccuracyOpProp::AccuracyOpProp(const MatrixType type) {
+    AccuracyOpProp::AccuracyOpProp(const MatrixType &type) {
         param = new AccuracyParam(type);
     }
 

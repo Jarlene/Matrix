@@ -35,10 +35,19 @@ namespace matrix {
 
 
     template <>
-    Operator* CreateOp<CPU>(FullConnectedParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out) {
+    Operator* CreateOp<CPU>(FullConnectedParam &param) {
         Operator *op = nullptr;
-        TYPE_SWITCH(type, DType, {
+        TYPE_SWITCH(param.type, DType, {
             op = new FullConnectedOp<DType, CPU>(param);
+        })
+        return op;
+    }
+
+    template <>
+    Operator* CreateOp<GPU>(FullConnectedParam &param) {
+        Operator *op = nullptr;
+        TYPE_SWITCH(param.type, DType, {
+            op = new FullConnectedOp<DType, GPU>(param);
         })
         return op;
     }
@@ -46,4 +55,31 @@ namespace matrix {
     FullConnectedParam::FullConnectedParam(MatrixType matrixType) : Parameter(matrixType) {
 
     }
+
+    FullConnectedOpProp::FullConnectedOpProp() {
+        param = new FullConnectedParam(kFloat);
+    }
+
+    FullConnectedOpProp::FullConnectedOpProp(const MatrixType &type) {
+        param = new FullConnectedParam(type);
+    }
+
+    FullConnectedOpProp::~FullConnectedOpProp() {
+        delete param;
+    }
+
+    void FullConnectedOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape) {
+
+    }
+
+    Operator *FullConnectedOpProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
+                                                  std::vector<Shape> &inShape, std::vector<Shape> &outShape) {
+        InferShape(inShape, outShape);
+        param->inputs = input;
+        param->outputs = output;
+        param->inputShapes = inShape;
+        param->outShapes = outShape;
+        BIND_DISPATCH(CreateOp, *param);
+    }
+
 }

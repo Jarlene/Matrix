@@ -54,7 +54,8 @@ namespace matrix {
 
     enum Phase {
         TRAIN = 0,
-        TEST
+        TEST,
+        PREDICTION
     };
 
     struct CPU {
@@ -69,6 +70,7 @@ namespace matrix {
 
 
     struct Context {
+        MatrixType type;
         Phase phase;
         RunMode mode;
     };

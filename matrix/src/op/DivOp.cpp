@@ -35,15 +35,50 @@ namespace matrix {
 
 
     template <>
-    Operator* CreateOp<CPU>(DivParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out) {
+    Operator* CreateOp<CPU>(DivParam &param) {
         Operator *op = nullptr;
-        TYPE_SWITCH(type, DType, {
+        TYPE_SWITCH(param.type, DType, {
             op = new DivOp<DType, CPU>(param);
+        })
+        return op;
+    }
+
+    template <>
+    Operator* CreateOp<GPU>(DivParam &param) {
+        Operator *op = nullptr;
+        TYPE_SWITCH(param.type, DType, {
+            op = new DivOp<DType, GPU>(param);
         })
         return op;
     }
 
     DivParam::DivParam(MatrixType matrixType) : Parameter(matrixType) {
 
+    }
+
+    DivOpProp::DivOpProp() {
+        param = new DivParam(kFloat);
+    }
+
+    DivOpProp::DivOpProp(const MatrixType &type) {
+        param = new DivParam(type);
+    }
+
+    DivOpProp::~DivOpProp() {
+        delete param;
+    }
+
+    void DivOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape) {
+
+    }
+
+    Operator *DivOpProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
+                                        std::vector<Shape> &inShape, std::vector<Shape> &outShape) {
+        InferShape(inShape, outShape);
+        param->inputs = input;
+        param->outputs = output;
+        param->inputShapes = inShape;
+        param->outShapes = outShape;
+        BIND_DISPATCH(CreateOp, *param);
     }
 }

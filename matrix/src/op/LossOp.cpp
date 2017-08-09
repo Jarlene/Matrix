@@ -36,15 +36,50 @@ namespace matrix {
 
 
     template <>
-    Operator* CreateOp<CPU>(LossParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out) {
+    Operator* CreateOp<CPU>(LossParam &param) {
         Operator *op = nullptr;
-        TYPE_SWITCH(type, DType, {
+        TYPE_SWITCH(param.type, DType, {
             op = new LossOp<DType, CPU>(param);
+        })
+        return op;
+    }
+
+    template <>
+    Operator* CreateOp<GPU>(LossParam &param) {
+        Operator *op = nullptr;
+        TYPE_SWITCH(param.type, DType, {
+            op = new LossOp<DType, GPU>(param);
         })
         return op;
     }
 
     LossParam::LossParam(MatrixType matrixType) : Parameter(matrixType) {
 
+    }
+
+    LossOpProp::LossOpProp() {
+        param = new LossParam(kFloat);
+    }
+
+    LossOpProp::LossOpProp(const MatrixType &type) {
+        param = new LossParam(type);
+    }
+
+    LossOpProp::~LossOpProp() {
+        delete param;
+    }
+
+    void LossOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape) {
+
+    }
+
+    Operator *LossOpProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
+                                         std::vector<Shape> &inShape, std::vector<Shape> &outShape) {
+        InferShape(inShape, outShape);
+        param->inputs = input;
+        param->outputs = output;
+        param->inputShapes = inShape;
+        param->outShapes = outShape;
+        BIND_DISPATCH(CreateOp, *param);
     }
 }

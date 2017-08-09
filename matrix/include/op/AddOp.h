@@ -31,7 +31,7 @@ namespace matrix {
     class AddOpProp : public OperatorProperty {
     public:
         AddOpProp();
-        AddOpProp(const MatrixType type);
+        AddOpProp(const MatrixType &type);
         ~AddOpProp();
         virtual void InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape);
         virtual Operator* CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output, std::vector<Shape> &inShape, std::vector<Shape> &outShape) ;

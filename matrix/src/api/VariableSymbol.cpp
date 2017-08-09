@@ -7,11 +7,19 @@
 
 namespace matrix {
 
-    Symbol VariableSymbol::Create(const std::string &name, const Shape &shape,  const MatrixType &type) {
-        auto symbol = Symbol("variable")
-                .SetParam("shape", shape)
-                .Build();
+    VariableSymbol VariableSymbol::Create(const std::string &name, const Shape &shape,  const MatrixType &type) {
+        auto symbol = VariableSymbol("variable");
+        symbol.nodePtr->outputShapes = shape;
+        symbol.nodePtr->context.type = type;
         return symbol;
+    }
+
+    VariableSymbol::VariableSymbol() {
+
+    }
+
+    VariableSymbol::VariableSymbol(const std::string &name) : Symbol(name) {
+
     }
 
 }

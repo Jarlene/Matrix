@@ -19,9 +19,22 @@ namespace matrix {
     DISABLE_COPY_AND_ASSIGN(Sub);
     };
 
-    template <typename Context>
-    Operator* CreateOp(SubParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out);
+    template <typename xpu>
+    Operator* CreateOp(SubParam &param);
 
+
+    class SubOpProp : public OperatorProperty {
+    public:
+        SubOpProp();
+        SubOpProp(const MatrixType &type);
+        ~SubOpProp();
+        virtual void InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape);
+        virtual Operator* CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output, std::vector<Shape> &inShape, std::vector<Shape> &outShape) ;
+    private:
+        SubParam* param;
+    };
 }
+
+REGISTER_OP_PROPERTY(sub, SubOpProp);
 
 #endif //MATRIX_SUBOP_H

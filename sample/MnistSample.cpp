@@ -5,6 +5,7 @@
 #include <matrix/include/api/Symbol.h>
 #include <matrix/include/api/VariableSymbol.h>
 #include <matrix/include/api/PlaceHolderSymbol.h>
+#include <matrix/include/api/ConstantSymbol.h>
 
 using namespace matrix;
 
@@ -22,6 +23,8 @@ Symbol LogisticRegression(Symbol input, int batchSize, int hideNum) {
 
 
 Symbol Connvolution(Symbol input, int batchSize) {
+    int a = 2;
+    auto symbol = ConstantSymbol::Create<int>("constant", a);
     return Symbol("");
 }
 

@@ -20,9 +20,22 @@ namespace matrix {
     };
 
 
-    template <typename Context>
-    Operator* CreateOp(DivParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out);
+    template <typename xpu>
+    Operator* CreateOp(DivParam &param);
+
+
+    class DivOpProp : public OperatorProperty {
+    public:
+        DivOpProp();
+        DivOpProp(const MatrixType &type);
+        ~DivOpProp();
+        virtual void InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape);
+        virtual Operator* CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output, std::vector<Shape> &inShape, std::vector<Shape> &outShape) ;
+    private:
+        DivParam* param;
+    };
 
 }
+REGISTER_OP_PROPERTY(div, DivOpProp);
 
 #endif //MATRIX_DIVOP_H

@@ -73,7 +73,7 @@ namespace matrix {
         return op;
     }
 
-    AddOpProp::AddOpProp(const MatrixType type)  {
+    AddOpProp::AddOpProp(const MatrixType &type)  {
         param = new AddParam(type);
     }
 

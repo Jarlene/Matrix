@@ -27,7 +27,7 @@ namespace matrix {
     class ConvolutionOpProp : public OperatorProperty {
     public:
         ConvolutionOpProp();
-        ConvolutionOpProp(const MatrixType type);
+        ConvolutionOpProp(const MatrixType &type);
         ~ConvolutionOpProp();
         virtual void InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape);
         virtual Operator* CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output, std::vector<Shape> &inShape, std::vector<Shape> &outShape) ;

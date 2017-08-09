@@ -41,7 +41,7 @@ namespace matrix {
     Symbol Symbol::operator+(const Symbol &symbol) {
         auto s = Symbol("add")
                 .SetInput("first", *this)
-                .SetInput("third", symbol)
+                .SetInput("second", symbol)
                 .Build();
         return s;
     }
@@ -49,7 +49,7 @@ namespace matrix {
     Symbol Symbol::operator-(const Symbol &symbol) {
         auto s = Symbol("sub")
                 .SetInput("first", *this)
-                .SetInput("third", symbol)
+                .SetInput("second", symbol)
                 .Build();
         return s;
     }
@@ -57,7 +57,7 @@ namespace matrix {
     Symbol Symbol::operator*(const Symbol &symbol) {
         auto s = Symbol("mul")
                 .SetInput("first", *this)
-                .SetInput("third", symbol)
+                .SetInput("second", symbol)
                 .Build();
         return s;
     }
@@ -65,7 +65,7 @@ namespace matrix {
     Symbol Symbol::operator/(const Symbol &symbol) {
         auto s = Symbol("div")
                 .SetInput("first", *this)
-                .SetInput("third", symbol)
+                .SetInput("second", symbol)
                 .Build();
         return s;
     }

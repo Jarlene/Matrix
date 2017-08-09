@@ -21,8 +21,21 @@ namespace matrix {
     };
 
     template <typename Context>
-    Operator* CreateOp(LossParam param, MatrixType type, std::vector<Shape> &in, std::vector<Shape> out);
+    Operator* CreateOp(LossParam &param);
 
+
+    class LossOpProp : public OperatorProperty {
+    public:
+        LossOpProp();
+        LossOpProp(const MatrixType &type);
+        ~LossOpProp();
+        virtual void InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape);
+        virtual Operator* CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output, std::vector<Shape> &inShape, std::vector<Shape> &outShape) ;
+    private:
+        LossParam* param;
+    };
 }
+
+REGISTER_OP_PROPERTY(loss, LossOpProp);
 
 #endif //MATRIX_LOSSOP_H
