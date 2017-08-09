@@ -45,6 +45,10 @@ using EigenVector = Map<Matrix<T, Dynamic, 1>>;
 
 namespace matrix {
 
+
+    static struct timeval tv;
+    static std::mt19937 rnd_engine_;
+
     enum BlasTranspose {
         NoTrans,
         Trans,
@@ -578,6 +582,30 @@ namespace matrix {
 #endif
         for (int i = 0; i < N; ++i) {
             res += x[i] * y[i];
+        }
+    }
+
+
+    template <class T>
+    inline void Value(const int N, T* out, T val) {
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+        for (int i = 0; i < N; ++i) {
+            out[i] = val;
+        }
+    }
+
+    template <class T>
+    inline void Random(const int N, T *out, T mu, T sigma) {
+        gettimeofday(&tv,NULL);
+        std::normal_distribution<T> dist_normal(mu, sigma);
+        rnd_engine_.seed((unsigned int) (tv.tv_sec * 1000 * 1000 + tv.tv_usec));
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+        for (int i = 0; i < N; ++i) {
+            out[i] = dist_normal(rnd_engine_);
         }
     }
 

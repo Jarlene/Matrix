@@ -8,12 +8,26 @@ namespace matrix {
 
     template <class T, class xpu>
     VariableOp<T, xpu>::VariableOp(VariableParam &param) {
-
+        this->args = param.args;
+        this->outputShapes = param.outShapes;
+        this->output = param.outputs;
     }
 
 
     template <class T, class xpu>
     bool VariableOp<T, xpu>::Run() {
+
+        if (HasArg("isTrain")) {
+            Tensor<T> out = output.at(0). template GeneratorTensor<T>(outputShapes.at(0));
+            if (HasArg("constant")) {
+                T val = GetArgValue<T>("constant", T(0.1));
+                Value<T>(out, val);
+            } else {
+                T mu  = GetArgValue<T>("mu", T(0));
+                T sigma = GetArgValue<T>("sigma", T(1));;
+                Random<T>(out, mu, sigma);
+            }
+        }
         return true;
     }
 

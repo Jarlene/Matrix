@@ -5,7 +5,7 @@
 #ifndef MATRIX_OPERATOR_H
 #define MATRIX_OPERATOR_H
 
-#include <map>
+#include <unordered_map>
 #include <vector>
 #include "matrix/include/utils/MathTensor.h"
 #include "matrix/include/api/MatrixType.h"
@@ -147,7 +147,7 @@ namespace matrix {
 
 
     protected:
-        std::map<std::string, Any> args;
+        std::unordered_map<std::string, Any> args;
         std::vector<Blob> input;
         std::vector<Blob> output;
         std::vector<Shape> inputShapes;
@@ -175,6 +175,7 @@ namespace matrix {
         std::vector<Shape> inputShapes;
         std::vector<Blob> outputs;
         std::vector<Shape> outShapes;
+        std::unordered_map<std::string, Any> args;
     };
 
 

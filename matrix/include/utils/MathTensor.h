@@ -76,6 +76,15 @@ namespace matrix {
 
     }
 
+    template <class T>
+    void Value(Tensor<T> &a, T value) {
+        Value<T>(a.Size(), a.MutableData(), value);
+    }
+
+    template <class T>
+    void Random(Tensor<T> &a, T mu, T sigma) {
+        Random<T>(a.Size(), a.MutableData(), mu, sigma);
+    }
 
 
 }
