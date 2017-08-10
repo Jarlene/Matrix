@@ -8,8 +8,10 @@
 #include <math.h>
 #include <assert.h>
 #include <functional>
+#include <vector>
 #include <random>
 #include <sys/time.h>
+#include "Logger.h"
 
 #ifdef USE_MP
 #include <omp.h>
@@ -44,6 +46,11 @@ using EigenVector = Map<Matrix<T, Dynamic, 1>>;
 
 
 namespace matrix {
+
+
+    static inline bool isLess(int a, int b) {
+        return static_cast<unsigned>(a) < static_cast<unsigned>(b);
+    }
 
 
     static struct timeval tv;
@@ -858,6 +865,339 @@ namespace matrix {
                 }
             }
         }
+    }
+
+    template <class T, int order>
+    inline void Img2Col(const T *input, const int channels, const int height, const int width,
+                        const int kernel_h, const int kernel_w, const int dilation_h,
+                        const int dilation_w, const int pad_t, const int pad_l,
+                        const int pad_b, const int pad_r, const int stride_h, const int stride_w,
+                        T *output) {
+        if (order == 0) {
+            const int output_h = (height + pad_b + pad_t - (dilation_h * (kernel_h - 1) + 1)) / stride_h + 1;
+            const int output_w = (width + pad_l + pad_r - (dilation_w * (kernel_w - 1) + 1)) / stride_w + 1;
+
+            // padding = 0; dilation = 1;
+            if (dilation_h == 1 && dilation_w == 1 && pad_l == 0 && pad_r == 0 &&
+                pad_t == 0 && pad_b == 0) {
+                for (auto k = 0; k < channels * kernel_h * kernel_w; k++) {
+                    const auto nip = k / (kernel_h * kernel_w);
+                    const auto rest = k % (kernel_h * kernel_w);
+                    const auto kh = rest / kernel_w;
+                    const auto kw = rest % kernel_w;
+                    auto* dst = output + nip * (kernel_h * kernel_w * output_h * output_w) +
+                                kh * (kernel_w * output_h * output_w) + kw * (output_h * output_w);
+                    const auto* src = input + nip * (height * width);
+                    for (auto y = 0; y < output_h; y++) {
+                        const auto iy = y * stride_h + kh;
+                        const auto ix = kw;
+                        if (stride_w == 1) {
+                            memcpy(
+                                    dst + (y * output_w),
+                                    src + (iy * width + ix),
+                                    sizeof(float) * output_w);
+                        } else {
+                            for (auto x = 0; x < output_w; x++) {
+                                memcpy(
+                                        dst + (y * output_w + x),
+                                        src + (iy * width + ix + x * stride_w),
+                                        sizeof(float));
+                            }
+                        }
+                    }
+                }
+                return;
+            }
+
+            // equal padding
+            if (pad_l == pad_r && pad_t == pad_b) {
+                const int pad_h = pad_t;
+                const int pad_w = pad_l;
+                const int channel_size = height * width;
+                for (int channel = channels; channel--; input += channel_size) {
+                    for (int kernel_row = 0; kernel_row < kernel_h; kernel_row++) {
+                        for (int kernel_col = 0; kernel_col < kernel_w; kernel_col++) {
+                            int input_row = -pad_h + kernel_row * dilation_h;
+                            for (int output_rows = output_h; output_rows; output_rows--) {
+                                if (!isLess(input_row, height)) {
+                                    for (int output_cols = output_w; output_cols; output_cols--) {
+                                        *(output++) = 0;
+                                    }
+                                } else {
+                                    int input_col = -pad_w + kernel_col * dilation_w;
+                                    for (int output_col = output_w; output_col; output_col--) {
+                                        if (isLess(input_col, width)) {
+                                            *(output++) = input[input_row * width + input_col];
+                                        } else {
+                                            *(output++) = 0;
+                                        }
+                                        input_col += stride_w;
+                                    }
+                                }
+                                input_row += stride_h;
+                            }
+                        }
+                    }
+                }
+                return;
+            }
+
+            // base
+            const int dkernel_h = dilation_h * (kernel_h - 1) + 1;
+            const int dkernel_w = dilation_w * (kernel_w - 1) + 1;
+
+            int height_col = (height + pad_t + pad_b - dkernel_h) / stride_h + 1;
+            int width_col = (width + pad_l + pad_r - dkernel_w) / stride_w + 1;
+
+            int channels_col = channels * kernel_h * kernel_w;
+            for (int c = 0; c < channels_col; ++c) {
+                int w_offset = c % kernel_w;
+                int h_offset = (c / kernel_w) % kernel_h;
+                int c_im = c / kernel_h / kernel_w;
+                for (int h = 0; h < height_col; ++h) {
+                    for (int w = 0; w < width_col; ++w) {
+                        int h_pad = h * stride_h - pad_t + h_offset * dilation_h;
+                        int w_pad = w * stride_w - pad_l + w_offset * dilation_w;
+                        if (h_pad >= 0 && h_pad < height && w_pad >= 0 && w_pad < width) {
+                            output[(c * height_col + h) * width_col + w] = input[(c_im * height + h_pad) * width + w_pad];
+                        } else {
+                            output[(c * height_col + h) * width_col + w] = 0;
+                        }
+                    }
+                }
+            }
+
+
+        } else if (order == 1) {
+            const int dkernel_h = dilation_h * (kernel_h - 1) + 1;
+            const int dkernel_w = dilation_w * (kernel_w - 1) + 1;
+
+            int height_col = (height + pad_t + pad_b - dkernel_h) / stride_h + 1;
+            int width_col = (width + pad_l + pad_r - dkernel_w) / stride_w + 1;
+
+            int h_pad = -pad_t;
+            for (int h = 0; h < height_col; ++h) {
+                int w_pad = -pad_l;
+                for (int w = 0; w < width_col; ++w) {
+                    for (int ih = h_pad; ih < h_pad + dkernel_h; ih += dilation_h) {
+                        for (int iw = w_pad; iw < w_pad + dkernel_w; iw += dilation_w) {
+                            if (ih >= 0 && ih < height && iw >= 0 && iw < width) {
+                                memcpy(output, input + (ih * width + iw) * channels, sizeof(T) * channels);
+                            } else {
+                                memset(output, 0, sizeof(T) * channels);
+                            }
+                            output += channels;
+                        }
+                    }
+                    w_pad += stride_w;
+                }
+                h_pad += stride_h;
+            }
+        } else {
+            Logger::Global()->Fatal("Img2Col do not support other image order except NCHW or NHWC \n");
+        }
+
+    };
+
+
+    template <class T, int order>
+    inline void Col2Img(const T *input, const int channels, const int height, const int width,
+                        const int kernel_h, const int kernel_w, const int dilation_h,
+                        const int dilation_w, const int pad_t, const int pad_l,
+                        const int pad_b, const int pad_r, const int stride_h, const int stride_w,
+                        T *output) {
+        memset(output, 0, height * width * channels* sizeof(T));
+        if (order == 0) {
+            const int output_h = (height + pad_b + pad_t - (dilation_h * (kernel_h - 1) + 1)) / stride_h + 1;
+            const int output_w = (width + pad_l + pad_r - (dilation_w * (kernel_w - 1) + 1)) / stride_w + 1;
+
+            if (dilation_h == 1 && dilation_w == 1 && pad_l == 0 && pad_r == 0 &&
+                pad_t == 0 && pad_b == 0) {
+                for (auto k = 0; k < channels * kernel_h * kernel_w; k++) {
+                    const auto nip = k / (kernel_h * kernel_w);
+                    const auto rest = k % (kernel_h * kernel_w);
+                    const auto kh = rest / kernel_w;
+                    const auto kw = rest % kernel_w;
+                    const auto* dst = input + nip * (kernel_h * kernel_w * output_h * output_w) +
+                                      kh * (kernel_w * output_h * output_w) + kw * (output_h * output_w);
+                    auto* src = output + nip * (height * width);
+                    for (auto y = 0; y < output_h; y++) {
+                        const auto iy = y * stride_h + kh;
+                        const auto ix = kw;
+                        if (stride_w == 1) {
+                            auto offsrc = src + (iy * width + ix);
+                            const auto offdst = dst + (y * output_w);
+                            for (auto i = 0; i < output_w; ++i) {
+                                offsrc[i] += offdst[i];
+                            }
+                        } else {
+                            for (auto x = 0; x < output_w; x++) {
+                                auto offsrc = src + (iy * width + ix + x * stride_w);
+                                const auto offdst = dst + (y * output_w + x);
+                                *offsrc += *offdst;
+                            }
+                        }
+                    }
+                }
+                return;
+            }
+
+            if (pad_l == pad_r && pad_t == pad_b) {
+                // From Intel, https://github.com/BVLC/caffe/pull/3536
+                const int pad_h = pad_t;
+                const int pad_w = pad_l;
+                const int channel_size = height * width;
+                for (int channel = channels; channel--; output += channel_size) {
+                    for (int kernel_row = 0; kernel_row < kernel_h; kernel_row++) {
+                        for (int kernel_col = 0; kernel_col < kernel_w; kernel_col++) {
+                            int input_row = -pad_h + kernel_row * dilation_h;
+                            for (int output_rows = output_h; output_rows; output_rows--) {
+                                if (!isLess(input_row, height)) {
+                                    input += output_w;
+                                } else {
+                                    int input_col = -pad_w + kernel_col * dilation_w;
+                                    for (int output_col = output_w; output_col; output_col--) {
+                                        if (isLess(input_col, width)) {
+                                            output[input_row * width + input_col] += *input;
+                                        }
+                                        input++;
+                                        input_col += stride_w;
+                                    }
+                                }
+                                input_row += stride_h;
+                            }
+                        }
+                    }
+                }
+                return;
+            }
+
+            const int dkernel_h = dilation_h * (kernel_h - 1) + 1;
+            const int dkernel_w = dilation_w * (kernel_w - 1) + 1;
+
+            int height_col = (height + pad_t + pad_b - dkernel_h) / stride_h + 1;
+            int width_col = (width + pad_l + pad_r - dkernel_w) / stride_w + 1;
+            int channels_col = channels * kernel_h * kernel_w;
+            for (int c = 0; c < channels_col; ++c) {
+                int w_offset = c % kernel_w;
+                int h_offset = (c / kernel_w) % kernel_h;
+                int c_im = c / kernel_h / kernel_w;
+                for (int h = 0; h < height_col; ++h) {
+                    for (int w = 0; w < width_col; ++w) {
+                        int h_pad = h * stride_h - pad_t + h_offset * dilation_h;
+                        int w_pad = w * stride_w - pad_l + w_offset * dilation_w;
+                        if (h_pad >= 0 && h_pad < height && w_pad >= 0 && w_pad < width) {
+                            output[(c_im * height + h_pad) * width + w_pad] += input[(c * height_col + h) * width_col + w];
+                        }
+                    }
+                }
+            }
+
+        } else if (order == 1) {
+            const int dkernel_h = dilation_h * (kernel_h - 1) + 1;
+            const int dkernel_w = dilation_w * (kernel_w - 1) + 1;
+
+            int height_col = (height + pad_t + pad_b - dkernel_h) / stride_h + 1;
+            int width_col = (width + pad_l + pad_r - dkernel_w) / stride_w + 1;
+            int h_pad = -pad_t;
+            for (int h = 0; h < height_col; ++h) {
+                int w_pad = -pad_l;
+                for (int w = 0; w < width_col; ++w) {
+                    for (int ih = h_pad; ih < h_pad + dkernel_h; ih += dilation_h) {
+                        for (int iw = w_pad; iw < w_pad + dkernel_w; iw += dilation_w) {
+                            if (ih >= 0 && ih < height && iw >= 0 && iw < width) {
+                                auto* data_im_patch = output + (ih * width + iw) * channels;
+                                Add<T>(channels, data_im_patch, input, data_im_patch);
+                            }
+                            input += channels;
+                        }
+                    }
+                    w_pad += stride_w;
+                }
+                h_pad += stride_h;
+            }
+        } else {
+            Logger::Global()->Fatal("Col2Img do not support other image order except NCHW or NHWC \n");
+        }
+    };
+
+
+
+    template <class T>
+    inline void Img2ColNd(const T *input, const int *imageShape, const int *dataShape,
+                          const int * kernel, const int *stride, const int * dilation,
+                          const int * padding, const int N, T *output, bool accumulate_output = false) {
+        int kernel_size = 1;
+        for (int i = 0; i < N; ++i) {
+            kernel_size *= kernel[i];
+        }
+        const int channels_col = dataShape[0];
+        std::vector<int> d_offset(N, 0);
+        std::vector<int> d_iter(N, 0);
+        for (int c_col = 0; c_col < channels_col; ++c_col) {
+            // Loop over spatial axes in reverse order to compute a per-axis offset.
+            int offset = c_col;
+            for (int d_i = N - 1; d_i >= 0; --d_i) {
+                if (d_i < N - 1) {
+                    offset /= kernel[d_i + 1];
+                }
+                d_offset[d_i] = offset % kernel[d_i];
+            }
+            for (bool incremented = true; incremented;) {
+                // Loop over spatial axes in forward order to compute the indices in the
+                // image and column, and whether the index lies in the padding.
+                int index_col = c_col;
+                int index_im = c_col / kernel_size;
+                bool is_padding = false;
+                for (int d_i = 0; d_i < N; ++d_i) {
+                    const int d = d_iter[d_i];
+                    const int d_im =
+                            d * stride[d_i] - padding[d_i] + d_offset[d_i] * dilation[d_i];
+                    is_padding |= d_im < 0 || d_im >= imageShape[d_i + 1];
+                    index_col *= dataShape[d_i + 1];
+                    index_col += d;
+                    index_im *= imageShape[d_i + 1];
+                    index_im += d_im;
+                }
+                if (!accumulate_output) {
+                    if (is_padding) {
+                        output[index_col] = 0;
+                    } else {
+                        output[index_col] = input[index_im];
+                    }
+                } else if (!is_padding) { // col2im
+                    output[index_im] += input[index_col];
+                }
+                // Loop over spatial axes in reverse order to choose an index,
+                // like counting.
+                incremented = false;
+                for (int d_i = N - 1; d_i >= 0; --d_i) {
+                    const int d_max = dataShape[d_i + 1];
+//                    DCHECK_LT(d_iter[d_i], d_max);
+                    if (d_iter[d_i] == d_max - 1) {
+                        d_iter[d_i] = 0;
+                    } else { // d_iter[d_i] < d_max - 1
+                        ++d_iter[d_i];
+                        incremented = true;
+                        break;
+                    }
+                }
+            }
+        }
+    };
+
+
+
+    template <class T>
+    inline void Col2ImgNd(const T *input, const int *imageShape, const int *dataShape,
+                          const int * kernel, const int *stride, const int * dilation,
+                          const int * padding, const int N, T *output) {
+        int imageSize = 1;
+        for (int i = 0; i < N; ++i) {
+            imageSize *= imageShape[i];
+        }
+        memset(output, 0, sizeof(T) * imageSize);
+        Img2ColNd(input, imageShape, dataShape, kernel, stride, dilation, padding, N, output, true);
     }
 }
 

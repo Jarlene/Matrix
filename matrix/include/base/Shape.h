@@ -36,6 +36,8 @@ namespace matrix {
 
         const size_t Size() const ;
 
+        const int * Array() const ;
+
         const int operator[](int idx) const ;
 
     private:

@@ -40,6 +40,11 @@ namespace matrix {
 
     };
 
+    enum ImageOrder {
+        NCHW = 0,
+        NHWC
+    };
+
     enum ApplyGradMode {
         kSGD = 0,
         kMomentum,

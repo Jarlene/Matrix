@@ -6,6 +6,7 @@
 #define MATRIX_MATHTENSOR_H
 
 #include <cassert>
+#include "matrix/include/api/MatrixType.h"
 #include "matrix/include/base/Tensor.h"
 #include "Math.h"
 #include "Logger.h"
@@ -86,6 +87,49 @@ namespace matrix {
         Random<T>(a.Size(), a.MutableData(), mu, sigma);
     }
 
+
+    template <class T>
+    inline void Img2Col(const Tensor<T> &input, Shape &in, Shape &kernel, Shape &stride,
+                        Shape &padding, Shape &dilate, Shape &out, Tensor<T> &output, ImageOrder &order) {
+
+        if (kernel.Rank() == 2) {
+            assert(in.Rank() == 4);
+            Img2Col<T, order>(input.Data(), in[1], in[2], in[3],
+                              kernel[0], kernel[1],
+                              dilate[0], dilate[1],
+                              padding[0],padding[1],
+                              padding[0],padding[1],
+                              stride[0],stride[1],
+                              output.MutableData());
+        } else {
+            Img2ColNd<T>(input.Data(), in.Array(), out.Array(),
+                         kernel.Array(), stride.Array(),
+                         dilate.Array(), padding.Array(), kernel.Rank(),
+                         output.MutableData());
+        }
+
+    }
+
+
+    template <class T>
+    inline void Col2Img(const Tensor<T> & input, Shape &in, Shape &kernel, Shape &stride,
+                        Shape &padding, Shape &dilate, Shape &out, Tensor<T> &output, ImageOrder &order) {
+        if (kernel.Rank() == 2) {
+            assert(in.Rank() == 4);
+            Col2Img<T, order>(input.Data(), in[1], in[2], in[3],
+                              kernel[0], kernel[1],
+                              dilate[0], dilate[1],
+                              padding[0],padding[1],
+                              padding[0],padding[1],
+                              stride[0],stride[1],
+                              output.MutableData());
+        } else {
+            Col2ImgNd<T>(input.Data(), in.Array(), out.Array(),
+                         kernel.Array(), stride.Array(),
+                         dilate.Array(), padding.Array(), kernel.Rank(),
+                         output.MutableData());
+        }
+    }
 
 }
 
