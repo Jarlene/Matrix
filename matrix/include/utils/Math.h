@@ -696,7 +696,7 @@ namespace matrix {
     /// \param y
     /// \param z
     template <class T>
-    inline void TanhGrad(const int N,  T*x, T *y,  T *z) {
+    inline void TanhGrad(const int N,  const T*x, const T *y,  T *z) {
 #ifdef USE_MP
 #pragma omp parallel for
 #endif

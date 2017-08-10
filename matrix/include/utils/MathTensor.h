@@ -56,7 +56,7 @@ namespace matrix {
 
 
     template <class T>
-    void Sub(const Tensor<T> &a, const Tensor<T> &b, const Tensor<T> &c) {
+    void Sub(const Tensor<T> &a, const Tensor<T> &b,  Tensor<T> &c) {
         assert(a.GetShape() == b.GetShape());
         assert(a.GetShape() == c.GetShape());
         int size = a.Size();
@@ -66,7 +66,7 @@ namespace matrix {
 
 
     template <class T>
-    void Tanh(const Tensor<T> &a, const Tensor<T> &b) {
+    void Tanh(const Tensor<T> &a, Tensor<T> &b) {
         assert(a.GetShape() == b.GetShape());
         int size = a.Size();
         Tanh<T>(size, a.Data(), b.MutableData());
@@ -74,7 +74,7 @@ namespace matrix {
 
     template <class T>
     void GradTanh(const Tensor<T> &a, const Tensor<T> &b,  Tensor<T> &c) {
-
+        TanhGrad<T>(a.Size(), a.Data(), b.Data(), c.MutableData());
     }
 
     template <class T>
