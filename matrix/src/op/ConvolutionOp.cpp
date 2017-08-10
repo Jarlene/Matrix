@@ -9,12 +9,20 @@ namespace matrix {
 
     template <class T, class Context>
     ConvolutionOp<T, Context>::ConvolutionOp(ConvolutionParam &param) {
-
+        this->outputShapes = param.outShapes;
+        this->output = param.outputs;
+        this->input = param.inputs;
+        this->inputShapes = param.inputShapes;
+        this->args = param.args;
     }
 
     template <class T, class Context>
     bool ConvolutionOp<T, Context>::Run() {
-        return Operator::Run();
+
+
+
+
+        return true;
     }
 
 

@@ -64,6 +64,10 @@ namespace matrix {
         return true;
     }
 
+    const int * Shape::Array() const {
+        return shape_.data();
+    }
+
     bool Shape::isConstant() {
         return Rank() == 1 && Size() == 1;
     }
