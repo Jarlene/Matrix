@@ -19,6 +19,8 @@ namespace matrix {
     class ConvolutionOp : public Operator {
     SAME_FUNCTION(Convolution);
     DISABLE_COPY_AND_ASSIGN(Convolution);
+        INPUT_TAG(DATA, KERNEL, BIAS, COLBUFFER);
+        OUTPUT_TAG(OUT);
     };
 
     template <typename Context>

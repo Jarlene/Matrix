@@ -14,12 +14,74 @@ namespace matrix {
         this->input = param.inputs;
         this->inputShapes = param.inputShapes;
         this->args = param.args;
+        if (HasArg("col_buffer")) {
+            inputShapes.push_back(GetArgValue<Shape>("col_buffer"));
+        }
     }
 
     template <class T, class Context>
     bool ConvolutionOp<T, Context>::Run() {
+        if (Inputs().size() == 1) {
+//            Tensor<T> data = Inputs()[DATA]. template GeneratorTensor<T>(inputShapes[DATA]);
+//            if (!HasArg("kernel")) {
+//                Logger::Global()->Fatal("ConvolutionOp one input must has kernel shape \n");
+//            }
+//            Shape kShape = GetArgValue<Shape>("kernel");
+//            void* kData = MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(kShape.Size() * sizeof(T));
+//            Blob weight(kData);
+//            input.push_back(weight);
+//            Tensor<T>  kernel = weight.template GeneratorTensor<T>(kShape);
+//
+//            if (HasArg("bias")) {
+//                Shape bShape = GetArgValue<Shape>("bias");
+//                void* bData = MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(bShape.Size() * sizeof(T));
+//                Blob bias(bData);
+//                input.push_back(Blob(bias));
+//                Tensor<T>  b = bias.template GeneratorTensor<T>(bShape);
+//            }
+        } else if (Inputs().size() == 2) {
+
+        } else if (Inputs().size() == 3) {
+            Tensor<T> data = Inputs()[DATA]. template GeneratorTensor<T>(inputShapes[DATA]);
+            Tensor<T> weight = Inputs()[KERNEL]. template GeneratorTensor<T>(inputShapes[KERNEL]);
+            Tensor<T> bias = Inputs()[BIAS]. template GeneratorTensor<T>(inputShapes[BIAS]);
+            Tensor<T> colBuffer = Inputs()[COLBUFFER]. template GeneratorTensor<T>(inputShapes[COLBUFFER]);
+            Tensor<T> out = Outputs()[OUT]. template GeneratorTensor<T>(outputShapes[OUT]);
+
+            int num = data.GetShape()[0];
+            ImageOrder  order = GetArgValue<ImageOrder>("order");
+            int imageSize = 1;
+            int channel = 1;
+            if (order == NCHW) {
+                channel = data.GetShape()[1];
+                imageSize = data.GetShape()[2] * data.GetShape()[3];
+            } else {
+                imageSize = data.GetShape()[1] * data.GetShape()[2];
+                channel = data.GetShape()[3];
+            }
 
 
+            int group = GetArgValue<int>("group");
+
+            const int input_offset = channel / group * imageSize;
+
+            const int output_offset = out.Size() / out.GetShape()[0] / group;
+
+            const int filter_offset = inputShapes[KERNEL].Size() / group;
+
+
+            for (int i = 0; i < num; ++i) {
+                for (int j = 0; j < group; ++j) {
+                    if (inputShapes[KERNEL].Rank() == 2) {
+//                        Img2Col<T, order>(data, )
+
+                    }
+                }
+            }
+
+        } else {
+            Logger::Global()->Fatal("ConvolutionOp do not support other inputs\n");
+        }
 
 
         return true;
@@ -28,7 +90,13 @@ namespace matrix {
 
     template <class T, class Context>
     void ConvolutionOp<T, Context>::AsyncRun() {
-        Operator::AsyncRun();
+        if (Context::mode == RunMode::kCpu) {
+            Run();
+        } else {
+            if (!RunOnDevice()) {
+                Run();
+            }
+        }
     }
 
     template <class T, class Context>
@@ -84,6 +152,38 @@ namespace matrix {
     }
 
     void ConvolutionOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape) {
+
+        Shape padding = ShapeN(0, 0);
+        Shape stride = ShapeN(1, 1);
+        Shape dilate = ShapeN(1, 1);
+        if (param->args.count("padding")) {
+            padding.reShape(get<Shape>(param->args["padding"]));
+        }
+        if (param->args.count("stride")) {
+            stride.reShape(get<Shape>(param->args["stride"]));
+        }
+        if (param->args.count("dilate")) {
+            dilate.reShape(get<Shape>(param->args["dilate"]));
+        }
+        ImageOrder order = NCHW;
+        if (param->args.count("order")) {
+            order = get<ImageOrder>(param->args["order"]);
+        }
+        int filter_num = get<int>(param->args["filter_num"]);
+
+        Shape in = inShape[0];
+        Shape kernel = inShape[1];
+        Shape out = outShape[0];
+        int n = in[0];
+        if (order == NCHW) {
+            int height = (in[2] + padding[0] - (dilate[0] * (kernel[0] - 1) + 1)) / stride[0] + 1;
+            int width  = (in[3] + padding[1] - (dilate[1] * (kernel[1] - 1) + 1)) / stride[1] + 1;
+            out.reShape(ShapeN(n, filter_num, height, width));
+        } else {
+            int height = (in[1] + padding[0] - (dilate[0] * (kernel[0] - 1) + 1)) / stride[0] + 1;
+            int width  = (in[2] + padding[1] - (dilate[1] * (kernel[1] - 1) + 1)) / stride[1] + 1;
+            out.reShape(ShapeN(n, height, width, filter_num));
+        }
 
     }
 
