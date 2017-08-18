@@ -21,7 +21,7 @@ namespace matrix {
 
     template <class T, class Context>
     bool ConvolutionOp<T, Context>::Run() {
-        if (Inputs().size() == 1) {
+        if (Inputs().size() <= 2) {
 //            Tensor<T> data = Inputs()[DATA]. template GeneratorTensor<T>(inputShapes[DATA]);
 //            if (!HasArg("kernel")) {
 //                Logger::Global()->Fatal("ConvolutionOp one input must has kernel shape \n");
@@ -39,9 +39,9 @@ namespace matrix {
 //                input.push_back(Blob(bias));
 //                Tensor<T>  b = bias.template GeneratorTensor<T>(bShape);
 //            }
-        } else if (Inputs().size() == 2) {
-
         } else if (Inputs().size() == 3) {
+
+        } else if (Inputs().size() == 4) {
             Tensor<T> data = Inputs()[DATA]. template GeneratorTensor<T>(inputShapes[DATA]);
             Tensor<T> weight = Inputs()[KERNEL]. template GeneratorTensor<T>(inputShapes[KERNEL]);
             Tensor<T> bias = Inputs()[BIAS]. template GeneratorTensor<T>(inputShapes[BIAS]);
@@ -49,6 +49,7 @@ namespace matrix {
             Tensor<T> out = Outputs()[OUT]. template GeneratorTensor<T>(outputShapes[OUT]);
 
             int num = data.GetShape()[0];
+            int filterNum = GetArgValue<int>("filter_num");
             ImageOrder  order = GetArgValue<ImageOrder>("order");
             int imageSize = 1;
             int channel = 1;
@@ -60,8 +61,10 @@ namespace matrix {
                 channel = data.GetShape()[3];
             }
 
-
-            int group = GetArgValue<int>("group");
+            int group = 1;
+            if (HasArg("group")) {
+                group = GetArgValue<int>("group");
+            }
 
             const int input_offset = channel / group * imageSize;
 
@@ -69,13 +72,11 @@ namespace matrix {
 
             const int filter_offset = inputShapes[KERNEL].Size() / group;
 
-
-            for (int i = 0; i < num; ++i) {
+            for (int i = 0; i < filterNum; ++i) {
                 for (int j = 0; j < group; ++j) {
-                    if (inputShapes[KERNEL].Rank() == 2) {
-//                        Img2Col<T, order>(data, )
 
-                    }
+
+
                 }
             }
 
@@ -171,18 +172,34 @@ namespace matrix {
         }
         int filter_num = get<int>(param->args["filter_num"]);
 
+        int group = 1;
+        if (param->args.count("group")) {
+            group = get<int>(param->args["group"]);
+        }
+
         Shape in = inShape[0];
         Shape kernel = inShape[1];
         Shape out = outShape[0];
+        Shape colBuffer = inShape[inShape.size() - 1];
         int n = in[0];
+        int kernel_h = kernel[0];
+        int kernel_w = kernel[1];
         if (order == NCHW) {
+            int channel = in[1];
             int height = (in[2] + padding[0] - (dilate[0] * (kernel[0] - 1) + 1)) / stride[0] + 1;
             int width  = (in[3] + padding[1] - (dilate[1] * (kernel[1] - 1) + 1)) / stride[1] + 1;
             out.reShape(ShapeN(n, filter_num, height, width));
+            int c = channel/group* kernel.Size();
+            colBuffer.reShape(ShapeN(c, height, width));
+            kernel.reShape(ShapeN(channel, kernel_h, kernel_w));
         } else {
             int height = (in[1] + padding[0] - (dilate[0] * (kernel[0] - 1) + 1)) / stride[0] + 1;
             int width  = (in[2] + padding[1] - (dilate[1] * (kernel[1] - 1) + 1)) / stride[1] + 1;
             out.reShape(ShapeN(n, height, width, filter_num));
+            int channel = in[3];
+            int c = channel/group* kernel.Size();
+            colBuffer.reShape(ShapeN(c, height, width));
+            kernel.reShape(ShapeN(channel, kernel_h, kernel_w));
         }
 
     }

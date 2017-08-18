@@ -134,5 +134,7 @@ namespace matrix {
             int dim = outShape.at(0).Size();
             checkArrayEqual<float>(d, res, dim);
         }
+
+
     }
 }

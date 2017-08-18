@@ -57,5 +57,33 @@ namespace matrix {
             checkArrayEqual(c, res, 6);
         }
 
+
+        TEST_F(MathTest, Img2Col) {
+            float a[] = {1, 1, 1, 0, 0,
+                         0, 1, 1, 1, 0,
+                         0, 0, 1, 1, 1,
+                         0, 0, 1, 1, 0,
+                         0, 1, 1, 0, 0};
+
+            float kernel[] = {1, 1, 1,
+                              1, 1, 0,
+                              1, 0, 0};
+
+            float colBuffer[81] = {0};
+
+            Shape input = ShapeN(1, 1, 5, 5);
+            Shape kShape = ShapeN(1, 3, 3);
+            Shape stride = ShapeN(1, 1);
+            Shape padding = ShapeN(0, 0);
+            Shape dilation = ShapeN(1, 1);
+            Shape out = ShapeN(1, 1, 3, 3);
+            const int input_offset = 1 / 1 * 5*5;
+
+            Col2Img<float, 0>(a, 1, 5, 5, 3, 3, 1, 1, 0, 0, 0, 0, 1, 1, colBuffer);
+            for (int i = 0; i < 81; ++i) {
+                std::cout<<colBuffer[i] << std::endl;
+            }
+        }
+
     }
 }

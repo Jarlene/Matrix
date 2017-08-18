@@ -895,13 +895,13 @@ namespace matrix {
                             memcpy(
                                     dst + (y * output_w),
                                     src + (iy * width + ix),
-                                    sizeof(float) * output_w);
+                                    sizeof(T) * output_w);
                         } else {
                             for (auto x = 0; x < output_w; x++) {
                                 memcpy(
                                         dst + (y * output_w + x),
                                         src + (iy * width + ix + x * stride_w),
-                                        sizeof(float));
+                                        sizeof(T));
                             }
                         }
                     }
@@ -1135,7 +1135,6 @@ namespace matrix {
         std::vector<int> d_offset(N, 0);
         std::vector<int> d_iter(N, 0);
         for (int c_col = 0; c_col < channels_col; ++c_col) {
-            // Loop over spatial axes in reverse order to compute a per-axis offset.
             int offset = c_col;
             for (int d_i = N - 1; d_i >= 0; --d_i) {
                 if (d_i < N - 1) {
@@ -1144,15 +1143,12 @@ namespace matrix {
                 d_offset[d_i] = offset % kernel[d_i];
             }
             for (bool incremented = true; incremented;) {
-                // Loop over spatial axes in forward order to compute the indices in the
-                // image and column, and whether the index lies in the padding.
                 int index_col = c_col;
                 int index_im = c_col / kernel_size;
                 bool is_padding = false;
                 for (int d_i = 0; d_i < N; ++d_i) {
                     const int d = d_iter[d_i];
-                    const int d_im =
-                            d * stride[d_i] - padding[d_i] + d_offset[d_i] * dilation[d_i];
+                    const int d_im = d * stride[d_i] - padding[d_i] + d_offset[d_i] * dilation[d_i];
                     is_padding |= d_im < 0 || d_im >= imageShape[d_i + 1];
                     index_col *= dataShape[d_i + 1];
                     index_col += d;
@@ -1168,8 +1164,6 @@ namespace matrix {
                 } else if (!is_padding) { // col2im
                     output[index_im] += input[index_col];
                 }
-                // Loop over spatial axes in reverse order to choose an index,
-                // like counting.
                 incremented = false;
                 for (int d_i = N - 1; d_i >= 0; --d_i) {
                     const int d_max = dataShape[d_i + 1];
