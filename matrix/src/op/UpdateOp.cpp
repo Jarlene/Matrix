@@ -89,7 +89,11 @@ namespace matrix {
         InferShape(inShape, outShape);
         param->inputShapes = inShape;
         param->outShapes = outShape;
-        BIND_DISPATCH(CreateOp, *param, &memorySize);
+        BIND_DISPATCH(CreateOp, *param);
+    }
+
+    void UpdateOpProp::SwitchType(const MatrixType &type) {
+        this->param->type = type;
     }
 
 

@@ -37,11 +37,12 @@ namespace matrix {
         virtual Operator* CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
                                          std::vector<Shape> &inShape, std::vector<Shape> &outShape,
                                          std::map<std::string, Any> &args) ;
+        virtual void SwitchType(const MatrixType &type);
     private:
         UpdateParam* param;
     };
 }
 
-REGISTER_OP_PROPERTY(applyGrad, ApplyGradProp);
+REGISTER_OP_PROPERTY(applyGrad, UpdateOpProp);
 
 #endif //MATRIX_APPLYGRADOP_H
