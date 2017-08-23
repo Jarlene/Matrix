@@ -77,7 +77,7 @@ namespace matrix {
     }
 
     void ActivationOpGradProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape*> &outShape) {
-        assert(inShape.size() == 3);
+        assert(inShape.size() >= 3);
         outShape.at(0)->reShape(inShape[2]);
     }
 

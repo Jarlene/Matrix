@@ -100,7 +100,7 @@ namespace matrix {
     }
 
     void LossOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape*> &outShape) {
-
+        outShape.at(0)->Append(1);
     }
 
     Operator *LossOpProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,

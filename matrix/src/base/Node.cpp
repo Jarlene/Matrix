@@ -23,6 +23,7 @@ namespace matrix {
         t->opName = "grad_" + this->opName;
         t->nodeName = "grad_" + this->nodeName;
         t->params["input_idx"] = input_index;
+        t->context = this->context;
         t->inputs.push_back(preGrad);
         t->inputs.push_back(pre);
         pre->outputs.push_back(std::weak_ptr<Node>(t));
@@ -34,6 +35,7 @@ namespace matrix {
         for (auto &it : pre->params) {
             t->params.insert(it);
         }
+        t->Build();
         return t;
     }
 

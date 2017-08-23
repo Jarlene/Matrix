@@ -63,11 +63,13 @@ int main() {
     auto loss = Symbol("loss")
             .SetInput("logistic", symbol)
             .SetInput("y", label)
-            .SetParam("type", kCrossEntropy);
+            .SetParam("type", kCrossEntropy)
+            .Build();
 
     auto prediction = Symbol("prediction")
             .SetInput("logistic", symbol)
-            .SetInput("y", label);
+            .SetInput("y", label)
+            .Build();
 
     Context context;
     context.type = kFloat;

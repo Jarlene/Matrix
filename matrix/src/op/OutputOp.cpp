@@ -92,7 +92,7 @@ namespace matrix {
     }
 
     void OutputOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape*> &outShape) {
-
+        outShape[0]->reShape(inShape[0]);
     }
 
     Operator *OutputOpProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
