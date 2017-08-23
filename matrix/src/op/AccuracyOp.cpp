@@ -23,7 +23,26 @@ namespace matrix {
 
     template <class T, class Context>
     bool AccuracyOp<T, Context>::Run() {
-
+        int N = inputShapes[PREDICTION][0];
+        int D = inputShapes[PREDICTION][1];
+        int correct = 0;
+        for (int i = 0; i < N; ++i) {
+            auto label = static_cast<int>(Input<T>(LABEL)[i]);
+            auto label_pred = Input<T>(PREDICTION)[i * D + label];
+            int index = 0;
+            T max = Input<T>(PREDICTION)[i * D];
+            for (int j = 1; j < D; ++j) {
+                T pred = Input<T>(PREDICTION)[i * D + j];
+                if (pred > max) {
+                    index = j;
+                }
+            }
+            if (label == index) {
+                ++correct;
+            }
+        }
+        assert(correct <= N);
+        Output<T>(OUT)[0] = T((correct * 1.0)/N);
         return true;
     }
 

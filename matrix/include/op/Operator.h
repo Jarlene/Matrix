@@ -115,12 +115,12 @@ namespace matrix {
 
 
         template <class T>
-        inline const T& Input(int idx) {
+        inline const T* Input(int idx) {
             return input.at(idx).Get<T>();
         }
 
         template <class T>
-        inline T Output(int idx) {
+        inline T* Output(int idx) {
             return output.at(idx).GetMutable<T>();
         }
 

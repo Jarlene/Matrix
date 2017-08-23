@@ -63,7 +63,16 @@ namespace matrix {
         Sub<T>(size, a.Data(), b.Data(), c.MutableData());
     }
 
+    template <class T>
+    void Sigmoid(const Tensor<T> &input, Tensor<T> &out) {
+        assert(input.GetShape() == out.GetShape());
+        Sigmoid<T>(input.Size(), input.Data(), out.MutableData());
+    }
 
+    template <class T>
+    void SigmoidGrad(const Tensor<T> &input, const Tensor<T> &pre, Tensor<T> &out) {
+        SigmoidGrad<T>(input.Size(), input.Data(), pre.Data(),  out.MutableData());
+    }
 
     template <class T>
     void Tanh(const Tensor<T> &a, Tensor<T> &b) {
@@ -73,8 +82,19 @@ namespace matrix {
     }
 
     template <class T>
-    void GradTanh(const Tensor<T> &a, const Tensor<T> &b,  Tensor<T> &c) {
-        TanhGrad<T>(a.Size(), a.Data(), b.Data(), c.MutableData());
+    void TanhGrad(const Tensor<T> &input, const Tensor<T> &pre,  Tensor<T> &out) {
+        TanhGrad<T>(input.Size(), input.Data(), pre.Data(), out.MutableData());
+    }
+
+    template <class T>
+    void Relu(const Tensor<T> &input, Tensor<T> &out) {
+        assert(input.GetShape() == out.GetShape());
+        Relu<T>(input.Size(), input.Data(), out.MutableData());
+    }
+
+    template <class T>
+    void ReluGrad(const Tensor<T> &input, const Tensor<T> &pre,  Tensor<T> &out) {
+        ReluGrad<T>(input.Size(), pre.Data(), input.Data(), out.MutableData());
     }
 
     template <class T>

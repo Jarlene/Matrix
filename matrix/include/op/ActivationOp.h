@@ -19,6 +19,8 @@ namespace matrix {
     class ActivationOp : public Operator {
     SAME_FUNCTION(Activation);
     DISABLE_COPY_AND_ASSIGN(Activation);
+        INPUT_TAG(DATA);
+        OUTPUT_TAG(OUT);
     };
 
 

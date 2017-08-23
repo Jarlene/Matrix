@@ -20,7 +20,7 @@ namespace matrix {
     class AccuracyOp : public Operator {
     SAME_FUNCTION(Accuracy);
     DISABLE_COPY_AND_ASSIGN(Accuracy);
-        INPUT_TAG(DATA, LABEL);
+        INPUT_TAG(PREDICTION, LABEL);
         OUTPUT_TAG(OUT);
     };
 

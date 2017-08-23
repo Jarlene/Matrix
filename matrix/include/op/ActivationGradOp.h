@@ -21,6 +21,8 @@ namespace matrix {
     class ActivationGradOp : public Operator {
         SAME_FUNCTION(ActivationGrad);
         DISABLE_COPY_AND_ASSIGN(ActivationGrad);
+        INPUT_TAG(PRE_GRAD, OUT, INPUT);
+        OUTPUT_TAG(GRAD_OUT);
     };
 
 
