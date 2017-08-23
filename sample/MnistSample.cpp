@@ -95,5 +95,8 @@ int main() {
         executor->runSync();
     }
 
+    delete imageData;
+    delete labelData;
+
     return 0;
 }

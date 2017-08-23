@@ -12,6 +12,7 @@ namespace matrix {
         symbol.nodePtr->outputShapes = shape;
         symbol.nodePtr->context.type = type;
         symbol.nodePtr->nodeName = name;
+        symbol.SetParam("isTrain", true);
         symbol.nodePtr->isVariable = true;
         symbol.Build();
         return symbol;

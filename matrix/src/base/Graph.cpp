@@ -120,7 +120,7 @@ namespace matrix {
     }
 
     void Graph::Unique() {
-        sort(nodes_.begin(), nodes_.end());
+        sort(nodes_.begin(), nodes_.end(), less);
         nodes_.erase(unique(nodes_.begin(), nodes_.end()), nodes_.end());
     }
 
@@ -173,5 +173,9 @@ namespace matrix {
             applyGradNode->params["momentum_factor"] = 0.9f;
             nodes_.push_back(applyGradNode);
         }
+    }
+
+    bool Graph::less(const NodePtr &lhs, const NodePtr &rhs) {
+        return lhs->id_ < rhs->id_;
     }
 }

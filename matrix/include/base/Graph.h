@@ -37,6 +37,7 @@ namespace matrix {
 
     private:
 
+        static bool less(const NodePtr &lhs, const NodePtr &rhs);
         void Unique();
 
         void GeneratorGradNodes(const Symbol &symbol);
