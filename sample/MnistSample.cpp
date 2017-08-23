@@ -7,9 +7,12 @@
 #include <matrix/include/api/PlaceHolderSymbol.h>
 #include <matrix/include/models/AlexNet.h>
 #include <matrix/include/executor/Executor.h>
+#include "include/DataSet.h"
 
 using namespace matrix;
 
+const string trainImagePath = "/Users/zhengshan/ClionProjects/Matrix/data/train-images-idx3-ubyte";
+const string trainLabelPath = "/Users/zhengshan/ClionProjects/Matrix/data/train-labels-idx1-ubyte";
 
 
 Symbol LogisticRegression(Symbol input, int batchSize, int hideNum) {
@@ -55,9 +58,16 @@ Symbol Connvolution(Symbol &input, Symbol &label, int batchSize) {
 
 int main() {
     int batchSize = 100;
-    int epochSize = 200;
-    auto input = PlaceHolderSymbol::Create("x", ShapeN(batchSize, 784));
-    auto label = PlaceHolderSymbol::Create("label", ShapeN(batchSize));
+    int epochSize = 10;
+    Shape imageShape = ShapeN(batchSize, 784);
+    Shape labelShape = ShapeN(batchSize);
+    auto input = PlaceHolderSymbol::Create("x", imageShape);
+    auto label = PlaceHolderSymbol::Create("label", labelShape);
+
+    void* imageData = malloc(sizeof(float) * imageShape.Size());
+    void* labelData = malloc(sizeof(float) * labelShape.Size());
+
+
     auto symbol = LogisticRegression(input, batchSize, 128);
 
     auto loss = Symbol("loss")
@@ -75,10 +85,13 @@ int main() {
     context.type = kFloat;
     context.phase = TRAIN;
     context.mode = kCpu;
-
+    DataSet trainSet(trainImagePath, trainLabelPath);
     auto executor = std::make_shared<Executor>(loss, context);
 
     for (int i = 0; i < epochSize; ++i) {
+        trainSet.GetBatchData(batchSize, imageData, labelData);
+        input.Fill(imageData);
+        label.Fill(labelData);
         executor->runSync();
     }
 
