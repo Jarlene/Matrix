@@ -14,7 +14,24 @@ namespace matrix {
 
     template <class T, class Context>
     bool FullConnectedGradOp<T, Context>::Run() {
+        if (!HasArg("input_idx")) {
+            Logger::Global()->Fatal("FullConnectedGradOp not support. \n");
+        }
+        int idx = GetArgValue<int>("input_idx");
+        Tensor<T> pre_grad = Inputs()[PRE_GRAD]. template GeneratorTensor<T>(inputShapes[PRE_GRAD]);
+        switch (idx + 2) {
+            case DATA:
 
+
+                break;
+            case WEIGHT:
+                break;
+            case BIAS:
+                break;
+            default:
+                Logger::Global()->Fatal("FullConnectedGradOp not support. \n");
+                break;
+        }
         return true;
     }
 
