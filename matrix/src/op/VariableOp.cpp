@@ -8,9 +8,7 @@ namespace matrix {
 
     template <class T, class xpu>
     VariableOp<T, xpu>::VariableOp(Parameter &param) {
-        this->args = param.args;
-        this->outputShapes = param.outShapes;
-        this->output = param.outputs;
+        INIT_PARAMS
     }
 
 

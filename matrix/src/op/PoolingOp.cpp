@@ -8,7 +8,7 @@ namespace matrix {
 
     template <class T, class Context>
     PoolingOp<T, Context>::PoolingOp(Parameter &param) {
-
+        INIT_PARAMS
     }
 
     template <class T, class Context>

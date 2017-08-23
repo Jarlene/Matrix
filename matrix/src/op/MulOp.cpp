@@ -9,7 +9,7 @@ namespace matrix {
 
     template <class T, class Context>
     MulOp<T, Context>::MulOp(Parameter &param) {
-
+        INIT_PARAMS
     }
 
     template <class T, class Context>

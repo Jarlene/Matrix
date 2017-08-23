@@ -7,11 +7,7 @@
 namespace matrix {
     template <class T, class Context>
     OutputOp<T, Context>::OutputOp(Parameter &param) {
-        this->input = param.inputs;
-        this->args = param.args;
-        this->output = param.outputs;
-        this->inputShapes = param.inputShapes;
-        this->outputShapes = param.outShapes;
+        INIT_PARAMS
     }
 
     template <class T, class Context>

@@ -8,11 +8,7 @@ namespace matrix {
 
     template <class T, class Context>
     FullConnectedOp<T, Context>::FullConnectedOp(Parameter &param) {
-        this->output = param.outputs;
-        this->outputShapes = param.outShapes;
-        this->input = param.inputs;
-        this->inputShapes = param.inputShapes;
-        this->args = param.args;
+        INIT_PARAMS
     }
 
     template <class T, class Context>

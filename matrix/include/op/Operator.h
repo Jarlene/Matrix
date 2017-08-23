@@ -24,6 +24,12 @@
       return Method<CPU>(__VA_ARGS__);               \
    }
 
+#define INIT_PARAMS  \
+    this->inputShapes = param.inputShapes; \
+    this->outputShapes = param.outShapes; \
+    this->input = param.inputs; \
+    this->output = param.outputs; \
+    this->args = param.args; \
 
 #define INPUT_TAG(first, ...)  \
   enum InputTags {first = 0, __VA_ARGS__} \

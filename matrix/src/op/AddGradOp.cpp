@@ -1,33 +1,32 @@
 //
-// Created by Jarlene on 2017/8/2.
+// Created by Jarlene on 2017/8/23.
 //
 
-#include "matrix/include/op/AddOp.h"
+#include "matrix/include/op/AddGradOp.h"
+
 
 namespace matrix {
 
 
     template <class T, class xpu>
-    AddOp<T, xpu>::AddOp(Parameter &param) {
+    AddGradOp<T, xpu>::AddGradOp(Parameter &param) {
         INIT_PARAMS
     }
 
 
     template <class T, class xpu>
-    bool AddOp<T, xpu>::Run() {
+    bool AddGradOp<T, xpu>::Run() {
         if (inputShapes.size() < 2) {
             Logger::Global()->Fatal("input shape size less then 2 \n");
         }
-        Tensor<T> t1 = Inputs()[INPUT1]. template GeneratorTensor<T>(inputShapes.at(0));
-        Tensor<T> t2 = Inputs()[INPUT2]. template GeneratorTensor<T>(inputShapes.at(1));
-        Tensor<T> out = Outputs()[OUT]. template GeneratorTensor<T>(outputShapes.at(0));
-        Add(t1, t2, out);
+
+
         return true;
 
     }
 
     template <class T, class xpu>
-    void AddOp<T, xpu>::AsyncRun() {
+    void AddGradOp<T, xpu>::AsyncRun() {
         if (xpu::mode == RunMode::kCpu) {
             Run();
         } else if (xpu::mode == RunMode::kGpu) {
@@ -38,12 +37,12 @@ namespace matrix {
     }
 
     template <class T, class xpu>
-    AddOp<T, xpu>::~AddOp() {
+    AddGradOp<T, xpu>::~AddGradOp() {
 
     }
 
     template <class T, class xpu>
-    bool AddOp<T, xpu>::RunOnDevice() {
+    bool AddGradOp<T, xpu>::RunOnDevice() {
         return false;
     }
 
@@ -51,10 +50,10 @@ namespace matrix {
 
 
     template <>
-    Operator* CreateOp<CPU>(AddParam &param, long *size) {
+    Operator* CreateOp<CPU>(AddGradParam &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
-            op = new AddOp<DType, CPU>(param);
+            op = new AddGradOp<DType, CPU>(param);
             int shape = 0;
             for (Shape s : param.outShapes) {
                 shape += s.Size();
@@ -65,10 +64,10 @@ namespace matrix {
     }
 
     template <>
-    Operator* CreateOp<GPU>(AddParam &param, long *size) {
+    Operator* CreateOp<GPU>(AddGradParam &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
-            op = new AddOp<DType, GPU>(param);
+            op = new AddGradOp<DType, GPU>(param);
             int shape = 0;
             for (Shape s : param.outShapes) {
                 shape += s.Size();
@@ -78,15 +77,15 @@ namespace matrix {
         return op;
     }
 
-    AddOpProp::AddOpProp(const MatrixType &type)  {
-        param = new AddParam(type);
+    AddGradOpProp::AddGradOpProp(const MatrixType &type)  {
+        param = new AddGradParam(type);
     }
 
-    AddOpProp::AddOpProp() {
-        param = new AddParam(MatrixType::kFloat);
+    AddGradOpProp::AddGradOpProp() {
+        param = new AddGradParam(MatrixType::kFloat);
     }
 
-    Operator *AddOpProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
+    Operator *AddGradOpProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
                                         std::vector<Shape> &inShape, std::vector<Shape> &outShape,
                                         std::map<std::string, Any> &args) {
         InferShape(inShape, outShape);
@@ -98,13 +97,20 @@ namespace matrix {
         BIND_DISPATCH(CreateOp, *param, &memorySize);
     }
 
-    void AddOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape) {
-        outShape.at(0).reShape(inShape.at(0));
+    void AddGradOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape) {
+        if (param->args.count("input_idx")) {
+            int idx = get<int>(param->args["input_idx"]);
+            outShape.at(0).reShape(inShape.at(idx));
+        }
+
     }
 
-    AddOpProp::~AddOpProp() {
+    void AddGradOpProp::SwitchType(const MatrixType &type) {
+        param->type = type;
+    }
+
+    AddGradOpProp::~AddGradOpProp() {
         delete param;
     }
-
 
 }

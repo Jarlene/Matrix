@@ -7,7 +7,7 @@
 namespace matrix {
     template <class T, class Context>
     SubOp<T, Context>::SubOp(Parameter &param) {
-
+        INIT_PARAMS
     }
 
     template <class T, class Context>

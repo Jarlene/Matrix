@@ -8,7 +8,7 @@ namespace matrix {
 
     template <class T, class Context>
     DivOp<T, Context>::DivOp(Parameter &param) {
-
+        INIT_PARAMS
     }
 
     template <class T, class Context>

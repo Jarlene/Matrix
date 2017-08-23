@@ -9,11 +9,7 @@ namespace matrix {
 
     template <class T, class Context>
     ConvolutionOp<T, Context>::ConvolutionOp(Parameter &param) {
-        this->outputShapes = param.outShapes;
-        this->output = param.outputs;
-        this->input = param.inputs;
-        this->inputShapes = param.inputShapes;
-        this->args = param.args;
+        INIT_PARAMS
         if (HasArg("col_buffer")) {
             inputShapes.push_back(GetArgValue<Shape>("col_buffer"));
         }

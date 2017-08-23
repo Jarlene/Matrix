@@ -8,10 +8,7 @@ namespace matrix {
 
     template <class T, class Context>
     ActivationGradOp<T, Context>::ActivationGradOp(Parameter &param) {
-        this->outputShapes = param.outShapes;
-        this->output = param.outputs;
-        this->input = param.inputs;
-        this->inputShapes = param.inputShapes;
+        INIT_PARAMS
     }
 
     template <class T, class Context>

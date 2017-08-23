@@ -8,7 +8,7 @@ namespace matrix {
 
     template <class T, class Context>
     GRUOp<T, Context>::GRUOp(Parameter &param) {
-
+        INIT_PARAMS
     }
 
     template <class T, class Context>

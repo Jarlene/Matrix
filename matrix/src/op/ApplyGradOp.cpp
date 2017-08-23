@@ -8,13 +8,7 @@ namespace matrix {
 
     template <class T, class xpu>
     ApplyGradOp<T, xpu>::ApplyGradOp(Parameter &param) {
-        this->inputShapes = param.inputShapes;
-        this->outputShapes = param.outShapes;
-        this->input.insert(input.end(), param.inputs.begin(), param.inputs.end());
-        for (Blob b : param.outputs) {
-            this->output.push_back(b);
-        }
-        this->args = param.args;
+        INIT_PARAMS
     }
 
 

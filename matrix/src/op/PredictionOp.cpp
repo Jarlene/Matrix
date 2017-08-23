@@ -8,7 +8,7 @@ namespace matrix {
 
     template <class T, class Context>
     PredictionOp<T, Context>::PredictionOp(Parameter &param) {
-
+        INIT_PARAMS
     }
 
     template <class T, class Context>

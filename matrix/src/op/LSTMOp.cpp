@@ -8,7 +8,7 @@ namespace matrix {
 
     template <class T, class Context>
     LSTMOp<T, Context>::LSTMOp(Parameter &param) {
-
+        INIT_PARAMS
     }
 
     template <class T, class Context>

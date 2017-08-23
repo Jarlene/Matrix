@@ -9,11 +9,7 @@ namespace matrix {
 
     template <class T, class Context>
     LossOp<T, Context>::LossOp(Parameter &param) {
-        this->args = param.args;
-        this->input = param.inputs;
-        this->output = param.outputs;
-        this->inputShapes = param.inputShapes;
-        this->outputShapes = param.outShapes;
+        INIT_PARAMS
     }
 
     template <class T, class Context>
