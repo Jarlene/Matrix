@@ -14,6 +14,14 @@
 namespace matrix {
 
 
+
+    template <class T>
+    void Copy(const Tensor<T> &input, Tensor<T> &out) {
+        assert(input.GetShape() == out.GetShape()) ;
+        CPUCopy<T>(input.Size(), input.Data(), 1, out.MutableData(), 1);
+    }
+
+
     template <class T>
     void MatrixMul(const Tensor<T> &a, const bool ATran,  const Tensor<T> &b, const bool BTran, Tensor<T> &c, T beta = T(0)) {
         assert(a.GetShape()[0] == c.GetShape()[0]);

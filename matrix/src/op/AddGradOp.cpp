@@ -19,8 +19,9 @@ namespace matrix {
         if (inputShapes.size() < 2) {
             Logger::Global()->Fatal("input shape size less then 2 \n");
         }
-
-
+        Tensor<T> pre_grad = Inputs()[PRE_GRAD]. template GeneratorTensor<T>(inputShapes[PRE_GRAD]);
+        Tensor<T> out_grad = Outputs()[OUT_GRAD]. template GeneratorTensor<T>(outputShapes[OUT_GRAD]);
+        Copy(pre_grad, out_grad);
         return true;
 
     }
@@ -88,21 +89,21 @@ namespace matrix {
     Operator *AddGradOpProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
                                         std::vector<Shape> &inShape, std::vector<Shape> &outShape,
                                         std::map<std::string, Any> &args) {
-        InferShape(inShape, outShape);
+        // attention order
         param->outputs = output;
         param->inputs = input;
+        param->args = args;
+        InferShape(inShape, outShape);
         param->inputShapes = inShape;
         param->outShapes = outShape;
-        param->args = args;
         BIND_DISPATCH(CreateOp, *param, &memorySize);
     }
 
     void AddGradOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape) {
         if (param->args.count("input_idx")) {
             int idx = get<int>(param->args["input_idx"]);
-            outShape.at(0).reShape(inShape.at(idx));
+            outShape.at(0).reShape(inShape.at(idx + 2));
         }
-
     }
 
     void AddGradOpProp::SwitchType(const MatrixType &type) {

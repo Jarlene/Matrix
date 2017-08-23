@@ -106,12 +106,12 @@ namespace matrix {
     Operator *LossOpProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
                                          std::vector<Shape> &inShape, std::vector<Shape> &outShape,
                                          std::map<std::string, Any> &args) {
-        InferShape(inShape, outShape);
+        param->args = args;
         param->inputs = input;
         param->outputs = output;
+        InferShape(inShape, outShape);
         param->inputShapes = inShape;
         param->outShapes = outShape;
-        param->args = args;
         BIND_DISPATCH(CreateOp, *param, &memorySize);
     }
 }

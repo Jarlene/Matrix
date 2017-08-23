@@ -397,11 +397,11 @@ namespace matrix {
     /// \param y
     /// \param incy
     template <class T>
-    inline void CPUCopy(const int N, T* x, int incx, T* y, int incy);
+    inline void CPUCopy(const int N, const T* x, int incx, T* y, int incy);
 
 
     template <>
-    inline void CPUCopy<float>(const int N, float* x, int incx, float* y, int incy) {
+    inline void CPUCopy<float>(const int N, const float* x, int incx, float* y, int incy) {
 #ifdef BLAS
         cblas_scopy(N, x, incx, y, incy);
 #else
@@ -420,7 +420,7 @@ namespace matrix {
     }
 
     template <>
-    inline void CPUCopy<double>(const int N, double* x, int incx, double* y, int incy) {
+    inline void CPUCopy<double>(const int N, const double* x, int incx, double* y, int incy) {
 #ifdef BLAS
         cblas_dcopy(N, x, incx, y, incy);
 #else
@@ -440,7 +440,7 @@ namespace matrix {
 
 
     template <>
-    inline void CPUCopy<int>(const int N, int* x, int incx, int* y, int incy) {
+    inline void CPUCopy<int>(const int N, const int* x, int incx, int* y, int incy) {
         int posx = 0;
         int posy = 0;
 #ifdef USE_MP
@@ -455,7 +455,7 @@ namespace matrix {
     }
 
     template <>
-    inline void CPUCopy<long>(const int N, long* x, int incx, long* y, int incy) {
+    inline void CPUCopy<long>(const int N, const long* x, int incx, long* y, int incy) {
         int posx = 0;
         int posy = 0;
 #ifdef USE_MP
