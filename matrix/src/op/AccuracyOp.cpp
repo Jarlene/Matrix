@@ -9,7 +9,7 @@ namespace matrix {
 
 
     template <class T, class Context>
-    AccuracyOp<T, Context>::AccuracyOp(AccuracyParam &param) {
+    AccuracyOp<T, Context>::AccuracyOp(Parameter &param) {
         this->outputShapes = param.outShapes;
         this->output = param.outputs;
         this->input = param.inputs;
@@ -104,5 +104,9 @@ namespace matrix {
         param->outShapes = outShape;
         param->args = args;
         BIND_DISPATCH(CreateOp, *param, &memorySize);
+    }
+
+    void AccuracyOpProp::SwitchType( const MatrixType &type) {
+        param->type = type;
     }
 }

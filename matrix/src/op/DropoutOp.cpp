@@ -7,7 +7,7 @@
 namespace matrix {
 
     template <class T, class Context>
-    DropoutOp<T, Context>::DropoutOp(DropoutParam &param) {
+    DropoutOp<T, Context>::DropoutOp(Parameter &param) {
 
     }
 

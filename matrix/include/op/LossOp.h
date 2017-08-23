@@ -18,6 +18,8 @@ namespace matrix {
     class LossOp : public Operator {
     SAME_FUNCTION(Loss);
     DISABLE_COPY_AND_ASSIGN(Loss);
+        INPUT_TAG(DATA, LABEL);
+        OUTPUT_TAG(OUT);
     };
 
     template <typename Context>

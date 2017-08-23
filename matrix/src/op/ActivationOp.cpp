@@ -8,7 +8,7 @@ namespace matrix {
 
 
     template <class T, class Context>
-    ActivationOp<T, Context>::ActivationOp(matrix::ActivationParam &param) {
+    ActivationOp<T, Context>::ActivationOp(Parameter &param) {
 
     }
 

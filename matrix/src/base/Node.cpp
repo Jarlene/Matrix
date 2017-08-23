@@ -38,7 +38,7 @@ namespace matrix {
     }
 
     void Node::Build() {
-        OpPtr opPtr = Registry::Global()->GetOp(this->opName);
+        OpPtr opPtr = Registry::Global()->GetOp(this->opName, context.type);
         if (opPtr == nullptr) {
             return;
         }

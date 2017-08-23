@@ -122,9 +122,6 @@ namespace matrix {
     void Graph::Unique() {
         sort(nodes_.begin(), nodes_.end());
         nodes_.erase(unique(nodes_.begin(), nodes_.end()), nodes_.end());
-        for(NodePtr node : nodes_) {
-            node->Build();
-        }
     }
 
     void Graph::GeneratorGradNodes(const Symbol &symbol) {

@@ -7,7 +7,7 @@
 namespace matrix {
 
     template <class T, class Context>
-    DivOp<T, Context>::DivOp(DivParam &param) {
+    DivOp<T, Context>::DivOp(Parameter &param) {
 
     }
 

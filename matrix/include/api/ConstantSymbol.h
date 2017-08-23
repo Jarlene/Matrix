@@ -35,6 +35,7 @@ namespace matrix {
         auto symbol = ConstantSymbol(name);
         T* s = const_cast<T*>(&value);
         symbol.nodePtr->data_ = s;
+        symbol.Build();
         return symbol;
     }
 
@@ -43,6 +44,7 @@ namespace matrix {
         auto symbol = ConstantSymbol(name);
         symbol.nodePtr->data_ = values;
         symbol.nodePtr->outputShapes = shape;
+        symbol.Build();
         return symbol;
     }
 
@@ -51,6 +53,7 @@ namespace matrix {
         auto symbol = ConstantSymbol(name);
         symbol.nodePtr->data_ = values.data();
         symbol.nodePtr->outputShapes = shape;
+        symbol.Build();
         return symbol;
     }
 

@@ -6,7 +6,7 @@
 
 namespace matrix {
     template <class T, class Context>
-    SubOp<T, Context>::SubOp(SubParam &param) {
+    SubOp<T, Context>::SubOp(Parameter &param) {
 
     }
 

@@ -6,18 +6,39 @@
 
 namespace matrix {
     template <class T, class Context>
-    OutputOp<T, Context>::OutputOp(OutputParam &param) {
-
+    OutputOp<T, Context>::OutputOp(Parameter &param) {
+        this->input = param.inputs;
+        this->args = param.args;
+        this->output = param.outputs;
+        this->inputShapes = param.inputShapes;
+        this->outputShapes = param.outShapes;
     }
 
     template <class T, class Context>
     bool OutputOp<T, Context>::Run() {
-        return OutputOp::Run();
+        auto outModel = OutputMode::kSoftmax;
+        if (HasArg("type")) {
+            outModel = GetArgValue<OutputMode>("type");
+        }
+        Tensor<T> data = Inputs()[DATA]. template GeneratorTensor<T>(inputShapes[DATA]);
+        Tensor<T> out = Outputs()[OUT]. template GeneratorTensor<T>(inputShapes[OUT]);
+        if (outModel == OutputMode::kSoftmax) {
+            Softmax<T>(data, out);
+        } else {
+            Logger::Global()->Fatal("OutputOp not support other output.\n");
+        }
+        return true;
     }
 
     template <class T, class Context>
     void OutputOp<T, Context>::AsyncRun() {
-        Operator::AsyncRun();
+        if (Context::mode == RunMode::kCpu) {
+            Run();
+        } else {
+            if (!RunOnDevice()) {
+                Run();
+            }
+        }
     }
 
     template <class T, class Context>

@@ -7,7 +7,7 @@
 namespace matrix {
 
     template <class T, class Context>
-    FullConnectedOp<T, Context>::FullConnectedOp(FullConnectedParam &param) {
+    FullConnectedOp<T, Context>::FullConnectedOp(Parameter &param) {
         this->output = param.outputs;
         this->outputShapes = param.outShapes;
         this->input = param.inputs;
@@ -85,9 +85,6 @@ namespace matrix {
         return op;
     }
 
-    FullConnectedParam::FullConnectedParam(MatrixType matrixType) : Parameter(matrixType) {
-
-    }
 
     FullConnectedOpProp::FullConnectedOpProp() {
         param = new FullConnectedParam(kFloat);

@@ -8,7 +8,7 @@ namespace matrix {
 
 
     template <class T, class xpu>
-    AddOp<T, xpu>::AddOp(matrix::AddParam &param) {
+    AddOp<T, xpu>::AddOp(Parameter &param) {
         this->inputShapes = param.inputShapes;
         this->outputShapes = param.outShapes;
         this->input.insert(input.end(), param.inputs.begin(), param.inputs.end());

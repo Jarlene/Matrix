@@ -20,6 +20,8 @@ namespace matrix {
     class OutputOp : public Operator {
     SAME_FUNCTION(Output);
     DISABLE_COPY_AND_ASSIGN(Output);
+        INPUT_TAG(DATA);
+        OUTPUT_TAG(OUT);
     };
 
 

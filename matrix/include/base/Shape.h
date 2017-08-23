@@ -24,6 +24,8 @@ namespace matrix {
 
         Shape& operator=(const Shape& other);
 
+        void Append(int idx);
+
         bool isConstant();
 
         bool isVector();

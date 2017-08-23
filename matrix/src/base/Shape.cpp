@@ -52,6 +52,10 @@ namespace matrix {
         this->shape_ = shape.shape_;
     }
 
+    void Shape::Append(int idx) {
+        shape_.push_back(idx);
+    }
+
     const bool Shape::operator==(const Shape &shape) const {
         if (this->Size() != shape.Size()) {
             return false;

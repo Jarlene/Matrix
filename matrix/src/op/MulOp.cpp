@@ -8,7 +8,7 @@ namespace matrix {
 
 
     template <class T, class Context>
-    MulOp<T, Context>::MulOp(MulParam &param) {
+    MulOp<T, Context>::MulOp(Parameter &param) {
 
     }
 

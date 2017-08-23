@@ -7,7 +7,7 @@
 namespace matrix {
 
     template <class T, class Context>
-    PredictionOp<T, Context>::PredictionOp(PredictionParam &param) {
+    PredictionOp<T, Context>::PredictionOp(Parameter &param) {
 
     }
 

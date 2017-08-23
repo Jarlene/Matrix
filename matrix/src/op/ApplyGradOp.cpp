@@ -7,7 +7,7 @@
 namespace matrix {
 
     template <class T, class xpu>
-    ApplyGradOp<T, xpu>::ApplyGradOp(ApplyGradParam &param) {
+    ApplyGradOp<T, xpu>::ApplyGradOp(Parameter &param) {
         this->inputShapes = param.inputShapes;
         this->outputShapes = param.outShapes;
         this->input.insert(input.end(), param.inputs.begin(), param.inputs.end());

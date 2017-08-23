@@ -35,7 +35,7 @@ namespace matrix {
 
         int RegisterOp(const std::string &name, const OpPtr op);
 
-        const OpPtr GetOp(const std::string &name) const;
+        const OpPtr GetOp(const std::string &name, const MatrixType &type = kFloat) const;
 
     private:
         std::unordered_map<std::string, OpPtr> opMap;

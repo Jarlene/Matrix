@@ -8,7 +8,7 @@
 namespace matrix {
 
     template <class T, class Context>
-    ConvolutionOp<T, Context>::ConvolutionOp(ConvolutionParam &param) {
+    ConvolutionOp<T, Context>::ConvolutionOp(Parameter &param) {
         this->outputShapes = param.outShapes;
         this->output = param.outputs;
         this->input = param.inputs;
@@ -191,7 +191,7 @@ namespace matrix {
             out.reShape(ShapeN(n, filter_num, height, width));
             int c = channel/group* kernel.Size();
             colBuffer.reShape(ShapeN(c, height, width));
-            kernel.reShape(ShapeN(channel, kernel_h, kernel_w));
+            kernel.reShape(ShapeN(filter_num, channel, kernel_h, kernel_w));
         } else {
             int height = (in[1] + padding[0] - (dilate[0] * (kernel[0] - 1) + 1)) / stride[0] + 1;
             int width  = (in[2] + padding[1] - (dilate[1] * (kernel[1] - 1) + 1)) / stride[1] + 1;
@@ -199,7 +199,7 @@ namespace matrix {
             int channel = in[3];
             int c = channel/group* kernel.Size();
             colBuffer.reShape(ShapeN(c, height, width));
-            kernel.reShape(ShapeN(channel, kernel_h, kernel_w));
+            kernel.reShape(ShapeN(filter_num, channel, kernel_h, kernel_w));
         }
 
     }

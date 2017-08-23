@@ -8,18 +8,42 @@
 namespace matrix {
 
     template <class T, class Context>
-    LossOp<T, Context>::LossOp(LossParam &param) {
-
+    LossOp<T, Context>::LossOp(Parameter &param) {
+        this->args = param.args;
+        this->input = param.inputs;
+        this->output = param.outputs;
+        this->inputShapes = param.inputShapes;
+        this->outputShapes = param.outShapes;
     }
 
     template <class T, class Context>
     bool LossOp<T, Context>::Run() {
-        return Operator::Run();
+        auto lossModel = LossMode::kCrossEntropy;
+        if (HasArg("type")) {
+            lossModel = GetArgValue<LossMode>("type");
+        }
+        Tensor<T> data = Inputs()[DATA].template GeneratorTensor<T>(inputShapes[DATA]);
+        Tensor<T> label = Inputs()[LABEL].template GeneratorTensor<T>(inputShapes[LABEL]);
+        Tensor<T> out = Outputs()[OUT]. template GeneratorTensor<T>(outputShapes[OUT]);
+        if (lossModel == LossMode::kCrossEntropy) {
+            CrossEntropy<T>(data, label, out);
+        } else if (lossModel == LossMode::kMSE) {
+            RMSLoss<T>(data, label, out);
+        } else {
+            Logger::Global()->Fatal("LossOp not support other loss.\n");
+        }
+        return true;
     }
 
     template <class T, class Context>
     void LossOp<T, Context>::AsyncRun() {
-        Operator::AsyncRun();
+        if (Context::mode == RunMode::kCpu) {
+            Run();
+        } else {
+            if (!RunOnDevice()) {
+                Run();
+            }
+        }
     }
 
     template <class T, class Context>

@@ -89,20 +89,76 @@ namespace matrix {
 
 
     template <class T>
-    inline void Img2Col(const Tensor<T> &input, Shape &in, Shape &kernel, Shape &stride,
-                        Shape &padding, Shape &dilate, Shape &out, Tensor<T> &output, ImageOrder &order) {
+    void CrossEntropy(const Tensor<T> &data, const Tensor<T> &label, Tensor<T> &out) {
+        CrossEntropy<T>(data.Size(), data.Data(), label.Size(), label.Data(), out.MutableData());
+    }
+
+    template <class T>
+    void RMSLoss(const Tensor<T> &data, const Tensor<T> &label, Tensor<T> &out) {
+        RMSLoss<T>(data.Size(), data.Data(), label.Size(), label.Data(), out.MutableData());
+    }
+
+    template <class T>
+    void Softmax(const Tensor<T> &data, Tensor<T> &out) {
+        Softmax<T>(data.Size(), data.Data(), out.MutableData());
+    }
+
+
+
+    template <class T>
+    inline void Img2Col(const Tensor<T> &input, Shape &kernel, Shape &stride,
+                        Shape &padding, Shape &dilate,  Tensor<T> &output, ImageOrder order = NCHW) {
 
         if (kernel.Rank() == 2) {
+            Shape in = input.GetShape();
             assert(in.Rank() == 4);
-            Img2Col<T, order>(input.Data(), in[1], in[2], in[3],
-                              kernel[0], kernel[1],
-                              dilate[0], dilate[1],
-                              padding[0],padding[1],
-                              padding[0],padding[1],
-                              stride[0],stride[1],
-                              output.MutableData());
+            switch (order) {
+                case NCHW:
+                    Img2Col<T, 0>(input.Data(), in[1], in[2], in[3],
+                                      kernel[0], kernel[1],
+                                      dilate[0], dilate[1],
+                                      padding[0],padding[1],
+                                      padding[0],padding[1],
+                                      stride[0],stride[1],
+                                      output.MutableData());
+                    break;
+                case NHWC:
+                    Img2Col<T, 1>(input.Data(), in[1], in[2], in[3],
+                                  kernel[0], kernel[1],
+                                  dilate[0], dilate[1],
+                                  padding[0],padding[1],
+                                  padding[0],padding[1],
+                                  stride[0],stride[1],
+                                  output.MutableData());
+                    break;
+                default:
+                    Logger::Global()->Fatal("Col2Img does not support");
+                    break;
+            }
+
         } else {
-            Img2ColNd<T>(input.Data(), in.Array(), out.Array(),
+            Shape colShape;
+            int c = 0;
+            switch (order) {
+                case NCHW:
+                    c = input.GetShape()[1];
+                    colShape.Append(c*kernel.Size());
+                    for (int i = 1; i < kernel.Rank(); ++i) {
+                        colShape.Append(output.GetShape()[i+1]);
+                    }
+                    break;
+                case NHWC:
+                    c = input.GetShape()[3];
+                    colShape.Append(c*kernel.Size());
+                    for (int i = 1; i < kernel.Rank(); ++i) {
+                        colShape.Append(output.GetShape()[i+1]);
+                    }
+                    break;
+                default:
+                    Logger::Global()->Fatal("Col2Img does not support");
+                    break;
+            }
+            Img2ColNd<T>(input.Data(), input.GetShape().Array(), colShape.Array(),
                          kernel.Array(), stride.Array(),
                          dilate.Array(), padding.Array(), kernel.Rank(),
                          output.MutableData());
@@ -112,23 +168,76 @@ namespace matrix {
 
 
     template <class T>
-    inline void Col2Img(const Tensor<T> & input, Shape &in, Shape &kernel, Shape &stride,
-                        Shape &padding, Shape &dilate, Shape &out, Tensor<T> &output, ImageOrder &order) {
+    inline void Col2Img(const Tensor<T> & input, Shape &kernel, Shape &stride,
+                        Shape &padding, Shape &dilate, Tensor<T> &output, ImageOrder order = NCHW) {
+        Shape in = input.GetShape();
         if (kernel.Rank() == 2) {
             assert(in.Rank() == 4);
-            Col2Img<T, order>(input.Data(), in[1], in[2], in[3],
-                              kernel[0], kernel[1],
-                              dilate[0], dilate[1],
-                              padding[0],padding[1],
-                              padding[0],padding[1],
-                              stride[0],stride[1],
-                              output.MutableData());
+            switch (order) {
+                case NCHW:
+                    Col2Img<T, 0>(input.Data(), in[1], in[2], in[3],
+                                    kernel[0], kernel[1],
+                                    dilate[0], dilate[1],
+                                    padding[0],padding[1],
+                                    padding[0],padding[1],
+                                    stride[0],stride[1],
+                                    output.MutableData());
+                    break;
+                case NHWC:
+                    Col2Img<T, 1>(input.Data(), in[1], in[2], in[3],
+                                  kernel[0], kernel[1],
+                                  dilate[0], dilate[1],
+                                  padding[0],padding[1],
+                                  padding[0],padding[1],
+                                  stride[0],stride[1],
+                                  output.MutableData());
+                    break;
+                default:
+                    Logger::Global()->Fatal("Col2Img does not support");
+                    break;
+            }
+
         } else {
-            Col2ImgNd<T>(input.Data(), in.Array(), out.Array(),
+            Shape colShape;
+            int c = 0;
+            switch (order) {
+                case NCHW:
+                    c = in[1];
+                    colShape.Append(c*kernel.Size());
+                    for (int i = 1; i < kernel.Rank(); ++i) {
+                        colShape.Append(output.GetShape()[i+1]);
+                    }
+                    break;
+                case NHWC:
+                    c = in[3];
+                    colShape.Append(c*kernel.Size());
+                    for (int i = 1; i < kernel.Rank(); ++i) {
+                        colShape.Append(output.GetShape()[i+1]);
+                    }
+                    break;
+                default:
+                    Logger::Global()->Fatal("Col2Img does not support");
+                    break;
+            }
+
+            Col2ImgNd<T>(input.Data(), in.Array(), colShape.Array(),
                          kernel.Array(), stride.Array(),
                          dilate.Array(), padding.Array(), kernel.Rank(),
                          output.MutableData());
         }
+    }
+
+
+
+
+    template <class T>
+    inline void Img2ColND(const Tensor<T> &input, Shape &colShape, Shape &kernel, Shape &stride,
+                          Shape &padding, Shape &dilate, Tensor<T> &output, ImageOrder order = NCHW) {
+
+        Col2ImgNd<T>(input.Data(), input.GetShape().Array(),
+                     colShape.Array(), kernel.Array(),stride.Array(),
+                     dilate.Array(), padding.Array(), kernel.Rank(), output.MutableData());
+
     }
 
 }

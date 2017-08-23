@@ -7,7 +7,7 @@
 namespace matrix {
 
     template <class T, class Context>
-    GRUOp<T, Context>::GRUOp(GRUParam &param) {
+    GRUOp<T, Context>::GRUOp(Parameter &param) {
 
     }
 

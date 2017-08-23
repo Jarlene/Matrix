@@ -7,7 +7,7 @@
 namespace matrix {
 
     template <class T, class Context>
-    LSTMOp<T, Context>::LSTMOp(LSTMParam &param) {
+    LSTMOp<T, Context>::LSTMOp(Parameter &param) {
 
     }
 

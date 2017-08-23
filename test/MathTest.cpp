@@ -72,14 +72,17 @@ namespace matrix {
             float colBuffer[81] = {0};
 
             Shape input = ShapeN(1, 1, 5, 5);
-            Shape kShape = ShapeN(1, 3, 3);
+            Shape kShape = ShapeN(1,1,3, 3);
             Shape stride = ShapeN(1, 1);
             Shape padding = ShapeN(0, 0);
             Shape dilation = ShapeN(1, 1);
             Shape out = ShapeN(1, 1, 3, 3);
-            const int input_offset = 1 / 1 * 5*5;
 
-            Col2Img<float, 0>(a, 1, 5, 5, 3, 3, 1, 1, 0, 0, 0, 0, 1, 1, colBuffer);
+            Tensor<float> data(a, input);
+            Tensor<float> col(colBuffer, out);
+
+            Img2Col<float>(data, kShape, stride, padding, dilation, col);
+            std::cout<<std::endl;
             for (int i = 0; i < 81; ++i) {
                 std::cout<<colBuffer[i] << std::endl;
             }

@@ -30,7 +30,9 @@ namespace matrix {
             return SetParam(name, Any(value));
         }
 
-//        Symbol &Build();
+        Symbol &On(const RunMode &mode = kCpu);
+
+        Symbol &Build();
 
         Symbol &operator=(const Symbol &symbol);
 

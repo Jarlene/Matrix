@@ -35,6 +35,7 @@ namespace matrix {
     public:
         AccuracyOpProp();
         AccuracyOpProp(const MatrixType &type);
+        virtual void SwitchType(const MatrixType &type);
         ~AccuracyOpProp();
         virtual void InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape);
         virtual Operator* CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,

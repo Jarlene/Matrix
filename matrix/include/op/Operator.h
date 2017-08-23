@@ -33,7 +33,7 @@
 
 #define SAME_FUNCTION(classname)  \
 public:                           \
-explicit classname##Op(classname##Param &param); \
+explicit classname##Op(matrix::Parameter &param); \
 virtual bool Run() override ; \
 virtual void AsyncRun() override ; \
 virtual ~classname##Op(); \
@@ -188,6 +188,10 @@ namespace matrix {
                                          std::vector<Shape> &inShape, std::vector<Shape> &outShape,
                                          std::map<std::string, Any> &args) {
             return nullptr;
+        }
+
+        virtual void SwitchType(const MatrixType &type) {
+
         }
 
         long GetMemorySize() {

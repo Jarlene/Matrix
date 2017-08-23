@@ -696,7 +696,7 @@ namespace matrix {
     /// \param y
     /// \param z
     template <class T>
-    inline void TanhGrad(const int N,  const T*x, const T *y,  T *z) {
+    inline void TanhGrad(const int N,  const T *x, const T *y,  T *z) {
 #ifdef USE_MP
 #pragma omp parallel for
 #endif
@@ -712,7 +712,7 @@ namespace matrix {
     /// \param x
     /// \param y
     template <class T>
-    inline void Sigmoid(const int N,  T*x, T *y) {
+    inline void Sigmoid(const int N,  const T*x, T *y) {
 #ifdef USE_MP
 #pragma omp parallel for
 #endif
@@ -729,7 +729,7 @@ namespace matrix {
     /// \param y
     /// \param z
     template <class T>
-    inline void SigmoidGrad(const int N, T *x, T *y,  T *z) {
+    inline void SigmoidGrad(const int N, const T *x, const T *y,  T *z) {
 #ifdef USE_MP
 #pragma omp parallel for
 #endif
@@ -746,7 +746,7 @@ namespace matrix {
     /// \param x
     /// \param y
     template <class T>
-    inline void Relu(const int N, T *x, T *y) {
+    inline void Relu(const int N, const T *x, T *y) {
 #ifdef USE_MP
 #pragma omp parallel for
 #endif
@@ -762,7 +762,7 @@ namespace matrix {
     /// \param x
     /// \param dy
     template <class T>
-    inline void ReluGrad(const int N, T *dx, T *x, T* dy) {
+    inline void ReluGrad(const int N, const T *dx, const T *x, T* dy) {
 #ifdef USE_MP
 #pragma omp parallel for
 #endif
@@ -779,7 +779,7 @@ namespace matrix {
     /// \param x
     /// \param y
     template <class T>
-    inline void Softmax(const int N, T* x, T* y) {
+    inline void Softmax(const int N, const T* x, T* y) {
         T max = x[0];
 #ifdef USE_MP
 #pragma omp parallel for
@@ -816,7 +816,7 @@ namespace matrix {
     /// \param in2 real value
     /// \param out
     template <class T>
-    inline void CrossEntropy(const int N, T *in1, const int M, T *in2, T *out) {
+    inline void CrossEntropy(const int N, const T *in1, const int M, const T *in2, T *out) {
         if (N == M) {
 #ifdef USE_MP
 #pragma omp parallel for
@@ -847,7 +847,7 @@ namespace matrix {
     /// \param in2 real value
     /// \param out
     template <class T>
-    inline void CrossEntropyGrad(const int N, T *in1, const int M, T *in2, T *out) {
+    inline void CrossEntropyGrad(const int N, const T *in1, const int M, const T *in2, T *out) {
         if (N == M) {
 #ifdef USE_MP
 #pragma omp parallel for
@@ -866,6 +866,67 @@ namespace matrix {
             }
         }
     }
+
+
+    /// rms loss
+    /// \tparam T
+    /// \param N  prediction data length
+    /// \param in1 prediction value
+    /// \param M label data length
+    /// \param in2 label value
+    /// \param out
+    template <class T>
+    inline void RMSLoss(const int N, const T *in1, const int M, const T *in2, T *out) {
+        if (N == M) {
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+            for (int i = 0; i < N; ++i) {
+                out[0] += std::pow((in1[i] - in2[i]), 2);
+            }
+        } else {
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+            for (int i = 0; i < M; ++i) {
+                for (int j = 0; j < N / M; ++j) {
+                    out[0] += std::pow((in1[i*M + j] - in2[i]), 2);
+                }
+            }
+        }
+        out[0] /= N;
+    }
+
+
+    /// rms loss grad
+    /// \tparam T
+    /// \param N prediction data length
+    /// \param in1 prediction value
+    /// \param M  label data length
+    /// \param in2 label value
+    /// \param out
+    template <class T>
+    inline void RMSLossGrad(const int N, const T *in1, const int M, const T *in2, T *out) {
+        if (N == M) {
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+            for (int i = 0; i < N; ++i) {
+                out[i] = 2 * (in1[i] - in2[i]);
+            }
+        } else {
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+            for (int i = 0; i < M; ++i) {
+                for (int j = 0; j < N / M; ++j) {
+                    out[i * M + j] = 2 * (in1[i * M + j] - in2[i]);
+                }
+            }
+        }
+    }
+
+
 
     template <class T, int order>
     inline void Img2Col(const T *input, const int channels, const int height, const int width,
@@ -1126,7 +1187,7 @@ namespace matrix {
     template <class T>
     inline void Img2ColNd(const T *input, const int *imageShape, const int *dataShape,
                           const int * kernel, const int *stride, const int * dilation,
-                          const int * padding, const int N, T *output, bool accumulate_output = false) {
+                          const int * padding, const int N, T *output, bool col2img = false) {
         int kernel_size = 1;
         for (int i = 0; i < N; ++i) {
             kernel_size *= kernel[i];
@@ -1155,7 +1216,7 @@ namespace matrix {
                     index_im *= imageShape[d_i + 1];
                     index_im += d_im;
                 }
-                if (!accumulate_output) {
+                if (!col2img) {
                     if (is_padding) {
                         output[index_col] = 0;
                     } else {
@@ -1167,7 +1228,9 @@ namespace matrix {
                 incremented = false;
                 for (int d_i = N - 1; d_i >= 0; --d_i) {
                     const int d_max = dataShape[d_i + 1];
-//                    DCHECK_LT(d_iter[d_i], d_max);
+                    if (d_iter[d_i] < d_max) {
+                        Logger::Global()->Fatal("Img2ColNd d_iter[%d] less then d_max\n", d_i);
+                    }
                     if (d_iter[d_i] == d_max - 1) {
                         d_iter[d_i] = 0;
                     } else { // d_iter[d_i] < d_max - 1

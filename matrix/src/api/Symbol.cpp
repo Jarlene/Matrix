@@ -20,6 +20,9 @@ namespace matrix {
     Symbol &Symbol::SetInput(const std::string &name, const Symbol &symbol) {
         this->nodePtr->inputs.push_back(symbol.nodePtr);
         symbol.nodePtr->outputs.push_back(std::weak_ptr<Node>(this->nodePtr));
+        if (this->nodePtr->context.type == kInvalid) {
+            this->nodePtr->context.type = symbol.nodePtr->context.type;
+        }
         symbol.nodePtr->nodeName = name;
         return *this;
     }
@@ -29,10 +32,15 @@ namespace matrix {
         return *this;
     }
 
-//    Symbol &Symbol::Build() {
-//        this->nodePtr->Build();
-//        return *this;
-//    }
+    Symbol &Symbol::Build() {
+        this->nodePtr->Build();
+        return *this;
+    }
+
+    Symbol &Symbol::On(const RunMode &mode) {
+        this->nodePtr->context.mode = mode;
+        return *this;
+    }
 
     Symbol &Symbol::operator=(const Symbol &symbol) {
         this->nodePtr = symbol.nodePtr;
@@ -42,32 +50,32 @@ namespace matrix {
     Symbol Symbol::operator+(const Symbol &symbol) {
         auto s = Symbol("add")
                 .SetInput("first", *this)
-                .SetInput("second", symbol);
-//                .Build();
+                .SetInput("second", symbol)
+                .Build();
         return s;
     }
 
     Symbol Symbol::operator-(const Symbol &symbol) {
         auto s = Symbol("sub")
                 .SetInput("first", *this)
-                .SetInput("second", symbol);
-//                .Build();
+                .SetInput("second", symbol)
+                .Build();
         return s;
     }
 
     Symbol Symbol::operator*(const Symbol &symbol) {
         auto s = Symbol("mul")
                 .SetInput("first", *this)
-                .SetInput("second", symbol);
-//                .Build();
+                .SetInput("second", symbol)
+                .Build();
         return s;
     }
 
     Symbol Symbol::operator/(const Symbol &symbol) {
         auto s = Symbol("div")
                 .SetInput("first", *this)
-                .SetInput("second", symbol);
-//                .Build();
+                .SetInput("second", symbol)
+                .Build();
         return s;
     }
 

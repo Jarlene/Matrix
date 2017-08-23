@@ -80,7 +80,7 @@ namespace matrix {
 
 
     struct Context {
-        MatrixType type;
+        MatrixType type = kInvalid;
         Phase phase;
         RunMode mode;
     };

@@ -7,7 +7,7 @@
 namespace matrix {
 
     template <class T, class Context>
-    PoolingOp<T, Context>::PoolingOp(PoolingParam &param) {
+    PoolingOp<T, Context>::PoolingOp(Parameter &param) {
 
     }
 
