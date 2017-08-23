@@ -65,8 +65,8 @@ namespace matrix {
         TYPE_SWITCH(param.type, DType, {
             op = new ActivationOp<DType, CPU>(param);
             int shape = 0;
-            for (Shape s : param.outShapes) {
-                shape += s.Size();
+            for (auto s : param.outShapes) {
+                shape += s->Size();
             }
             *size = sizeof(DType) * shape;
         })
@@ -79,8 +79,8 @@ namespace matrix {
         TYPE_SWITCH(param.type, DType, {
             op = new ActivationOp<DType, GPU>(param);
             int shape = 0;
-            for (Shape s : param.outShapes) {
-                shape += s.Size();
+            for (auto s : param.outShapes) {
+                shape += s->Size();
             }
             *size = sizeof(DType) * shape;
         })
@@ -102,12 +102,12 @@ namespace matrix {
         delete param;
     }
 
-    void ActivationOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape) {
-
+    void ActivationOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape*> &outShape) {
+        outShape[0]->reShape(inShape[0]);
     }
 
     Operator *ActivationOpProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
-                                               std::vector<Shape> &inShape, std::vector<Shape> &outShape,
+                                               std::vector<Shape> &inShape, std::vector<Shape*> &outShape,
                                                std::map<std::string, Any> &args) {
         param->args = args;
         param->inputs = input;
@@ -116,5 +116,9 @@ namespace matrix {
         param->inputShapes = inShape;
         param->outShapes = outShape;
         BIND_DISPATCH(CreateOp, *param, &memorySize);
+    }
+
+    void ActivationOpProp::SwitchType(const MatrixType &type) {
+        this->param->type = type;
     }
 }

@@ -68,8 +68,8 @@ namespace matrix {
         TYPE_SWITCH(param.type, DType, {
             op = new AccuracyOp<DType, CPU>(param);
             int shape = 0;
-            for (Shape s : param.outShapes) {
-                shape += s.Size();
+            for (Shape *s : param.outShapes) {
+                shape += s->Size();
             }
             *size = sizeof(DType) * shape;
         })
@@ -82,8 +82,8 @@ namespace matrix {
         TYPE_SWITCH(param.type, DType, {
             op = new AccuracyOp<DType, GPU>(param);
             int shape = 0;
-            for (Shape s : param.outShapes) {
-                shape += s.Size();
+            for (Shape *s : param.outShapes) {
+                shape += s->Size();
             }
             *size = sizeof(DType) * shape;
         })
@@ -103,15 +103,15 @@ namespace matrix {
         delete param;
     }
 
-    void AccuracyOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape) {
+    void AccuracyOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape*> &outShape) {
         if (outShape.size() < 1) {
             Logger::Global()->Fatal("AccuracyOp  must has output shape. \n");
         }
-        outShape.at(0).reShape(ShapeN(1));
+        outShape.at(0)->reShape(ShapeN(1));
     }
 
     Operator *AccuracyOpProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
-                                             std::vector<Shape> &inShape, std::vector<Shape> &outShape,
+                                             std::vector<Shape> &inShape, std::vector<Shape*> &outShape,
                                              std::map<std::string, Any> &args) {
         param->args = args;
         param->inputs = input;

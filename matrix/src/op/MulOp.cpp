@@ -40,8 +40,8 @@ namespace matrix {
         TYPE_SWITCH(param.type, DType, {
             op = new MulOp<DType, CPU>(param);
             int shape = 0;
-            for (Shape s : param.outShapes) {
-                shape += s.Size();
+            for (auto s : param.outShapes) {
+                shape += s->Size();
             }
             *size = sizeof(DType) * shape;
         })
@@ -54,8 +54,8 @@ namespace matrix {
         TYPE_SWITCH(param.type, DType, {
             op = new MulOp<DType, GPU>(param);
             int shape = 0;
-            for (Shape s : param.outShapes) {
-                shape += s.Size();
+            for (auto s : param.outShapes) {
+                shape += s->Size();
             }
             *size = sizeof(DType) * shape;
         })
@@ -75,14 +75,14 @@ namespace matrix {
         delete param;
     }
 
-    void MulOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape) {
+    void MulOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape*> &outShape) {
         assert(inShape.size() >= 2);
         assert(outShape.size() >= 1);
-        ProduceMulOpShape(inShape, outShape[0]);
+        ProduceMulOpShape(inShape, *outShape[0]);
     }
 
     Operator *MulOpProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
-                                        std::vector<Shape> &inShape, std::vector<Shape> &outShape,
+                                        std::vector<Shape> &inShape, std::vector<Shape*> &outShape,
                                         std::map<std::string, Any> &args) {
         param->args = args;
         param->inputs = input;
@@ -91,5 +91,9 @@ namespace matrix {
         param->inputShapes = inShape;
         param->outShapes = outShape;
         BIND_DISPATCH(CreateOp, *param, &memorySize);
+    }
+
+    void MulOpProp::SwitchType(const MatrixType &type) {
+        this->param->type = type;
     }
 }

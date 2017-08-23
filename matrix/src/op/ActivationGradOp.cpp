@@ -9,6 +9,7 @@ namespace matrix {
     template <class T, class Context>
     ActivationGradOp<T, Context>::ActivationGradOp(Parameter &param) {
         INIT_PARAMS
+
     }
 
     template <class T, class Context>
@@ -75,9 +76,9 @@ namespace matrix {
         delete param;
     }
 
-    void ActivationOpGradProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape) {
+    void ActivationOpGradProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape*> &outShape) {
         assert(inShape.size() == 3);
-        outShape.at(0).reShape(inShape[2]);
+        outShape.at(0)->reShape(inShape[2]);
     }
 
 
@@ -87,8 +88,8 @@ namespace matrix {
         TYPE_SWITCH(param.type, DType, {
             op = new ActivationGradOp<DType, CPU>(param);
             int shape = 0;
-            for (Shape s : param.outShapes) {
-                shape += s.Size();
+            for (Shape *s : param.outShapes) {
+                shape += s->Size();
             }
             *size = sizeof(DType) * shape;
         })
@@ -101,8 +102,8 @@ namespace matrix {
         TYPE_SWITCH(param.type, DType, {
             op = new ActivationGradOp<DType, GPU>(param);
             int shape = 0;
-            for (Shape s : param.outShapes) {
-                shape += s.Size();
+            for (Shape *s : param.outShapes) {
+                shape += s->Size();
             }
             *size = sizeof(DType) * shape;
         })
@@ -111,7 +112,7 @@ namespace matrix {
 
 
     Operator *ActivationOpGradProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
-                                                   std::vector<Shape> &inShape, std::vector<Shape> &outShape,
+                                                   std::vector<Shape> &inShape, std::vector<Shape*> &outShape,
                                                    std::map<std::string, Any> &args) {
         param->args = args;
         param->inputs = input;
@@ -122,5 +123,8 @@ namespace matrix {
         BIND_DISPATCH(CreateOp, *param, &memorySize);
     }
 
+    void ActivationOpGradProp::SwitchType(const MatrixType &type) {
+        param->type = type;
+    }
 
 }

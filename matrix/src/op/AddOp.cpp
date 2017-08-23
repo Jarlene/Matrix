@@ -56,8 +56,8 @@ namespace matrix {
         TYPE_SWITCH(param.type, DType, {
             op = new AddOp<DType, CPU>(param);
             int shape = 0;
-            for (Shape s : param.outShapes) {
-                shape += s.Size();
+            for (auto s : param.outShapes) {
+                shape += s->Size();
             }
             *size = sizeof(DType) * shape;
         })
@@ -70,8 +70,8 @@ namespace matrix {
         TYPE_SWITCH(param.type, DType, {
             op = new AddOp<DType, GPU>(param);
             int shape = 0;
-            for (Shape s : param.outShapes) {
-                shape += s.Size();
+            for (auto s : param.outShapes) {
+                shape += s->Size();
             }
             *size = sizeof(DType) * shape;
         })
@@ -87,7 +87,7 @@ namespace matrix {
     }
 
     Operator *AddOpProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
-                                        std::vector<Shape> &inShape, std::vector<Shape> &outShape,
+                                        std::vector<Shape> &inShape, std::vector<Shape*> &outShape,
                                         std::map<std::string, Any> &args) {
         param->args = args;
         param->inputs = input;
@@ -98,13 +98,16 @@ namespace matrix {
         BIND_DISPATCH(CreateOp, *param, &memorySize);
     }
 
-    void AddOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape) {
-        outShape.at(0).reShape(inShape.at(0));
+    void AddOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape*> &outShape) {
+        outShape.at(0)->reShape(inShape.at(0));
     }
 
     AddOpProp::~AddOpProp() {
         delete param;
     }
 
+    void AddOpProp::SwitchType(const MatrixType &type) {
+        this->param->type = type;
+    }
 
 }

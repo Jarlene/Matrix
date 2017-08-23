@@ -26,10 +26,13 @@
 
 #define INIT_PARAMS  \
     this->inputShapes = param.inputShapes; \
-    this->outputShapes = param.outShapes; \
     this->input = param.inputs; \
     this->output = param.outputs; \
     this->args = param.args; \
+    for(auto s : param.outShapes) { \
+        this->outputShapes.push_back(*s); \
+    } \
+
 
 #define INPUT_TAG(first, ...)  \
   enum InputTags {first = 0, __VA_ARGS__} \
@@ -180,7 +183,7 @@ namespace matrix {
         std::vector<Blob> inputs;
         std::vector<Shape> inputShapes;
         std::vector<Blob> outputs;
-        std::vector<Shape> outShapes;
+        std::vector<Shape*> outShapes;
         std::map<std::string, Any> args;
     };
 
@@ -189,9 +192,9 @@ namespace matrix {
     class OperatorProperty {
     public:
         OperatorProperty() = default;
-        virtual void InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape)  = 0;
+        virtual void InferShape(std::vector<Shape> &inShape, std::vector<Shape*> &outShape)  = 0;
         virtual Operator* CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
-                                         std::vector<Shape> &inShape, std::vector<Shape> &outShape,
+                                         std::vector<Shape> &inShape, std::vector<Shape*> &outShape,
                                          std::map<std::string, Any> &args) {
             return nullptr;
         }

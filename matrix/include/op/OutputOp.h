@@ -35,10 +35,11 @@ namespace matrix {
         OutputOpProp();
         OutputOpProp(const MatrixType &type);
         ~OutputOpProp();
-        virtual void InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape);
+        virtual void InferShape(std::vector<Shape> &inShape, std::vector<Shape*> &outShape);
         virtual Operator* CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
-                                         std::vector<Shape> &inShape, std::vector<Shape> &outShape,
+                                         std::vector<Shape> &inShape, std::vector<Shape*> &outShape,
                                          std::map<std::string, Any> &args) ;
+        virtual void SwitchType(const MatrixType &type);
     private:
         OutputParam* param;
     };

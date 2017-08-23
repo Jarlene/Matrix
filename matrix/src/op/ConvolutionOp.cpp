@@ -114,8 +114,8 @@ namespace matrix {
         TYPE_SWITCH(param.type, DType, {
             op = new ConvolutionOp<DType, CPU>(param);
             int shape = 0;
-            for (Shape s : param.outShapes) {
-                shape += s.Size();
+            for (auto s : param.outShapes) {
+                shape += s->Size();
             }
             *size = sizeof(DType) * shape;
         })
@@ -128,8 +128,8 @@ namespace matrix {
         TYPE_SWITCH(param.type, DType, {
             op = new ConvolutionOp<DType, GPU>(param);
             int shape = 0;
-            for (Shape s : param.outShapes) {
-                shape += s.Size();
+            for (auto s : param.outShapes) {
+                shape += s->Size();
             }
             *size = sizeof(DType) * shape;
         })
@@ -148,7 +148,7 @@ namespace matrix {
         delete param;
     }
 
-    void ConvolutionOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape) {
+    void ConvolutionOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape*> &outShape) {
 
         Shape padding = ShapeN(0, 0);
         Shape stride = ShapeN(1, 1);
@@ -175,7 +175,7 @@ namespace matrix {
 
         Shape in = inShape[0];
         Shape kernel = inShape[1];
-        Shape out = outShape[0];
+        Shape out = *outShape[0];
         Shape colBuffer = inShape[inShape.size() - 1];
         int n = in[0];
         int kernel_h = kernel[0];
@@ -201,7 +201,7 @@ namespace matrix {
     }
 
     Operator *ConvolutionOpProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
-                                                std::vector<Shape> &inShape, std::vector<Shape> &outShape,
+                                                std::vector<Shape> &inShape, std::vector<Shape*> &outShape,
                                                 std::map<std::string, Any> &args) {
         param->args = args;
         param->inputs = input;
@@ -210,5 +210,9 @@ namespace matrix {
         param->inputShapes = inShape;
         param->outShapes = outShape;
         BIND_DISPATCH(CreateOp, *param, &memorySize);
+    }
+
+    void ConvolutionOpProp::SwitchType(const MatrixType &type) {
+        this->param->type = type;
     }
 }

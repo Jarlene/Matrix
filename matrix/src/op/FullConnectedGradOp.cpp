@@ -65,8 +65,8 @@ namespace matrix {
         TYPE_SWITCH(param.type, DType, {
                 op = new FullConnectedGradOp<DType, CPU>(param);
                 int shape = 0;
-                for (Shape s : param.outShapes) {
-                    shape += s.Size();
+                for (auto s : param.outShapes) {
+                    shape += s->Size();
                 }
                 *size = sizeof(DType) * shape;
         })
@@ -79,8 +79,8 @@ namespace matrix {
         TYPE_SWITCH(param.type, DType, {
                 op = new FullConnectedGradOp<DType, GPU>(param);
                 int shape = 0;
-                for (Shape s : param.outShapes) {
-                    shape += s.Size();
+                for (auto s : param.outShapes) {
+                    shape += s->Size();
                 }
                 *size = sizeof(DType) * shape;
         })
@@ -100,16 +100,16 @@ namespace matrix {
         delete param;
     }
 
-    void FullConnectedGradOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape) {
+    void FullConnectedGradOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape*> &outShape) {
         if (param->args.count("input_idx")) {
             int idx = get<int>(param->args["input_idx"]);
-            outShape.at(0).reShape(inShape.at(idx + 2));
+            outShape.at(0)->reShape(inShape.at(idx + 2));
         }
 
     }
 
     Operator *FullConnectedGradOpProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
-                                                  std::vector<Shape> &inShape, std::vector<Shape> &outShape,
+                                                  std::vector<Shape> &inShape, std::vector<Shape*> &outShape,
                                                   std::map<std::string, Any> &args) {
 
         param->args = args;

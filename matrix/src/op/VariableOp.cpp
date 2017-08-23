@@ -52,8 +52,8 @@ namespace matrix {
         TYPE_SWITCH(param.type, DType, {
             op = new VariableOp<DType, CPU>(param);
             int shape = 0;
-            for (Shape s : param.outShapes) {
-                shape += s.Size();
+            for (auto s : param.outShapes) {
+                shape += s->Size();
             }
             *size = sizeof(DType) * shape;
         })
@@ -66,8 +66,8 @@ namespace matrix {
         TYPE_SWITCH(param.type, DType, {
             op = new VariableOp<DType, GPU>(param);
             int shape = 0;
-            for (Shape s : param.outShapes) {
-                shape += s.Size();
+            for (auto s : param.outShapes) {
+                shape += s->Size();
             }
             *size = sizeof(DType) * shape;
         })
@@ -88,14 +88,14 @@ namespace matrix {
         delete param;
     }
 
-    void VariableOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape) {
+    void VariableOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape*> &outShape) {
         if (outShape.size() == 0) {
             Logger::Global()->Fatal("variable input shapes must lager then 0\n");
         }
     }
 
     Operator *VariableOpProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
-                                                std::vector<Shape> &inShape, std::vector<Shape> &outShape,
+                                                std::vector<Shape> &inShape, std::vector<Shape*> &outShape,
                                              std::map<std::string, Any> &args) {
         param->args = args;
         param->inputs = input;
@@ -104,5 +104,8 @@ namespace matrix {
         param->inputShapes = inShape;
         param->outShapes = outShape;
         BIND_DISPATCH(CreateOp, *param, &memorySize);
+    }
+    void VariableOpProp::SwitchType(const MatrixType &type) {
+        param->type = type;
     }
 }

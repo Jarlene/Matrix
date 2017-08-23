@@ -39,8 +39,8 @@ namespace matrix {
         TYPE_SWITCH(param.type, DType, {
             op = new PoolingOp<DType, CPU>(param);
             int shape = 0;
-            for (Shape s : param.outShapes) {
-                shape += s.Size();
+            for (auto s : param.outShapes) {
+                shape += s->Size();
             }
             *size = sizeof(DType) * shape;
         })
@@ -53,8 +53,8 @@ namespace matrix {
         TYPE_SWITCH(param.type, DType, {
             op = new PoolingOp<DType, GPU>(param);
             int shape = 0;
-            for (Shape s : param.outShapes) {
-                shape += s.Size();
+            for (auto s : param.outShapes) {
+                shape += s->Size();
             }
             *size = sizeof(DType) * shape;
         })
@@ -77,12 +77,12 @@ namespace matrix {
         delete param;
     }
 
-    void PoolingOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape) {
+    void PoolingOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape*> &outShape) {
 
     }
 
     Operator *PoolingOpProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
-                                            std::vector<Shape> &inShape, std::vector<Shape> &outShape,
+                                            std::vector<Shape> &inShape, std::vector<Shape*> &outShape,
                                             std::map<std::string, Any> &args) {
         param->args = args;
         param->inputs = input;
@@ -91,5 +91,9 @@ namespace matrix {
         param->inputShapes = inShape;
         param->outShapes = outShape;
         BIND_DISPATCH(CreateOp, *param, &memorySize);
+    }
+
+    void PoolingOpProp::SwitchType(const MatrixType &type) {
+        this->param->type = type;
     }
 }

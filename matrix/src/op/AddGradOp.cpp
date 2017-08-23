@@ -56,8 +56,8 @@ namespace matrix {
         TYPE_SWITCH(param.type, DType, {
             op = new AddGradOp<DType, CPU>(param);
             int shape = 0;
-            for (Shape s : param.outShapes) {
-                shape += s.Size();
+            for (auto s : param.outShapes) {
+                shape += s->Size();
             }
             *size = sizeof(DType) * shape;
         })
@@ -70,8 +70,8 @@ namespace matrix {
         TYPE_SWITCH(param.type, DType, {
             op = new AddGradOp<DType, GPU>(param);
             int shape = 0;
-            for (Shape s : param.outShapes) {
-                shape += s.Size();
+            for (auto s : param.outShapes) {
+                shape += s->Size();
             }
             *size = sizeof(DType) * shape;
         })
@@ -87,7 +87,7 @@ namespace matrix {
     }
 
     Operator *AddGradOpProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
-                                        std::vector<Shape> &inShape, std::vector<Shape> &outShape,
+                                        std::vector<Shape> &inShape, std::vector<Shape*> &outShape,
                                         std::map<std::string, Any> &args) {
         // attention order
         param->outputs = output;
@@ -99,10 +99,10 @@ namespace matrix {
         BIND_DISPATCH(CreateOp, *param, &memorySize);
     }
 
-    void AddGradOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape) {
+    void AddGradOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape*> &outShape) {
         if (param->args.count("input_idx")) {
             int idx = get<int>(param->args["input_idx"]);
-            outShape.at(0).reShape(inShape.at(idx + 2));
+            outShape.at(0)->reShape(inShape.at(idx + 2));
         }
     }
 

@@ -19,11 +19,13 @@ Symbol LogisticRegression(Symbol input, int batchSize, int hideNum) {
     auto y1 = Symbol("fullConnected")
             .SetInput("x", input)
             .SetInput("w1", w1)
-            .SetInput("b1", b1);
+            .SetInput("b1", b1)
+            .Build();
 
     auto act1 = Symbol("activation")
             .SetInput("y1", y1)
-            .SetParam("type", kSigmoid);
+            .SetParam("type", kSigmoid)
+            .Build();
 
     auto w2 = VariableSymbol::Create("w2", ShapeN(hideNum, 10));
     auto b2 = VariableSymbol::Create("b2", ShapeN(batchSize));
@@ -31,11 +33,13 @@ Symbol LogisticRegression(Symbol input, int batchSize, int hideNum) {
     auto y2 = Symbol("fullConnected")
             .SetInput("act1", act1)
             .SetInput("w2", w2)
-            .SetInput("b2", b2);
+            .SetInput("b2", b2)
+            .Build();
 
     auto out = Symbol("output")
             .SetInput("y2", y2)
-            .SetParam("type", kSoftmax);
+            .SetParam("type", kSoftmax)
+            .Build();
 
     return out;
 }

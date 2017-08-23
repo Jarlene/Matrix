@@ -48,8 +48,8 @@ namespace matrix {
             inputs.push_back(Blob(node->data_));
             inputShapes.push_back(node->outputShapes);
         }
-        std::vector<Shape> out;
-        out.push_back(outputShapes);
+        std::vector<Shape*> out;
+        out.push_back(&outputShapes);
         op = opPtr->CreateOperator(this->context, inputs, outputs, inputShapes, out, params);
         memorySize = opPtr->GetMemorySize();
     }
