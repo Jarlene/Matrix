@@ -10,35 +10,35 @@
 
 namespace matrix {
 
-    struct ApplyGradParam : public Parameter {
-        ApplyGradParam(MatrixType matrixType) : Parameter(matrixType) {
+    struct UpdateParam : public Parameter {
+        UpdateParam(MatrixType matrixType) : Parameter(matrixType) {
         }
 
     };
 
     template <class T, class xpu>
-    class ApplyGradOp : public Operator {
-    SAME_FUNCTION(ApplyGrad);
-    DISABLE_COPY_AND_ASSIGN(ApplyGrad);
+    class UpdateOp : public Operator {
+    SAME_FUNCTION(Update);
+    DISABLE_COPY_AND_ASSIGN(Update);
         INPUT_TAG(VARIABLE, GRAD_VARIABLE);
     };
 
 
     template <typename xpu>
-    Operator* CreateOp(ApplyGradParam &param);
+    Operator* CreateOp(UpdateParam &param);
 
 
-    class ApplyGradProp : public OperatorProperty {
+    class UpdateOpProp : public OperatorProperty {
     public:
-        ApplyGradProp();
-        ApplyGradProp(const MatrixType &type);
-        ~ApplyGradProp();
+        UpdateOpProp();
+        UpdateOpProp(const MatrixType &type);
+        ~UpdateOpProp();
         virtual void InferShape(std::vector<Shape> &inShape, std::vector<Shape> &outShape);
         virtual Operator* CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
                                          std::vector<Shape> &inShape, std::vector<Shape> &outShape,
                                          std::map<std::string, Any> &args) ;
     private:
-        ApplyGradParam* param;
+        UpdateParam* param;
     };
 }
 
