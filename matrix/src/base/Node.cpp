@@ -20,8 +20,8 @@ namespace matrix {
     NodePtr Node::GetGradNode(int input_index, NodePtr &pre, NodePtr &preGrad) {
         auto t = Node::Create();
         t->isBackward = true;
-        t->opName = "grad_" + this->opName;
-        t->nodeName = "grad_" + this->nodeName;
+        t->opName = "grad_" + pre->opName;
+        t->nodeName = "grad_" + pre->nodeName;
         t->params["input_idx"] = input_index;
         t->context = this->context;
         t->inputs.push_back(preGrad);
@@ -34,6 +34,9 @@ namespace matrix {
         }
         for (auto &it : pre->params) {
             t->params.insert(it);
+        }
+        if (this->isVariable) {
+            t->isVariable = true;
         }
         t->Build();
         return t;
@@ -50,12 +53,13 @@ namespace matrix {
         for(NodePtr node : this->inputs) {
             Blob blob(node->data_);
             inputs.push_back(&blob);
-            inputShapes.push_back(node->outputShapes);
-            in.push_back(&node->outputShapes);
+            inputShapes.push_back(&node->outputShapes);
         }
         std::vector<Shape*> out;
         out.push_back(&outputShapes);
-        op = opPtr->CreateOperator(this->context, inputs, outputs, in, out, params);
+        Blob oB(this->data_);
+        outputs.push_back(&oB);
+        op = opPtr->CreateOperator(this->context, inputs, outputs, inputShapes, out, params);
         memorySize = opPtr->GetMemorySize();
     }
 

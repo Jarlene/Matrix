@@ -80,7 +80,7 @@ private:                                                            \
             }                     \
               break;               \
           default:             \
-               Logger::Global()->Fatal("switch type error %d", type); \
+               Logger::Global()->Fatal("switch type error %d\n", type); \
                break;       \
      }                          \
 

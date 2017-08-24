@@ -38,9 +38,7 @@ namespace matrix {
         } else {
             Logger::Global()->Fatal("ProduceMulOpShape cant not support Mul Shape Size\n");
         }
-        input[0]->reShape(*in1);
-        input[1]->reShape(*in2);
-        out->reShape(ShapeN(in1->At(0), in2->At(0)));
+        out->reShape(ShapeN(in1->At(0), in2->At(1)));
 
     }
 

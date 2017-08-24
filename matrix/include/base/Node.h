@@ -30,7 +30,7 @@ namespace matrix {
 
         Context context;
 
-        std::vector<Shape> inputShapes;
+        std::vector<Shape*> inputShapes;
 
         Shape outputShapes;
 

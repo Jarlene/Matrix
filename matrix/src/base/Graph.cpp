@@ -56,51 +56,59 @@ namespace matrix {
     }
 
     void Graph::AllocateGraph(const std::vector<NodePtr> &fetch) {
-        GraphAlgorithm colorGraph;
-        colorGraph.Coloring(*this, graphColor_, fetch);
-
-        std::map<int, size_t> colorSize;
-
-        std::unordered_map<int, std::vector<int>> colors;
-
-        for (auto &it : graphColor_) {
-            int color = it.second;
-            colors[color].push_back(it.first);
-        }
-
-        for (auto &it : colors) {
-            auto vec = it.second;
-            long maxSize = 0;
-            for (int id : vec) {
-                auto node = GetNode(id);
-                if (maxSize < node->getMemorySize()) {
-                    maxSize = node->getMemorySize();
-                }
+        for(auto node : nodes_) {
+            if (node->isVariable && node->isBackward) {
+                node->data_ = MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(node->memorySize);
             }
-            colorSize[it.first] = maxSize;
-        }
-        MemoryManager::Global()->GetCpuMemoryPool()->staticAllocate(colorSize);
-        for (auto &it : graphColor_) {
-            auto node = GetNode(it.first);
-            int color = it.second;
-            if (node->data_ == nullptr) {
-                node->data_= MemoryManager::Global()->GetCpuMemoryPool()->getMemory(color);
+            if (node->op != nullptr && node->memorySize > 0 && node->data_ == nullptr) {
+                node->data_ = MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(node->memorySize);
             }
         }
-        for (auto &item : nodes_) {
-
-
-            if (item->data_ == nullptr && item->op != nullptr) {
-                size_t m = item->getMemorySize();
-                if (m > 0) {
-                    item->data_ = MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(m);
-                } else {
-                    Logger::Global()->Info("%s not in memory \n", item->nodeName.c_str());
-                }
-
-            }
-        }
-        MemoryManager::Global()->GetCpuMemoryPool()->PrintMemory();
+//        GraphAlgorithm colorGraph;
+//        colorGraph.Coloring(*this, graphColor_, fetch);
+//
+//        std::map<int, size_t> colorSize;
+//
+//        std::unordered_map<int, std::vector<int>> colors;
+//
+//        for (auto &it : graphColor_) {
+//            int color = it.second;
+//            colors[color].push_back(it.first);
+//        }
+//
+//        for (auto &it : colors) {
+//            auto vec = it.second;
+//            long maxSize = 0;
+//            for (int id : vec) {
+//                auto node = GetNode(id);
+//                if (maxSize < node->getMemorySize()) {
+//                    maxSize = node->getMemorySize();
+//                }
+//            }
+//            colorSize[it.first] = maxSize;
+//        }
+//        MemoryManager::Global()->GetCpuMemoryPool()->staticAllocate(colorSize);
+//        for (auto &it : graphColor_) {
+//            auto node = GetNode(it.first);
+//            int color = it.second;
+//            if (node->data_ == nullptr) {
+//                node->data_= MemoryManager::Global()->GetCpuMemoryPool()->getMemory(color);
+//            }
+//        }
+//        for (auto &item : nodes_) {
+//
+//
+//            if (item->data_ == nullptr && item->op != nullptr) {
+//                size_t m = item->getMemorySize();
+//                if (m > 0) {
+//                    item->data_ = MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(m);
+//                } else {
+//                    Logger::Global()->Info("%s not in memory \n", item->nodeName.c_str());
+//                }
+//
+//            }
+//        }
+//        MemoryManager::Global()->GetCpuMemoryPool()->PrintMemory();
     }
 
     void Graph::SaveVariableData(std::string &file) {
@@ -131,7 +139,9 @@ namespace matrix {
         ones->opName = "variable";
         ones->nodeName = "ones";
         ones->outputShapes = out->outputShapes;
+        ones->context = out->context;
         ones->params["constant"] = 1;
+        ones->Build();
         gradMap[out] = ones;
 
         std::vector<NodePtr> stack;
@@ -166,12 +176,15 @@ namespace matrix {
             auto applyGradNode = Node::Create();
             applyGradNode->inputs.push_back(it.first);
             applyGradNode->inputs.push_back(it.second);
+            applyGradNode->context = it.first->context;
             applyGradNode->opName = "applyGrad";
             applyGradNode->nodeName = it.first->nodeName + "_apply_" + it.second->nodeName;
             applyGradNode->params["learning_rate"] = 0.001f;
             applyGradNode->params["apply_mode"] = kMomentum;
             applyGradNode->params["momentum_factor"] = 0.9f;
+            applyGradNode->Build();
             nodes_.push_back(applyGradNode);
+
         }
     }
 
