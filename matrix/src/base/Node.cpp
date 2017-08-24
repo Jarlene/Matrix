@@ -44,15 +44,18 @@ namespace matrix {
         if (opPtr == nullptr) {
             return;
         }
-        std::vector<Blob> inputs;
-        std::vector<Blob> outputs;
+        std::vector<Blob*> inputs;
+        std::vector<Blob*> outputs;
+        std::vector<Shape*> in;
         for(NodePtr node : this->inputs) {
-            inputs.push_back(Blob(node->data_));
+            Blob blob(node->data_);
+            inputs.push_back(&blob);
             inputShapes.push_back(node->outputShapes);
+            in.push_back(&node->outputShapes);
         }
         std::vector<Shape*> out;
         out.push_back(&outputShapes);
-        op = opPtr->CreateOperator(this->context, inputs, outputs, inputShapes, out, params);
+        op = opPtr->CreateOperator(this->context, inputs, outputs, in, out, params);
         memorySize = opPtr->GetMemorySize();
     }
 

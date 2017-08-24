@@ -77,12 +77,12 @@ namespace matrix {
         delete param;
     }
 
-    void PoolingOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape*> &outShape) {
+    void PoolingOpProp::InferShape(std::vector<Shape*> &inShape, std::vector<Shape*> &outShape) {
 
     }
 
-    Operator *PoolingOpProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
-                                            std::vector<Shape> &inShape, std::vector<Shape*> &outShape,
+    Operator *PoolingOpProp::CreateOperator(Context context, std::vector<Blob*> &input, std::vector<Blob*> &output,
+                                            std::vector<Shape*> &inShape, std::vector<Shape*> &outShape,
                                             std::map<std::string, Any> &args) {
         param->args = args;
         param->inputs = input;

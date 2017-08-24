@@ -42,6 +42,8 @@ namespace matrix {
 
         const int operator[](int idx) const ;
 
+        const int At(int idx) const;
+
     private:
         std::vector<int> shape_;
     };

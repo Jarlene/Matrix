@@ -34,10 +34,14 @@ namespace matrix {
 
 
         template <class T>
-        Tensor<T> GeneratorTensor(const Shape shape_) const {
+        Tensor<T> GeneratorTensor(const Shape &shape_) const {
             return Tensor<T>(static_cast<T *>(ptr_), shape_);
         }
 
+        template <class T>
+        Tensor<T> GeneratorTensor(const Shape *shape_) const {
+            return Tensor<T>(static_cast<T *>(ptr_), *shape_);
+        }
 
         template <class T>
         const T &GetInstance() const {

@@ -16,8 +16,8 @@ namespace matrix {
         if (HasArg("type")) {
             outModel = GetArgValue<OutputMode>("type");
         }
-        Tensor<T> data = Inputs()[DATA]. template GeneratorTensor<T>(inputShapes[DATA]);
-        Tensor<T> out = Outputs()[OUT]. template GeneratorTensor<T>(inputShapes[OUT]);
+        Tensor<T> data = Inputs()[DATA]-> template GeneratorTensor<T>(inputShapes[DATA]);
+        Tensor<T> out = Outputs()[OUT]-> template GeneratorTensor<T>(inputShapes[OUT]);
         if (outModel == OutputMode::kSoftmax) {
             Softmax<T>(data, out);
         } else {
@@ -91,13 +91,13 @@ namespace matrix {
         delete param;
     }
 
-    void OutputOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape*> &outShape) {
-        outShape[0]->reShape(inShape[0]);
+    void OutputOpProp::InferShape(std::vector<Shape*> &inShape, std::vector<Shape*> &outShape) {
+        outShape[0]->reShape(*inShape[0]);
     }
 
-    Operator *OutputOpProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
-                                               std::vector<Shape> &inShape, std::vector<Shape*> &outShape,
-                                               std::map<std::string, Any> &args) {
+    Operator *OutputOpProp::CreateOperator(Context context, std::vector<Blob*> &input, std::vector<Blob*> &output,
+                                           std::vector<Shape*> &inShape, std::vector<Shape*> &outShape,
+                                           std::map<std::string, Any> &args) {
         param->args = args;
         param->inputs = input;
         param->outputs = output;

@@ -18,8 +18,8 @@ namespace matrix {
         if (HasArg("type")) {
             type = GetArgValue<ActType>("type");
         }
-        Tensor<T> data = Inputs()[DATA]. template GeneratorTensor<T>(inputShapes[DATA]);
-        Tensor<T> out = Outputs()[OUT]. template GeneratorTensor<T>(outputShapes[OUT]);
+        Tensor<T> data = Inputs()[DATA]-> template GeneratorTensor<T>(*inputShapes[DATA]);
+        Tensor<T> out = Outputs()[OUT]-> template GeneratorTensor<T>(*outputShapes[OUT]);
         switch (type) {
             case kSigmoid:
                 Sigmoid<T>(data, out);
@@ -102,12 +102,12 @@ namespace matrix {
         delete param;
     }
 
-    void ActivationOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape*> &outShape) {
-        outShape[0]->reShape(inShape[0]);
+    void ActivationOpProp::InferShape(std::vector<Shape*> &inShape, std::vector<Shape*> &outShape) {
+        outShape[0]->reShape(*inShape[0]);
     }
 
-    Operator *ActivationOpProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
-                                               std::vector<Shape> &inShape, std::vector<Shape*> &outShape,
+    Operator *ActivationOpProp::CreateOperator(Context context, std::vector<Blob*> &input, std::vector<Blob*> &output,
+                                               std::vector<Shape*> &inShape, std::vector<Shape*> &outShape,
                                                std::map<std::string, Any> &args) {
         param->args = args;
         param->inputs = input;

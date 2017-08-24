@@ -16,7 +16,7 @@ namespace matrix {
     bool VariableOp<T, xpu>::Run() {
 
         if (HasArg("isTrain")) {
-            Tensor<T> out = output.at(0). template GeneratorTensor<T>(outputShapes.at(0));
+            Tensor<T> out = output.at(0)-> template GeneratorTensor<T>(outputShapes.at(0));
             if (HasArg("constant")) {
                 T val = GetArgValue<T>("constant", T(0.1));
                 Value<T>(out, val);
@@ -88,14 +88,14 @@ namespace matrix {
         delete param;
     }
 
-    void VariableOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape*> &outShape) {
+    void VariableOpProp::InferShape(std::vector<Shape*> &inShape, std::vector<Shape*> &outShape) {
         if (outShape.size() == 0) {
             Logger::Global()->Fatal("variable input shapes must lager then 0\n");
         }
     }
 
-    Operator *VariableOpProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
-                                                std::vector<Shape> &inShape, std::vector<Shape*> &outShape,
+    Operator *VariableOpProp::CreateOperator(Context context, std::vector<Blob*> &input, std::vector<Blob*> &output,
+                                             std::vector<Shape*> &inShape, std::vector<Shape*> &outShape,
                                              std::map<std::string, Any> &args) {
         param->args = args;
         param->inputs = input;

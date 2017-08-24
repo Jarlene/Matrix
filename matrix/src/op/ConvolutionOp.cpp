@@ -11,7 +11,8 @@ namespace matrix {
     ConvolutionOp<T, Context>::ConvolutionOp(Parameter &param) {
         INIT_PARAMS
         if (HasArg("col_buffer")) {
-            inputShapes.push_back(GetArgValue<Shape>("col_buffer"));
+            Shape col = GetArgValue<Shape>("col_buffer");
+            inputShapes.push_back(&col);
         }
     }
 
@@ -38,11 +39,11 @@ namespace matrix {
         } else if (Inputs().size() == 3) {
 
         } else if (Inputs().size() == 4) {
-            Tensor<T> data = Inputs()[DATA]. template GeneratorTensor<T>(inputShapes[DATA]);
-            Tensor<T> weight = Inputs()[KERNEL]. template GeneratorTensor<T>(inputShapes[KERNEL]);
-            Tensor<T> bias = Inputs()[BIAS]. template GeneratorTensor<T>(inputShapes[BIAS]);
-            Tensor<T> colBuffer = Inputs()[COLBUFFER]. template GeneratorTensor<T>(inputShapes[COLBUFFER]);
-            Tensor<T> out = Outputs()[OUT]. template GeneratorTensor<T>(outputShapes[OUT]);
+            Tensor<T> data = Inputs()[DATA]-> template GeneratorTensor<T>(inputShapes[DATA]);
+            Tensor<T> weight = Inputs()[KERNEL]-> template GeneratorTensor<T>(inputShapes[KERNEL]);
+            Tensor<T> bias = Inputs()[BIAS]-> template GeneratorTensor<T>(inputShapes[BIAS]);
+            Tensor<T> colBuffer = Inputs()[COLBUFFER]-> template GeneratorTensor<T>(inputShapes[COLBUFFER]);
+            Tensor<T> out = Outputs()[OUT]-> template GeneratorTensor<T>(outputShapes[OUT]);
 
             int num = data.GetShape()[0];
             int filterNum = GetArgValue<int>("filter_num");
@@ -66,7 +67,7 @@ namespace matrix {
 
             const int output_offset = out.Size() / out.GetShape()[0] / group;
 
-            const int filter_offset = inputShapes[KERNEL].Size() / group;
+            const int filter_offset = inputShapes[KERNEL]->Size() / group;
 
             for (int i = 0; i < filterNum; ++i) {
                 for (int j = 0; j < group; ++j) {
@@ -148,7 +149,7 @@ namespace matrix {
         delete param;
     }
 
-    void ConvolutionOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape*> &outShape) {
+    void ConvolutionOpProp::InferShape(std::vector<Shape*> &inShape, std::vector<Shape*> &outShape) {
 
         Shape padding = ShapeN(0, 0);
         Shape stride = ShapeN(1, 1);
@@ -173,10 +174,10 @@ namespace matrix {
             group = get<int>(param->args["group"]);
         }
 
-        Shape in = inShape[0];
-        Shape kernel = inShape[1];
+        Shape in = *inShape[0];
+        Shape kernel = *inShape[1];
         Shape out = *outShape[0];
-        Shape colBuffer = inShape[inShape.size() - 1];
+        Shape colBuffer = *inShape[inShape.size() - 1];
         int n = in[0];
         int kernel_h = kernel[0];
         int kernel_w = kernel[1];
@@ -200,8 +201,8 @@ namespace matrix {
 
     }
 
-    Operator *ConvolutionOpProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
-                                                std::vector<Shape> &inShape, std::vector<Shape*> &outShape,
+    Operator *ConvolutionOpProp::CreateOperator(Context context, std::vector<Blob*> &input, std::vector<Blob*> &output,
+                                                std::vector<Shape*> &inShape, std::vector<Shape*> &outShape,
                                                 std::map<std::string, Any> &args) {
         param->args = args;
         param->inputs = input;

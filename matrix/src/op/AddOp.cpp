@@ -18,9 +18,9 @@ namespace matrix {
         if (inputShapes.size() < 2) {
             Logger::Global()->Fatal("input shape size less then 2 \n");
         }
-        Tensor<T> t1 = Inputs()[INPUT1]. template GeneratorTensor<T>(inputShapes.at(0));
-        Tensor<T> t2 = Inputs()[INPUT2]. template GeneratorTensor<T>(inputShapes.at(1));
-        Tensor<T> out = Outputs()[OUT]. template GeneratorTensor<T>(outputShapes.at(0));
+        Tensor<T> t1 = Inputs()[INPUT1]-> template GeneratorTensor<T>(*inputShapes.at(0));
+        Tensor<T> t2 = Inputs()[INPUT2]-> template GeneratorTensor<T>(*inputShapes.at(1));
+        Tensor<T> out = Outputs()[OUT]-> template GeneratorTensor<T>(*outputShapes.at(0));
         Add(t1, t2, out);
         return true;
 
@@ -86,8 +86,8 @@ namespace matrix {
         param = new AddParam(MatrixType::kFloat);
     }
 
-    Operator *AddOpProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
-                                        std::vector<Shape> &inShape, std::vector<Shape*> &outShape,
+    Operator *AddOpProp::CreateOperator(Context context, std::vector<Blob*> &input, std::vector<Blob*> &output,
+                                        std::vector<Shape*> &inShape, std::vector<Shape*> &outShape,
                                         std::map<std::string, Any> &args) {
         param->args = args;
         param->inputs = input;
@@ -98,8 +98,8 @@ namespace matrix {
         BIND_DISPATCH(CreateOp, *param, &memorySize);
     }
 
-    void AddOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape*> &outShape) {
-        outShape.at(0)->reShape(inShape.at(0));
+    void AddOpProp::InferShape(std::vector<Shape*> &inShape, std::vector<Shape*> &outShape) {
+        outShape.at(0)->reShape(*inShape.at(0));
     }
 
     AddOpProp::~AddOpProp() {

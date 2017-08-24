@@ -76,12 +76,12 @@ namespace matrix {
         param = new UpdateParam(MatrixType::kFloat);
     }
 
-    void UpdateOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape*> &outShape) {
+    void UpdateOpProp::InferShape(std::vector<Shape*> &inShape, std::vector<Shape*> &outShape) {
     }
 
-    Operator *UpdateOpProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
-                                        std::vector<Shape> &inShape, std::vector<Shape*> &outShape,
-                                        std::map<std::string, Any> &args) {
+    Operator *UpdateOpProp::CreateOperator(Context context, std::vector<Blob*> &input, std::vector<Blob*> &output,
+                                           std::vector<Shape*> &inShape, std::vector<Shape*> &outShape,
+                                           std::map<std::string, Any> &args) {
         param->args = args;
         param->inputs = input;
         param->outputs = output;

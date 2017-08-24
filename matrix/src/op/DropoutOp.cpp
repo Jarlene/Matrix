@@ -77,12 +77,12 @@ namespace matrix {
         delete param;
     }
 
-    void DropoutOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape*> &outShape) {
+    void DropoutOpProp::InferShape(std::vector<Shape*> &inShape, std::vector<Shape*> &outShape) {
 
     }
 
-    Operator *DropoutOpProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
-                                            std::vector<Shape> &inShape, std::vector<Shape*> &outShape,
+    Operator *DropoutOpProp::CreateOperator(Context context, std::vector<Blob*> &input, std::vector<Blob*> &output,
+                                            std::vector<Shape*> &inShape, std::vector<Shape*> &outShape,
                                             std::map<std::string, Any> &args) {
         param->args = args;
         param->inputs = input;

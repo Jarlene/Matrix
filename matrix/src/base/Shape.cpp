@@ -39,6 +39,13 @@ namespace matrix {
         return 0;
     }
 
+    const int Shape::At(int idx) const {
+        if (shape_.size() > idx) {
+            return shape_[idx];
+        }
+        return 0;
+    }
+
     Shape &Shape::operator=(const Shape &other) {
         this->shape_.clear();
 #pragma unroll

@@ -18,7 +18,7 @@ namespace matrix {
             Logger::Global()->Fatal("FullConnectedGradOp not support. \n");
         }
         int idx = GetArgValue<int>("input_idx");
-        Tensor<T> pre_grad = Inputs()[PRE_GRAD]. template GeneratorTensor<T>(inputShapes[PRE_GRAD]);
+        Tensor<T> pre_grad = Inputs()[PRE_GRAD]-> template GeneratorTensor<T>(inputShapes[PRE_GRAD]);
         switch (idx + 2) {
             case DATA:
 
@@ -100,16 +100,16 @@ namespace matrix {
         delete param;
     }
 
-    void FullConnectedGradOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape*> &outShape) {
+    void FullConnectedGradOpProp::InferShape(std::vector<Shape*> &inShape, std::vector<Shape*> &outShape) {
         if (param->args.count("input_idx")) {
             int idx = get<int>(param->args["input_idx"]);
-            outShape.at(0)->reShape(inShape.at(idx + 2));
+            outShape.at(0)->reShape(*inShape.at(idx + 2));
         }
 
     }
 
-    Operator *FullConnectedGradOpProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
-                                                  std::vector<Shape> &inShape, std::vector<Shape*> &outShape,
+    Operator *FullConnectedGradOpProp::CreateOperator(Context context, std::vector<Blob*> &input, std::vector<Blob*> &output,
+                                                  std::vector<Shape*> &inShape, std::vector<Shape*> &outShape,
                                                   std::map<std::string, Any> &args) {
 
         param->args = args;

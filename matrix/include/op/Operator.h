@@ -29,9 +29,7 @@
     this->input = param.inputs; \
     this->output = param.outputs; \
     this->args = param.args; \
-    for(auto s : param.outShapes) { \
-        this->outputShapes.push_back(*s); \
-    } \
+     this->outputShapes = param.outShapes;\
 
 
 #define INPUT_TAG(first, ...)  \
@@ -125,19 +123,19 @@ namespace matrix {
 
         template <class T>
         inline const T* Input(int idx) {
-            return input.at(idx).Get<T>();
+            return input.at(idx)->Get<T>();
         }
 
         template <class T>
         inline T* Output(int idx) {
-            return output.at(idx).GetMutable<T>();
+            return output.at(idx)->GetMutable<T>();
         }
 
-        inline const std::vector<Blob> Inputs() const {
+        inline const std::vector<Blob*> Inputs() const {
             return input;
         }
 
-        inline const std::vector<Blob> Outputs() const {
+        inline const std::vector<Blob*> Outputs() const {
             return output;
         }
 
@@ -157,10 +155,10 @@ namespace matrix {
 
     protected:
         std::map<std::string, Any> args;
-        std::vector<Blob> input;
-        std::vector<Blob> output;
-        std::vector<Shape> inputShapes;
-        std::vector<Shape> outputShapes;
+        std::vector<Blob*> input;
+        std::vector<Blob*> output;
+        std::vector<Shape*> inputShapes;
+        std::vector<Shape*> outputShapes;
     };
 
 
@@ -180,9 +178,9 @@ namespace matrix {
 
         }
 
-        std::vector<Blob> inputs;
-        std::vector<Shape> inputShapes;
-        std::vector<Blob> outputs;
+        std::vector<Blob*> inputs;
+        std::vector<Shape*> inputShapes;
+        std::vector<Blob*> outputs;
         std::vector<Shape*> outShapes;
         std::map<std::string, Any> args;
     };
@@ -192,9 +190,9 @@ namespace matrix {
     class OperatorProperty {
     public:
         OperatorProperty() = default;
-        virtual void InferShape(std::vector<Shape> &inShape, std::vector<Shape*> &outShape)  = 0;
-        virtual Operator* CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
-                                         std::vector<Shape> &inShape, std::vector<Shape*> &outShape,
+        virtual void InferShape(std::vector<Shape*> &inShape, std::vector<Shape*> &outShape)  = 0;
+        virtual Operator* CreateOperator(Context context, std::vector<Blob*> &input, std::vector<Blob*> &output,
+                                         std::vector<Shape*> &inShape, std::vector<Shape*> &outShape,
                                          std::map<std::string, Any> &args) {
             return nullptr;
         }

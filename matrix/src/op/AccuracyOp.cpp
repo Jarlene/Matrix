@@ -20,8 +20,8 @@ namespace matrix {
 
     template <class T, class Context>
     bool AccuracyOp<T, Context>::Run() {
-        int N = inputShapes[PREDICTION][0];
-        int D = inputShapes[PREDICTION][1];
+        int N = inputShapes[PREDICTION]->At(0);
+        int D = inputShapes[PREDICTION]->At(1);
         int correct = 0;
         for (int i = 0; i < N; ++i) {
             auto label = static_cast<int>(Input<T>(LABEL)[i]);
@@ -103,15 +103,15 @@ namespace matrix {
         delete param;
     }
 
-    void AccuracyOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape*> &outShape) {
+    void AccuracyOpProp::InferShape(std::vector<Shape*> &inShape, std::vector<Shape*> &outShape) {
         if (outShape.size() < 1) {
             Logger::Global()->Fatal("AccuracyOp  must has output shape. \n");
         }
         outShape.at(0)->reShape(ShapeN(1));
     }
 
-    Operator *AccuracyOpProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
-                                             std::vector<Shape> &inShape, std::vector<Shape*> &outShape,
+    Operator *AccuracyOpProp::CreateOperator(Context context, std::vector<Blob*> &input, std::vector<Blob*> &output,
+                                             std::vector<Shape*> &inShape, std::vector<Shape*> &outShape,
                                              std::map<std::string, Any> &args) {
         param->args = args;
         param->inputs = input;

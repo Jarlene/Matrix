@@ -14,15 +14,15 @@ namespace matrix {
     template <class T, class Context>
     bool FullConnectedOp<T, Context>::Run() {
         if (Inputs().size() == 2) {
-            Tensor<T> data = Inputs()[DATA]. template GeneratorTensor<T>(inputShapes.at(DATA));
-            Tensor<T> weight = Inputs()[WEIGHT]. template GeneratorTensor<T>(inputShapes.at(WEIGHT));
-            Tensor<T> out = Outputs()[OUT]. template GeneratorTensor<T>(outputShapes.at(OUT));
+            Tensor<T> data = Inputs()[DATA]-> template GeneratorTensor<T>(inputShapes.at(DATA));
+            Tensor<T> weight = Inputs()[WEIGHT]-> template GeneratorTensor<T>(inputShapes.at(WEIGHT));
+            Tensor<T> out = Outputs()[OUT]-> template GeneratorTensor<T>(outputShapes.at(OUT));
             MatrixMul<T>(data, false, weight, false, out);
         } else if (Inputs().size() == 3) {
-            Tensor<T> data = Inputs()[DATA]. template GeneratorTensor<T>(inputShapes.at(DATA));
-            Tensor<T> weight = Inputs()[WEIGHT]. template GeneratorTensor<T>(inputShapes.at(WEIGHT));
-            Tensor<T> bias = Inputs()[BIAS]. template GeneratorTensor<T>(inputShapes.at(BIAS));
-            Tensor<T> out = Outputs()[OUT]. template GeneratorTensor<T>(outputShapes.at(OUT));
+            Tensor<T> data = Inputs()[DATA]-> template GeneratorTensor<T>(inputShapes.at(DATA));
+            Tensor<T> weight = Inputs()[WEIGHT]-> template GeneratorTensor<T>(inputShapes.at(WEIGHT));
+            Tensor<T> bias = Inputs()[BIAS]-> template GeneratorTensor<T>(inputShapes.at(BIAS));
+            Tensor<T> out = Outputs()[OUT]-> template GeneratorTensor<T>(outputShapes.at(OUT));
             MatrixMul<T>(data, false, weight, false, out);
             Add<T>(out, bias, out);
         }
@@ -94,14 +94,14 @@ namespace matrix {
         delete param;
     }
 
-    void FullConnectedOpProp::InferShape(std::vector<Shape> &inShape, std::vector<Shape*> &outShape) {
+    void FullConnectedOpProp::InferShape(std::vector<Shape*> &inShape, std::vector<Shape*> &outShape) {
         assert(inShape.size() >= 2);
         assert(outShape.size() >= 1);
-        ProduceMulOpShape(inShape, *outShape[0]);
+        ProduceMulOpShape(inShape, outShape[0]);
     }
 
-    Operator *FullConnectedOpProp::CreateOperator(Context context, std::vector<Blob> &input, std::vector<Blob> &output,
-                                                  std::vector<Shape> &inShape, std::vector<Shape*> &outShape,
+    Operator *FullConnectedOpProp::CreateOperator(Context context, std::vector<Blob*> &input, std::vector<Blob*> &output,
+                                                  std::vector<Shape*> &inShape, std::vector<Shape*> &outShape,
                                                   std::map<std::string, Any> &args) {
         param->args = args;
         param->inputs = input;
