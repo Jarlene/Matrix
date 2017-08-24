@@ -31,7 +31,13 @@ namespace matrix {
 
     template <class T, class xpu>
     void VariableOp<T, xpu>::AsyncRun() {
-
+        if (xpu::mode == RunMode::kCpu) {
+            Run();
+        } else {
+            if (!RunOnDevice()) {
+                Run();
+            }
+        }
     }
 
 

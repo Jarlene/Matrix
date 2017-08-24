@@ -64,8 +64,8 @@ int main() {
     auto input = PlaceHolderSymbol::Create("x", imageShape);
     auto label = PlaceHolderSymbol::Create("label", labelShape);
 
-    void* imageData = malloc(sizeof(float) * imageShape.Size());
-    void* labelData = malloc(sizeof(float) * labelShape.Size());
+    float* imageData = static_cast<float *>(malloc(sizeof(float) * imageShape.Size()));
+    float* labelData = static_cast<float *>(malloc(sizeof(float) * labelShape.Size()));
 
 
     auto symbol = LogisticRegression(input, batchSize, 128);

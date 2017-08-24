@@ -57,9 +57,6 @@ namespace matrix {
 
     void Graph::AllocateGraph(const std::vector<NodePtr> &fetch) {
         for(auto node : nodes_) {
-            if (node->isVariable && node->isBackward) {
-                node->data_ = MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(node->memorySize);
-            }
             if (node->op != nullptr && node->memorySize > 0 && node->data_ == nullptr) {
                 node->data_ = MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(node->memorySize);
             }
