@@ -91,4 +91,24 @@ namespace matrix {
         return Rank() == 2;
     }
 
+    const int Shape::StrideInclude(int idx) const {
+        assert(idx >= 0);
+        int result = 1;
+#pragma unroll
+        for (int i = idx; i < shape_.size(); ++i) {
+            result *= shape_[i];
+        }
+        return result;
+    }
+
+    const int Shape::StrideExclude(int idx) const {
+        assert(idx >= 0);
+        int result = 1;
+#pragma unroll
+        for (int i = idx + 1; i < shape_.size(); ++i) {
+            result *= shape_[i];
+        }
+        return result;
+    }
+
 }

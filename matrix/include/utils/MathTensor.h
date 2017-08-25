@@ -17,8 +17,16 @@ namespace matrix {
 
     template <class T>
     void Copy(const Tensor<T> &input, Tensor<T> &out) {
-        assert(input.GetShape() == out.GetShape()) ;
-        CPUCopy<T>(input.Size(), input.Data(), 1, out.MutableData(), 1);
+        if (input.GetShape() == out.GetShape()) {
+            CPUCopy<T>(input.Size(), input.Data(), 1, out.MutableData(), 1);
+        } else  {
+            Shape in = input.GetShape();
+            Shape ou = out.GetShape();
+            if (in.isMatrix() && ou.isVector() && in[0] == ou[0]) {
+                SumCopy<T>(in.Size(), input.Data(), ou.Size(), out.MutableData())
+            }
+        }
+
     }
 
 

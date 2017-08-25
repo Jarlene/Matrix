@@ -44,6 +44,10 @@ namespace matrix {
 
         const int At(int idx) const;
 
+        const int StrideInclude(int idx) const;
+
+        const int StrideExclude(int idx) const;
+
     private:
         std::vector<int> shape_;
     };

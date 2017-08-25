@@ -927,6 +927,29 @@ namespace matrix {
     }
 
 
+    template <class T>
+    inline void Reduce(const int N, std::function<void(int)> func) {
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+        for (int i = 0; i < N; ++i) {
+            func(i);
+        }
+    }
+
+
+    template <class T>
+    inline void SumCopy(const int N, const T *in, const int M, T *out) {
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+        for (int i = 0; i < N / M; ++i) {
+            for (int j = 0; j < M; ++j) {
+                out[i] += in[i * M + j];
+            }
+        }
+    }
+
 
     template <class T, int order>
     inline void Img2Col(const T *input, const int channels, const int height, const int width,
