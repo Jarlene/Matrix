@@ -35,27 +35,27 @@ namespace matrix {
 
         template <class T>
         Tensor<T> GeneratorTensor(const Shape &shape_) const {
-            return Tensor<T>(static_cast<T *>(ptr_), shape_);
+            return Tensor<T>(reinterpret_cast<T *>(ptr_), shape_);
         }
 
         template <class T>
         Tensor<T> GeneratorTensor(const Shape *shape_) const {
-            return Tensor<T>(static_cast<T *>(ptr_), *shape_);
+            return Tensor<T>(reinterpret_cast<T *>(ptr_), *shape_);
         }
 
         template <class T>
         const T &GetInstance() const {
-            return *static_cast<T*>(ptr_);
+            return *reinterpret_cast<T*>(ptr_);
         }
 
         template <class T>
         const T * Get() const {
-            return static_cast<T*>(ptr_);
+            return reinterpret_cast<T*>(ptr_);
         }
 
         template <class T>
         T * GetMutable() {
-            return static_cast<T*>(ptr_);
+            return reinterpret_cast<T*>(ptr_);
         }
 
     };

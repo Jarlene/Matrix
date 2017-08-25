@@ -17,7 +17,9 @@ namespace matrix {
     const OpPtr Registry::GetOp(const std::string &name, const MatrixType &type) const {
         if (opMap.count(name)) {
             auto op_prop = opMap.at(name);
-            op_prop->SwitchType(type);
+            if (type != kInvalid) {
+                op_prop->SwitchType(type);
+            }
             return op_prop;
         }
         return nullptr;
