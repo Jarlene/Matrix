@@ -39,7 +39,7 @@ namespace matrix {
             }
         }
         assert(correct <= N);
-        Output<T>(OUT)[0] = T((correct * 1.0)/N);
+        Output<T>()[0] = T((correct * 1.0)/N);
         return true;
     }
 
@@ -67,11 +67,7 @@ namespace matrix {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new AccuracyOp<DType, CPU>(param);
-            int shape = 0;
-            for (Shape *s : param.outShapes) {
-                shape += s->Size();
-            }
-            *size = sizeof(DType) * shape;
+            *size = sizeof(DType) * param.outShapes->Size();
         })
         return op;
     }
@@ -81,11 +77,7 @@ namespace matrix {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new AccuracyOp<DType, GPU>(param);
-            int shape = 0;
-            for (Shape *s : param.outShapes) {
-                shape += s->Size();
-            }
-            *size = sizeof(DType) * shape;
+            *size = sizeof(DType) * param.outShapes->Size();
         })
         return op;
     }
@@ -103,17 +95,17 @@ namespace matrix {
         delete param;
     }
 
-    void AccuracyOpProp::InferShape(std::vector<Shape*> &inShape, std::vector<Shape*> &outShape) {
-        if (outShape.size() < 1) {
+    void AccuracyOpProp::InferShape(std::vector<Shape*> &inShape, Shape *outShape) {
+        if (outShape == nullptr) {
             Logger::Global()->Fatal("AccuracyOp  must has output shape. \n");
         }
-        outShape.at(0)->reShape(ShapeN(1));
+        outShape->reShape(ShapeN(1));
     }
 
-    Operator *AccuracyOpProp::CreateOperator(Context context, std::vector<Blob*> &input, std::vector<Blob*> &output,
-                                             std::vector<Shape*> &inShape, std::vector<Shape*> &outShape,
+    Operator *AccuracyOpProp::CreateOperator(Context context, std::vector<Blob*> &input,Blob* output,
+                                             std::vector<Shape*> &inShape, Shape *outShape,
                                              std::map<std::string, Any> &args) {
-        param->args = args;
+        param->args = &args;
         param->inputs = input;
         param->outputs = output;
         InferShape(inShape, outShape);

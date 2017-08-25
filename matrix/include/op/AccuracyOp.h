@@ -21,7 +21,6 @@ namespace matrix {
     SAME_FUNCTION(Accuracy);
     DISABLE_COPY_AND_ASSIGN(Accuracy);
         INPUT_TAG(PREDICTION, LABEL);
-        OUTPUT_TAG(OUT);
     };
 
 
@@ -37,9 +36,9 @@ namespace matrix {
         AccuracyOpProp(const MatrixType &type);
         virtual void SwitchType(const MatrixType &type);
         ~AccuracyOpProp();
-        virtual void InferShape(std::vector<Shape*> &inShape, std::vector<Shape*> &outShape);
-        virtual Operator* CreateOperator(Context context, std::vector<Blob*> &input, std::vector<Blob*> &output,
-                                         std::vector<Shape*> &inShape, std::vector<Shape*> &outShape,
+        virtual void InferShape(std::vector<Shape*> &inShape, Shape *outShape);
+        virtual Operator* CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
+                                         std::vector<Shape*> &inShape, Shape *outShape,
                                          std::map<std::string, Any> &args) ;
     private:
         AccuracyParam* param;

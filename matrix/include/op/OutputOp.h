@@ -21,7 +21,6 @@ namespace matrix {
     SAME_FUNCTION(Output);
     DISABLE_COPY_AND_ASSIGN(Output);
         INPUT_TAG(DATA);
-        OUTPUT_TAG(OUT);
     };
 
 
@@ -35,9 +34,9 @@ namespace matrix {
         OutputOpProp();
         OutputOpProp(const MatrixType &type);
         ~OutputOpProp();
-        virtual void InferShape(std::vector<Shape*> &inShape, std::vector<Shape*> &outShape);
-        virtual Operator* CreateOperator(Context context, std::vector<Blob*> &input, std::vector<Blob*> &output,
-                                         std::vector<Shape*> &inShape, std::vector<Shape*> &outShape,
+        virtual void InferShape(std::vector<Shape*> &inShape, Shape *outShape);
+        virtual Operator* CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
+                                         std::vector<Shape*> &inShape, Shape *outShape,
                                          std::map<std::string, Any> &args)  ;
         virtual void SwitchType(const MatrixType &type);
     private:

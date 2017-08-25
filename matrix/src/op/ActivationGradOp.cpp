@@ -22,7 +22,7 @@ namespace matrix {
         Tensor<T> pre = Inputs()[PRE_GRAD]-> template GeneratorTensor<T>(*inputShapes[PRE_GRAD]);
         Tensor<T> out = Inputs()[OUT]-> template GeneratorTensor<T>(*inputShapes[OUT]);
         Tensor<T> input = Inputs()[INPUT]-> template GeneratorTensor<T>(*inputShapes[INPUT]);
-        Tensor<T> gradOut = Outputs()[GRAD_OUT]-> template GeneratorTensor<T>(*outputShapes[GRAD_OUT]);
+        Tensor<T> gradOut = Outputs()-> template GeneratorTensor<T>(*outputShapes);
 
         switch (type) {
             case kSigmoid:
@@ -76,9 +76,9 @@ namespace matrix {
         delete param;
     }
 
-    void ActivationOpGradProp::InferShape(std::vector<Shape*> &inShape, std::vector<Shape*> &outShape) {
-        assert(inShape.size() >= 3);
-        outShape.at(0)->reShape(*inShape[2]);
+    void ActivationOpGradProp::InferShape(std::vector<Shape*> &inShape, Shape* outShape) {
+        assert(outShape != nullptr);
+        outShape->reShape(*inShape[2]);
     }
 
 
@@ -87,11 +87,7 @@ namespace matrix {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new ActivationGradOp<DType, CPU>(param);
-            int shape = 0;
-            for (Shape *s : param.outShapes) {
-                shape += s->Size();
-            }
-            *size = sizeof(DType) * shape;
+            *size = sizeof(DType) * param.outShapes->Size();
         })
         return op;
     }
@@ -101,20 +97,16 @@ namespace matrix {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new ActivationGradOp<DType, GPU>(param);
-            int shape = 0;
-            for (Shape *s : param.outShapes) {
-                shape += s->Size();
-            }
-            *size = sizeof(DType) * shape;
+            *size = sizeof(DType) * param.outShapes->Size();
         })
         return op;
     }
 
 
-    Operator *ActivationOpGradProp::CreateOperator(Context context, std::vector<Blob*> &input, std::vector<Blob*> &output,
-                                                   std::vector<Shape*> &inShape, std::vector<Shape*> &outShape,
+    Operator *ActivationOpGradProp::CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
+                                                   std::vector<Shape*> &inShape, Shape* &outShape,
                                                    std::map<std::string, Any> &args) {
-        param->args = args;
+        param->args = &args;
         param->inputs = input;
         param->outputs = output;
         InferShape(inShape, outShape);

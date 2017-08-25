@@ -16,7 +16,7 @@ namespace matrix {
     bool VariableOp<T, xpu>::Run() {
 
         if (HasArg("isTrain")) {
-            Tensor<T> out = output.at(0)-> template GeneratorTensor<T>(outputShapes.at(0));
+            Tensor<T> out = Outputs()-> template GeneratorTensor<T>(outputShapes);
             if (HasArg("constant")) {
                 T val = GetArgValue<T>("constant", T(0.1));
                 Value<T>(out, val);
@@ -57,11 +57,7 @@ namespace matrix {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new VariableOp<DType, CPU>(param);
-            int shape = 0;
-            for (auto s : param.outShapes) {
-                shape += s->Size();
-            }
-            *size = sizeof(DType) * shape;
+            *size = sizeof(DType) * param.outShapes->Size();
         })
         return op;
     }
@@ -71,11 +67,7 @@ namespace matrix {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new VariableOp<DType, GPU>(param);
-            int shape = 0;
-            for (auto s : param.outShapes) {
-                shape += s->Size();
-            }
-            *size = sizeof(DType) * shape;
+            *size = sizeof(DType) * param.outShapes->Size();
         })
         return op;
     }
@@ -94,16 +86,16 @@ namespace matrix {
         delete param;
     }
 
-    void VariableOpProp::InferShape(std::vector<Shape*> &inShape, std::vector<Shape*> &outShape) {
-        if (outShape.size() == 0) {
-            Logger::Global()->Fatal("variable input shapes must lager then 0\n");
+    void VariableOpProp::InferShape(std::vector<Shape*> &inShape, Shape* outShape) {
+        if (outShape == nullptr) {
+            Logger::Global()->Fatal("variable output shape must not null \n");
         }
     }
 
-    Operator *VariableOpProp::CreateOperator(Context context, std::vector<Blob*> &input, std::vector<Blob*> &output,
-                                             std::vector<Shape*> &inShape, std::vector<Shape*> &outShape,
+    Operator *VariableOpProp::CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
+                                             std::vector<Shape*> &inShape, Shape* outShape,
                                              std::map<std::string, Any> &args) {
-        param->args = args;
+        param->args = &args;
         param->inputs = input;
         param->outputs = output;
         InferShape(inShape, outShape);

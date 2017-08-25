@@ -16,6 +16,23 @@ namespace matrix {
 
         };
 
+        TEST_F(OpTest, VariableOp) {
+            OpPtr pro = Registry::Global()->GetOp("variable");
+            Context context;
+            context.mode = RunMode::kCpu;
+            context.phase = Phase::TEST;
+            context.type = kFloat;
+            Shape shape = ShapeN(784, 128);
+            float * result = static_cast<float *>(malloc(sizeof(float) * shape.Size()));
+            Blob blob(result);
+            std::vector<Blob *> inputs;
+            std::vector<Shape *> inShape;
+            std::map<std::string, Any> params;
+            params["isTrain"] = true;
+            Operator *op = pro->CreateOperator(context, inputs, &blob, inShape, &shape, params);
+            op->AsyncRun();
+        }
+
         TEST_F(OpTest, AddOp) {
             float a[] = {1, 2, 3, 4, 5, 6};
             float b[] = {2, 3, 4, 5, 6, 7};
@@ -36,17 +53,14 @@ namespace matrix {
             Blob bblob(b);
             inputs.push_back(&bblob);
             Blob resblob(res);
-            outputs.push_back(&resblob);
 
             std::vector<Shape *> inShape;
             inShape.push_back(&shape);
             inShape.push_back(&shape);
-            std::vector<Shape *> outShape;
-            outShape.push_back(&shape);
 
             std::map<std::string, Any> params;
 
-            Operator *op = pro->CreateOperator(context, inputs, outputs, inShape, outShape, params);
+            Operator *op = pro->CreateOperator(context, inputs, &resblob, inShape, &shape, params);
 
             op->AsyncRun();
             int dim = shape.Size();
@@ -81,7 +95,6 @@ namespace matrix {
             inputs.push_back(&cblob);
 
             Blob resblob(res);
-            outputs.push_back(&resblob);
 
             std::vector<Shape *> inShape;
 
@@ -93,15 +106,13 @@ namespace matrix {
             inShape.push_back(&in2);
             inShape.push_back(&out);
 
-            std::vector<Shape *> outShape;
-            outShape.push_back(&out);
 
             std::map<std::string, Any> params;
 
-            Operator *op = pro->CreateOperator(context, inputs, outputs, inShape, outShape, params);
+            Operator *op = pro->CreateOperator(context, inputs, &resblob, inShape, &out, params);
 
             op->AsyncRun();
-            int dim = outShape.at(0)->Size();
+            int dim = out.Size();
             checkArrayEqual<float>(d, res, dim);
 
         }
@@ -133,7 +144,6 @@ namespace matrix {
             inputs.push_back(&cblob);
 
             Blob resblob(res);
-            outputs.push_back(&resblob);
 
             std::vector<Shape *> inShape;
             std::vector<Shape *> outShape;
@@ -146,12 +156,11 @@ namespace matrix {
             inShape.push_back(&out);
 
 
-            outShape.push_back(&out);
 
             std::map<std::string, Any> params;
             params["filter_num"] = 1;
 
-            Operator *op = pro->CreateOperator(context, inputs, outputs, inShape, outShape, params);
+            Operator *op = pro->CreateOperator(context, inputs, &resblob, inShape, &out, params);
 
             op->AsyncRun();
             int dim = outShape.at(0)->Size();

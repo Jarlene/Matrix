@@ -21,7 +21,6 @@ namespace matrix {
     SAME_FUNCTION(AddGrad);
     DISABLE_COPY_AND_ASSIGN(AddGrad);
         INPUT_TAG(PRE_GRAD, OUT, INPUT1, INPUT2);
-        OUTPUT_TAG(OUT_GRAD);
     };
 
 
@@ -34,9 +33,9 @@ namespace matrix {
         AddGradOpProp();
         AddGradOpProp(const MatrixType &type);
         ~AddGradOpProp();
-        virtual void InferShape(std::vector<Shape*> &inShape, std::vector<Shape*> &outShape);
-        virtual Operator* CreateOperator(Context context, std::vector<Blob*> &input, std::vector<Blob*> &output,
-                                         std::vector<Shape*> &inShape, std::vector<Shape*> &outShape,
+        virtual void InferShape(std::vector<Shape*> &inShape, Shape *outShape);
+        virtual Operator* CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
+                                         std::vector<Shape*> &inShape, Shape *outShape,
                                          std::map<std::string, Any> &args)  ;
         virtual void SwitchType(const MatrixType &type);
     private:

@@ -39,11 +39,7 @@ namespace matrix {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new DivOp<DType, CPU>(param);
-            int shape = 0;
-            for (auto s : param.outShapes) {
-                shape += s->Size();
-            }
-            *size = sizeof(DType) * shape;
+            *size = sizeof(DType) * param.outShapes->Size();
         })
         return op;
     }
@@ -53,11 +49,7 @@ namespace matrix {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new DivOp<DType, GPU>(param);
-            int shape = 0;
-            for (auto s : param.outShapes) {
-                shape += s->Size();
-            }
-            *size = sizeof(DType) * shape;
+            *size = sizeof(DType) * param.outShapes->Size();
         })
         return op;
     }
@@ -78,14 +70,14 @@ namespace matrix {
         delete param;
     }
 
-    void DivOpProp::InferShape(std::vector<Shape*> &inShape, std::vector<Shape*> &outShape) {
-        outShape.at(0)->reShape(*inShape.at(0));
+    void DivOpProp::InferShape(std::vector<Shape*> &inShape, Shape *outShape) {
+        outShape->reShape(*inShape.at(0));
     }
 
-    Operator *DivOpProp::CreateOperator(Context context, std::vector<Blob*> &input, std::vector<Blob*> &output,
-                                        std::vector<Shape*> &inShape, std::vector<Shape*> &outShape,
+    Operator *DivOpProp::CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
+                                        std::vector<Shape*> &inShape, Shape *outShape,
                                         std::map<std::string, Any> &args) {
-        param->args = args;
+        param->args = &args;
         param->inputs = input;
         param->outputs = output;
         InferShape(inShape, outShape);

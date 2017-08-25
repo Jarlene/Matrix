@@ -38,11 +38,7 @@ namespace matrix {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new PoolingOp<DType, CPU>(param);
-            int shape = 0;
-            for (auto s : param.outShapes) {
-                shape += s->Size();
-            }
-            *size = sizeof(DType) * shape;
+            *size = sizeof(DType) * param.outShapes->Size();
         })
         return op;
     }
@@ -52,11 +48,7 @@ namespace matrix {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new PoolingOp<DType, GPU>(param);
-            int shape = 0;
-            for (auto s : param.outShapes) {
-                shape += s->Size();
-            }
-            *size = sizeof(DType) * shape;
+            *size = sizeof(DType) * param.outShapes->Size();
         })
         return op;
     }
@@ -77,14 +69,14 @@ namespace matrix {
         delete param;
     }
 
-    void PoolingOpProp::InferShape(std::vector<Shape*> &inShape, std::vector<Shape*> &outShape) {
+    void PoolingOpProp::InferShape(std::vector<Shape*> &inShape, Shape* outShape) {
 
     }
 
-    Operator *PoolingOpProp::CreateOperator(Context context, std::vector<Blob*> &input, std::vector<Blob*> &output,
-                                            std::vector<Shape*> &inShape, std::vector<Shape*> &outShape,
+    Operator *PoolingOpProp::CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
+                                            std::vector<Shape*> &inShape, Shape* outShape,
                                             std::map<std::string, Any> &args) {
-        param->args = args;
+        param->args = &args;
         param->inputs = input;
         param->outputs = output;
         InferShape(inShape, outShape);

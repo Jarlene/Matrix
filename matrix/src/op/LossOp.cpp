@@ -20,7 +20,7 @@ namespace matrix {
         }
         Tensor<T> data = Inputs()[DATA]->template GeneratorTensor<T>(inputShapes[DATA]);
         Tensor<T> label = Inputs()[LABEL]->template GeneratorTensor<T>(inputShapes[LABEL]);
-        Tensor<T> out = Outputs()[OUT]-> template GeneratorTensor<T>(outputShapes[OUT]);
+        Tensor<T> out = Outputs()-> template GeneratorTensor<T>(outputShapes);
         if (lossModel == LossMode::kCrossEntropy) {
             CrossEntropy<T>(data, label, out);
         } else if (lossModel == LossMode::kMSE) {
@@ -60,11 +60,7 @@ namespace matrix {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new LossOp<DType, CPU>(param);
-            int shape = 0;
-            for (auto s : param.outShapes) {
-                shape += s->Size();
-            }
-            *size = sizeof(DType) * shape;
+            *size = sizeof(DType) * param.outShapes->Size();
         })
         return op;
     }
@@ -74,11 +70,7 @@ namespace matrix {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new LossOp<DType, GPU>(param);
-            int shape = 0;
-            for (auto s : param.outShapes) {
-                shape += s->Size();
-            }
-            *size = sizeof(DType) * shape;
+            *size = sizeof(DType) * param.outShapes->Size();
         })
         return op;
     }
@@ -99,14 +91,15 @@ namespace matrix {
         delete param;
     }
 
-    void LossOpProp::InferShape(std::vector<Shape*> &inShape, std::vector<Shape*> &outShape) {
-        outShape.at(0)->Append(1);
+    void LossOpProp::InferShape(std::vector<Shape*> &inShape, Shape *outShape) {
+        assert(outShape != nullptr);
+        outShape->Append(1);
     }
 
-    Operator *LossOpProp::CreateOperator(Context context, std::vector<Blob*> &input, std::vector<Blob*> &output,
-                                         std::vector<Shape*> &inShape, std::vector<Shape*> &outShape,
+    Operator *LossOpProp::CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
+                                         std::vector<Shape*> &inShape, Shape *outShape,
                                          std::map<std::string, Any> &args) {
-        param->args = args;
+        param->args = &args;
         param->inputs = input;
         param->outputs = output;
         InferShape(inShape, outShape);

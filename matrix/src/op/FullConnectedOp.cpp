@@ -16,13 +16,13 @@ namespace matrix {
         if (Inputs().size() == 2) {
             Tensor<T> data = Inputs()[DATA]-> template GeneratorTensor<T>(inputShapes.at(DATA));
             Tensor<T> weight = Inputs()[WEIGHT]-> template GeneratorTensor<T>(inputShapes.at(WEIGHT));
-            Tensor<T> out = Outputs()[OUT]-> template GeneratorTensor<T>(outputShapes.at(OUT));
+            Tensor<T> out = Outputs()-> template GeneratorTensor<T>(outputShapes);
             MatrixMul<T>(data, false, weight, false, out);
         } else if (Inputs().size() == 3) {
             Tensor<T> data = Inputs()[DATA]-> template GeneratorTensor<T>(inputShapes.at(DATA));
             Tensor<T> weight = Inputs()[WEIGHT]-> template GeneratorTensor<T>(inputShapes.at(WEIGHT));
             Tensor<T> bias = Inputs()[BIAS]-> template GeneratorTensor<T>(inputShapes.at(BIAS));
-            Tensor<T> out = Outputs()[OUT]-> template GeneratorTensor<T>(outputShapes.at(OUT));
+            Tensor<T> out = Outputs()-> template GeneratorTensor<T>(outputShapes);
             MatrixMul<T>(data, false, weight, false, out);
             Add<T>(out, bias, out);
         }
@@ -58,11 +58,7 @@ namespace matrix {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new FullConnectedOp<DType, CPU>(param);
-            int shape = 0;
-            for (auto s : param.outShapes) {
-                shape += s->Size();
-            }
-            *size = sizeof(DType) * shape;
+            *size = sizeof(DType) * param.outShapes->Size();
         })
         return op;
     }
@@ -72,11 +68,7 @@ namespace matrix {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new FullConnectedOp<DType, GPU>(param);
-            int shape = 0;
-            for (auto s : param.outShapes) {
-                shape += s->Size();
-            }
-            *size = sizeof(DType) * shape;
+            *size = sizeof(DType) * param.outShapes->Size();
         })
         return op;
     }
@@ -94,16 +86,16 @@ namespace matrix {
         delete param;
     }
 
-    void FullConnectedOpProp::InferShape(std::vector<Shape*> &inShape, std::vector<Shape*> &outShape) {
+    void FullConnectedOpProp::InferShape(std::vector<Shape*> &inShape, Shape *outShape) {
         assert(inShape.size() >= 2);
-        assert(outShape.size() >= 1);
-        ProduceMulOpShape(inShape, outShape[0]);
+        assert(outShape != nullptr);
+        ProduceMulOpShape(inShape, outShape);
     }
 
-    Operator *FullConnectedOpProp::CreateOperator(Context context, std::vector<Blob*> &input, std::vector<Blob*> &output,
-                                                  std::vector<Shape*> &inShape, std::vector<Shape*> &outShape,
+    Operator *FullConnectedOpProp::CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
+                                                  std::vector<Shape*> &inShape, Shape *outShape,
                                                   std::map<std::string, Any> &args) {
-        param->args = args;
+        param->args = &args;
         param->inputs = input;
         param->outputs = output;
         InferShape(inShape, outShape);

@@ -29,7 +29,7 @@
     this->input = param.inputs; \
     this->output = param.outputs; \
     this->args = param.args; \
-     this->outputShapes = param.outShapes;\
+    this->outputShapes = param.outShapes;\
 
 
 #define INPUT_TAG(first, ...)  \
@@ -98,21 +98,21 @@ namespace matrix {
         }
 
         inline bool HasArg(const std::string &name) {
-            return args.count(name) > 0;
+            return args->count(name) > 0;
         }
 
         template <class T>
         inline T GetArgValue(const std::string & name, const T &default_value) {
-            if (args.count(name)) {
-                return get<T>(args.at(name));
+            if (args->count(name)) {
+                return get<T>(args->at(name));
             }
             return default_value;
         }
 
         template <class T>
         inline T GetArgValue(const std::string & name) {
-            if (args.count(name)) {
-                return get<T>(args.at(name));
+            if (args->count(name)) {
+                return get<T>(args->at(name));
             }
 
             Logger::Global()->Fatal("can not find arg name");
@@ -127,15 +127,15 @@ namespace matrix {
         }
 
         template <class T>
-        inline T* Output(int idx) {
-            return output.at(idx)->GetMutable<T>();
+        inline T* Output() {
+            return output->GetMutable<T>();
         }
 
         inline const std::vector<Blob*> Inputs() const {
             return input;
         }
 
-        inline const std::vector<Blob*> Outputs() const {
+        inline const Blob* Outputs() const {
             return output;
         }
 
@@ -154,11 +154,11 @@ namespace matrix {
 
 
     protected:
-        std::map<std::string, Any> args;
+        std::map<std::string, Any> *args;
         std::vector<Blob*> input;
-        std::vector<Blob*> output;
+        Blob* output;
         std::vector<Shape*> inputShapes;
-        std::vector<Shape*> outputShapes;
+        Shape* outputShapes;
     };
 
 
@@ -180,9 +180,9 @@ namespace matrix {
 
         std::vector<Blob*> inputs;
         std::vector<Shape*> inputShapes;
-        std::vector<Blob*> outputs;
-        std::vector<Shape*> outShapes;
-        std::map<std::string, Any> args;
+        Blob* outputs;
+        Shape* outShapes;
+        std::map<std::string, Any> *args;
     };
 
 
@@ -190,9 +190,9 @@ namespace matrix {
     class OperatorProperty {
     public:
         OperatorProperty() = default;
-        virtual void InferShape(std::vector<Shape*> &inShape, std::vector<Shape*> &outShape)  = 0;
-        virtual Operator* CreateOperator(Context context, std::vector<Blob*> &input, std::vector<Blob*> &output,
-                                         std::vector<Shape*> &inShape, std::vector<Shape*> &outShape,
+        virtual void InferShape(std::vector<Shape*> &inShape, Shape *outShape)  = 0;
+        virtual Operator* CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
+                                         std::vector<Shape*> &inShape, Shape* outShape,
                                          std::map<std::string, Any> &args) {
             return nullptr;
         }

@@ -20,7 +20,7 @@ namespace matrix {
             Logger::Global()->Fatal("input shape size less then 2 \n");
         }
         Tensor<T> pre_grad = Inputs()[PRE_GRAD]-> template GeneratorTensor<T>(*inputShapes[PRE_GRAD]);
-        Tensor<T> out_grad = Outputs()[OUT_GRAD]-> template GeneratorTensor<T>(*outputShapes[OUT_GRAD]);
+        Tensor<T> out_grad = Outputs()-> template GeneratorTensor<T>(*outputShapes);
         Copy(pre_grad, out_grad);
         return true;
 
@@ -55,11 +55,7 @@ namespace matrix {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new AddGradOp<DType, CPU>(param);
-            int shape = 0;
-            for (auto s : param.outShapes) {
-                shape += s->Size();
-            }
-            *size = sizeof(DType) * shape;
+            *size = sizeof(DType) * param.outShapes->Size();
         })
         return op;
     }
@@ -69,11 +65,7 @@ namespace matrix {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new AddGradOp<DType, GPU>(param);
-            int shape = 0;
-            for (auto s : param.outShapes) {
-                shape += s->Size();
-            }
-            *size = sizeof(DType) * shape;
+            *size = sizeof(DType) * param.outShapes->Size();
         })
         return op;
     }
@@ -86,23 +78,23 @@ namespace matrix {
         param = new AddGradParam(MatrixType::kFloat);
     }
 
-    Operator *AddGradOpProp::CreateOperator(Context context, std::vector<Blob*> &input, std::vector<Blob*> &output,
-                                        std::vector<Shape*> &inShape, std::vector<Shape*> &outShape,
+    Operator *AddGradOpProp::CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
+                                        std::vector<Shape*> &inShape, Shape *outShape,
                                         std::map<std::string, Any> &args) {
         // attention order
         param->outputs = output;
         param->inputs = input;
-        param->args = args;
+        param->args = &args;
         InferShape(inShape, outShape);
         param->inputShapes = inShape;
         param->outShapes = outShape;
         BIND_DISPATCH(CreateOp, *param, &memorySize);
     }
 
-    void AddGradOpProp::InferShape(std::vector<Shape*> &inShape, std::vector<Shape*> &outShape) {
-        if (param->args.count("input_idx")) {
-            int idx = get<int>(param->args["input_idx"]);
-            outShape.at(0)->reShape(*inShape.at(idx + 2));
+    void AddGradOpProp::InferShape(std::vector<Shape*> &inShape, Shape *outShape) {
+        if (param->args->count("input_idx")) {
+            int idx = get<int>(param->args->at("input_idx"));
+            outShape->reShape(*inShape.at(idx + 2));
         }
     }
 

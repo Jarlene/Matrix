@@ -19,7 +19,6 @@ namespace matrix {
     SAME_FUNCTION(Loss);
     DISABLE_COPY_AND_ASSIGN(Loss);
         INPUT_TAG(DATA, LABEL);
-        OUTPUT_TAG(OUT);
     };
 
     template <typename Context>
@@ -31,9 +30,9 @@ namespace matrix {
         LossOpProp();
         LossOpProp(const MatrixType &type);
         ~LossOpProp();
-        virtual void InferShape(std::vector<Shape*> &inShape, std::vector<Shape*> &outShape);
-        virtual Operator* CreateOperator(Context context, std::vector<Blob*> &input, std::vector<Blob*> &output,
-                                         std::vector<Shape*> &inShape, std::vector<Shape*> &outShape,
+        virtual void InferShape(std::vector<Shape*> &inShape, Shape *outShape);
+        virtual Operator* CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
+                                         std::vector<Shape*> &inShape, Shape *outShape,
                                          std::map<std::string, Any> &args)  ;
         virtual void SwitchType(const MatrixType &type);
     private:

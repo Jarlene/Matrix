@@ -22,7 +22,6 @@ namespace matrix {
     SAME_FUNCTION(FullConnectedGrad);
     DISABLE_COPY_AND_ASSIGN(FullConnectedGrad);
         INPUT_TAG(PRE_GRAD, OUT, DATA, WEIGHT, BIAS);
-        OUTPUT_TAG(OUT_GRAD);
     };
 
     template <typename Context>
@@ -34,9 +33,9 @@ namespace matrix {
         FullConnectedGradOpProp();
         FullConnectedGradOpProp(const MatrixType &type);
         ~FullConnectedGradOpProp();
-        virtual void InferShape(std::vector<Shape*> &inShape, std::vector<Shape*> &outShape);
-        virtual Operator* CreateOperator(Context context, std::vector<Blob*> &input, std::vector<Blob*> &output,
-                                         std::vector<Shape*> &inShape, std::vector<Shape*> &outShape,
+        virtual void InferShape(std::vector<Shape*> &inShape, Shape *outShape);
+        virtual Operator* CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
+                                         std::vector<Shape*> &inShape, Shape *outShape,
                                          std::map<std::string, Any> &args)  ;
         virtual void SwitchType(const MatrixType &type);
     private:

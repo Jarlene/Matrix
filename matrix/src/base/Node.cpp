@@ -55,11 +55,9 @@ namespace matrix {
             inputs.push_back(&blob);
             inputShapes.push_back(&node->outputShapes);
         }
-        std::vector<Shape*> out;
-        out.push_back(&outputShapes);
+
         Blob oB(this->data_);
-        outputs.push_back(&oB);
-        op = opPtr->CreateOperator(this->context, inputs, outputs, inputShapes, out, params);
+        op = opPtr->CreateOperator(this->context, inputs, &oB, inputShapes, &outputShapes, params);
         memorySize = opPtr->GetMemorySize();
     }
 

@@ -63,12 +63,8 @@ namespace matrix {
     Operator* CreateOp<CPU>(FullConnectedGradParam &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
-                op = new FullConnectedGradOp<DType, CPU>(param);
-                int shape = 0;
-                for (auto s : param.outShapes) {
-                    shape += s->Size();
-                }
-                *size = sizeof(DType) * shape;
+            op = new FullConnectedGradOp<DType, CPU>(param);
+            *size = sizeof(DType) * param.outShapes->Size();
         })
         return op;
     }
@@ -77,12 +73,8 @@ namespace matrix {
     Operator* CreateOp<GPU>(FullConnectedGradParam &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
-                op = new FullConnectedGradOp<DType, GPU>(param);
-                int shape = 0;
-                for (auto s : param.outShapes) {
-                    shape += s->Size();
-                }
-                *size = sizeof(DType) * shape;
+            op = new FullConnectedGradOp<DType, GPU>(param);
+            *size = sizeof(DType) * param.outShapes->Size();
         })
         return op;
     }
@@ -100,19 +92,19 @@ namespace matrix {
         delete param;
     }
 
-    void FullConnectedGradOpProp::InferShape(std::vector<Shape*> &inShape, std::vector<Shape*> &outShape) {
-        if (param->args.count("input_idx")) {
-            int idx = get<int>(param->args["input_idx"]);
-            outShape.at(0)->reShape(*inShape.at(idx + 2));
+    void FullConnectedGradOpProp::InferShape(std::vector<Shape*> &inShape, Shape *outShape) {
+        if (param->args->count("input_idx")) {
+            int idx = get<int>(param->args->at("input_idx"));
+            outShape->reShape(*inShape.at(idx + 2));
         }
 
     }
 
-    Operator *FullConnectedGradOpProp::CreateOperator(Context context, std::vector<Blob*> &input, std::vector<Blob*> &output,
-                                                  std::vector<Shape*> &inShape, std::vector<Shape*> &outShape,
+    Operator *FullConnectedGradOpProp::CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
+                                                  std::vector<Shape*> &inShape, Shape *outShape,
                                                   std::map<std::string, Any> &args) {
 
-        param->args = args;
+        param->args = &args;
         param->inputs = input;
         param->outputs = output;
         InferShape(inShape, outShape);

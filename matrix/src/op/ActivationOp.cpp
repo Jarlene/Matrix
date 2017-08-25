@@ -19,7 +19,7 @@ namespace matrix {
             type = GetArgValue<ActType>("type");
         }
         Tensor<T> data = Inputs()[DATA]-> template GeneratorTensor<T>(*inputShapes[DATA]);
-        Tensor<T> out = Outputs()[OUT]-> template GeneratorTensor<T>(*outputShapes[OUT]);
+        Tensor<T> out = Outputs()-> template GeneratorTensor<T>(*outputShapes);
         switch (type) {
             case kSigmoid:
                 Sigmoid<T>(data, out);
@@ -64,11 +64,7 @@ namespace matrix {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new ActivationOp<DType, CPU>(param);
-            int shape = 0;
-            for (auto s : param.outShapes) {
-                shape += s->Size();
-            }
-            *size = sizeof(DType) * shape;
+            *size = sizeof(DType) * param.outShapes->Size();
         })
         return op;
     }
@@ -78,11 +74,7 @@ namespace matrix {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new ActivationOp<DType, GPU>(param);
-            int shape = 0;
-            for (auto s : param.outShapes) {
-                shape += s->Size();
-            }
-            *size = sizeof(DType) * shape;
+            *size = sizeof(DType) * param.outShapes->Size();
         })
         return op;
     }
@@ -102,14 +94,14 @@ namespace matrix {
         delete param;
     }
 
-    void ActivationOpProp::InferShape(std::vector<Shape*> &inShape, std::vector<Shape*> &outShape) {
-        outShape[0]->reShape(*inShape[0]);
+    void ActivationOpProp::InferShape(std::vector<Shape*> &inShape, Shape* outShape) {
+        outShape->reShape(*inShape[0]);
     }
 
-    Operator *ActivationOpProp::CreateOperator(Context context, std::vector<Blob*> &input, std::vector<Blob*> &output,
-                                               std::vector<Shape*> &inShape, std::vector<Shape*> &outShape,
+    Operator *ActivationOpProp::CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
+                                               std::vector<Shape*> &inShape, Shape* outShape,
                                                std::map<std::string, Any> &args) {
-        param->args = args;
+        param->args = &args;
         param->inputs = input;
         param->outputs = output;
         InferShape(inShape, outShape);

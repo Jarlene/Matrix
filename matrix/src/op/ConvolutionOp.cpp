@@ -43,7 +43,7 @@ namespace matrix {
             Tensor<T> weight = Inputs()[KERNEL]-> template GeneratorTensor<T>(inputShapes[KERNEL]);
             Tensor<T> bias = Inputs()[BIAS]-> template GeneratorTensor<T>(inputShapes[BIAS]);
             Tensor<T> colBuffer = Inputs()[COLBUFFER]-> template GeneratorTensor<T>(inputShapes[COLBUFFER]);
-            Tensor<T> out = Outputs()[OUT]-> template GeneratorTensor<T>(outputShapes[OUT]);
+            Tensor<T> out = Outputs()-> template GeneratorTensor<T>(outputShapes);
 
             int num = data.GetShape()[0];
             int filterNum = GetArgValue<int>("filter_num");
@@ -114,11 +114,7 @@ namespace matrix {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new ConvolutionOp<DType, CPU>(param);
-            int shape = 0;
-            for (auto s : param.outShapes) {
-                shape += s->Size();
-            }
-            *size = sizeof(DType) * shape;
+            *size = sizeof(DType) * param.outShapes->Size();
         })
         return op;
     }
@@ -128,11 +124,7 @@ namespace matrix {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new ConvolutionOp<DType, GPU>(param);
-            int shape = 0;
-            for (auto s : param.outShapes) {
-                shape += s->Size();
-            }
-            *size = sizeof(DType) * shape;
+            *size = sizeof(DType) * param.outShapes->Size();
         })
         return op;
     }
@@ -149,34 +141,36 @@ namespace matrix {
         delete param;
     }
 
-    void ConvolutionOpProp::InferShape(std::vector<Shape*> &inShape, std::vector<Shape*> &outShape) {
+    void ConvolutionOpProp::InferShape(std::vector<Shape*> &inShape, Shape *outShape) {
 
         Shape padding = ShapeN(0, 0);
         Shape stride = ShapeN(1, 1);
         Shape dilate = ShapeN(1, 1);
-        if (param->args.count("padding")) {
-            padding.reShape(get<Shape>(param->args["padding"]));
+        if (param->args->count("padding")) {
+            padding.reShape(get<Shape>(param->args->at("padding")));
         }
-        if (param->args.count("stride")) {
-            stride.reShape(get<Shape>(param->args["stride"]));
+        if (param->args->count("stride")) {
+            stride.reShape(get<Shape>(param->args->at("stride")));
         }
-        if (param->args.count("dilate")) {
-            dilate.reShape(get<Shape>(param->args["dilate"]));
+        if (param->args->count("dilate")) {
+            dilate.reShape(get<Shape>(param->args->at("dilate")));
         }
         ImageOrder order = NCHW;
-        if (param->args.count("order")) {
-            order = get<ImageOrder>(param->args["order"]);
+        if (param->args->count("order")) {
+            order = get<ImageOrder>(param->args->at("order"));
         }
-        int filter_num = get<int>(param->args["filter_num"]);
+
 
         int group = 1;
-        if (param->args.count("group")) {
-            group = get<int>(param->args["group"]);
+        if (param->args->count("group")) {
+            group = get<int>(param->args->at("group"));
         }
+        int filter_num = 1;
+
 
         Shape in = *inShape[0];
         Shape kernel = *inShape[1];
-        Shape out = *outShape[0];
+        Shape out = *outShape;
         Shape colBuffer = *inShape[inShape.size() - 1];
         int n = in[0];
         int kernel_h = kernel[0];
@@ -185,15 +179,24 @@ namespace matrix {
             int channel = in[1];
             int height = (in[2] + padding[0] - (dilate[0] * (kernel[0] - 1) + 1)) / stride[0] + 1;
             int width  = (in[3] + padding[1] - (dilate[1] * (kernel[1] - 1) + 1)) / stride[1] + 1;
+            filter_num = channel;
+            if (param->args->count("filter_num")) {
+                filter_num = get<int>(param->args->at("filter_num"));
+            }
             out.reShape(ShapeN(n, filter_num, height, width));
             int c = channel/group* kernel.Size();
+
             colBuffer.reShape(ShapeN(c, height, width));
             kernel.reShape(ShapeN(filter_num, channel, kernel_h, kernel_w));
         } else {
             int height = (in[1] + padding[0] - (dilate[0] * (kernel[0] - 1) + 1)) / stride[0] + 1;
             int width  = (in[2] + padding[1] - (dilate[1] * (kernel[1] - 1) + 1)) / stride[1] + 1;
-            out.reShape(ShapeN(n, height, width, filter_num));
             int channel = in[3];
+            filter_num = channel;
+            if (param->args->count("filter_num")) {
+                filter_num = get<int>(param->args->at("filter_num"));
+            }
+            out.reShape(ShapeN(n, height, width, filter_num));
             int c = channel/group* kernel.Size();
             colBuffer.reShape(ShapeN(c, height, width));
             kernel.reShape(ShapeN(filter_num, channel, kernel_h, kernel_w));
@@ -201,10 +204,10 @@ namespace matrix {
 
     }
 
-    Operator *ConvolutionOpProp::CreateOperator(Context context, std::vector<Blob*> &input, std::vector<Blob*> &output,
-                                                std::vector<Shape*> &inShape, std::vector<Shape*> &outShape,
+    Operator *ConvolutionOpProp::CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
+                                                std::vector<Shape*> &inShape, Shape *outShape,
                                                 std::map<std::string, Any> &args) {
-        param->args = args;
+        param->args = &args;
         param->inputs = input;
         param->outputs = output;
         InferShape(inShape, outShape);
