@@ -18,6 +18,7 @@ namespace matrix {
         template <class T>
         void Fill(T * ptr) {
             this->nodePtr->context.phase = PREDICTION;
+            this->nodePtr->params["isTrain"] = false;
             this->nodePtr->data_ = ptr;
         }
 
