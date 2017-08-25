@@ -23,7 +23,7 @@ namespace matrix {
             Shape in = input.GetShape();
             Shape ou = out.GetShape();
             if (in.isMatrix() && ou.isVector() && in[0] == ou[0]) {
-                SumCopy<T>(in.Size(), input.Data(), ou.Size(), out.MutableData())
+                SumCopy<T>(in.Size(), input.Data(), ou.Size(), out.MutableData());
             }
         }
 
