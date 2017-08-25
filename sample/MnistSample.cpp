@@ -11,8 +11,8 @@
 
 using namespace matrix;
 
-const string trainImagePath = "/Users/jarlene/Code/Cpp/AI/Matrix/data/train-images-idx3-ubyte";
-const string trainLabelPath = "/Users/jarlene/Code/Cpp/AI/Matrix/data/train-labels-idx1-ubyte";
+const string trainImagePath = "../../data/train-images-idx3-ubyte";
+const string trainLabelPath = "../../data/train-labels-idx1-ubyte";
 
 
 Symbol LogisticRegression(Symbol input, int batchSize, int hideNum) {
