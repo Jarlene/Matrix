@@ -1279,6 +1279,136 @@ namespace matrix {
         memset(output, 0, sizeof(T) * imageSize);
         Img2ColNd(input, imageShape, dataShape, kernel, stride, dilation, padding, N, output, true);
     }
+
+    template<class T>
+    inline void img2col(const T *input, const int input_channels, const int input_width, const int input_height,
+                        const int stride_width, const int stride_height, const int padding_width,
+                        const int padding_height, const int filter_width, const int filter_height,
+                        const int dilation_width, const int dilation_height, T *output) {
+        const int output_width =
+                (input_width + 2 * padding_width - (dilation_width * (filter_width - 1) + 1)) / stride_width + 1;
+        const int output_height =
+                (input_height + 2 * padding_height - (dilation_height * (filter_height - 1) + 1)) / stride_height + 1;
+        const int col_channels = input_channels * filter_width * filter_height;
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+        for (int c = 0; c < col_channels; ++c) {
+            int w_offset = c % filter_width;
+            int h_offset = (c / filter_width) % filter_height;
+            int c_im = c / filter_width / filter_height;
+            for (int h = 0; h < output_height; ++h) {
+                for (int w = 0; w < output_width; ++w) {
+                    int imRowIdx = h * stride_height + h_offset;
+                    int imColIdx = w * stride_width + w_offset;
+                    if ((imRowIdx - padding_height) < 0 ||
+                        (imRowIdx - padding_height) >= input_height ||
+                        (imColIdx - padding_width) < 0 ||
+                        (imColIdx - padding_width) >= input_width) {
+                        output[(c * output_height + h) * output_width + w] = T(0);
+                    } else {
+                        imRowIdx += c_im * input_height - padding_height;
+                        imColIdx -= padding_width;
+                        output[(c * output_height + h) * output_width + w] =
+                                input[imRowIdx * input_width + imColIdx];
+                    }
+                }
+            }
+        }
+    }
+
+
+    template<class T>
+    inline void col2img(const T *input, const int input_channels, const int input_width, const int input_height,
+                        const int stride_width, const int stride_height, const int padding_width,
+                        const int padding_height, const int filter_width, const int filter_height,
+                        const int dilation_width, const int dilation_height, T *output) {
+        const int output_width =
+                (input_width + 2 * padding_width - (dilation_width * (filter_width - 1) + 1)) / stride_width + 1;
+        const int output_height =
+                (input_height + 2 * padding_height - (dilation_height * (filter_height - 1) + 1)) / stride_height + 1;
+        const int col_channels = input_channels * filter_width * filter_height;
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+        for (int c = 0; c < col_channels; ++c) {
+            int w_offset = c % filter_width;
+            int h_offset = (c / filter_width) % filter_height;
+            int c_im = c / filter_width / filter_height;
+            for (int h = 0; h < output_height; ++h) {
+                for (int w = 0; w < output_width; ++w) {
+                    int imRowIdx = h * stride_height + h_offset;
+                    int imColIdx = w * stride_width + w_offset;
+                    if ((imRowIdx - padding_height) >= 0 &&
+                        (imRowIdx - padding_height) < input_height &&
+                        (imColIdx - padding_width) >= 0 &&
+                        (imColIdx - padding_width) < input_width) {
+                        imRowIdx += c_im * input_height - padding_height;
+                        imColIdx -= padding_width;
+                        output[imRowIdx * input_width + imColIdx] +=
+                                input[(c * output_height + h) * output_width + w];
+                    }
+                }
+            }
+        }
+    }
+
+
+    template<class T>
+    inline void NaiveConv(const T *input, const int batch_size, const int input_channels,
+                          const int input_width, const int input_height,
+                          const int stride_width, const int stride_height,
+                          const int padding_width, const int padding_height,
+                          const int filter_width, const int filter_height,
+                          const int dilation_width, const int dilation_height,
+                          const int output_channels, const T *filter, T *output) {
+
+        const int output_width =
+                (input_width + 2 * padding_width - (dilation_width * (filter_width - 1) + 1)) / stride_width + 1;
+        const int output_height =
+                (input_height + 2 * padding_height - (dilation_height * (filter_height - 1) + 1)) / stride_height + 1;
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+        for (int batch = 0; batch < batch_size; ++batch) {
+            for (int out_channel = 0; out_channel <output_channels ; ++out_channel) {
+                for (int out_h = 0; out_h < output_height; ++out_h) {
+                    for (int out_w = 0; out_w < output_width; ++out_w) {
+                        const int inStartH = (out_h * stride_height) - padding_height;
+                        const int inStartW = (out_w * stride_width) - padding_width;
+                        T outValue = (T)0;
+                        for (int in_channel = 0; in_channel < input_channels; ++in_channel) {
+                            for (int filter_h = 0; filter_h < filter_height; ++filter_h) {
+                                for (int filter_w = 0; filter_w < filter_width; ++filter_w) {
+                                    T inValue;
+                                    const int inH = inStartH + filter_h;
+                                    const int inW = inStartW + filter_w;
+                                    if ((inH >= 0 && inH < input_height) &&
+                                        (inW >= 0 && inW < input_width)) {
+                                        int offsetInput = batch * input_channels * input_height * input_width +
+                                                        in_channel * input_height * input_width + inH * input_width + inW;
+                                        inValue = input[offsetInput];
+                                    } else {
+                                        inValue = (T)0;
+                                    }
+                                    int offsetFilter = out_channel * input_channels * filter_height * filter_width +
+                                                    in_channel * filter_height * filter_width + filter_h * filter_width + filter_w;
+                                    T filterValue = filter[offsetFilter];
+                                    outValue += (inValue * filterValue);
+                                }
+                            }
+
+                        }
+                        int offset = batch * output_channels * output_height * output_width +
+                                        out_channel * output_height * output_width + out_h * output_width + out_w;
+                        output[offset] = outValue;
+                    }
+                }
+            }
+        }
+    }
+
+
 }
 
 #endif //MATRIX_MATH_H

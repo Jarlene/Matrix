@@ -127,6 +127,11 @@ namespace matrix {
         }
 
         template <class T>
+        inline T* InputNonConst(int idx) {
+            return input.at(idx)->GetMutable<T>();
+        }
+
+        template <class T>
         inline T* Output() {
             return output->GetMutable<T>();
         }

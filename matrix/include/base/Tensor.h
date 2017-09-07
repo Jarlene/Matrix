@@ -34,6 +34,10 @@ namespace matrix {
             return data_;
         }
 
+        const T *Data(int offset) const {
+            return data_+offset;
+        }
+
         T* MutableData() {
             return data_;
         }

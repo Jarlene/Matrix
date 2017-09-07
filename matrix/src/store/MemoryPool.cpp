@@ -64,7 +64,8 @@ namespace matrix {
     }
 
     void MemoryPool::freeMemory(void *ptr, size_t n) {
-        freeAll();
+        allocator_->free(ptr);
+        poolMemorySize_ -= n;
     }
 
     void *MemoryPool::getMemory(int color) {

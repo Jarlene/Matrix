@@ -71,8 +71,14 @@ namespace matrix {
 
             float colBuffer[81] = {0};
 
+            float b[9];
+
+            float c[] = {4, 4, 4,
+                         2, 4, 5,
+                         1, 4, 6};
+
             Shape input = ShapeN(1, 1, 5, 5);
-            Shape kShape = ShapeN(1,1,3, 3);
+            Shape kShape = ShapeN(1, 3, 3);
             Shape stride = ShapeN(1, 1);
             Shape padding = ShapeN(0, 0);
             Shape dilation = ShapeN(1, 1);
@@ -81,11 +87,23 @@ namespace matrix {
             Tensor<float> data(a, input);
             Tensor<float> col(colBuffer, out);
 
-            Img2Col<float>(data, kShape, stride, padding, dilation, col);
-            std::cout<<std::endl;
-            for (int i = 0; i < 81; ++i) {
-                std::cout<<colBuffer[i] << std::endl;
+            const int input_offset = 25;
+
+            const int output_offset = 9;
+
+            const int filter_offset = 9;
+            for (int i = 0; i < 1; ++i) {
+                for (int j = 0; j < 1; ++j) {
+                    img2col(a, 1, 5, 5, 1, 1, 0, 0, 3, 3, 1, 1, colBuffer);
+                    int M = 1;
+                    int N = 9;
+                    int K = 9;
+                    CPUGemm<float>(NoTrans, NoTrans, M, N, K, 1.0f, kernel + j * filter_offset, colBuffer,
+                                   0.0f, b + j * output_offset);
+                }
             }
+
+            checkArrayEqual<float>(b, c, 9);
         }
 
     }
