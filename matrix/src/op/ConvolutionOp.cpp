@@ -39,6 +39,15 @@ namespace matrix {
             group = GetArgValue<int>("group");
         }
 
+
+
+
+        Shape kernel = *inputShapes[KERNEL];
+        Shape stride = GetArgValue<Shape>("stride");
+        Shape padding = GetArgValue<Shape>("padding");
+        Shape dilate = GetArgValue<Shape>("dilate");
+
+
         const int input_offset = channel / group * imageSize;
 
         const int output_offset = outputShapes->Size() / outputShapes->At(0) / group;
@@ -50,13 +59,14 @@ namespace matrix {
         T *outputData = Output<T>();
 
         if (Inputs().size() == 2) {
-            Shape colBuffer = *inputShapes[KERNEL + 1];
-            T *colData = static_cast<T*>(MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(colBuffer.Size() * sizeof(T)));
+            int colSize = channel/group*kernel.Size() * outputShapes->At(2) * outputShapes->At(3);
+            T *colData = static_cast<T*>(MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(colSize * sizeof(T)));
             for (int i = 0; i < num; ++i) {
                 for (int j = 0; j < group; ++j) {
-                    Img2Col<T>(inputData + j * input_offset, *inputShapes[DATA], *inputShapes[KERNEL],
-                               GetArgValue<Shape>("stride"),
-                               GetArgValue<Shape>("padding"), GetArgValue<Shape>("dilate"), colData, order);
+                    Img2Col<T>(inputData + j * input_offset, *inputShapes[DATA],
+                               kernel, stride,
+                               padding, dilate,
+                               colData, order);
                     int M = filterNum / group;
                     int N = outputShapes->At(2) * outputShapes->At(3);
                     int K = channel / group * inputShapes[KERNEL]->At(2) * inputShapes[KERNEL]->At(3);
@@ -66,15 +76,16 @@ namespace matrix {
                 inputData += channel * imageSize;
                 outputData += filterNum * outputShapes->At(2) * outputShapes->At(3);
             }
-            MemoryManager::Global()->GetCpuMemoryPool()->freeMemory(colData, colBuffer.Size() * sizeof(T));
+            MemoryManager::Global()->GetCpuMemoryPool()->freeMemory(colData, colSize * sizeof(T));
         } else if (Inputs().size() == 3) {
-            Shape colBuffer = *inputShapes[BIAS + 1];
-            T *colData = static_cast<T*>(MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(colBuffer.Size() * sizeof(T)));
+            int colSize = channel/group*kernel.Size() * outputShapes->At(2) * outputShapes->At(3);
+            T *colData = static_cast<T*>(MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(colSize * sizeof(T)));
             for (int i = 0; i < num; ++i) {
                 for (int j = 0; j < group; ++j) {
-                    Img2Col<T>(inputData + j * input_offset, *inputShapes[DATA], *inputShapes[KERNEL],
-                               GetArgValue<Shape>("stride"),
-                               GetArgValue<Shape>("padding"), GetArgValue<Shape>("dilate"), colData, order);
+                    Img2Col<T>(inputData + j * input_offset, *inputShapes[DATA],
+                               kernel, stride,
+                               padding, dilate,
+                               colData, order);
                     int M = filterNum / group;
                     int N = outputShapes->At(2) * outputShapes->At(3);
                     int K = channel / group * inputShapes[KERNEL]->At(2) * inputShapes[KERNEL]->At(3);
@@ -84,14 +95,19 @@ namespace matrix {
                 inputData += channel * imageSize;
                 outputData += filterNum * outputShapes->At(2) * outputShapes->At(3);
             }
-            MemoryManager::Global()->GetCpuMemoryPool()->freeMemory(colData, colBuffer.Size() * sizeof(T));
+
+            Tensor<T> out = Outputs()->template GeneratorTensor<T>(outputShapes);
+            Tensor<T> bias = Inputs()[BIAS]->template GeneratorTensor<T>(inputShapes[BIAS]);
+            Add<T>(out, bias, out);
+            MemoryManager::Global()->GetCpuMemoryPool()->freeMemory(colData, colSize * sizeof(T));
         } else if (Inputs().size() == 4) {
             T *colBuff = InputNonConst<T>(COLBUFFER);
             for (int i = 0; i < num; ++i) {
                 for (int j = 0; j < group; ++j) {
-                    Img2Col<T>(inputData + j * input_offset, *inputShapes[DATA], *inputShapes[KERNEL],
-                               GetArgValue<Shape>("stride"),
-                               GetArgValue<Shape>("padding"), GetArgValue<Shape>("dilate"), colBuff, order);
+                    Img2Col<T>(inputData + j * input_offset, *inputShapes[DATA],
+                               kernel, stride,
+                               padding, dilate,
+                               colBuff, order);
                     int M = filterNum / group;
                     int N = outputShapes->At(2) * outputShapes->At(3);
                     int K = channel / group * inputShapes[KERNEL]->At(2) * inputShapes[KERNEL]->At(3);
@@ -198,8 +214,6 @@ namespace matrix {
 
         Shape in = *inShape[0];
         Shape kernel = *inShape[1];
-        Shape out = *outShape;
-        Shape colBuffer;
         int n = in[0];
         int kernel_h = kernel[0];
         int kernel_w = kernel[1];
@@ -211,11 +225,8 @@ namespace matrix {
             if (param->args->count("filter_num")) {
                 filter_num = get<int>(param->args->at("filter_num"));
             }
-            out.reShape(ShapeN(n, filter_num, height, width));
-            int c = channel / group * kernel.Size();
-
-            colBuffer.reShape(ShapeN(c, height, width));
-            kernel.reShape(ShapeN(filter_num, channel, kernel_h, kernel_w));
+            outShape->reShape(ShapeN(n, filter_num, height, width));
+            inShape[1]->reShape(ShapeN(filter_num, channel, kernel_h, kernel_w));
         } else {
             int height = (in[1] + padding[0] - (dilate[0] * (kernel[0] - 1) + 1)) / stride[0] + 1;
             int width = (in[2] + padding[1] - (dilate[1] * (kernel[1] - 1) + 1)) / stride[1] + 1;
@@ -224,12 +235,9 @@ namespace matrix {
             if (param->args->count("filter_num")) {
                 filter_num = get<int>(param->args->at("filter_num"));
             }
-            out.reShape(ShapeN(n, height, width, filter_num));
-            int c = channel / group * kernel.Size();
-            colBuffer.reShape(ShapeN(c, height, width));
-            kernel.reShape(ShapeN(filter_num, channel, kernel_h, kernel_w));
+            outShape->reShape(ShapeN(n, height, width, filter_num));
+            inShape[1]->reShape(ShapeN(filter_num, channel, kernel_h, kernel_w));
         }
-        inShape.push_back(&colBuffer);
     }
 
     Operator *ConvolutionOpProp::CreateOperator(Context context, std::vector<Blob *> &input, Blob *output,

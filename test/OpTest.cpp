@@ -119,13 +119,28 @@ namespace matrix {
 
 
         TEST_F(OpTest, ConovolutionOp) {
-            float a[] = {1, 2, 3, 4, 5, 6};
-            float b[] = {2, 2, 1, 1}; // 28, 34, 64, 79
-            float c[] = {3, 5, 1, 4};
+            float a[] = {1, 1, 1, 0, 0,
+                         0, 1, 1, 1, 0,
+                         0, 0, 1, 1, 1,
+                         0, 0, 1, 1, 0,
+                         0, 1, 1, 0, 0};
 
-            float d[] = {31, 39, 65, 83};
+            float kernel[] = {1, 1, 1,
+                              1, 1, 0,
+                              1, 0, 0};
 
-            float res[] = {0, 0, 0, 0, 0, 0};
+
+            float b[] = {1, 2, 3,
+                         1, 2, 1,
+                         2, 1, 3};
+
+            float c[] = {5, 6, 7,
+                         3, 6, 6,
+                         3, 5, 9};
+
+            float res[] = {0, 0, 0,
+                           0, 0, 0,
+                           0, 0, 0};
 
             OpPtr pro = Registry::Global()->GetOp("convolution");
 
@@ -136,35 +151,36 @@ namespace matrix {
             std::vector<Blob *> inputs;
             std::vector<Blob *> outputs;
 
-            Blob ablob(a);
-            Blob bblob(b);
-            Blob cblob(c);
-            inputs.push_back(&ablob);
-            inputs.push_back(&bblob);
-            inputs.push_back(&cblob);
+            Blob data(a);
+            Blob weight(kernel);
+            Blob bias(b);
 
-            Blob resblob(res);
+            inputs.push_back(&data);
+            inputs.push_back(&weight);
+            inputs.push_back(&bias);
+
+            Blob outBlob(res);
 
             std::vector<Shape *> inShape;
             std::vector<Shape *> outShape;
 
             Shape out = ShapeN(2, 2);
-            Shape in1 = ShapeN(2, 3);
-            Shape in2 = ShapeN(3, 2);
+            Shape in1 = ShapeN(1, 1, 5, 5);
+            Shape in2 = ShapeN(3, 3);
             inShape.push_back(&in1);
             inShape.push_back(&in2);
-            inShape.push_back(&out);
+            inShape.push_back(&in2);
 
 
 
             std::map<std::string, Any> params;
             params["filter_num"] = 1;
 
-            Operator *op = pro->CreateOperator(context, inputs, &resblob, inShape, &out, params);
+            Operator *op = pro->CreateOperator(context, inputs, &outBlob, inShape, &out, params);
 
             op->AsyncRun();
-            int dim = outShape.at(0)->Size();
-            checkArrayEqual<float>(d, res, dim);
+            int dim = out.Size();
+            checkArrayEqual<float>(c, res, dim);
         }
 
 
