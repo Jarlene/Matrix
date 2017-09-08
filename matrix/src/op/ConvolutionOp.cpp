@@ -41,18 +41,12 @@ namespace matrix {
 
 
         Shape kernel;
-        Shape stride = GetArgValue<Shape>("stride");
-        Shape padding = GetArgValue<Shape>("padding");
-        Shape dilate = GetArgValue<Shape>("dilate");
-
-
-        const int input_offset = channel / group * imageSize;
-
-        const int output_offset = outputShapes->Size() / outputShapes->At(0) / group;
-
-        const int filter_offset = inputShapes[KERNEL]->Size() / group;
+        Shape stride = GetArgValue<Shape>("stride", ShapeN(1, 1));
+        Shape padding = GetArgValue<Shape>("padding", ShapeN(0, 0));
+        Shape dilate = GetArgValue<Shape>("dilate", ShapeN(1, 1));
 
         if (Inputs().size() == 1) {
+
             if (!HasArg("filter")) {
                 Logger::Global()->Fatal("ConvolutionOp input size is 1, should has filter param\n");
             }
@@ -66,16 +60,20 @@ namespace matrix {
             Blob kernelBlob(kernelData);
             input.push_back(&kernelBlob);
             if (hasBias) {
-                Shape bias;
-                bias.reShape(*outputShapes);
-                inputShapes.push_back(&bias);
+                inputShapes.push_back(outputShapes);
                 T *biasData = static_cast<T*>(MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(
-                        bias.Size() * sizeof(T)));
-                Random<T>(bias.Size(),biasData, T(0.0), T(1.0));
+                        outputShapes->Size() * sizeof(T)));
+                Random<T>(outputShapes->Size(),biasData, T(0.0), T(1.0));
                 Blob biasBlob(biasData);
                 input.push_back(&biasBlob);
             }
         }
+
+        const int input_offset = channel / group * imageSize;
+
+        const int output_offset = outputShapes->Size() / outputShapes->At(0) / group;
+
+        const int filter_offset = kernel.Size() / group;
 
         const T *inputData = Input<T>(DATA);
         T *outputData = Output<T>();
