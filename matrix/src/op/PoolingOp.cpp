@@ -13,7 +13,7 @@ namespace matrix {
 
     template <class T, class Context>
     bool PoolingOp<T, Context>::Run() {
-        PoolType  type = GetArgValue<PoolType>("type", kMax)
+        PoolType  type = GetArgValue<PoolType>("type", kMax);
         switch (type) {
             case kMax:
 
