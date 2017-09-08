@@ -244,8 +244,8 @@ namespace matrix {
         Shape in = *inShape[0];
         if (inShape.size() == 1) {
             kernel = get<Shape>(param->args->at("filter"));
-        } else if (inShape.size() == 2) {
-            kernel = *inShape[1];
+        } else if (inShape.size() >= 2) {
+            kernel.reShape(*inShape[1]);
         }
 
         int n = in[0];
@@ -260,7 +260,7 @@ namespace matrix {
                 filter_num = get<int>(param->args->at("filter_num"));
             }
             outShape->reShape(ShapeN(n, filter_num, height, width));
-            if (inShape.size() == 2) {
+            if (inShape.size() >= 2) {
                 inShape[1]->reShape(ShapeN(filter_num, channel, kernel_h, kernel_w));
             }
         } else {
@@ -272,7 +272,7 @@ namespace matrix {
                 filter_num = get<int>(param->args->at("filter_num"));
             }
             outShape->reShape(ShapeN(n, height, width, filter_num));
-            if (inShape.size() == 2) {
+            if (inShape.size() >= 2) {
                 inShape[1]->reShape(ShapeN(filter_num, channel, kernel_h, kernel_w));
             }
         }
