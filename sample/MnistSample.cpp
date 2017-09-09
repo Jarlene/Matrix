@@ -49,8 +49,20 @@ Symbol LogisticRegression(Symbol input, int batchSize, int hideNum) {
 
 
 Symbol Connvolution(Symbol &input, Symbol &label, int batchSize) {
+    auto w = VariableSymbol::Create("w1", ShapeN(5, 5));
+    auto b = VariableSymbol::Create("b1", ShapeN(batchSize));
 
-    auto symbol = AlexSymbol(input, label);
+    auto symbol = Symbol("convolution")
+            .SetInput("data", input)
+            .SetInput("kernel", w)
+            .SetInput("bias", b)
+            .SetParam("padding", ShapeN(0,0))
+            .SetParam("stride", ShapeN(2,2))
+            .SetParam("dilate", ShapeN(1,1))
+            .SetParam("filter_num", 8)
+            .Build();
+
+
     return symbol;
 }
 
@@ -59,7 +71,7 @@ Symbol Connvolution(Symbol &input, Symbol &label, int batchSize) {
 int main() {
     int batchSize = 100;
     int epochSize = 10;
-    Shape imageShape = ShapeN(batchSize, 784);
+    Shape imageShape = ShapeN(batchSize, 1, 28, 28);
     Shape labelShape = ShapeN(batchSize);
     auto input = PlaceHolderSymbol::Create("x", imageShape);
     auto label = PlaceHolderSymbol::Create("label", labelShape);
@@ -68,7 +80,7 @@ int main() {
     float* labelData = static_cast<float *>(malloc(sizeof(float) * labelShape.Size()));
 
 
-    auto symbol = LogisticRegression(input, batchSize, 128);
+    auto symbol = Connvolution(input, label, 128);
 
     auto loss = Symbol("loss")
             .SetInput("logistic", symbol)

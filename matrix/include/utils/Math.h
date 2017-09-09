@@ -1319,10 +1319,10 @@ namespace matrix {
 
 
     template<class T>
-    inline void col2img(const T *input, const int input_channels, const int input_width, const int input_height,
+    inline void col2img(T *input, const int input_channels, const int input_width, const int input_height,
                         const int stride_width, const int stride_height, const int padding_width,
                         const int padding_height, const int filter_width, const int filter_height,
-                        const int dilation_width, const int dilation_height, T *output) {
+                        const int dilation_width, const int dilation_height, const T *output) {
         const int output_width =
                 (input_width + 2 * padding_width - (dilation_width * (filter_width - 1) + 1)) / stride_width + 1;
         const int output_height =
@@ -1345,8 +1345,8 @@ namespace matrix {
                         (imColIdx - padding_width) < input_width) {
                         imRowIdx += c_im * input_height - padding_height;
                         imColIdx -= padding_width;
-                        output[imRowIdx * input_width + imColIdx] +=
-                                input[(c * output_height + h) * output_width + w];
+                        input[imRowIdx * input_width + imColIdx] +=
+                                output[(c * output_height + h) * output_width + w];
                     }
                 }
             }

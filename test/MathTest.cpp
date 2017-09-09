@@ -84,20 +84,15 @@ namespace matrix {
             Shape dilation = ShapeN(1, 1);
             Shape out = ShapeN(1, 1, 3, 3);
 
-            Tensor<float> data(a, input);
-            Tensor<float> col(colBuffer, out);
-
             const int input_offset = 25;
-
             const int output_offset = 9;
-
+            int M = 1;
+            int N = 9;
+            int K = 9;
             const int filter_offset = 9;
             for (int i = 0; i < 1; ++i) {
                 for (int j = 0; j < 1; ++j) {
                     img2col(a, 1, 5, 5, 1, 1, 0, 0, 3, 3, 1, 1, colBuffer);
-                    int M = 1;
-                    int N = 9;
-                    int K = 9;
                     CPUGemm<float>(NoTrans, NoTrans, M, N, K, 1.0f, kernel + j * filter_offset, colBuffer,
                                    0.0f, b + j * output_offset);
                 }
@@ -106,5 +101,45 @@ namespace matrix {
             checkArrayEqual<float>(b, c, 9);
         }
 
+        TEST_F(MathTest, Col2Img) {
+            float inputData[] = {1, 1, 1,
+                                 2, 1, 0,
+                                 1, 0, 1};
+
+            float kernelData[] = {1, 1, 1,
+                                  1, 1, 0,
+                                  1, 0, 0};
+
+            float colBuffer[45] = {0};
+
+            float a[25] = {0};
+
+            float res[25] = {0,0,1,1,1,
+                             0,1,4,3,1,
+                             1,4,7,3,2,
+                             2,4,4,2,1,
+                             1,1,2,1,1};
+
+            Shape input = ShapeN(1, 1, 3, 3);
+            Shape kShape = ShapeN(1, 3, 3);
+            Shape stride = ShapeN(1, 1);
+            Shape padding = ShapeN(0, 0);
+            Shape dilation = ShapeN(1, 1);
+            Shape out = ShapeN(1, 1, 5, 5);
+
+            int M = 1 / 1 * 3 * 3;
+            int N = 3 * 3;
+            int K = 1 / 1;
+
+            CPUGemm<float>(Trans, NoTrans, M, N, K, 1.0f,
+                           kernelData,
+                           inputData,
+                           0.0f, colBuffer);
+
+            col2img(a, 1, 5, 5, 1, 1, 0, 0, 3, 3, 1, 1, colBuffer);
+            for (int i = 0; i < 45; ++i) {
+                std::cout << colBuffer[i] << std::endl;
+            }
+        }
     }
 }

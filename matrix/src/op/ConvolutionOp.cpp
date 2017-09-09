@@ -18,7 +18,6 @@ namespace matrix {
     bool ConvolutionOp<T, Context>::Run() {
 
         int num = inputShapes[DATA]->At(0);
-        int filterNum = GetArgValue<int>("filter_num");
 
         ImageOrder order = NCHW;
         if (HasArg("order")) {
@@ -38,7 +37,7 @@ namespace matrix {
         if (HasArg("group")) {
             group = GetArgValue<int>("group");
         }
-
+        int filterNum = GetArgValue<int>("filter_num", channel);
 
         Shape kernel;
         Shape stride = GetArgValue<Shape>("stride", ShapeN(1, 1));
