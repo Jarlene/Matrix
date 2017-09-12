@@ -123,7 +123,7 @@ namespace matrix {
             Shape input = ShapeN(1, 1, 3, 3);
             Shape kShape = ShapeN(1, 3, 3);
             Shape stride = ShapeN(1, 1);
-            Shape padding = ShapeN(0, 0);
+            Shape padding = ShapeN(2, 2);
             Shape dilation = ShapeN(1, 1);
             Shape out = ShapeN(1, 1, 5, 5);
 
@@ -136,10 +136,32 @@ namespace matrix {
                            inputData,
                            0.0f, colBuffer);
 
-            col2img(a, 1, 5, 5, 1, 1, 0, 0, 3, 3, 1, 1, colBuffer);
-            for (int i = 0; i < 45; ++i) {
-                std::cout << colBuffer[i] << std::endl;
+            col2img(a, 1, 5, 5, 1, 1, 2, 2, 3, 3, 1, 1, colBuffer);
+            for (int i = 0; i < 25; ++i) {
+                std::cout << a[i] << std::endl;
             }
+        }
+        
+        
+        TEST_F(MathTest, NaiveConv) {
+            float a[] = {1, 1, 1, 0, 0,
+                         0, 1, 1, 1, 0,
+                         0, 0, 1, 1, 1,
+                         0, 0, 1, 1, 0,
+                         0, 1, 1, 0, 0};
+
+            float kernel[] = {1, 1, 1,
+                              1, 1, 0,
+                              1, 0, 0};
+
+            float b[9];
+
+            float c[] = {4, 4, 4,
+                         2, 4, 5,
+                         1, 4, 6};
+            
+            NaiveConv(a, 1, 1, 5, 5, 1, 1, 0, 0, 3, 3, 1, 1, 1, kernel, b);
+            checkArrayEqual<float>(b, c, 9);
         }
     }
 }

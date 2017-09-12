@@ -149,43 +149,114 @@ namespace matrix {
             context.phase = Phase::TEST;
 
             std::vector<Blob *> inputs;
-            std::vector<Blob *> outputs;
+
 
             Blob data(a);
             Blob weight(kernel);
             Blob bias(b);
 
             inputs.push_back(&data);
-//            inputs.push_back(&weight);
-//            inputs.push_back(&bias);
+            inputs.push_back(&weight);
+            inputs.push_back(&bias);
 
             Blob outBlob(res);
 
             std::vector<Shape *> inShape;
-            std::vector<Shape *> outShape;
-
             Shape out = ShapeN(2, 2);
             Shape in1 = ShapeN(1, 1, 5, 5);
             Shape in2 = ShapeN(3, 3);
             inShape.push_back(&in1);
-//            inShape.push_back(&in2);
-//            inShape.push_back(&in2);
+            inShape.push_back(&in2);
+            inShape.push_back(&in2);
 
 
 
             std::map<std::string, Any> params;
             params["filter_num"] = 1;
-            params["filter"] = in2;
-            params["bias"] = true;
+//            params["filter"] = in2;
+//            params["bias"] = true;
 
             Operator *op = pro->CreateOperator(context, inputs, &outBlob, inShape, &out, params);
 
             op->AsyncRun();
             int dim = out.Size();
-//            checkArrayEqual<float>(c, res, dim);
+            checkArrayEqual<float>(c, res, dim);
         }
 
 
+
+        TEST_F(OpTest, ConvolutionGradOp) {
+
+            float pre_grad[] = {1, 1, 1,
+                                2, 1, 0,
+                                1, 0, 1};
+
+            float data[] = {
+                    4, 4, 4,
+                    2, 4, 5,
+                    1, 4, 6
+            };
+
+            float inputdata[] = {1, 1, 1, 0, 0,
+                         0, 1, 1, 1, 0,
+                         0, 0, 1, 1, 1,
+                         0, 0, 1, 1, 0,
+                         0, 1, 1, 0, 0};
+
+            float kernel[] = {1, 1, 1,
+                              1, 1, 0,
+                              1, 0, 0};
+
+            float b[] = {1, 2, 3,
+                            1, 2, 1,
+                            2, 1, 3};
+
+            float res[25] = {0};
+
+            OpPtr pro = Registry::Global()->GetOp("grad_convolution");
+
+            Context context;
+            context.mode = RunMode::kCpu;
+            context.phase = Phase::TEST;
+
+            std::vector<Blob *> inputs;
+
+
+            Blob preGrad(pre_grad);
+            Blob selfOut(data);
+            Blob inputData(inputdata);
+            Blob weight(kernel);
+            Blob bias(b);
+
+            Blob outBlob(res);
+
+            inputs.push_back(&preGrad);
+            inputs.push_back(&selfOut);
+            inputs.push_back(&inputData);
+            inputs.push_back(&weight);
+            inputs.push_back(&bias);
+
+            std::vector<Shape *> inShape;
+
+            Shape inshape = ShapeN(1, 1, 5, 5);
+            Shape preg = ShapeN(1, 1, 3, 3);
+            Shape self_out = ShapeN(1, 1, 3, 3);
+            Shape k = ShapeN(3, 3);
+            inShape.push_back(&preg);
+            inShape.push_back(&self_out);
+            inShape.push_back(&inshape);
+            inShape.push_back(&k);
+            inShape.push_back(&self_out);
+
+            Shape out;
+
+            std::map<std::string, Any> params;
+            params["filter_num"] = 1;
+            params["input_idx"] = 0;
+            Operator *op = pro->CreateOperator(context, inputs, &outBlob, inShape, &out, params);
+            op->AsyncRun();
+            int dim = out.Size();
+        }
 
 
     }

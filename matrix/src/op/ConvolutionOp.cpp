@@ -250,8 +250,8 @@ namespace matrix {
         int kernel_w = kernel[1];
         if (order == NCHW) {
             int channel = in[1];
-            int height = (in[2] + padding[0] - (dilate[0] * (kernel[0] - 1) + 1)) / stride[0] + 1;
-            int width = (in[3] + padding[1] - (dilate[1] * (kernel[1] - 1) + 1)) / stride[1] + 1;
+            int height = (in[2] + 2 * padding[0] - (dilate[0] * (kernel[0] - 1) + 1)) / stride[0] + 1;
+            int width = (in[3] + 2 * padding[1] - (dilate[1] * (kernel[1] - 1) + 1)) / stride[1] + 1;
             filter_num = channel;
             if (param->args->count("filter_num")) {
                 filter_num = get<int>(param->args->at("filter_num"));
@@ -261,8 +261,8 @@ namespace matrix {
                 inShape[1]->reShape(ShapeN(filter_num, channel, kernel_h, kernel_w));
             }
         } else {
-            int height = (in[1] + padding[0] - (dilate[0] * (kernel[0] - 1) + 1)) / stride[0] + 1;
-            int width = (in[2] + padding[1] - (dilate[1] * (kernel[1] - 1) + 1)) / stride[1] + 1;
+            int height = (in[1] + 2 * padding[0] - (dilate[0] * (kernel[0] - 1) + 1)) / stride[0] + 1;
+            int width = (in[2] + 2 * padding[1] - (dilate[1] * (kernel[1] - 1) + 1)) / stride[1] + 1;
             int channel = in[3];
             filter_num = channel;
             if (param->args->count("filter_num")) {

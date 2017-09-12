@@ -22,15 +22,20 @@ namespace matrix {
         }
 
         int num = inputShapes[DATA]->At(0);
-
-        int imageSize = 1;
+        
         int channel = 1;
+        int outSize = 1;
+        int input_width = 0, input_height = 0;
         if (order == NCHW) {
             channel = inputShapes[DATA]->At(1);
-            imageSize = inputShapes[DATA]->At(2) * inputShapes[DATA]->At(3);
+            input_width = inputShapes[DATA]->At(2);
+            input_height = inputShapes[DATA]->At(3);
+            outSize = inputShapes[SELF_OUT]->At(2) * inputShapes[SELF_OUT]->At(3);
         } else {
-            imageSize = inputShapes[DATA]->At(1) * inputShapes[DATA]->At(2);
+            input_width = inputShapes[DATA]->At(1);
+            input_height = inputShapes[DATA]->At(2);
             channel = inputShapes[DATA]->At(3);
+            outSize = inputShapes[SELF_OUT]->At(1) * inputShapes[SELF_OUT]->At(2);
         }
 
         int filterNum = GetArgValue<int>("filter_num", channel);
@@ -43,13 +48,14 @@ namespace matrix {
 
 
         Shape kernel = *inputShapes[KERNEL];
+        kernel.reShape(ShapeN(filterNum, channel, kernel[0], kernel[1]));
         Shape stride = GetArgValue<Shape>("stride", ShapeN(1, 1));
         Shape padding = GetArgValue<Shape>("padding", ShapeN(0, 0));
         Shape dilate = GetArgValue<Shape>("dilate", ShapeN(1, 1));
 
 
-        int inputOffSize = channel / group * inputShapes[DATA]->At(2) * inputShapes[DATA]->At(3);
-        int outputOffset = filterNum / group * inputShapes[SELF_OUT]->At(2) * inputShapes[SELF_OUT]->At(3);
+        int inputOffSize = channel / group * input_width * input_height;;
+        int outputOffset = filterNum / group * outSize;
         int filterOffset = kernel.Size() / group;
 
         const T *preGrad = Inputs()[PRE_GRAG]-> template Get<T>();
@@ -60,12 +66,11 @@ namespace matrix {
             const T *filterData = Inputs()[KERNEL]-> template Get<T>();
 
             int K = filterNum / group;
-            int N = inputShapes[SELF_OUT]->At(2) * inputShapes[SELF_OUT]->At(3);
+            int N = outSize;
             int M = channel / group * kernel[2] * kernel[3];
 
-            int colSize = channel / group * kernel[2] * kernel[3] * inputShapes[SELF_OUT]->At(2) * inputShapes[SELF_OUT]->At(3);
-            T *colData = static_cast<T *>(MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(
-                    colSize * sizeof(T)));
+            int colSize = channel / group * kernel[2] * kernel[3] * outSize;
+            T *colData = static_cast<T *>(MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(colSize * sizeof(T)));
             Value<T>(colSize, colData, T(0.0));
             for (int i = 0; i < num; ++i) {
                 for (int j = 0; j < group; ++j) {
@@ -74,8 +79,8 @@ namespace matrix {
                                preGrad + j * outputOffset,
                                T(0.0), colData);
 
-                    col2img(out + j * inputOffSize, filterNum,
-                            outputShapes[PRE_GRAG].At(2), outputShapes[PRE_GRAG].At(3),
+                    col2img(out + j * inputOffSize, channel,
+                            input_width, input_height,
                             stride[0], stride[1],
                             padding[0],padding[1],
                             kernel[2],kernel[3],
@@ -169,13 +174,13 @@ namespace matrix {
         int index = get<int>(param->args->at("input_idx"));
         switch (index) {
             case 0:
-                outShape->reShape(*inShape[1]);
-                break;
-            case 1:
                 outShape->reShape(*inShape[2]);
                 break;
-            case 2:
+            case 1:
                 outShape->reShape(*inShape[3]);
+                break;
+            case 2:
+                outShape->reShape(*inShape[4]);
                 break;
             default:
                 Logger::Global()->Fatal("ConvolutionOpGradProp do not support other inputs\n");
