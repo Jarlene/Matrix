@@ -214,6 +214,7 @@ namespace matrix {
             float input_grad[25] = {0};
 
             float filter_grad[9] = {0};
+            float bias_grad[9] = {0};
 
 
 
@@ -256,7 +257,7 @@ namespace matrix {
 
             std::map<std::string, Any> params;
             params["filter_num"] = 1;
-            int inputIdx = 0;
+            int inputIdx = 2;
 
             params["input_idx"] = inputIdx;
             if (inputIdx == 0) {
@@ -279,10 +280,15 @@ namespace matrix {
                 float target[9] = {5, 6, 6,
                                    3, 5, 6,
                                    2, 4, 7};
-                checkArrayEqual<float>(target, target, dim);
+                checkArrayEqual<float>(filter_grad, target, dim);
                 PrintMat(filter_grad, k[0], k[1], "input_filter");
             } else if (inputIdx == 2) {
-
+                Blob outBlob(bias_grad);
+                Operator *op = pro->CreateOperator(context, inputs, &outBlob, inShape, &out, params);
+                op->AsyncRun();
+                int dim = out.Size();
+                checkArrayEqual<float>(bias_grad, pre_grad, dim);
+                PrintMat(bias_grad, preg[2], preg[3], "input_bias");
             }
 
 

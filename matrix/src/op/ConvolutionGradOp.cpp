@@ -123,7 +123,7 @@ namespace matrix {
         } else if (index == 2) {
             auto pre = Inputs()[PRE_GRAG]-> template GeneratorTensor<T>(inputShapes[PRE_GRAG]);
             auto bias_grad = Outputs()->template GeneratorTensor<T>(inputShapes[BIAS]);
-            Sum(pre, 1, bias_grad);
+            Copy(pre, bias_grad);
         } else {
             Logger::Global()->Fatal("ConvolutionGradOp do not support other inputs\n");
         }
