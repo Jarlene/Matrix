@@ -113,7 +113,7 @@ namespace matrix {
         }
         int w = (inShape[0]->At(2) + 2 * padding[0] - (dilate[0] * (filter[0] - 1) + 1) )/stride[0] + 1 ;
         int h = (inShape[0]->At(3) + 2 * padding[1] - (dilate[1] * (filter[1] - 1) + 1) )/stride[1] + 1 ;
-        outShape->reShape(ShapeN(w, h));
+        outShape->reShape(ShapeN(inShape[0]->At(0), inShape[0]->At(1), w, h));
     }
 
     Operator *PoolingOpProp::CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,

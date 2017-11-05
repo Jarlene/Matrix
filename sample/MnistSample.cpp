@@ -48,29 +48,77 @@ Symbol LogisticRegression(Symbol input, int batchSize, int hideNum) {
 }
 
 
-Symbol Connvolution(Symbol &input, Symbol &label, int batchSize) {
-    auto w = VariableSymbol::Create("w1", ShapeN(5, 5));
+Symbol Connvolution(Symbol &input, Symbol &label, int batchSize, int classNum) {
+    auto w = VariableSymbol::Create("w1", ShapeN(3, 3));
     auto b = VariableSymbol::Create("b1", ShapeN(batchSize));
 
-    auto symbol = Symbol("convolution")
+    auto conv1 = Symbol("convolution")
             .SetInput("data", input)
             .SetInput("kernel", w)
             .SetInput("bias", b)
             .SetParam("padding", ShapeN(0,0))
-            .SetParam("stride", ShapeN(2,2))
+            .SetParam("stride", ShapeN(1,1))
             .SetParam("dilate", ShapeN(1,1))
             .SetParam("filter_num", 8)
             .Build();
 
+    auto act = Symbol("activation")
+            .SetInput("data", conv1)
+            .SetParam("type", ActType::kRelu)
+            .Build();
 
-    return symbol;
+    auto pool1 = Symbol("pooling")
+            .SetInput("data", act)
+            .SetParam("filter", ShapeN(3,3))
+            .SetParam("type", PoolType::kMax)
+            .Build();
+
+    auto w2 = VariableSymbol::Create("w2", ShapeN(2, 2));
+    auto b2 = VariableSymbol::Create("b2", ShapeN(batchSize));
+
+    auto conv2 = Symbol("convolution")
+            .SetInput("data", pool1)
+            .SetInput("kernel", w2)
+            .SetInput("bias", b)
+            .SetParam("padding", ShapeN(0,0))
+            .SetParam("stride", ShapeN(1,1))
+            .SetParam("dilate", ShapeN(1,1))
+            .SetParam("filter_num", 16)
+            .Build();
+
+    auto act2 = Symbol("activation")
+            .SetInput("data", conv2)
+            .SetParam("type", ActType::kRelu)
+            .Build();
+
+    auto pool2 = Symbol("pooling")
+            .SetInput("data", act2)
+            .SetParam("filter", ShapeN(2,2))
+            .SetParam("type", PoolType::kMax)
+            .Build();
+
+    auto flatten = Symbol("flatten")
+            .SetInput("data", pool2)
+            .Build();
+
+    auto w3 = VariableSymbol::Create("w3", ShapeN(7744, classNum));
+    auto b3 = VariableSymbol::Create("b3", ShapeN(batchSize));
+
+    auto fully = Symbol("fullConnected")
+            .SetInput("data", flatten)
+            .SetInput("weight", w3)
+            .SetInput("bias", b3)
+            .Build();
+    return fully;
 }
 
 
 
 int main() {
-    int batchSize = 100;
-    int epochSize = 10;
+    const int batchSize = 100;
+    const int epochSize = 10;
+    const int classNum = 10;
+
     Shape imageShape = ShapeN(batchSize, 1, 28, 28);
     Shape labelShape = ShapeN(batchSize);
     auto input = PlaceHolderSymbol::Create("x", imageShape);
@@ -80,7 +128,7 @@ int main() {
     float* labelData = static_cast<float *>(malloc(sizeof(float) * labelShape.Size()));
 
 
-    auto symbol = Connvolution(input, label, 128);
+    auto symbol = Connvolution(input, label, batchSize, classNum);
 
     auto loss = Symbol("loss")
             .SetInput("logistic", symbol)

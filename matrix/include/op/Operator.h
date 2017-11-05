@@ -144,6 +144,9 @@ namespace matrix {
             return output;
         }
 
+        inline void FallThrow() {
+            output = input[0];
+        }
 
         virtual bool Run() {
             return false;
