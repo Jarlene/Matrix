@@ -2,6 +2,7 @@
 // Created by Jarlene on 2017/9/8.
 //
 
+#include "matrix/include/op/ReduceOp.h"
 #include "matrix/include/store/MemoryManager.h"
 #include "matrix/include/op/ConvolutionGradOp.h"
 
@@ -61,6 +62,9 @@ namespace matrix {
         const T *preGrad = Inputs()[PRE_GRAG]-> template Get<T>();
         T *out = Output<T>();
         int index = GetArgValue<int>("input_idx", -1);
+        int colSize = channel / group * kernel[2] * kernel[3] * outSize;
+        T *colData = static_cast<T *>(MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(colSize * sizeof(T)));
+
         if (index == 0) {
 
             const T *filterData = Inputs()[KERNEL]-> template Get<T>();
@@ -69,8 +73,6 @@ namespace matrix {
             int N = outSize;
             int M = channel / group * kernel[2] * kernel[3];
 
-            int colSize = channel / group * kernel[2] * kernel[3] * outSize;
-            T *colData = static_cast<T *>(MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(colSize * sizeof(T)));
             Value<T>(colSize, colData, T(0.0));
             for (int i = 0; i < num; ++i) {
                 for (int j = 0; j < group; ++j) {
@@ -90,7 +92,7 @@ namespace matrix {
                 out += channel * inputShapes[DATA]->At(2) * inputShapes[DATA]->At(3);
                 preGrad += filterNum * inputShapes[SELF_OUT]->At(2) * inputShapes[SELF_OUT]->At(3);
             }
-            MemoryManager::Global()->GetCpuMemoryPool()->freeMemory(colData, colSize * sizeof(T));
+
         } else if (index == 1) {
             int inputOffSize = filterNum / group * inputShapes[PRE_GRAG]->At(2) * inputShapes[PRE_GRAG]->At(3);
             int outputOffset = channel / group * outputShapes->At(2) * outputShapes->At(3);
@@ -101,17 +103,32 @@ namespace matrix {
             int N = filterNum / group *  kernel[2] * kernel[3];
             for (int i = 0; i < num; ++i) {
                 for (int j = 0; j < group; ++j) {
-//                    img2col(inputData + j * inputOffSize, filterNum, );
+                    img2col<T>(inputData + j * inputOffSize, channel,
+                            input_width, input_height,
+                            stride[0], stride[1],
+                            padding[0],padding[1],
+                            kernel[2],kernel[3],
+                            dilate[0],dilate[1], colData);
+                    CPUGemm<T>(NoTrans,Trans, M, N, K, T(1.0),
+                               preGrad + j * outputOffset,
+                               colData,
+                               T(0.0),
+                               out + j * filterOffset);
+
+                    inputData += channel * input_height * input_width;
+                    preGrad += filterNum * inputShapes[SELF_OUT]->At(2) * inputShapes[SELF_OUT]->At(3);
                 }
             }
 
         } else if (index == 2) {
-
+            auto pre = Inputs()[PRE_GRAG]-> template GeneratorTensor<T>(inputShapes[PRE_GRAG]);
+            auto bias_grad = Outputs()->template GeneratorTensor<T>(inputShapes[BIAS]);
+            Sum(pre, 1, bias_grad);
         } else {
             Logger::Global()->Fatal("ConvolutionGradOp do not support other inputs\n");
         }
 
-
+        MemoryManager::Global()->GetCpuMemoryPool()->freeMemory(colData, colSize * sizeof(T));
         return true;
     }
 
@@ -177,7 +194,13 @@ namespace matrix {
                 outShape->reShape(*inShape[2]);
                 break;
             case 1:
-                outShape->reShape(*inShape[3]);
+            {
+                int output_channel = get<int>(param->args->at("filter_num"));
+                int input_channel = inShape[2]->At(1);
+                outShape->reShape(ShapeN(output_channel, input_channel, inShape[3]->At(0), inShape[3]->At(1)));
+
+            }
+
                 break;
             case 2:
                 outShape->reShape(*inShape[4]);

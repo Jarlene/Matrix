@@ -102,28 +102,28 @@ namespace matrix {
         }
 
         TEST_F(MathTest, Col2Img) {
-            float inputData[] = {1, 1, 1,
-                                 2, 1, 0,
-                                 1, 0, 1};
+            float inputData[] = {4, 4, 4,
+                                 2, 4, 5,
+                                 1, 4, 6};
 
             float kernelData[] = {1, 1, 1,
-                                  1, 1, 0,
-                                  1, 0, 0};
+                                  1, 1, 1,
+                                  1, 1, 1};
 
-            float colBuffer[45] = {0};
+            float colBuffer[81] = {0};
 
             float a[25] = {0};
 
-            float res[25] = {0,0,1,1,1,
-                             0,1,4,3,1,
-                             1,4,7,3,2,
-                             2,4,4,2,1,
-                             1,1,2,1,1};
+            float res[25] = {1, 1, 1, 0, 0,
+                             0, 1, 1, 1, 0,
+                             0, 0, 1, 1, 1,
+                             0, 0, 1, 1, 0,
+                             0, 1, 1, 0, 0};
 
-            Shape input = ShapeN(1, 1, 3, 3);
+            Shape input = ShapeN(1, 1, 5, 5); // NCHW
             Shape kShape = ShapeN(1, 3, 3);
             Shape stride = ShapeN(1, 1);
-            Shape padding = ShapeN(2, 2);
+            Shape padding = ShapeN(1, 1);
             Shape dilation = ShapeN(1, 1);
             Shape out = ShapeN(1, 1, 5, 5);
 
@@ -136,10 +136,17 @@ namespace matrix {
                            inputData,
                            0.0f, colBuffer);
 
-            col2img(a, 1, 5, 5, 1, 1, 2, 2, 3, 3, 1, 1, colBuffer);
-            for (int i = 0; i < 25; ++i) {
-                std::cout << a[i] << std::endl;
-            }
+            PrintMat(colBuffer, 9, 9, "colbuffer");
+
+            col2img(a, input[1], input[2], input[3],
+                    stride[0], stride[1],
+                    padding[0], padding[1],
+                    kShape[1], kShape[2],
+                    dilation[0], dilation[1],
+                    colBuffer);
+
+
+            PrintMat(colBuffer, 5, 5, "image");
         }
         
         

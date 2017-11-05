@@ -208,10 +208,14 @@ namespace matrix {
                               1, 0, 0};
 
             float b[] = {1, 2, 3,
-                            1, 2, 1,
-                            2, 1, 3};
+                         1, 2, 1,
+                         2, 1, 3};
 
-            float res[25] = {0};
+            float input_grad[25] = {0};
+
+            float filter_grad[9] = {0};
+
+
 
             OpPtr pro = Registry::Global()->GetOp("grad_convolution");
 
@@ -228,7 +232,7 @@ namespace matrix {
             Blob weight(kernel);
             Blob bias(b);
 
-            Blob outBlob(res);
+
 
             inputs.push_back(&preGrad);
             inputs.push_back(&selfOut);
@@ -252,10 +256,36 @@ namespace matrix {
 
             std::map<std::string, Any> params;
             params["filter_num"] = 1;
-            params["input_idx"] = 0;
-            Operator *op = pro->CreateOperator(context, inputs, &outBlob, inShape, &out, params);
-            op->AsyncRun();
-            int dim = out.Size();
+            int inputIdx = 0;
+
+            params["input_idx"] = inputIdx;
+            if (inputIdx == 0) {
+                Blob outBlob(input_grad);
+                Operator *op = pro->CreateOperator(context, inputs, &outBlob, inShape, &out, params);
+                op->AsyncRun();
+                int dim = out.Size();
+                float target[25] = {1, 2, 3, 2, 1,
+                                    3, 5, 5, 2, 0,
+                                    4, 5, 4, 1, 1,
+                                    3, 2, 1, 1, 0,
+                                    1, 0, 1, 0, 0};
+                checkArrayEqual<float>(target, input_grad, dim);
+                PrintMat(input_grad, inshape[2], inshape[3], "input_grad");
+            } else if (inputIdx == 1) {
+                Blob outBlob(filter_grad);
+                Operator *op = pro->CreateOperator(context, inputs, &outBlob, inShape, &out, params);
+                op->AsyncRun();
+                int dim = out.Size();
+                float target[9] = {5, 6, 6,
+                                   3, 5, 6,
+                                   2, 4, 7};
+                checkArrayEqual<float>(target, target, dim);
+                PrintMat(filter_grad, k[0], k[1], "input_filter");
+            } else if (inputIdx == 2) {
+
+            }
+
+
         }
 
 

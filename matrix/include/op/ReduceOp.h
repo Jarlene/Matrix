@@ -11,8 +11,8 @@
 namespace matrix {
 
     template <class T>
-    void Sum(Tensor<T>& tensor, int dim, Tensor<T>& reduce) {
-        T* tensorData = tensor.Data();
+    void Sum(const Tensor<T>& tensor, int dim, Tensor<T>& reduce) {
+        const T* tensorData = tensor.Data();
         T* reduceData = reduce.MutableData();
         assert(tensorData);
         assert(reduceData);
@@ -43,8 +43,8 @@ namespace matrix {
     }
 
     template <typename T>
-    void Mean(Tensor<T>& tensor, int dim, Tensor<T>& reduce) {
-        T* tensorData = tensor.Data();
+    void Mean(const Tensor<T>& tensor, int dim, Tensor<T>& reduce) {
+        const T* tensorData = tensor.Data();
         T* reduceData = reduce.MutableData();
         assert(tensorData);
         assert(reduceData);
@@ -77,8 +77,8 @@ namespace matrix {
 
 
     template <typename T>
-    void ASum(Tensor<T>& tensor, int dim, Tensor<T>& reduce) {
-        T* tensorData = tensor.Data();
+    void ASum(const Tensor<T>& tensor, int dim, Tensor<T>& reduce) {
+        const T* tensorData = tensor.Data();
         T* reduceData = reduce.MutableData();
         assert(tensorData);
         assert(reduceData);
@@ -109,8 +109,8 @@ namespace matrix {
     }
 
     template <typename T>
-    void Normal2(Tensor<T>& tensor, int dim, Tensor<T>& reduce) {
-        T* tensorData = tensor.Data();
+    void Normal2(const Tensor<T>& tensor, int dim, Tensor<T>& reduce) {
+        const T* tensorData = tensor.Data();
         T* reduceData = reduce.MutableData();
         assert(tensorData);
         assert(reduceData);
@@ -141,8 +141,8 @@ namespace matrix {
     }
 
     template <typename T>
-    void Max(Tensor<T>& tensor, int dim, Tensor<T>& reduce) {
-        T* tensorData = tensor.Data();
+    void Max(const Tensor<T>& tensor, int dim, Tensor<T>& reduce) {
+        const T* tensorData = tensor.Data();
         T* reduceData = reduce.MutableData();
         assert(tensorData);
         assert(reduceData);
@@ -177,8 +177,8 @@ namespace matrix {
     }
 
     template <typename T>
-    void Min(Tensor<T>& tensor, int dim, Tensor<T>& reduce) {
-        T* tensorData = tensor.Data();
+    void Min(const Tensor<T>& tensor, int dim, Tensor<T>& reduce) {
+        const T* tensorData = tensor.Data();
         T* reduceData = reduce.MutableData();
         assert(tensorData);
         assert(reduceData);

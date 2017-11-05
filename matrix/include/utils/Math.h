@@ -1339,14 +1339,13 @@ namespace matrix {
                 for (int w = 0; w < output_width; ++w) {
                     int imRowIdx = h * stride_height + h_offset;
                     int imColIdx = w * stride_width + w_offset;
-                    if ((imRowIdx - padding_height) >= 0 &&
-                        (imRowIdx - padding_height) < input_height &&
-                        (imColIdx - padding_width) >= 0 &&
-                        (imColIdx - padding_width) < input_width) {
-                        imRowIdx += c_im * input_height - padding_height;
-                        imColIdx -= padding_width;
-                        input[imRowIdx * input_width + imColIdx] +=
-                                output[(c * output_height + h) * output_width + w];
+                    imRowIdx -= padding_height;
+                    imColIdx -= padding_width;
+                    if (imRowIdx >= 0 && imRowIdx < input_height &&
+                        imColIdx >= 0 && imColIdx < input_width) {
+                        int input_idx = (imRowIdx + c_im * input_height) * input_width + imColIdx;
+                        int output_idx = (c * output_height + h) * output_width + w;
+                        input[input_idx] += output[output_idx];
                     }
                 }
             }

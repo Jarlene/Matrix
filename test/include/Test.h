@@ -49,5 +49,18 @@ namespace matrix {
         }
         return 0;
     }
+
+    template<class T>
+    void static PrintMat(const T *mat, int x, int y, std::string comment = "unknown") {
+        int index = 0;
+        std::cout << std::endl << comment << std::endl;
+        for (int i = 0; i < x; ++i) {
+            for (int j = 0; j < y; ++j) {
+                std::cout << std::setw(6) << mat[index++] << "  ";
+            }
+            std::cout << std::endl;
+        }
+        std::cout << std::endl;
+    }
 }
 #endif //MATRIX_TEST_H
