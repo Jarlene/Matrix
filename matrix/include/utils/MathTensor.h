@@ -333,7 +333,7 @@ namespace matrix {
                 input_width = input_shape[2];
                 break;
             default:
-                Logger::Global()->Fatal("Img2Col does not support\n");
+                Logger::Global()->Fatal("Col2Img does not support\n");
                 break;
         }
         int stride_width = stride[0];
@@ -344,13 +344,13 @@ namespace matrix {
         int dilate_height = dilate[1];
         int filter_width = kernel[2];
         int filter_height = kernel[3];
-        col2img<T>(input, input_channels,
+        col2img<T>(output, input_channels,
                    input_width,input_height,
                    stride_width,stride_height,
                    padding_width,padding_height,
                    filter_width,filter_height,
                    dilate_width,dilate_height,
-                   output);
+                   input);
     }
 }
 
