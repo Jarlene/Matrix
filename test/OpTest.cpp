@@ -295,7 +295,7 @@ namespace matrix {
         }
 
 
-        TEST_F(OpTest, Pooling) {
+        TEST_F(OpTest, PoolingOp) {
             float a[] = {1, 3, 1, 5,
                          4, 2, 6, 2,
                          7, 1, 3, 5,
@@ -335,6 +335,10 @@ namespace matrix {
             auto maxIndex = get<Tensor<int>>(params["max_index"]);
 
             PrintMat(maxIndex.Data(), 1, 9, "max_index");
+
+        }
+
+        TEST_F(OpTest, PoolingGradOp) {
 
         }
 

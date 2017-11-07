@@ -33,12 +33,9 @@ namespace matrix {
             group = GetArgValue<int>("group");
         }
 
-        const int input_offset = channel / group * imageSize;
         const T * pre_grad = Input<T>(PRE_GRAG);
-        const T * input = Input<T>(INPUT);
         T * out = Output<T>();
-
-
+        Value<T>(outputShapes->Size(), out, T(0));
         switch (type) {
             case kMax:
             {
@@ -46,14 +43,28 @@ namespace matrix {
                     Logger::Global()->Fatal("PoolingGradOp--> not max_index in param, please check\n");
                 }
                 Tensor<int> maxIndex = GetArgValue<Tensor<int>>("max_index");
+                for (int i = 0; i < batch_size; ++i) {
+                    for (int j = 0; j < group; ++j) {
+                        for (int k = 0; k < inputShapes[PRE_GRAG]->Size(); ++k) {
+                            const int *idx = maxIndex.Data(k);
+                            out[*idx] += pre_grad[k];
+                        }
+                    }
+                    pre_grad +=  channel * outputShapes->At(2) * outputShapes->At(3);
+                    out +=  channel * imageSize;
+                }
             }
                 break;
             case kAvg:
             {
                 for (int i = 0; i < batch_size; ++i) {
                     for (int j = 0; j < group; ++j) {
+                        for (int k = 0; k < inputShapes[PRE_GRAG]->Size(); ++k) {
 
+                        }
                     }
+                    pre_grad += channel *  outputShapes->At(2) * outputShapes->At(3);
+                    out +=  channel * imageSize;
                 }
             }
                 break;
