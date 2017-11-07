@@ -5,6 +5,7 @@
 #include "include/Test.h"
 #include <matrix/include/base/Tensor.h>
 #include <matrix/include/utils/MathTensor.h>
+#include <matrix/include/op/ReduceOp.h>
 namespace matrix {
 
     namespace Test {
@@ -97,8 +98,9 @@ namespace matrix {
                                    0.0f, b + j * output_offset);
                 }
             }
-
+            PrintMat(colBuffer, 9, 9, "colbuffer");
             checkArrayEqual<float>(b, c, 9);
+            PrintMat(b, 3, 3, "Img2Col");
         }
 
         TEST_F(MathTest, Col2Img) {
@@ -169,6 +171,26 @@ namespace matrix {
             
             NaiveConv(a, 1, 1, 5, 5, 1, 1, 0, 0, 3, 3, 1, 1, 1, kernel, b);
             checkArrayEqual<float>(b, c, 9);
+        }
+
+
+        TEST_F(MathTest, Max) {
+            float a[] = {1, 3, 1, 5,
+                         4, 2, 6, 2,
+                         7, 1, 3, 5,
+                         1, 3, 10, 2};
+
+
+
+            float b[4] = {0};
+            int c[4] = {0};
+            auto input = TensorN(a, 4, 4);
+            auto out = TensorN(b, 1, 4);
+            auto index = TensorN(c, 1, 4);
+            PrintMat(a, 4, 4, "orig_data");
+            Max(input, 1, out, &index);
+            PrintMat(out.Data(), 1, 4, "out");
+            PrintMat(index.Data(), 1, 4, "index");
         }
     }
 }

@@ -96,7 +96,7 @@ namespace matrix {
 
             // write to STDOUT
 
-            printf("[%s] [%s] ", level_str.c_str(), time_str.c_str());
+            printf("[%s] [%s] \n", level_str.c_str(), time_str.c_str());
 
             vprintf(format, *val);
 

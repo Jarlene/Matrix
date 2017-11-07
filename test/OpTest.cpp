@@ -295,5 +295,48 @@ namespace matrix {
         }
 
 
+        TEST_F(OpTest, Pooling) {
+            float a[] = {1, 3, 1, 5,
+                         4, 2, 6, 2,
+                         7, 1, 3, 5,
+                         1, 3, 10, 2};
+
+            float b[9] = {0};
+
+            float c[9] = {4, 6, 6,
+                          7, 6, 6,
+                          7, 10, 10};
+
+            Context context;
+            context.mode = RunMode::kCpu;
+            context.phase = Phase::TEST;
+
+            auto pro = Registry::Global()->GetOp("pooling");
+            std::vector<Shape *> inShape;
+            auto in = ShapeN(1, 1, 4, 4);
+            inShape.push_back(&in);
+
+            Shape out;
+            std::map<std::string, Any> params;
+            params["filter"] = ShapeN(2, 2);
+            params["type"] = PoolType::kMax;
+
+            Blob blobIn(a);
+            Blob blobOut(b);
+
+            std::vector<Blob *> inputs;
+            inputs.push_back(&blobIn);
+            Operator *op = pro->CreateOperator(context, inputs, &blobOut, inShape, &out, params);
+            op->AsyncRun();
+            int dim = out.Size();
+            checkArrayEqual<float>(b, c, dim);
+            PrintMat(b, 3, 3, "pool_out");
+            ASSERT_TRUE(params.count("max_index") > 0);
+            auto maxIndex = get<Tensor<int>>(params["max_index"]);
+
+            PrintMat(maxIndex.Data(), 1, 9, "max_index");
+
+        }
+
     }
 }

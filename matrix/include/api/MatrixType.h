@@ -59,7 +59,8 @@ namespace matrix {
 
     enum PoolType {
         kMax = 0,
-        kAvg
+        kAvg,
+        kKMax
     };
 
     enum Phase {

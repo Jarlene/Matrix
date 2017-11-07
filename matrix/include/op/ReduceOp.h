@@ -141,72 +141,92 @@ namespace matrix {
     }
 
     template <typename T>
-    void Max(const Tensor<T>& tensor, int dim, Tensor<T>& reduce) {
+    void Max(const Tensor<T>& tensor, int dim, Tensor<T>& reduce, Tensor<int> *indexTensor = nullptr) {
         const T* tensorData = tensor.Data();
         T* reduceData = reduce.MutableData();
         assert(tensorData);
         assert(reduceData);
         if (tensor.Rank() == 1) {
             T temp = tensorData[0];
-            auto func = [&tensorData, &temp](int i) {
+            int idx = 0;
+            auto func = [&tensorData, &temp, &idx, &indexTensor](int i) {
                 if (temp < tensorData[i]) {
                     temp = tensorData[i];
+                    idx = i;
                 }
             };
             Reduce<T>(tensor.Size(), func);
             reduceData[0] = temp;
+            if (indexTensor != nullptr) {
+                indexTensor->MutableData()[0] = idx;
+            }
         } else if (tensor.Rank() > 1) {
             auto s = tensor.GetShape();
             int strideOut = s.StrideExclude(dim);
             int strideIn = s.StrideInclude(dim);
             int shapeDim = s.At(dim);
-            auto func = [&tensorData, &reduceData, &strideOut, &strideIn, &shapeDim](int i) {
+            auto func = [&tensorData, &reduceData, &strideOut, &strideIn, &shapeDim, &indexTensor](int i) {
                 int fi = (i/strideOut)*strideIn + i % strideOut;
                 int fj = 0;
                 T temp = tensorData[fi];
+                int idx = 0;
                 for (int j = 0; j < shapeDim; ++j) {
                     if (temp < tensorData[fi + fj]) {
                         temp = tensorData[fi +fj];
+                        idx = j;
                     }
                     fj += strideOut;
                 }
                 reduceData[i] = temp;
+                if (indexTensor != nullptr) {
+                    indexTensor->MutableData()[i] = idx;
+                }
             };
             Reduce<T>(reduce.Size(), func);
         }
     }
 
     template <typename T>
-    void Min(const Tensor<T>& tensor, int dim, Tensor<T>& reduce) {
+    void Min(const Tensor<T>& tensor, int dim, Tensor<T>& reduce,  Tensor<int> *indexTensor = nullptr) {
         const T* tensorData = tensor.Data();
         T* reduceData = reduce.MutableData();
         assert(tensorData);
         assert(reduceData);
         if (tensor.Rank() == 1) {
             T temp = tensorData[0];
-            auto func = [&tensorData, &temp](int i) {
+            int idx = 0;
+            auto func = [&tensorData, &temp, &idx, &indexTensor](int i) {
                 if (temp > tensorData[i]) {
                     temp = tensorData[i];
+                    idx = i;
                 }
             };
             Reduce<T>(tensor.Size(), func);
             reduceData[0] = temp;
+            if (indexTensor != nullptr) {
+                indexTensor->MutableData()[0] = idx;
+            }
         } else if (tensor.Rank() > 1) {
             auto s = tensor.GetShape();
             int strideOut = s.StrideExclude(dim);
             int strideIn = s.StrideInclude(dim);
             int shapeDim = s.At(dim);
-            auto func = [&tensorData, &reduceData, &strideOut, &strideIn, &shapeDim](int i) {
+            auto func = [&tensorData, &reduceData, &strideOut, &strideIn, &shapeDim, &indexTensor](int i) {
                 int fi = (i/strideOut)*strideIn + i % strideOut;
                 int fj = 0;
                 T temp = tensorData[fi];
+                int idx = fi;
                 for (int j = 0; j < shapeDim; ++j) {
                     if (temp > tensorData[fi + fj]) {
                         temp = tensorData[fi +fj];
+                        idx = fi +fj;
                     }
                     fj += strideOut;
                 }
                 reduceData[i] = temp;
+                if (indexTensor != nullptr) {
+                    indexTensor->MutableData()[i] = idx;
+                }
             };
             Reduce<T>(reduce.Size(), func);
         }
