@@ -169,11 +169,11 @@ namespace matrix {
                 int fi = (i/strideOut)*strideIn + i % strideOut;
                 int fj = 0;
                 T temp = tensorData[fi];
-                int idx = 0;
+                int idx = fi;
                 for (int j = 0; j < shapeDim; ++j) {
                     if (temp < tensorData[fi + fj]) {
                         temp = tensorData[fi +fj];
-                        idx = j;
+                        idx = fi +fj;
                     }
                     fj += strideOut;
                 }

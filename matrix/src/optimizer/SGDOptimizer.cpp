@@ -11,7 +11,7 @@ namespace matrix {
         int size = dx.size();
         for (int i = 0; i < size; ++i) {
             Blob di = dx.at(i);
-            Blob i = x.at(i);
+            Blob xi = x.at(i);
         }
 
     }

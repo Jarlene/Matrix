@@ -319,7 +319,7 @@ namespace matrix {
             Shape out;
             std::map<std::string, Any> params;
             params["filter"] = ShapeN(2, 2);
-            params["type"] = PoolType::kMax;
+            params["type"] = PoolType::kAvg;
 
             Blob blobIn(a);
             Blob blobOut(b);
@@ -329,17 +329,87 @@ namespace matrix {
             Operator *op = pro->CreateOperator(context, inputs, &blobOut, inShape, &out, params);
             op->AsyncRun();
             int dim = out.Size();
-            checkArrayEqual<float>(b, c, dim);
+
+
             PrintMat(b, 3, 3, "pool_out");
-            ASSERT_TRUE(params.count("max_index") > 0);
-            auto maxIndex = get<Tensor<int>>(params["max_index"]);
-
-            PrintMat(maxIndex.Data(), 1, 9, "max_index");
-
+            if (get<PoolType>(params["type"]) == kMax) {
+                checkArrayEqual<float>(b, c, dim);
+                ASSERT_TRUE(params.count("max_index") > 0);
+                auto maxIndex = get<Tensor<int>>(params["max_index"]);
+                PrintMat(maxIndex.Data(), 1, 9, "max_index");
+            } else {
+                float target[] = {2.5, 2, 1.75,
+                                  2.333333, 1.333333, 1.333333,
+                                  1.5, 1.41667, 1.25};
+                checkArrayEqual<float>(b, target, dim);
+            }
         }
 
         TEST_F(OpTest, PoolingGradOp) {
 
+            float b[16]  = {0};
+
+            float pre_grad[] = {4, 6, 6,
+                                7, 6, 6,
+                                7, 10, 10};
+
+            float out[] = {4, 6, 6,
+                           7, 6, 6,
+                           7, 10, 10};
+
+            float input[] = {1, 3, 1, 5,
+                             4, 2, 6, 2,
+                             7, 1, 3, 5,
+                             1, 3, 10, 2};
+
+
+            int index[] = {4, 6, 6, 8, 6, 6, 8, 14, 14};
+
+            Tensor<int> maxIndex(index, ShapeN(9));
+
+            std::map<std::string, Any> params;
+            params["filter"] = ShapeN(2, 2);
+            params["type"] = PoolType::kMax;
+            params["max_index"] = maxIndex;
+
+            Context context;
+            context.mode = RunMode::kCpu;
+            context.phase = Phase::TEST;
+
+            auto pro = Registry::Global()->GetOp("grad_pooling");
+
+            std::vector<Blob *> inputs;
+            Blob pre(pre_grad);
+            Blob outB(out);
+            Blob inB(input);
+            inputs.push_back(&pre);
+            inputs.push_back(&outB);
+            inputs.push_back(&inB);
+
+            Blob blobOut(b);
+
+            std::vector<Shape *> inShape;
+            auto preShape = ShapeN(1, 1, 3, 3);
+            auto outShape = ShapeN(1, 1, 3, 3);
+            auto inputShape = ShapeN(1, 1, 4, 4);
+            inShape.push_back(&preShape);
+            inShape.push_back(&outShape);
+            inShape.push_back(&inputShape);
+
+            Shape out_Shape;
+
+            Operator *op = pro->CreateOperator(context, inputs, &blobOut, inShape, &out_Shape, params);
+            op->AsyncRun();
+            int dim = out_Shape.Size();
+
+            float target[] = {0, 0, 0, 0,
+                              4, 0, 24, 0,
+                              14, 0, 0, 0,
+                              0, 0, 20, 0};
+
+            PrintMat(b, 4, 4, "grad_pool_out");
+
+            checkArrayEqual<float>(b, target, dim);
         }
 
     }

@@ -149,7 +149,7 @@ int main() {
 
     for (int i = 0; i < epochSize; ++i) {
         trainSet.GetBatchData(batchSize, imageData, labelData);
-        input.Fill(imageData);
+        image.Fill(imageData);
         label.Fill(labelData);
         executor->runSync();
     }

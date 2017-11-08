@@ -59,99 +59,52 @@ namespace matrix {
         }
 
 
-        TEST_F(MathTest, Img2Col) {
-            float a[] = {1, 1, 1, 0, 0,
-                         0, 1, 1, 1, 0,
-                         0, 0, 1, 1, 1,
-                         0, 0, 1, 1, 0,
-                         0, 1, 1, 0, 0};
+        TEST_F(MathTest, im2col) {
+            float  a[] = {0, 1, 2,
+                          3, 4, 5};
 
-            float kernel[] = {1, 1, 1,
-                              1, 1, 0,
-                              1, 0, 0};
+            float b[8] = {0};
 
-            float colBuffer[81] = {0};
+            float target[8] = {0, 1,
+                               1, 2,
+                               3, 4,
+                               4, 5};
 
-            float b[9];
-
-            float c[] = {4, 4, 4,
-                         2, 4, 5,
-                         1, 4, 6};
-
-            Shape input = ShapeN(1, 1, 5, 5);
-            Shape kShape = ShapeN(1, 3, 3);
-            Shape stride = ShapeN(1, 1);
+            Shape in = ShapeN(1, 1, 2, 3);
+            Shape kernel = ShapeN(1, 1, 2, 2);
             Shape padding = ShapeN(0, 0);
-            Shape dilation = ShapeN(1, 1);
-            Shape out = ShapeN(1, 1, 3, 3);
-
-            const int input_offset = 25;
-            const int output_offset = 9;
-            int M = 1;
-            int N = 9;
-            int K = 9;
-            const int filter_offset = 9;
-            for (int i = 0; i < 1; ++i) {
-                for (int j = 0; j < 1; ++j) {
-                    img2col(a, 1, 5, 5, 1, 1, 0, 0, 3, 3, 1, 1, colBuffer);
-                    CPUGemm<float>(NoTrans, NoTrans, M, N, K, 1.0f, kernel + j * filter_offset, colBuffer,
-                                   0.0f, b + j * output_offset);
-                }
-            }
-            PrintMat(colBuffer, 9, 9, "colbuffer");
-            checkArrayEqual<float>(b, c, 9);
-            PrintMat(b, 3, 3, "Img2Col");
-        }
-
-        TEST_F(MathTest, Col2Img) {
-            float inputData[] = {4, 4, 4,
-                                 2, 4, 5,
-                                 1, 4, 6};
-
-            float kernelData[] = {1, 1, 1,
-                                  1, 1, 1,
-                                  1, 1, 1};
-
-            float colBuffer[81] = {0};
-
-            float a[25] = {0};
-
-            float res[25] = {1, 1, 1, 0, 0,
-                             0, 1, 1, 1, 0,
-                             0, 0, 1, 1, 1,
-                             0, 0, 1, 1, 0,
-                             0, 1, 1, 0, 0};
-
-            Shape input = ShapeN(1, 1, 5, 5); // NCHW
-            Shape kShape = ShapeN(1, 3, 3);
             Shape stride = ShapeN(1, 1);
-            Shape padding = ShapeN(1, 1);
             Shape dilation = ShapeN(1, 1);
-            Shape out = ShapeN(1, 1, 5, 5);
 
-            int M = 1 / 1 * 3 * 3;
-            int N = 3 * 3;
-            int K = 1 / 1;
-
-            CPUGemm<float>(Trans, NoTrans, M, N, K, 1.0f,
-                           kernelData,
-                           inputData,
-                           0.0f, colBuffer);
-
-            PrintMat(colBuffer, 9, 9, "colbuffer");
-
-            col2img(a, input[1], input[2], input[3],
-                    stride[0], stride[1],
-                    padding[0], padding[1],
-                    kShape[1], kShape[2],
-                    dilation[0], dilation[1],
-                    colBuffer);
-
-
-            PrintMat(colBuffer, 5, 5, "image");
+            PrintMat(a, 2, 3, "orig_data");
+            Img2Col(a, in, kernel, stride, padding, dilation, b);
+            PrintMat(b, 4, 2, "im2col");
+            checkArrayEqual<float>(b, target, 8);
         }
-        
-        
+
+        TEST_F(MathTest, col2im) {
+            float a[] = {0, 1, 1, 2,
+                         3, 4, 4, 5};
+
+            float b[6] = {0};
+
+            float target[6] = {0, 2, 2,
+                               3, 8, 5};
+
+            Shape in = ShapeN(1, 1, 2, 3);
+            Shape kernel = ShapeN(1, 1, 2, 2);
+            Shape padding = ShapeN(0, 0);
+            Shape stride = ShapeN(1, 1);
+            Shape dilation = ShapeN(1, 1);
+
+            PrintMat(a, 2, 4, "orig_data");
+            Col2Img(a, in, kernel, stride, padding, dilation, b);
+            PrintMat(b, 2, 3, "col2im");
+            checkArrayEqual<float>(b, target, 6);
+
+        }
+
+
         TEST_F(MathTest, NaiveConv) {
             float a[] = {1, 1, 1, 0, 0,
                          0, 1, 1, 1, 0,
@@ -174,7 +127,7 @@ namespace matrix {
         }
 
 
-        TEST_F(MathTest, Max) {
+        TEST_F(MathTest, PoolMax) {
             float a[] = {1, 3, 1, 5,
                          4, 2, 6, 2,
                          7, 1, 3, 5,
@@ -182,15 +135,20 @@ namespace matrix {
 
 
 
-            float b[4] = {0};
-            int c[4] = {0};
-            auto input = TensorN(a, 4, 4);
-            auto out = TensorN(b, 1, 4);
-            auto index = TensorN(c, 1, 4);
+            float b[9] = {0};
+            int c[9] = {0};
             PrintMat(a, 4, 4, "orig_data");
-            Max(input, 1, out, &index);
-            PrintMat(out.Data(), 1, 4, "out");
-            PrintMat(index.Data(), 1, 4, "index");
+            pooling2D(a, 1, 1, 4, 4, 1, 1, 0, 0, 2, 2, 1, 1, b, kMax, c);
+            PrintMat(b, 1, 9, "out");
+            PrintMat(c, 1, 9, "index");
+
+            float target[] = {4, 6, 6, 7, 6, 6, 7, 10, 10};
+            int indexTarget[] = {4, 6, 6, 8, 6, 6, 8, 14, 14};
+            checkArrayEqual<float>(b, target, 9);
+            checkArrayEqual<int>(c, indexTarget, 9);
         }
+
+
+
     }
 }

@@ -24,7 +24,7 @@ public:
     }
 
 
-    void GetBatchData(int batchSize, void* data, void* label) {
+    void GetBatchData(int batchSize, float* data, float* label) {
         if (data == nullptr || label == nullptr) {
             cout<< "the input DcgeTensor in null ptr " << endl;
         }
@@ -32,16 +32,13 @@ public:
         if (currentBatchIndx + batchSize >= allDataSize) {
             currentBatchIndx = 0;
         }
-        auto dd = static_cast<float*>(data);
-        auto ll = static_cast<float*>(label);
-
         for (int i = 0; i < batchSize; ++i) {
             for (int j = 0; j < oneDataSize; ++j) {
-                dd[i * oneDataSize +j] =  MniData[currentBatchIndx+i][j];
+                data[i * oneDataSize +j] =  MniData[currentBatchIndx+i][j];
             }
         }
         for (int k = 0; k < batchSize; ++k) {
-            ll[k] = MniLabel[currentBatchIndx + k];
+            label[k] = MniLabel[currentBatchIndx + k];
         }
         currentBatchIndx += batchSize;
     }

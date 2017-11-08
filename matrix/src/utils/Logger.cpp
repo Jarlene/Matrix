@@ -85,7 +85,7 @@ namespace matrix {
 
     void Logger::WriteImpl(LogLevel level, const char *format, va_list *val) {
         if (level >= this->level) {  // omit the message with low level
-
+            std::string result = std::string(format) + "\n";
             std::string level_str = GetLevelStr(level);
 
             std::string time_str = GetSysTime();
@@ -96,9 +96,9 @@ namespace matrix {
 
             // write to STDOUT
 
-            printf("[%s] [%s] \n", level_str.c_str(), time_str.c_str());
+            printf("[%s] [%s] ", level_str.c_str(), time_str.c_str());
 
-            vprintf(format, *val);
+            vprintf(result.c_str(), *val);
 
             fflush(stdout);
 
@@ -108,7 +108,7 @@ namespace matrix {
 
                 fprintf(file, "[%s] [%s] ", level_str.c_str(), time_str.c_str());
 
-                vfprintf(file, format, val_copy);
+                vfprintf(file, result.c_str(), val_copy);
 
                 fflush(file);
 

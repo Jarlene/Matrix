@@ -27,7 +27,6 @@ namespace matrix {
         int channel = inputShapes[0]->At(1);
         int input_width = inputShapes[0]->At(2);
         int input_height = inputShapes[0]->At(3);
-        int imageSize = input_height * input_width;
 
 
         int group = 1;
@@ -35,76 +34,23 @@ namespace matrix {
             group = GetArgValue<int>("group");
         }
 
-        ImageOrder order = NCHW;
-        if (HasArg("order")) {
-            order = GetArgValue<ImageOrder>("order");
-        }
-
-        const int input_offset = channel / group * imageSize;
-
-        int colSize = channel / group * filter.Size() * outputShapes->At(2) * outputShapes->At(3);
-        T *colData = static_cast<T *>(MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(
-                colSize * sizeof(T)));
         const T* input = Input<T>(0);
         T* out = Output<T>();
-        switch (type) {
-            case kMax:
-            {
-                int *maxIndex = static_cast<int*>(MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(
-                        batch_size * outputShapes->At(2) * outputShapes->At(3) * sizeof(int)));
-                Shape maxShape;
-                maxShape.Append(batch_size * outputShapes->At(2) * outputShapes->At(3));
-                Tensor<int> maxTensor(maxIndex, maxShape);
-                for (int i = 0; i < batch_size; ++i) {
-                    for (int j = 0; j < group; ++j) {
-                        Img2Col(input + j * input_offset,
-                                *inputShapes[0],
-                                filter, stride,
-                                padding, dilate,
-                                colData, order);
-                        Shape in;
-                        in.Append(filter.Size());
-                        in.Append(colSize/filter.Size());
-                        Tensor<T> i(colData, in);
-                        Shape ou;
-                        ou.Append(colSize/filter.Size());
-                        Tensor<T> o(out, ou);
-                        Max(i, 0, o, &maxTensor);
-                    }
-                    input += channel * imageSize;
-                    out += channel * outputShapes->At(2) * outputShapes->At(3);
-                    maxIndex += outputShapes->At(2) * outputShapes->At(3);
-                }
-                args->insert(std::pair<std::string, Any>("max_index", maxTensor));
-            }
 
-                break;
-            case kAvg:
-                for (int i = 0; i < batch_size; ++i) {
-                    for (int j = 0; j < group; ++j) {
-                        Img2Col(input + j * input_offset,
-                                 *inputShapes[0],
-                                filter, stride,
-                                padding, dilate,
-                                colData, order);
-                        Shape in;
-                        in.Append(filter.Size());
-                        in.Append(colSize/filter.Size());
-                        Tensor<T> i(colData, in);
-                        Shape ou;
-                        ou.Append(colSize/filter.Size());
-                        Tensor<T> o(out, ou);
-                        Mean(i, 0, o);
-                    }
-                    input += channel * imageSize;
-                    out += channel * outputShapes->At(2) * outputShapes->At(3);
-                }
-                break;
-            default:
-                Logger::Global()->Fatal("PoolingOp do not support PoolType\n");
-                break;
+
+        if (type == kMax) {
+            int *maxIndex = static_cast<int*>(MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(
+                    batch_size * outputShapes->At(2) * outputShapes->At(3) * sizeof(int)));
+            Shape maxShape;
+            maxShape.Append(batch_size * outputShapes->At(2) * outputShapes->At(3));
+            Tensor<int> maxTensor(maxIndex, maxShape);
+            pooling2D(input, batch_size, channel/group, input_width, input_height, stride[0], stride[1],
+                      padding[0], padding[1],filter[2], filter[3], dilate[0], dilate[1],out,type, maxIndex);
+            args->insert(std::pair<std::string, Any>("max_index", maxTensor));
+        } else {
+            pooling2D(input, batch_size, channel/group, input_width, input_height, stride[0], stride[1],
+                      padding[0], padding[1],filter[2], filter[3], dilate[0], dilate[1], out, type);
         }
-        MemoryManager::Global()->GetCpuMemoryPool()->freeMemory(colData, colSize);
         return true;
     }
 
