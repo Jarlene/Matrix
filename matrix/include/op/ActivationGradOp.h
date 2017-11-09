@@ -33,7 +33,7 @@ namespace matrix {
         ~ActivationOpGradProp();
         virtual void InferShape(std::vector<Shape*> &inShape, Shape* outShape);
         virtual Operator* CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
-                                         std::vector<Shape*> &inShape, Shape* &outShape,
+                                         std::vector<Shape*> &inShape, Shape* outShape,
                                          std::map<std::string, Any> &args) ;
         virtual void SwitchType(const MatrixType &type);
     private:

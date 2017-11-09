@@ -13,12 +13,20 @@ namespace matrix {
 
     template <class T, class Context>
     bool LSTMOp<T, Context>::Run() {
-        return Operator::Run();
+
+
+        return true;
     }
 
     template <class T, class Context>
     void LSTMOp<T, Context>::AsyncRun() {
-        Operator::AsyncRun();
+        if (Context::mode == RunMode::kCpu) {
+            Run();
+        } else {
+            if (!RunOnDevice()) {
+                Run();
+            }
+        }
     }
 
     template <class T, class Context>

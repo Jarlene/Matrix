@@ -19,14 +19,19 @@ namespace matrix {
         }
         int idx = GetArgValue<int>("input_idx");
         Tensor<T> pre_grad = Inputs()[PRE_GRAD]-> template GeneratorTensor<T>(inputShapes[PRE_GRAD]);
+        Tensor<T> data = Inputs()[DATA]-> template GeneratorTensor<T>(inputShapes[DATA]);
+        Tensor<T> weight = Inputs()[WEIGHT]-> template GeneratorTensor<T>(inputShapes[WEIGHT]);
+
+        Tensor<T> out = Outputs()-> template GeneratorTensor<T>(outputShapes);
         switch (idx + 2) {
             case DATA:
-
-
+                MatrixMul<T>(pre_grad, false, weight, true, out);
                 break;
             case WEIGHT:
+                MatrixMul<T>(data, true, pre_grad, false, out);
                 break;
             case BIAS:
+                Copy<T>(pre_grad, out);
                 break;
             default:
                 Logger::Global()->Fatal("FullConnectedGradOp not support. \n");

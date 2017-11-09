@@ -26,13 +26,13 @@ namespace matrix {
 
         switch (type) {
             case kSigmoid:
-                SigmoidGrad<T>(input, pre, gradOut);
+                SigmoidGrad<T>(out, gradOut);
                 break;
             case kTanh:
-                TanhGrad<T>(input, pre, gradOut);
+                TanhGrad<T>(out, gradOut);
                 break;
             case kRelu:
-                ReluGrad<T>(input, pre, out);
+                ReluGrad<T>(input, pre, gradOut);
                 break;
             default:
                 Logger::Global()->Fatal("ActivationOp not support \n");
@@ -104,7 +104,7 @@ namespace matrix {
 
 
     Operator *ActivationOpGradProp::CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
-                                                   std::vector<Shape*> &inShape, Shape* &outShape,
+                                                   std::vector<Shape*> &inShape, Shape* outShape,
                                                    std::map<std::string, Any> &args) {
         param->args = &args;
         param->inputs = input;
