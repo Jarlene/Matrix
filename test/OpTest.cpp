@@ -340,7 +340,7 @@ namespace matrix {
             } else {
                 float target[] = {2.5, 2, 1.75,
                                   2.333333, 1.333333, 1.333333,
-                                  1.5, 1.41667, 1.25};
+                                  1.5, 1.416666, 1.25};
                 checkArrayEqual<float>(b, target, dim);
             }
         }
@@ -369,7 +369,7 @@ namespace matrix {
 
             std::map<std::string, Any> params;
             params["filter"] = ShapeN(2, 2);
-            params["type"] = PoolType::kMax;
+            params["type"] = PoolType::kAvg;
             params["max_index"] = maxIndex;
 
             Context context;
@@ -401,15 +401,22 @@ namespace matrix {
             Operator *op = pro->CreateOperator(context, inputs, &blobOut, inShape, &out_Shape, params);
             op->AsyncRun();
             int dim = out_Shape.Size();
-
-            float target[] = {0, 0, 0, 0,
-                              4, 0, 24, 0,
-                              14, 0, 0, 0,
-                              0, 0, 20, 0};
-
+            if (get<PoolType >(params["type"]) == kMax) {
+                float target[16] = {0, 0, 0, 0,
+                          4, 0, 24, 0,
+                          14, 0, 0, 0,
+                          0, 0, 20, 0};
+                checkArrayEqual<float>(b, target, dim);
+            } else if (get<PoolType >(params["type"]) == kAvg) {
+                float target[16] = {1, 2.5, 3, 5,
+                          2.5, 5.5, 6.25, 11.75,
+                          4, 5.5, 3.25, 6.75,
+                          3, 4.25, 2.75, 6.5};
+                checkArrayEqual<float>(b, target, dim);
+            }
             PrintMat(b, 4, 4, "grad_pool_out");
 
-            checkArrayEqual<float>(b, target, dim);
+
         }
 
     }

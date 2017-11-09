@@ -28,10 +28,8 @@ namespace matrix {
         int input_height = inputShapes[INPUT]->At(3);
         int imageSize = input_height * input_width;
 
-        int group = 1;
-        if (HasArg("group")) {
-            group = GetArgValue<int>("group");
-        }
+        int output_width = outputShapes->At(2);
+        int output_height = outputShapes->At(3);
 
         const T * pre_grad = Input<T>(PRE_GRAG);
         T * out = Output<T>();
@@ -44,27 +42,39 @@ namespace matrix {
                 }
                 Tensor<int> maxIndex = GetArgValue<Tensor<int>>("max_index");
                 for (int i = 0; i < batch_size; ++i) {
-                    for (int j = 0; j < group; ++j) {
+                    for (int j = 0; j < channel; ++j) {
                         for (int k = 0; k < inputShapes[PRE_GRAG]->Size(); ++k) {
                             const int *idx = maxIndex.Data(k);
                             out[*idx] += pre_grad[k];
                         }
                     }
-                    pre_grad +=  channel * outputShapes->At(2) * outputShapes->At(3);
-                    out +=  channel * imageSize;
+                    pre_grad +=  output_width * output_height;
+                    out +=  imageSize;
                 }
             }
                 break;
             case kAvg:
             {
                 for (int i = 0; i < batch_size; ++i) {
-                    for (int j = 0; j < group; ++j) {
-                        for (int k = 0; k < inputShapes[PRE_GRAG]->Size(); ++k) {
-
+                    for (int j = 0; j < channel; ++j) {
+                        for (int ph = 0; ph < output_height; ++ph) {
+                            int hstart = std::max(ph * stride[1] - padding[1], 0);
+                            int hend = std::min(hstart + filter[3], input_height);
+                            for (int pw = 0; pw < output_width; ++pw) {
+                                int wstart = std::max(pw * stride[0] - padding[0], 0);
+                                int wend = std::min(wstart + filter[2], input_width);
+                                int pool_size = (hend - hstart) * (wend - wstart);
+                                T scale = 1.0 / pool_size;
+                                for (int h = hstart; h < hend; ++h) {
+                                    for (int w = wstart; w < wend; ++w) {
+                                        out[h * input_width + w] += (pre_grad[ph * output_width + pw] * scale);
+                                    }
+                                }
+                            }
                         }
                     }
-                    pre_grad += channel *  outputShapes->At(2) * outputShapes->At(3);
-                    out +=  channel * imageSize;
+                    pre_grad += output_width * output_height;
+                    out +=  imageSize;
                 }
             }
                 break;
@@ -140,8 +150,7 @@ namespace matrix {
         if (param->args->count("filter")) {
             auto s = get<Shape>(param->args->at("filter"));
             filter.reShape(s);
-            s.reShape(ShapeN(inShape[2]->At(0), inShape[2]->At(1), filter[0], filter[1]));
-            filter.reShape(get<Shape>(param->args->at("filter")));
+            get<Shape>(param->args->at("filter")).reShape(ShapeN(inShape[2]->At(0), inShape[2]->At(1), filter[0], filter[1]));
         } else {
             Logger::Global()->Fatal("PoolingOp cant not support no filter \n");
         }
@@ -160,9 +169,7 @@ namespace matrix {
         } else {
             param->args->insert(std::pair<std::string, Any>("dilate", dilate));
         }
-        int w = (inShape[0]->At(2) + 2 * padding[0] - (dilate[0] * (filter[0] - 1) + 1) )/stride[0] + 1 ;
-        int h = (inShape[0]->At(3) + 2 * padding[1] - (dilate[1] * (filter[1] - 1) + 1) )/stride[1] + 1 ;
-        outShape->reShape(ShapeN(inShape[0]->At(0), inShape[0]->At(1), w, h));
+        outShape->reShape(*inShape[2]);
     }
 
     Operator *PoolingGradOpProp::CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
