@@ -46,6 +46,7 @@ namespace matrix {
 
     protected:
         friend class Graph;
+        friend class ParameterCollection;
         const NodePtr &GetNode() const ;
 
     protected:

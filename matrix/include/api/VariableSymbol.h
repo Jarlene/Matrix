@@ -15,6 +15,8 @@ namespace matrix {
     public:
         static VariableSymbol Create(const std::string &name, const Shape &shape, const MatrixType &type = kFloat);
 
+        static VariableSymbol Create(const std::string &name, const MatrixType &type = kFloat);
+
         template <class T>
         void Fill(T * ptr) {
             this->nodePtr->context.phase = PREDICTION;
