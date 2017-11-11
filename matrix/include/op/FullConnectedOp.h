@@ -19,6 +19,7 @@ namespace matrix {
     template <class T, class Context>
     class FullConnectedOp : public Operator {
     SAME_FUNCTION(FullConnected);
+        virtual void VariableNode(std::function<void(std::initializer_list<Shape *> shapes)> func) override;
     DISABLE_COPY_AND_ASSIGN(FullConnected);
         INPUT_TAG(DATA, WEIGHT, BIAS);
     };

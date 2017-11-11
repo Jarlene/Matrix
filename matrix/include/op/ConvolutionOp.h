@@ -18,6 +18,7 @@ namespace matrix {
     template <class T, class Context>
     class ConvolutionOp : public Operator {
     SAME_FUNCTION(Convolution);
+        virtual void VariableNode(std::function<void(std::initializer_list<Shape *> shapes)> func) override;
     DISABLE_COPY_AND_ASSIGN(Convolution);
         INPUT_TAG(DATA, KERNEL, BIAS, COLBUFFER);
     };

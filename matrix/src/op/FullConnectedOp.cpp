@@ -50,7 +50,28 @@ namespace matrix {
         return false;
     }
 
-
+    template <class T, class Context>
+    void FullConnectedOp<T, Context>::VariableNode(std::function<void(std::initializer_list<Shape *> shapes)> func) {
+        if (inputShapes.size() == 1) {
+            Shape weight;
+            int rank = inputShapes[0]->Rank();
+            for (int i = 0; i < rank - 2; ++i) {
+                weight.Append(inputShapes[0]->At(i));
+            }
+            weight.Append(inputShapes[0]->At(rank - 1));
+            if (!HasArg("hide_num")) {
+                Logger::Global()->Fatal("FullConnectedOp can not find hide_num params");
+            }
+            weight.Append(GetArgValue<int>("hide_num"));
+            if(HasArg("with_bias")) {
+                Shape bias;
+                bias.Append(inputShapes[0]->At(0));
+                func({&weight, &bias});
+            } else {
+                func({&weight});
+            }
+        }
+    };
 
 
     template <>
@@ -87,6 +108,9 @@ namespace matrix {
     }
 
     void FullConnectedOpProp::InferShape(std::vector<Shape*> &inShape, Shape *outShape) {
+        if (inShape.size() == 1) {
+            return;
+        }
         assert(inShape.size() >= 2);
         assert(outShape != nullptr);
         ProduceMulOpShape(inShape, outShape);

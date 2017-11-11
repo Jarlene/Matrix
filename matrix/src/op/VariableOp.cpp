@@ -22,7 +22,7 @@ namespace matrix {
                 Value<T>(out, val);
             } else {
                 T mu  = GetArgValue<T>("mu", T(0));
-                T sigma = GetArgValue<T>("sigma", T(1));;
+                T sigma = GetArgValue<T>("sigma", T(1));
                 Random<T>(out, mu, sigma);
             }
         }

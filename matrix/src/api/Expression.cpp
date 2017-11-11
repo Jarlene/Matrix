@@ -10,8 +10,8 @@ namespace matrix {
 
     inline void convolution(ParameterCollection *parameterCollection,
                             const Symbol &input, const Shape &kernel, int filter_num,
-                            Shape padding = ShapeN(0, 0), Shape stride = ShapeN(1, 1),
-                            Shape dilate = ShapeN(1, 1), bool with_bias = true, int group = 1) {
+                            Shape padding , Shape stride ,
+                            Shape dilate , bool with_bias , int group) {
 
 
 
@@ -37,7 +37,7 @@ namespace matrix {
 
 
     inline void fullyConnected(ParameterCollection *parameterCollection,
-                               const Symbol &input, int hiddenNum, bool with_bias = true) {
+                               const Symbol &input, int hiddenNum, bool with_bias) {
         Symbol weight = VariableSymbol::Create("kernel", ShapeN(0, hiddenNum));
         Symbol fullyConnected = Symbol("fullyConnected")
                 .SetInput("data", input)

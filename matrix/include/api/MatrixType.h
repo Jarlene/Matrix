@@ -32,7 +32,8 @@ namespace matrix {
 
     enum LossMode {
         kCrossEntropy = 0,
-        kMSE
+        kMSE,
+        kSoftMaxCrossEntropy
     };
 
     enum OutputMode {

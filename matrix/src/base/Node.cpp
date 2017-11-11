@@ -58,7 +58,33 @@ namespace matrix {
 
         Blob oB(this->data_);
         op = opPtr->CreateOperator(this->context, inputs, &oB, inputShapes, &outputShapes, params);
+
+        bool rebuild = false;
+        auto generatorVariableFunc = [this, &rebuild](std::initializer_list<Shape *> shapes) {
+            rebuild = true;
+            for(auto shape = shapes.begin(); shape != shapes.end(); shape++) {
+                if (*shape != nullptr) {
+                    NodePtr var = Node::Create();
+                    var->opName = "variable";
+                    var->nodeName = this->opName + "_variable";
+                    var->outputShapes.reShape(**shape);
+                    var->isVariable = context.phase == TRAIN;
+                    var->context.type = context.type;
+                    var->params["isTrain"] = context.phase == TRAIN;
+                    var->Build();
+                    this->inputs.push_back(var);
+                }
+            }
+
+        };
+        op->VariableNode(generatorVariableFunc);
         memorySize = opPtr->GetMemorySize();
+        if (rebuild) {
+            delete  this->op;
+            this->op = nullptr;
+            this->inputShapes.clear();
+            Build();
+        }
     }
 
     long Node::getMemorySize() {

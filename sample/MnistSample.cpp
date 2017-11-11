@@ -19,8 +19,8 @@ Symbol LogisticRegression(Symbol input, int hideNum, int classNum) {
 
     auto y1 = Symbol("fullConnected")
             .SetInput("data", input)
-            .SetParam("weight", ShapeN(784, hideNum))
-            .SetParam("bias", true)
+            .SetParam("hide_num", hideNum)
+            .SetParam("with_bias", true)
             .Build();
 
     auto act1 = Symbol("activation")
@@ -30,8 +30,8 @@ Symbol LogisticRegression(Symbol input, int hideNum, int classNum) {
 
     auto y2 = Symbol("fullConnected")
             .SetInput("act1", act1)
-            .SetParam("weight", ShapeN(hideNum, classNum))
-            .SetParam("bias", true)
+            .SetParam("hide_num", classNum)
+            .SetParam("with_bias", true)
             .Build();
 
     auto out = Symbol("output")
@@ -48,7 +48,7 @@ Symbol Connvolution(Symbol &input, int batchSize, int classNum) {
     auto conv1 = Symbol("convolution")
             .SetInput("data", input)
             .SetParam("filter", ShapeN(3, 3))
-            .SetParam("bias", true)
+            .SetParam("with_bias", true)
             .SetParam("padding", ShapeN(0,0))
             .SetParam("stride", ShapeN(1,1))
             .SetParam("dilate", ShapeN(1,1))
@@ -71,7 +71,7 @@ Symbol Connvolution(Symbol &input, int batchSize, int classNum) {
     auto conv2 = Symbol("convolution")
             .SetInput("pool1", pool1)
             .SetParam("filter",  ShapeN(2, 2))
-            .SetParam("bias", true)
+            .SetParam("with_bias", true)
             .SetParam("padding", ShapeN(0,0))
             .SetParam("stride", ShapeN(1,1))
             .SetParam("dilate", ShapeN(1,1))
@@ -96,8 +96,8 @@ Symbol Connvolution(Symbol &input, int batchSize, int classNum) {
 
     auto fully = Symbol("fullConnected")
             .SetInput("flatten", flatten)
-            .SetParam("weight", ShapeN(864, classNum))
-            .SetParam("bias", true)
+            .SetParam("hide_num", classNum)
+            .SetParam("with_bias", true)
             .Build();
 
     auto out = Symbol("output")
@@ -116,7 +116,7 @@ int main() {
     const int classNum = 10;
     const int hideNum = 128;
 
-    Shape imageShape = ShapeN(batchSize, 1, 28, 28);
+    Shape imageShape = ShapeN(batchSize, 784);
     Shape labelShape = ShapeN(batchSize);
     auto image = PlaceHolderSymbol::Create("image", imageShape);
     auto label = PlaceHolderSymbol::Create("label", labelShape);
@@ -125,18 +125,18 @@ int main() {
     float* labelData = static_cast<float *>(malloc(sizeof(float) * labelShape.Size()));
 
 
-    auto convolution = Connvolution(image, batchSize, classNum);
+//    auto convolution = Connvolution(image, batchSize, classNum);
 
     auto logistic = LogisticRegression(image, hideNum, classNum);
 
     auto loss = Symbol("loss")
-            .SetInput("logistic", convolution)
+            .SetInput("logistic", logistic)
             .SetInput("y", label)
             .SetParam("type", kCrossEntropy)
             .Build();
 
     auto prediction = Symbol("prediction")
-            .SetInput("logistic", convolution)
+            .SetInput("logistic", logistic)
             .SetInput("y", label)
             .Build();
 
@@ -151,7 +151,7 @@ int main() {
         trainSet.GetBatchData(batchSize, imageData, labelData);
         image.Fill(imageData);
         label.Fill(labelData);
-        executor->runSync();
+        executor->runAsync();
     }
 
     free(imageData);

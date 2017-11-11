@@ -168,6 +168,23 @@ namespace matrix {
     }
 
     template<class T, class Context>
+    void ConvolutionOp<T, Context>::VariableNode(std::function<void(std::initializer_list<Shape *> shapes)> func) {
+        if (inputShapes.size() == 1) {
+            if (!HasArg("filter")) {
+                Logger::Global()->Fatal("ConvolutionOp no filter for input");
+            }
+            Shape filter = GetArgValue<Shape>("filter");
+            if (HasArg("with_bias")) {
+                Shape bias;
+                bias.Append(inputShapes[0]->At(0));
+                func({&filter, &bias});
+            } else {
+                func({&filter});
+            }
+        }
+    };
+
+    template<class T, class Context>
     bool ConvolutionOp<T, Context>::RunOnDevice() {
         return false;
     }
@@ -207,6 +224,10 @@ namespace matrix {
 
     void ConvolutionOpProp::InferShape(std::vector<Shape *> &inShape, Shape *outShape) {
 
+        if (inShape.size() == 1) {
+            return;
+        }
+
         Shape padding = ShapeN(0, 0);
         Shape stride = ShapeN(1, 1);
         Shape dilate = ShapeN(1, 1);
@@ -237,13 +258,9 @@ namespace matrix {
         }
         int filter_num = 1;
 
-        Shape kernel;
+
         Shape in = *inShape[0];
-        if (inShape.size() == 1) {
-            kernel = get<Shape>(param->args->at("filter"));
-        } else if (inShape.size() >= 2) {
-            kernel.reShape(*inShape[1]);
-        }
+        Shape kernel = *inShape[1];
 
         int n = in[0];
         int kernel_h = kernel[0];
@@ -257,9 +274,7 @@ namespace matrix {
                 filter_num = get<int>(param->args->at("filter_num"));
             }
             outShape->reShape(ShapeN(n, filter_num, height, width));
-            if (inShape.size() >= 2) {
-                inShape[1]->reShape(ShapeN(filter_num, channel, kernel_h, kernel_w));
-            }
+            inShape[1]->reShape(ShapeN(filter_num, channel, kernel_h, kernel_w));
         } else {
             int height = (in[1] + 2 * padding[0] - (dilate[0] * (kernel[0] - 1) + 1)) / stride[0] + 1;
             int width = (in[2] + 2 * padding[1] - (dilate[1] * (kernel[1] - 1) + 1)) / stride[1] + 1;
@@ -269,9 +284,7 @@ namespace matrix {
                 filter_num = get<int>(param->args->at("filter_num"));
             }
             outShape->reShape(ShapeN(n, height, width, filter_num));
-            if (inShape.size() >= 2) {
-                inShape[1]->reShape(ShapeN(filter_num, channel, kernel_h, kernel_w));
-            }
+            inShape[1]->reShape(ShapeN(filter_num, channel, kernel_h, kernel_w));
         }
     }
 

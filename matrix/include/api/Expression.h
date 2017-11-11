@@ -11,6 +11,12 @@
 
 namespace matrix {
 
+
+
+
+
+
+
     inline void convolution(ParameterCollection *parameterCollection,
                             const Symbol &input, const Shape &kernel, int output_channel,
                             Shape padding = ShapeN(0, 0), Shape stride = ShapeN(1, 1),

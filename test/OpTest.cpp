@@ -22,7 +22,7 @@ namespace matrix {
             context.mode = RunMode::kCpu;
             context.phase = Phase::TEST;
             context.type = kFloat;
-            Shape shape = ShapeN(784, 128);
+            Shape shape = ShapeN(5, 4);
             float *result = static_cast<float *>(malloc(sizeof(float) * shape.Size()));
             Blob blob(result);
             std::vector<Blob *> inputs;
@@ -31,6 +31,7 @@ namespace matrix {
             params["isTrain"] = true;
             Operator *op = pro->CreateOperator(context, inputs, &blob, inShape, &shape, params);
             op->AsyncRun();
+            PrintMat(result, shape[0], shape[1], "variable");
             delete result;
         }
 
@@ -655,6 +656,48 @@ namespace matrix {
 
             }
             PrintMat(c, out[0], out[1], "grad_activation");
+        }
+
+        TEST_F(OpTest, LossOp) {
+            float input[] = {0.2, 0.3,
+                             0.1, 0.4,
+                             0.1, 0.5};
+            float label[] = {1 ,0, 1};
+            Shape input_shape = ShapeN(3, 2);
+            Shape label_shape = ShapeN(3);
+
+            float a[] = {0};
+
+
+            Context context;
+            context.mode = RunMode::kCpu;
+            context.phase = Phase::TEST;
+
+
+            Blob input_blob(input);
+            Blob label_blob(label);
+
+            std::vector<Blob *> inputs;
+            inputs.push_back(&input_blob);
+            inputs.push_back(&label_blob);
+
+
+            Blob outBlob(a);
+
+            std::vector<Shape *> inShape;
+            inShape.push_back(&input_shape);
+            inShape.push_back(&label_shape);
+
+            OpPtr pro = Registry::Global()->GetOp("loss");
+
+            std::map<std::string, Any> params;
+            auto type = kCrossEntropy;
+            params["type"] = type;
+            Shape out;
+            Operator *op = pro->CreateOperator(context, inputs, &outBlob, inShape, &out, params);
+            op->AsyncRun();
+
+            PrintMat(a, 1, 1, "loss_out");
         }
     }
 }

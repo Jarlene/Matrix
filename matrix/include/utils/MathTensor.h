@@ -139,6 +139,10 @@ namespace matrix {
         Softmax<T>(data.Size(), data.Data(), out.MutableData());
     }
 
+    template <class T>
+    void SoftMaxCrossEntropy(const Tensor<T> &data, const Tensor<T> &label, Tensor<T> &out) {
+
+    }
 
 
 //    template <class T>

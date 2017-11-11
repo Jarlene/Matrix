@@ -7,6 +7,7 @@
 
 #include <map>
 #include <vector>
+#include <initializer_list>
 #include "matrix/include/utils/MathTensor.h"
 #include "matrix/include/api/MatrixType.h"
 #include "matrix/include/utils/Logger.h"
@@ -157,6 +158,9 @@ namespace matrix {
         }
 
 
+
+        virtual void VariableNode(std::function<void(std::initializer_list<Shape *> shapes)> func) {
+        }
 
         virtual bool RunOnDevice() = 0;
 
