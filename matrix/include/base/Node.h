@@ -26,7 +26,7 @@ namespace matrix {
 
         std::string opName;
 
-        Operator* op;
+        Operator* op{nullptr};
 
         Context context;
 
@@ -36,7 +36,7 @@ namespace matrix {
 
         bool isVariable;
 
-        void* data_;
+        void* data_ {nullptr};
 
         long memorySize;
 

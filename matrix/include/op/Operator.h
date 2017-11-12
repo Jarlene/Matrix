@@ -120,7 +120,8 @@ namespace matrix {
         }
 
         virtual ~Operator() {
-
+            input.clear();
+            inputShapes.clear();
         }
 
         inline bool HasArg(const std::string &name) {
@@ -191,11 +192,11 @@ namespace matrix {
 
 
     protected:
-        std::map<std::string, Any> *args;
+        std::map<std::string, Any> *args{nullptr};
         std::vector<Blob*> input;
-        Blob* output;
+        Blob* output{nullptr};
         std::vector<Shape*> inputShapes;
-        Shape* outputShapes;
+        Shape* outputShapes{nullptr};
     };
 
     class State {
@@ -216,9 +217,9 @@ namespace matrix {
 
         std::vector<Blob*> inputs;
         std::vector<Shape*> inputShapes;
-        Blob* outputs;
-        Shape* outShapes;
-        std::map<std::string, Any> *args;
+        Blob* outputs {nullptr};
+        Shape* outShapes{nullptr};
+        std::map<std::string, Any> *args{nullptr};
     };
 
 
@@ -243,7 +244,7 @@ namespace matrix {
 
     protected:
         long memorySize = 0;
-        Parameter * param;
+        Parameter * param {nullptr};
     };
 
 }
