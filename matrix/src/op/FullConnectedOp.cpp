@@ -75,7 +75,7 @@ namespace matrix {
 
 
     template <>
-    Operator* CreateOp<CPU>(FullConnectedParam &param, long *size) {
+    Operator* CreateOp<CPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new FullConnectedOp<DType, CPU>(param);
@@ -85,7 +85,7 @@ namespace matrix {
     }
 
     template <>
-    Operator* CreateOp<GPU>(FullConnectedParam &param, long *size) {
+    Operator* CreateOp<GPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new FullConnectedOp<DType, GPU>(param);
@@ -96,11 +96,11 @@ namespace matrix {
 
 
     FullConnectedOpProp::FullConnectedOpProp() {
-        param = new FullConnectedParam(kFloat);
+        param = new Parameter(kFloat);
     }
 
     FullConnectedOpProp::FullConnectedOpProp(const MatrixType &type) {
-        param = new FullConnectedParam(type);
+        param = new Parameter(type);
     }
 
     FullConnectedOpProp::~FullConnectedOpProp() {
@@ -128,7 +128,5 @@ namespace matrix {
         BIND_DISPATCH(CreateOp, *param, &memorySize);
     }
 
-    void FullConnectedOpProp::SwitchType(const MatrixType &type) {
-        this->param->type = type;
-    }
+
 }

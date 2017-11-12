@@ -9,11 +9,7 @@
 
 namespace matrix {
 
-    struct AddParam : public Parameter {
-        AddParam(MatrixType matrixType) : Parameter(matrixType) {
-        }
 
-    };
 
     template <class T, class xpu>
     class AddOp : public Operator {
@@ -23,22 +19,10 @@ namespace matrix {
     };
 
 
-    template <typename xpu>
-    Operator* CreateOp(AddParam &param, long *size);
 
 
     class AddOpProp : public OperatorProperty {
-    public:
-        AddOpProp();
-        AddOpProp(const MatrixType &type);
-        ~AddOpProp();
-        virtual void InferShape(std::vector<Shape*> &inShape, Shape *outShape);
-        virtual Operator* CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
-                                         std::vector<Shape*> &inShape, Shape *outShape,
-                                         std::map<std::string, Any> &args)  ;
-        virtual void SwitchType(const MatrixType &type);
-    private:
-        AddParam* param;
+        INIT_OPERATOR_PROPERTY(AddOpProp)
     };
 
 }

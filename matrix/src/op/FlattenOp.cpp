@@ -41,7 +41,7 @@ namespace matrix {
 
 
     template <>
-    Operator* CreateOp<CPU>(FlattenParam &param, long* size) {
+    Operator* CreateOp<CPU>(Parameter &param, long* size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new FlattenOp<DType, CPU>(param);
@@ -51,7 +51,7 @@ namespace matrix {
     }
 
     template <>
-    Operator* CreateOp<GPU>(FlattenParam &param, long *size) {
+    Operator* CreateOp<GPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new FlattenOp<DType, GPU>(param);
@@ -61,11 +61,11 @@ namespace matrix {
     }
 
     FlattenOpProp::FlattenOpProp() {
-        param = new FlattenParam(kFloat);
+        param = new Parameter(kFloat);
     }
 
     FlattenOpProp::FlattenOpProp(const MatrixType &type) {
-        param = new FlattenParam(type);
+        param = new Parameter(type);
     }
 
     FlattenOpProp::~FlattenOpProp() {
@@ -88,8 +88,5 @@ namespace matrix {
         BIND_DISPATCH(CreateOp, *param, &memorySize);
     }
 
-    void FlattenOpProp::SwitchType(const MatrixType &type) {
-        param->type = type;
-    }
 }
 

@@ -45,7 +45,7 @@ namespace matrix {
 
 
     template <>
-    Operator* CreateOp<CPU>(MulParam &param, long *size) {
+    Operator* CreateOp<CPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new MulOp<DType, CPU>(param);
@@ -55,7 +55,7 @@ namespace matrix {
     }
 
     template <>
-    Operator* CreateOp<GPU>(MulParam &param, long *size) {
+    Operator* CreateOp<GPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new MulOp<DType, GPU>(param);
@@ -66,11 +66,11 @@ namespace matrix {
 
 
     MulOpProp::MulOpProp() {
-        param = new MulParam(kFloat);
+        param = new Parameter(kFloat);
     }
 
     MulOpProp::MulOpProp(const MatrixType &type) {
-        param = new MulParam(type);
+        param = new Parameter(type);
     }
 
     MulOpProp::~MulOpProp() {
@@ -95,7 +95,5 @@ namespace matrix {
         BIND_DISPATCH(CreateOp, *param, &memorySize);
     }
 
-    void MulOpProp::SwitchType(const MatrixType &type) {
-        this->param->type = type;
-    }
+
 }

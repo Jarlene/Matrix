@@ -109,7 +109,7 @@ namespace matrix {
 
 
     template <>
-    Operator* CreateOp<CPU>(PoolingGradParam &param, long *size) {
+    Operator* CreateOp<CPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new PoolingGradOp<DType, CPU>(param);
@@ -119,7 +119,7 @@ namespace matrix {
     }
 
     template <>
-    Operator* CreateOp<GPU>(PoolingGradParam &param, long *size) {
+    Operator* CreateOp<GPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new PoolingGradOp<DType, GPU>(param);
@@ -131,11 +131,11 @@ namespace matrix {
 
 
     PoolingGradOpProp::PoolingGradOpProp() {
-        param = new PoolingGradParam(kFloat);
+        param = new Parameter(kFloat);
     }
 
     PoolingGradOpProp::PoolingGradOpProp(const MatrixType &type) {
-        param = new PoolingGradParam(type);
+        param = new Parameter(type);
     }
 
     PoolingGradOpProp::~PoolingGradOpProp() {
@@ -184,8 +184,6 @@ namespace matrix {
         BIND_DISPATCH(CreateOp, *param, &memorySize);
     }
 
-    void PoolingGradOpProp::SwitchType(const MatrixType &type) {
-        this->param->type = type;
-    }
+
 
 }

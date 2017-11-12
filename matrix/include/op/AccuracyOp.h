@@ -10,12 +10,6 @@
 
 namespace matrix {
 
-    struct AccuracyParam : public Parameter {
-        AccuracyParam(MatrixType matrixType) : Parameter(matrixType) {
-
-        }
-    };
-
     template <class T, class Context>
     class AccuracyOp : public Operator {
     SAME_FUNCTION(Accuracy);
@@ -24,24 +18,8 @@ namespace matrix {
     };
 
 
-
-
-    template <typename xpu>
-    Operator* CreateOp(AccuracyParam &param, long *size);
-
-
     class AccuracyOpProp : public OperatorProperty {
-    public:
-        AccuracyOpProp();
-        AccuracyOpProp(const MatrixType &type);
-        virtual void SwitchType(const MatrixType &type);
-        ~AccuracyOpProp();
-        virtual void InferShape(std::vector<Shape*> &inShape, Shape *outShape);
-        virtual Operator* CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
-                                         std::vector<Shape*> &inShape, Shape *outShape,
-                                         std::map<std::string, Any> &args) ;
-    private:
-        AccuracyParam* param;
+    INIT_OPERATOR_PROPERTY(AccuracyOpProp)
     };
 }
 

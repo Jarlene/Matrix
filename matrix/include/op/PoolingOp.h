@@ -9,9 +9,6 @@
 
 namespace matrix {
 
-    struct PoolingParam : public Parameter {
-        PoolingParam(MatrixType matrixType);
-    };
 
     template <class T, class Context>
     class PoolingOp : public Operator {
@@ -19,22 +16,11 @@ namespace matrix {
     DISABLE_COPY_AND_ASSIGN(Pooling);
     };
 
-    template <typename xpu>
-    Operator* CreateOp(PoolingParam &param, long *size);
 
 
     class PoolingOpProp : public OperatorProperty {
-    public:
-        PoolingOpProp();
-        PoolingOpProp(const MatrixType &type);
-        ~PoolingOpProp();
-        virtual void InferShape(std::vector<Shape*> &inShape, Shape* outShape);
-        virtual Operator* CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
-                                         std::vector<Shape*> &inShape, Shape* outShape,
-                                         std::map<std::string, Any> &args)  ;
-        virtual void SwitchType(const MatrixType &type);
-    private:
-        PoolingParam* param;
+    INIT_OPERATOR_PROPERTY(PoolingOpProp)
+
     };
 }
 

@@ -56,7 +56,7 @@ namespace matrix {
 
 
     template <>
-    Operator* CreateOp<CPU>(LossParam &param, long *size) {
+    Operator* CreateOp<CPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new LossOp<DType, CPU>(param);
@@ -66,7 +66,7 @@ namespace matrix {
     }
 
     template <>
-    Operator* CreateOp<GPU>(LossParam &param, long *size) {
+    Operator* CreateOp<GPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new LossOp<DType, GPU>(param);
@@ -75,16 +75,14 @@ namespace matrix {
         return op;
     }
 
-    LossParam::LossParam(MatrixType matrixType) : Parameter(matrixType) {
 
-    }
 
     LossOpProp::LossOpProp() {
-        param = new LossParam(kFloat);
+        param = new Parameter(kFloat);
     }
 
     LossOpProp::LossOpProp(const MatrixType &type) {
-        param = new LossParam(type);
+        param = new Parameter(type);
     }
 
     LossOpProp::~LossOpProp() {
@@ -108,7 +106,5 @@ namespace matrix {
         BIND_DISPATCH(CreateOp, *param, &memorySize);
     }
 
-    void LossOpProp::SwitchType(const MatrixType &type) {
-        this->param->type = type;
-    }
+
 }

@@ -10,11 +10,6 @@
 namespace matrix {
 
 
-    struct ActivationGradParam : public Parameter {
-        ActivationGradParam(MatrixType matrixType) : Parameter(matrixType) {
-
-        }
-    };
 
 
     template <class T, class Context>
@@ -27,23 +22,10 @@ namespace matrix {
 
 
     class ActivationOpGradProp : public OperatorProperty {
-    public:
-        ActivationOpGradProp();
-        explicit ActivationOpGradProp(const MatrixType &type);
-        ~ActivationOpGradProp();
-        virtual void InferShape(std::vector<Shape*> &inShape, Shape* outShape);
-        virtual Operator* CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
-                                         std::vector<Shape*> &inShape, Shape* outShape,
-                                         std::map<std::string, Any> &args) ;
-        virtual void SwitchType(const MatrixType &type);
-    private:
-        ActivationGradParam* param;
+    INIT_OPERATOR_PROPERTY(ActivationOpGradProp)
+
     };
 
-
-
-    template <typename xpu>
-    Operator* CreateOp(ActivationGradParam &param, long *size);
 
 }
 

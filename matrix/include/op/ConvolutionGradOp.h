@@ -10,11 +10,7 @@
 
 namespace matrix {
 
-    struct ConvolutionGradParam : public Parameter {
-        ConvolutionGradParam(MatrixType matrixType) : Parameter(matrixType) {
 
-        }
-    };
 
     template <class T, class Context>
     class ConvolutionGradOp : public Operator {
@@ -23,21 +19,10 @@ namespace matrix {
         INPUT_TAG(PRE_GRAG, SELF_OUT, DATA, KERNEL, BIAS, COLBUFFER);
     };
 
-    template <typename Context>
-    Operator* CreateOp(ConvolutionGradParam &param, long *size);
 
     class ConvolutionOpGradProp : public OperatorProperty {
-    public:
-        ConvolutionOpGradProp();
-        ConvolutionOpGradProp(const MatrixType &type);
-        ~ConvolutionOpGradProp();
-        virtual void InferShape(std::vector<Shape*> &inShape, Shape *outShape);
-        virtual Operator* CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
-                                         std::vector<Shape*> &inShape, Shape *outShape,
-                                         std::map<std::string, Any> &args)  ;
-        virtual void SwitchType(const MatrixType &type);
-    private:
-        ConvolutionGradParam* param;
+    INIT_OPERATOR_PROPERTY(ConvolutionOpGradProp)
+
     };
 
 }

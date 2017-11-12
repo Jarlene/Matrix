@@ -10,9 +10,7 @@
 
 namespace matrix {
 
-    struct LSTMParam : public Parameter {
-        LSTMParam(MatrixType matrixType);
-    };
+
 
     template <class T, class Context>
     class LSTMOp : public Operator {
@@ -33,22 +31,10 @@ namespace matrix {
     };
 
 
-    template <typename Context>
-    Operator* CreateOp(LSTMParam &param, long *size);
 
 
     class LSTMOpProp : public OperatorProperty {
-    public:
-        LSTMOpProp();
-        LSTMOpProp(const MatrixType &type);
-        ~LSTMOpProp();
-        virtual void InferShape(std::vector<Shape*> &inShape, Shape *outShape);
-        virtual Operator* CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
-                                         std::vector<Shape*> &inShape, Shape *outShape,
-                                         std::map<std::string, Any> &args)  ;
-        virtual void SwitchType(const MatrixType &type);
-    private:
-        LSTMParam* param;
+    INIT_OPERATOR_PROPERTY(LSTMOpProp)
     };
 }
 

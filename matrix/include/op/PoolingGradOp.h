@@ -10,11 +10,7 @@
 namespace matrix {
 
 
-    struct PoolingGradParam : public Parameter {
-        PoolingGradParam(MatrixType matrixType) : Parameter(matrixType) {
 
-        };
-    };
 
     template <class T, class Context>
     class PoolingGradOp : public Operator {
@@ -24,21 +20,9 @@ namespace matrix {
     };
 
 
-    template <typename xpu>
-    Operator* CreateOp(PoolingGradParam &param, long *size);
 
     class PoolingGradOpProp : public OperatorProperty {
-    public:
-        PoolingGradOpProp();
-        PoolingGradOpProp(const MatrixType &type);
-        ~PoolingGradOpProp();
-        virtual void InferShape(std::vector<Shape*> &inShape, Shape* outShape);
-        virtual Operator* CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
-                                         std::vector<Shape*> &inShape, Shape* outShape,
-                                         std::map<std::string, Any> &args)  ;
-        virtual void SwitchType(const MatrixType &type);
-    private:
-        PoolingGradParam* param;
+    INIT_OPERATOR_PROPERTY(PoolingGradOpProp)
     };
 }
 

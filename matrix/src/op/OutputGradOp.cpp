@@ -1,33 +1,26 @@
 //
-// Created by Jarlene on 2017/8/9.
+// Created by Jarlene on 2017/11/12.
 //
 
-#include "matrix/include/op/OutputOp.h"
+#include "matrix/include/op/OutputGradOp.h"
 
 namespace matrix {
+
+
     template <class T, class Context>
-    OutputOp<T, Context>::OutputOp(Parameter &param) {
+    OutputGradOp<T, Context>::OutputGradOp(Parameter &param) {
         INIT_PARAMS
     }
 
     template <class T, class Context>
-    bool OutputOp<T, Context>::Run() {
-        auto outModel = OutputMode::kSoftmax;
-        if (HasArg("type")) {
-            outModel = GetArgValue<OutputMode>("type");
-        }
-        Tensor<T> data = Inputs()[DATA]-> template GeneratorTensor<T>(inputShapes[DATA]);
-        Tensor<T> out = Outputs() -> template GeneratorTensor<T>(outputShapes);
-        if (outModel == OutputMode::kSoftmax) {
-            Softmax<T>(data, out);
-        } else {
-            Logger::Global()->Fatal("OutputOp not support other output.\n");
-        }
+    bool OutputGradOp<T, Context>::Run() {
+
+
         return true;
     }
 
     template <class T, class Context>
-    void OutputOp<T, Context>::AsyncRun() {
+    void OutputGradOp<T, Context>::AsyncRun() {
         if (Context::mode == RunMode::kCpu) {
             Run();
         } else {
@@ -38,12 +31,12 @@ namespace matrix {
     }
 
     template <class T, class Context>
-    bool OutputOp<T, Context>::RunOnDevice() {
+    bool OutputGradOp<T, Context>::RunOnDevice() {
         return false;
     }
 
     template <class T, class Context>
-    OutputOp<T, Context>::~OutputOp() {
+    OutputGradOp<T, Context>::~OutputGradOp() {
 
     }
 
@@ -53,7 +46,7 @@ namespace matrix {
     Operator* CreateOp<CPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
-            op = new OutputOp<DType, CPU>(param);
+            op = new OutputGradOp<DType, CPU>(param);
             *size = sizeof(DType) * param.outShapes->Size();
         })
         return op;
@@ -63,7 +56,7 @@ namespace matrix {
     Operator* CreateOp<GPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
-            op = new OutputOp<DType, GPU>(param);
+            op = new OutputGradOp<DType, GPU>(param);
             *size = sizeof(DType) * param.outShapes->Size();
         })
         return op;
@@ -71,24 +64,24 @@ namespace matrix {
 
 
 
-    OutputOpProp::OutputOpProp() {
+    OutputGradOpProp::OutputGradOpProp() {
         param = new Parameter(kFloat);
     }
 
-    OutputOpProp::OutputOpProp(const MatrixType &type) {
+    OutputGradOpProp::OutputGradOpProp(const MatrixType &type) {
         param = new Parameter(type);
     }
 
-    OutputOpProp::~OutputOpProp() {
+    OutputGradOpProp::~OutputGradOpProp() {
         delete param;
     }
 
-    void OutputOpProp::InferShape(std::vector<Shape*> &inShape, Shape *outShape) {
+    void OutputGradOpProp::InferShape(std::vector<Shape*> &inShape, Shape *outShape) {
         assert(outShape != nullptr);
         outShape->reShape(*inShape[0]);
     }
 
-    Operator *OutputOpProp::CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
+    Operator *OutputGradOpProp::CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
                                            std::vector<Shape*> &inShape, Shape *outShape,
                                            std::map<std::string, Any> &args) {
         param->args = &args;
@@ -99,7 +92,5 @@ namespace matrix {
         param->outShapes = outShape;
         BIND_DISPATCH(CreateOp, *param, &memorySize);
     }
-
-
 
 }

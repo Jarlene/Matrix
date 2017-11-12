@@ -9,9 +9,7 @@
 
 namespace matrix {
 
-    struct  GRUParam : public Parameter {
-        GRUParam(MatrixType matrixType);
-    };
+
 
     template <class T, class Context>
     class GRUOp : public Operator {
@@ -19,22 +17,11 @@ namespace matrix {
     DISABLE_COPY_AND_ASSIGN(GRU);
     };
 
-    template <typename Context>
-    Operator* CreateOp(GRUParam &param, long *size);
 
 
     class GRUOpProp : public OperatorProperty {
-    public:
-        GRUOpProp();
-        GRUOpProp(const MatrixType &type);
-        ~GRUOpProp();
-        virtual void InferShape(std::vector<Shape*> &inShape, Shape *outShape);
-        virtual Operator* CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
-                                         std::vector<Shape*> &inShape, Shape *outShape,
-                                         std::map<std::string, Any> &args)  ;
-        virtual void SwitchType(const MatrixType &type);
-    private:
-        GRUParam* param;
+    INIT_OPERATOR_PROPERTY(GRUOpProp)
+
     };
 }
 REGISTER_OP_PROPERTY(gru, GRUOpProp);

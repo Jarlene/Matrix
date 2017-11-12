@@ -34,7 +34,7 @@ namespace matrix {
 
 
     template <>
-    Operator* CreateOp<CPU>(PredictionParam &param, long *size) {
+    Operator* CreateOp<CPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new PredictionOp<DType, CPU>(param);
@@ -44,7 +44,7 @@ namespace matrix {
     }
 
     template <>
-    Operator* CreateOp<GPU>(PredictionParam &param, long *size) {
+    Operator* CreateOp<GPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new PredictionOp<DType, GPU>(param);
@@ -56,11 +56,11 @@ namespace matrix {
 
 
     PredictionOpProp::PredictionOpProp() {
-        param = new PredictionParam(kFloat);
+        param = new Parameter(kFloat);
     }
 
     PredictionOpProp::PredictionOpProp(const MatrixType &type) {
-        param = new PredictionParam(type);
+        param = new Parameter(type);
     }
 
     PredictionOpProp::~PredictionOpProp() {
@@ -83,7 +83,5 @@ namespace matrix {
         BIND_DISPATCH(CreateOp, *param, &memorySize);
     }
 
-    void PredictionOpProp::SwitchType(const MatrixType &type) {
-        this->param->type = type;
-    }
+
 }

@@ -47,7 +47,7 @@ namespace matrix {
 
 
     template <>
-    Operator* CreateOp<CPU>(UpdateParam &param) {
+    Operator* CreateOp<CPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new UpdateOp<DType, CPU>(param);
@@ -56,7 +56,7 @@ namespace matrix {
     }
 
     template <>
-    Operator* CreateOp<GPU>(UpdateParam &param) {
+    Operator* CreateOp<GPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new UpdateOp<DType, GPU>(param);
@@ -69,11 +69,11 @@ namespace matrix {
     }
 
     UpdateOpProp::UpdateOpProp(const MatrixType &type)  {
-        param = new UpdateParam(type);
+        param = new Parameter(type);
     }
 
     UpdateOpProp::UpdateOpProp() {
-        param = new UpdateParam(MatrixType::kFloat);
+        param = new Parameter(MatrixType::kFloat);
     }
 
     void UpdateOpProp::InferShape(std::vector<Shape*> &inShape, Shape* outShape) {
@@ -88,12 +88,9 @@ namespace matrix {
         InferShape(inShape, outShape);
         param->inputShapes = inShape;
         param->outShapes = outShape;
-        BIND_DISPATCH(CreateOp, *param);
+        BIND_DISPATCH(CreateOp, *param, &memorySize);
     }
 
-    void UpdateOpProp::SwitchType(const MatrixType &type) {
-        this->param->type = type;
-    }
 
 
 }

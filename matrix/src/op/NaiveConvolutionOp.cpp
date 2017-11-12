@@ -51,7 +51,7 @@ namespace matrix {
 
 
     template<>
-    Operator *CreateOp<CPU>(NaiveConvolutionParam &param, long *size) {
+    Operator *CreateOp<CPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new NaiveConvolutionOp<DType, CPU>(param);
@@ -61,7 +61,7 @@ namespace matrix {
     }
 
     template<>
-    Operator *CreateOp<GPU>(NaiveConvolutionParam &param, long *size) {
+    Operator *CreateOp<GPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new NaiveConvolutionOp<DType, GPU>(param);
@@ -71,11 +71,11 @@ namespace matrix {
     }
 
     NaiveConvolutionOpProp::NaiveConvolutionOpProp() {
-        param = new NaiveConvolutionParam(kFloat);
+        param = new Parameter(kFloat);
     }
 
     NaiveConvolutionOpProp::NaiveConvolutionOpProp(const MatrixType &type) {
-        param = new NaiveConvolutionParam(type);
+        param = new Parameter(type);
     }
 
     NaiveConvolutionOpProp::~NaiveConvolutionOpProp() {
@@ -157,7 +157,5 @@ namespace matrix {
         BIND_DISPATCH(CreateOp, *param, &memorySize);
     }
 
-    void NaiveConvolutionOpProp::SwitchType(const MatrixType &type) {
-        this->param->type = type;
-    }
+
 }

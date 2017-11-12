@@ -12,11 +12,6 @@
 namespace matrix {
 
 
-    struct PredictionParam : public Parameter {
-        PredictionParam(MatrixType matrixType) : Parameter(matrixType) {}
-    };
-
-
     template <class T, class xpu>
     class PredictionOp : public Operator {
     SAME_FUNCTION(Prediction);
@@ -24,23 +19,11 @@ namespace matrix {
     };
 
 
-    template <typename xpu>
-    Operator* CreateOp(PredictionParam &param, long *size);
 
 
 
     class PredictionOpProp : public OperatorProperty {
-    public:
-        PredictionOpProp();
-        PredictionOpProp(const MatrixType &type);
-        ~PredictionOpProp();
-        virtual void InferShape(std::vector<Shape*> &inShape, Shape* outShape);
-        virtual Operator* CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
-                                         std::vector<Shape*> &inShape, Shape *outShape,
-                                         std::map<std::string, Any> &args)  ;
-        virtual void SwitchType(const MatrixType &type);
-    private:
-        PredictionParam* param;
+    INIT_OPERATOR_PROPERTY(PredictionOpProp)
     };
 }
 

@@ -191,7 +191,7 @@ namespace matrix {
 
 
     template<>
-    Operator *CreateOp<CPU>(ConvolutionParam &param, long *size) {
+    Operator *CreateOp<CPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new ConvolutionOp<DType, CPU>(param);
@@ -201,7 +201,7 @@ namespace matrix {
     }
 
     template<>
-    Operator *CreateOp<GPU>(ConvolutionParam &param, long *size) {
+    Operator *CreateOp<GPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new ConvolutionOp<DType, GPU>(param);
@@ -211,11 +211,11 @@ namespace matrix {
     }
 
     ConvolutionOpProp::ConvolutionOpProp() {
-        param = new ConvolutionParam(kFloat);
+        param = new Parameter(kFloat);
     }
 
     ConvolutionOpProp::ConvolutionOpProp(const MatrixType &type) {
-        param = new ConvolutionParam(type);
+        param = new Parameter(type);
     }
 
     ConvolutionOpProp::~ConvolutionOpProp() {
@@ -300,7 +300,5 @@ namespace matrix {
         BIND_DISPATCH(CreateOp, *param, &memorySize);
     }
 
-    void ConvolutionOpProp::SwitchType(const MatrixType &type) {
-        this->param->type = type;
-    }
+
 }

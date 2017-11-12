@@ -9,11 +9,7 @@
 
 namespace matrix {
 
-    struct ActivationParam : public Parameter {
-        ActivationParam(MatrixType matrixType) : Parameter(matrixType) {
 
-        }
-    };
 
     template <class T, class Context>
     class ActivationOp : public Operator {
@@ -23,21 +19,9 @@ namespace matrix {
     };
 
 
-    template <typename Context>
-    Operator* CreateOp(ActivationParam &param, long *size);
-
     class ActivationOpProp : public OperatorProperty {
-    public:
-        ActivationOpProp();
-        ActivationOpProp(const MatrixType &type);
-        ~ActivationOpProp();
-        virtual void InferShape(std::vector<Shape*> &inShape, Shape* outShape );
-        virtual Operator* CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
-                                         std::vector<Shape*> &inShape, Shape* outShape,
-                                         std::map<std::string, Any> &args) ;
-        virtual void SwitchType(const MatrixType &type);
-    private:
-        ActivationParam* param;
+    INIT_OPERATOR_PROPERTY(ActivationOpProp)
+
     };
 
 }

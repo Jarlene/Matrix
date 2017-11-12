@@ -65,7 +65,7 @@ namespace matrix {
 
 
     template <>
-    Operator* CreateOp<CPU>(FullConnectedGradParam &param, long *size) {
+    Operator* CreateOp<CPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new FullConnectedGradOp<DType, CPU>(param);
@@ -75,7 +75,7 @@ namespace matrix {
     }
 
     template <>
-    Operator* CreateOp<GPU>(FullConnectedGradParam &param, long *size) {
+    Operator* CreateOp<GPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new FullConnectedGradOp<DType, GPU>(param);
@@ -86,11 +86,11 @@ namespace matrix {
 
 
     FullConnectedGradOpProp::FullConnectedGradOpProp() {
-        param = new FullConnectedGradParam(kFloat);
+        param = new Parameter(kFloat);
     }
 
     FullConnectedGradOpProp::FullConnectedGradOpProp(const MatrixType &type) {
-        param = new FullConnectedGradParam(type);
+        param = new Parameter(type);
     }
 
     FullConnectedGradOpProp::~FullConnectedGradOpProp() {
@@ -118,8 +118,6 @@ namespace matrix {
         BIND_DISPATCH(CreateOp, *param, &memorySize);
     }
 
-    void FullConnectedGradOpProp::SwitchType(const MatrixType &type) {
-        this->param->type = type;
-    }
+
 
 }

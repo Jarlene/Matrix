@@ -34,7 +34,7 @@ namespace matrix {
 
 
     template <>
-    Operator* CreateOp<CPU>(GRUParam &param, long *size) {
+    Operator* CreateOp<CPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new GRUOp<DType, CPU>(param);
@@ -44,7 +44,7 @@ namespace matrix {
     }
 
     template <>
-    Operator* CreateOp<GPU>(GRUParam &param, long *size) {
+    Operator* CreateOp<GPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new GRUOp<DType, GPU>(param);
@@ -53,16 +53,14 @@ namespace matrix {
         return op;
     }
 
-    GRUParam::GRUParam(MatrixType matrixType) : Parameter(matrixType) {
 
-    }
 
     GRUOpProp::GRUOpProp() {
-        param = new GRUParam(kFloat);
+        param = new Parameter(kFloat);
     }
 
     GRUOpProp::GRUOpProp(const MatrixType &type) {
-        param = new GRUParam(type);
+        param = new Parameter(type);
     }
 
     GRUOpProp::~GRUOpProp() {
@@ -85,7 +83,5 @@ namespace matrix {
         BIND_DISPATCH(CreateOp, *param, &memorySize);
     }
 
-    void GRUOpProp::SwitchType(const MatrixType &type) {
-        this->param->type = type;
-    }
+
 }

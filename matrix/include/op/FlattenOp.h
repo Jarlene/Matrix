@@ -10,11 +10,7 @@
 namespace matrix {
 
 
-    struct FlattenParam : public Parameter{
-        FlattenParam(MatrixType matrixType): Parameter(matrixType) {
 
-        };
-    };
 
     template <class T, class Context>
     class FlattenOp : public Operator {
@@ -22,22 +18,11 @@ namespace matrix {
     DISABLE_COPY_AND_ASSIGN(Flatten);
     };
 
-    template <typename xpu>
-    Operator* CreateOp(FlattenParam &param, long *size);
 
 
     class FlattenOpProp : public OperatorProperty {
-    public:
-        FlattenOpProp();
-        FlattenOpProp(const MatrixType &type);
-        ~FlattenOpProp();
-        virtual void InferShape(std::vector<Shape*> &inShape, Shape* outShape);
-        virtual Operator* CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
-                                         std::vector<Shape*> &inShape, Shape* outShape,
-                                         std::map<std::string, Any> &args)  ;
-        virtual void SwitchType(const MatrixType &type);
-    private:
-        FlattenParam* param;
+    INIT_OPERATOR_PROPERTY(FlattenOpProp)
+
     };
 }
 

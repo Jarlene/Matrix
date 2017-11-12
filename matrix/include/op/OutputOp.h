@@ -8,12 +8,7 @@
 #include "Operator.h"
 
 namespace matrix {
-    struct OutputParam : public Parameter {
-        OutputParam(MatrixType matrixType) : Parameter(matrixType) {
 
-        }
-
-    };
 
 
     template <class T, class xpu>
@@ -24,23 +19,12 @@ namespace matrix {
     };
 
 
-    template <typename xpu>
-    Operator* CreateOp(OutputParam &param, long *size);
-
 
 
     class OutputOpProp : public OperatorProperty {
-    public:
-        OutputOpProp();
-        OutputOpProp(const MatrixType &type);
-        ~OutputOpProp();
-        virtual void InferShape(std::vector<Shape*> &inShape, Shape *outShape);
-        virtual Operator* CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
-                                         std::vector<Shape*> &inShape, Shape *outShape,
-                                         std::map<std::string, Any> &args)  ;
-        virtual void SwitchType(const MatrixType &type);
-    private:
-        OutputParam* param;
+    INIT_OPERATOR_PROPERTY(OutputOpProp)
+
+
     };
 }
 

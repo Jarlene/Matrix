@@ -9,9 +9,7 @@
 
 namespace matrix {
 
-    struct SubParam : public Parameter {
-        SubParam(MatrixType matrixType);
-    };
+
 
     template <class T, class Context>
     class SubOp : public Operator {
@@ -19,22 +17,11 @@ namespace matrix {
     DISABLE_COPY_AND_ASSIGN(Sub);
     };
 
-    template <typename xpu>
-    Operator* CreateOp(SubParam &param, long *size);
 
 
     class SubOpProp : public OperatorProperty {
-    public:
-        SubOpProp();
-        SubOpProp(const MatrixType &type);
-        ~SubOpProp();
-        virtual void InferShape(std::vector<Shape*> &inShape, Shape* outShape);
-        virtual Operator* CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
-                                         std::vector<Shape*> &inShape, Shape* outShape,
-                                         std::map<std::string, Any> &args)  ;
-        virtual void SwitchType(const MatrixType &type);
-    private:
-        SubParam* param;
+    INIT_OPERATOR_PROPERTY(SubOpProp)
+
     };
 }
 

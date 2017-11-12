@@ -57,7 +57,7 @@ namespace matrix {
 
 
     template <>
-    Operator* CreateOp<CPU>(LossGradParam &param, long *size) {
+    Operator* CreateOp<CPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new LossGradOp<DType, CPU>(param);
@@ -67,7 +67,7 @@ namespace matrix {
     }
 
     template <>
-    Operator* CreateOp<GPU>(LossGradParam &param, long *size) {
+    Operator* CreateOp<GPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new LossGradOp<DType, GPU>(param);
@@ -79,11 +79,11 @@ namespace matrix {
 
 
     LossGradOpProp::LossGradOpProp() {
-        param = new LossGradParam(kFloat);
+        param = new Parameter(kFloat);
     }
 
     LossGradOpProp::LossGradOpProp(const MatrixType &type) {
-        param = new LossGradParam(type);
+        param = new Parameter(type);
     }
 
     LossGradOpProp::~LossGradOpProp() {
@@ -107,7 +107,5 @@ namespace matrix {
         BIND_DISPATCH(CreateOp, *param, &memorySize);
     }
 
-    void LossGradOpProp::SwitchType(const MatrixType &type) {
-        this->param->type = type;
-    }
+
 }

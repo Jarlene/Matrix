@@ -34,7 +34,7 @@ namespace matrix {
 
 
     template <>
-    Operator* CreateOp<CPU>(DropoutParam &param, long* size) {
+    Operator* CreateOp<CPU>(Parameter &param, long* size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new DropoutOp<DType, CPU>(param);
@@ -44,7 +44,7 @@ namespace matrix {
     }
 
     template <>
-    Operator* CreateOp<GPU>(DropoutParam &param, long *size) {
+    Operator* CreateOp<GPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new DropoutOp<DType, GPU>(param);
@@ -53,16 +53,14 @@ namespace matrix {
         return op;
     }
 
-    DropoutParam::DropoutParam(MatrixType matrixType) : Parameter(matrixType) {
 
-    }
 
     DropoutOpProp::DropoutOpProp() {
-        param = new DropoutParam(kFloat);
+        param = new Parameter(kFloat);
     }
 
     DropoutOpProp::DropoutOpProp(const MatrixType &type) {
-        param = new DropoutParam(type);
+        param = new Parameter(type);
     }
 
     DropoutOpProp::~DropoutOpProp() {
@@ -85,8 +83,5 @@ namespace matrix {
         BIND_DISPATCH(CreateOp, *param, &memorySize);
     }
 
-    void DropoutOpProp::SwitchType(const MatrixType &type) {
-        this->param->type = type;
-    }
 
 }

@@ -35,7 +35,7 @@ namespace matrix {
 
 
     template <>
-    Operator* CreateOp<CPU>(RNNParam &param, long *size) {
+    Operator* CreateOp<CPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new RNNOp<DType, CPU>(param);
@@ -45,7 +45,7 @@ namespace matrix {
     }
 
     template <>
-    Operator* CreateOp<GPU>(RNNParam &param, long *size) {
+    Operator* CreateOp<GPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new RNNOp<DType, GPU>(param);
@@ -57,11 +57,11 @@ namespace matrix {
 
 
     RNNOpProp::RNNOpProp() {
-        param = new RNNParam(kFloat);
+        param = new Parameter(kFloat);
     }
 
     RNNOpProp::RNNOpProp(const MatrixType &type) {
-        param = new RNNParam(type);
+        param = new Parameter(type);
     }
 
     RNNOpProp::~RNNOpProp() {
@@ -84,7 +84,5 @@ namespace matrix {
         BIND_DISPATCH(CreateOp, *param, &memorySize);
     }
 
-    void RNNOpProp::SwitchType(const MatrixType &type) {
-        this->param->type = type;
-    }
+
 }

@@ -9,11 +9,7 @@
 
 namespace matrix {
 
-    struct NaiveConvolutionParam : public Parameter {
-        NaiveConvolutionParam(MatrixType matrixType) : Parameter(matrixType) {
 
-        }
-    };
 
     template <class T, class Context>
     class NaiveConvolutionOp : public Operator {
@@ -22,21 +18,10 @@ namespace matrix {
         INPUT_TAG(DATA, KERNEL, BIAS);
     };
 
-    template <typename Context>
-    Operator* CreateOp(NaiveConvolutionParam &param, long *size);
 
     class NaiveConvolutionOpProp : public OperatorProperty {
-    public:
-        NaiveConvolutionOpProp();
-        NaiveConvolutionOpProp(const MatrixType &type);
-        ~NaiveConvolutionOpProp();
-        virtual void InferShape(std::vector<Shape*> &inShape, Shape *outShape);
-        virtual Operator* CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
-                                         std::vector<Shape*> &inShape, Shape *outShape,
-                                         std::map<std::string, Any> &args)  ;
-        virtual void SwitchType(const MatrixType &type);
-    private:
-        NaiveConvolutionParam* param;
+    INIT_OPERATOR_PROPERTY(NaiveConvolutionOpProp)
+
     };
 
 }

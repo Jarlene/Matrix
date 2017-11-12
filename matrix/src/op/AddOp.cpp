@@ -51,7 +51,7 @@ namespace matrix {
 
 
     template <>
-    Operator* CreateOp<CPU>(AddParam &param, long *size) {
+    Operator* CreateOp<CPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new AddOp<DType, CPU>(param);
@@ -61,7 +61,7 @@ namespace matrix {
     }
 
     template <>
-    Operator* CreateOp<GPU>(AddParam &param, long *size) {
+    Operator* CreateOp<GPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new AddOp<DType, GPU>(param);
@@ -71,11 +71,11 @@ namespace matrix {
     }
 
     AddOpProp::AddOpProp(const MatrixType &type)  {
-        param = new AddParam(type);
+        param = new Parameter(type);
     }
 
     AddOpProp::AddOpProp() {
-        param = new AddParam(MatrixType::kFloat);
+        param = new Parameter(MatrixType::kFloat);
     }
 
     Operator *AddOpProp::CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
@@ -98,8 +98,6 @@ namespace matrix {
         delete param;
     }
 
-    void AddOpProp::SwitchType(const MatrixType &type) {
-        this->param->type = type;
-    }
+
 
 }

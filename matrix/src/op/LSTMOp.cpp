@@ -42,7 +42,7 @@ namespace matrix {
 
 
     template <>
-    Operator* CreateOp<CPU>(LSTMParam &param, long *size) {
+    Operator* CreateOp<CPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new LSTMOp<DType, CPU>(param);
@@ -52,7 +52,7 @@ namespace matrix {
     }
 
     template <>
-    Operator* CreateOp<GPU>(LSTMParam &param, long *size) {
+    Operator* CreateOp<GPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new LSTMOp<DType, GPU>(param);
@@ -61,16 +61,13 @@ namespace matrix {
         return op;
     }
 
-    LSTMParam::LSTMParam(MatrixType matrixType) : Parameter(matrixType) {
-
-    }
 
     LSTMOpProp::LSTMOpProp() {
-        param = new LSTMParam(kFloat);
+        param = new Parameter(kFloat);
     }
 
     LSTMOpProp::LSTMOpProp(const MatrixType &type) {
-        param = new LSTMParam(type);
+        param = new Parameter(type);
     }
 
     LSTMOpProp::~LSTMOpProp() {
@@ -93,7 +90,5 @@ namespace matrix {
         BIND_DISPATCH(CreateOp, *param, &memorySize);
     }
 
-    void LSTMOpProp::SwitchType(const MatrixType &type) {
-        this->param->type = type;
-    }
+
 }

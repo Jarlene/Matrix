@@ -10,12 +10,6 @@
 namespace matrix {
 
 
-    struct VariableParam : public Parameter {
-        VariableParam(MatrixType matrixType) : Parameter(matrixType) {
-
-        }
-
-    };
 
     template <class T, class xpu>
     class VariableOp : public Operator {
@@ -25,22 +19,11 @@ namespace matrix {
     };
 
 
-    template <typename xpu>
-    Operator* CreateOp(VariableParam &param, long *size);
 
 
     class VariableOpProp : public OperatorProperty {
-    public:
-        VariableOpProp();
-        VariableOpProp(const MatrixType &type);
-        ~VariableOpProp();
-        virtual void InferShape(std::vector<Shape*> &inShape, Shape* outShape);
-        virtual Operator* CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
-                                         std::vector<Shape*> &inShape, Shape* outShape,
-                                         std::map<std::string, Any> &args)  ;
-        virtual void SwitchType(const MatrixType &type);
-    private:
-        VariableParam* param;
+    INIT_OPERATOR_PROPERTY(VariableOpProp)
+
     };
 }
 REGISTER_OP_PROPERTY(variable, VariableOpProp);

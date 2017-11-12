@@ -16,6 +16,17 @@
 #include "matrix/include/utils/Registry.h"
 #include "matrix/include/utils/ProduceShape.h"
 
+
+#define INIT_OPERATOR_PROPERTY(classname) \
+public: \
+   classname(); \
+   classname(const MatrixType &type); \
+   ~classname();  \
+   virtual void InferShape(std::vector<Shape*> &inShape, Shape *outShape); \
+   virtual Operator* CreateOperator(Context context, std::vector<Blob*> &input, Blob* output, \
+                                 std::vector<Shape*> &inShape, Shape *outShape, \
+                                 std::map<std::string, Any> &args) ; \
+
 #define BIND_DISPATCH(Method, ...)               \
    if (context.mode == RunMode::kCpu) {          \
       return Method<CPU>(__VA_ARGS__);            \
@@ -173,7 +184,6 @@ namespace matrix {
         Shape* outputShapes;
     };
 
-
     class State {
     public:
         ~State() {
@@ -209,8 +219,8 @@ namespace matrix {
             return nullptr;
         }
 
-        virtual void SwitchType(const MatrixType &type) {
-
+        void SwitchType(const MatrixType &type) {
+            this->param->type = type;
         }
 
         long GetMemorySize() {
@@ -219,9 +229,11 @@ namespace matrix {
 
     protected:
         long memorySize = 0;
+        Parameter * param;
     };
 
-
+    template <typename xpu>
+    extern Operator* CreateOp(Parameter &param, long *size);
 }
 
 

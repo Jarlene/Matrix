@@ -63,7 +63,7 @@ namespace matrix {
 
 
     template <>
-    Operator* CreateOp<CPU>(AccuracyParam &param, long *size) {
+    Operator* CreateOp<CPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new AccuracyOp<DType, CPU>(param);
@@ -73,7 +73,7 @@ namespace matrix {
     }
 
     template <>
-    Operator* CreateOp<GPU>(AccuracyParam &param, long *size) {
+    Operator* CreateOp<GPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new AccuracyOp<DType, GPU>(param);
@@ -83,12 +83,12 @@ namespace matrix {
     }
 
     AccuracyOpProp::AccuracyOpProp()  {
-        param = new AccuracyParam(MatrixType::kFloat);
+        param = new Parameter(MatrixType::kFloat);
 
     }
 
     AccuracyOpProp::AccuracyOpProp(const MatrixType &type) {
-        param = new AccuracyParam(type);
+        param = new Parameter(type);
     }
 
     AccuracyOpProp::~AccuracyOpProp() {
@@ -114,7 +114,4 @@ namespace matrix {
         BIND_DISPATCH(CreateOp, *param, &memorySize);
     }
 
-    void AccuracyOpProp::SwitchType( const MatrixType &type) {
-        param->type = type;
-    }
 }

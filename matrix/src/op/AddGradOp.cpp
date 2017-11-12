@@ -51,7 +51,7 @@ namespace matrix {
 
 
     template <>
-    Operator* CreateOp<CPU>(AddGradParam &param, long *size) {
+    Operator* CreateOp<CPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new AddGradOp<DType, CPU>(param);
@@ -61,7 +61,7 @@ namespace matrix {
     }
 
     template <>
-    Operator* CreateOp<GPU>(AddGradParam &param, long *size) {
+    Operator* CreateOp<GPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new AddGradOp<DType, GPU>(param);
@@ -71,11 +71,11 @@ namespace matrix {
     }
 
     AddGradOpProp::AddGradOpProp(const MatrixType &type)  {
-        param = new AddGradParam(type);
+        param = new Parameter(type);
     }
 
     AddGradOpProp::AddGradOpProp() {
-        param = new AddGradParam(MatrixType::kFloat);
+        param = new Parameter(MatrixType::kFloat);
     }
 
     Operator *AddGradOpProp::CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
@@ -96,10 +96,6 @@ namespace matrix {
             int idx = get<int>(param->args->at("input_idx"));
             outShape->reShape(*inShape.at(idx + 2));
         }
-    }
-
-    void AddGradOpProp::SwitchType(const MatrixType &type) {
-        param->type = type;
     }
 
     AddGradOpProp::~AddGradOpProp() {

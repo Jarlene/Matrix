@@ -60,7 +60,7 @@ namespace matrix {
 
 
     template <>
-    Operator* CreateOp<CPU>(ActivationParam &param, long *size) {
+    Operator* CreateOp<CPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new ActivationOp<DType, CPU>(param);
@@ -70,7 +70,7 @@ namespace matrix {
     }
 
     template <>
-    Operator* CreateOp<GPU>(ActivationParam &param, long *size) {
+    Operator* CreateOp<GPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new ActivationOp<DType, GPU>(param);
@@ -83,11 +83,11 @@ namespace matrix {
 
 
     ActivationOpProp::ActivationOpProp() {
-        param = new ActivationParam(kFloat);
+        param = new Parameter(kFloat);
     }
 
     ActivationOpProp::ActivationOpProp(const MatrixType &type) {
-        param = new ActivationParam(type);
+        param = new Parameter(type);
     }
 
     ActivationOpProp::~ActivationOpProp() {
@@ -110,7 +110,5 @@ namespace matrix {
         BIND_DISPATCH(CreateOp, *param, &memorySize);
     }
 
-    void ActivationOpProp::SwitchType(const MatrixType &type) {
-        this->param->type = type;
-    }
+
 }

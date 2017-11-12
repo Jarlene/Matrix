@@ -65,11 +65,11 @@ namespace matrix {
 
 
     ActivationOpGradProp::ActivationOpGradProp() {
-        param = new ActivationGradParam(kFloat);
+        param = new Parameter(kFloat);
     }
 
     ActivationOpGradProp::ActivationOpGradProp(const MatrixType &type) {
-        param = new ActivationGradParam(type);
+        param = new Parameter(type);
     }
 
     ActivationOpGradProp::~ActivationOpGradProp() {
@@ -83,7 +83,7 @@ namespace matrix {
 
 
     template <>
-    Operator* CreateOp<CPU>(ActivationGradParam &param, long *size) {
+    Operator* CreateOp<CPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new ActivationGradOp<DType, CPU>(param);
@@ -93,7 +93,7 @@ namespace matrix {
     }
 
     template <>
-    Operator* CreateOp<GPU>(ActivationGradParam &param, long *size) {
+    Operator* CreateOp<GPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new ActivationGradOp<DType, GPU>(param);
@@ -115,8 +115,6 @@ namespace matrix {
         BIND_DISPATCH(CreateOp, *param, &memorySize);
     }
 
-    void ActivationOpGradProp::SwitchType(const MatrixType &type) {
-        param->type = type;
-    }
+
 
 }

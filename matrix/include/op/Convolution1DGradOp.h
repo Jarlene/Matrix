@@ -8,11 +8,7 @@
 #include "Operator.h"
 namespace matrix {
 
-    struct Convolution1DGradParam : public Parameter {
-        Convolution1DGradParam(MatrixType matrixType) : Parameter(matrixType) {
 
-        }
-    };
 
 
 
@@ -24,22 +20,11 @@ namespace matrix {
     };
 
 
-    template <typename Context>
-    Operator* CreateOp(Convolution1DGradParam &param, long *size);
 
 
     class Convolution1DGradOpProp : public OperatorProperty {
-    public:
-        Convolution1DGradOpProp();
-        Convolution1DGradOpProp(const MatrixType &type);
-        ~Convolution1DGradOpProp();
-        virtual void InferShape(std::vector<Shape*> &inShape, Shape *outShape);
-        virtual Operator* CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
-                                         std::vector<Shape*> &inShape, Shape *outShape,
-                                         std::map<std::string, Any> &args)  ;
-        virtual void SwitchType(const MatrixType &type);
-    private:
-        Convolution1DGradParam* param;
+    INIT_OPERATOR_PROPERTY(Convolution1DGradOpProp)
+
     };
 
 }

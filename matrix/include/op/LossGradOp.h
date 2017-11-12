@@ -10,11 +10,7 @@
 
 namespace matrix {
 
-    struct LossGradParam : public Parameter {
-        LossGradParam(MatrixType matrixType) : Parameter(matrixType) {
 
-        };
-    };
 
     template <class T, class Context>
     class LossGradOp : public Operator{
@@ -23,22 +19,11 @@ namespace matrix {
         INPUT_TAG(DATA, LABEL);
     };
 
-    template <typename Context>
-    Operator* CreateOp(LossGradParam &param, long *size);
 
 
     class LossGradOpProp : public OperatorProperty {
-    public:
-        LossGradOpProp();
-        LossGradOpProp(const MatrixType &type);
-        ~LossGradOpProp();
-        virtual void InferShape(std::vector<Shape*> &inShape, Shape *outShape);
-        virtual Operator* CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
-                                         std::vector<Shape*> &inShape, Shape *outShape,
-                                         std::map<std::string, Any> &args)  ;
-        virtual void SwitchType(const MatrixType &type);
-    private:
-        LossGradParam* param;
+    INIT_OPERATOR_PROPERTY(LossGradOpProp)
+
     };
 }
 

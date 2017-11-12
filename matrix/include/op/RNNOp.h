@@ -10,9 +10,7 @@
 
 namespace matrix {
 
-    struct RNNParam : public Parameter {
-        RNNParam(MatrixType matrixType) : Parameter(matrixType) {};
-    };
+
     
     template <class T, class Context>
     class RNNOp : public Operator {
@@ -27,22 +25,10 @@ namespace matrix {
 
     };
 
-    template <typename Context>
-    Operator* CreateOp(RNNParam &param, long *size);
 
 
     class RNNOpProp : public OperatorProperty {
-    public:
-        RNNOpProp();
-        RNNOpProp(const MatrixType &type);
-        ~RNNOpProp();
-        virtual void InferShape(std::vector<Shape*> &inShape, Shape *outShape);
-        virtual Operator* CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
-                                         std::vector<Shape*> &inShape, Shape *outShape,
-                                         std::map<std::string, Any> &args)  ;
-        virtual void SwitchType(const MatrixType &type);
-    private:
-        RNNParam* param;
+    INIT_OPERATOR_PROPERTY(RNNOpProp)
     };
 }
 

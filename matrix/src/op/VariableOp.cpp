@@ -53,7 +53,7 @@ namespace matrix {
     }
 
     template <>
-    Operator* CreateOp<CPU>(VariableParam &param, long *size) {
+    Operator* CreateOp<CPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new VariableOp<DType, CPU>(param);
@@ -63,7 +63,7 @@ namespace matrix {
     }
 
     template <>
-    Operator* CreateOp<GPU>(VariableParam &param, long *size) {
+    Operator* CreateOp<GPU>(Parameter &param, long *size) {
         Operator *op = nullptr;
         TYPE_SWITCH(param.type, DType, {
             op = new VariableOp<DType, GPU>(param);
@@ -75,11 +75,11 @@ namespace matrix {
 
 
     VariableOpProp::VariableOpProp() {
-        param = new VariableParam(kFloat);
+        param = new Parameter(kFloat);
     }
 
     VariableOpProp::VariableOpProp(const MatrixType &type) {
-        param = new VariableParam(type);
+        param = new Parameter(type);
     }
 
     VariableOpProp::~VariableOpProp() {
@@ -103,7 +103,5 @@ namespace matrix {
         param->outShapes = outShape;
         BIND_DISPATCH(CreateOp, *param, &memorySize);
     }
-    void VariableOpProp::SwitchType(const MatrixType &type) {
-        param->type = type;
-    }
+
 }
