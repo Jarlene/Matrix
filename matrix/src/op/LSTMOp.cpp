@@ -41,27 +41,6 @@ namespace matrix {
 
 
 
-    template <>
-    Operator* CreateOp<CPU>(Parameter &param, long *size) {
-        Operator *op = nullptr;
-        TYPE_SWITCH(param.type, DType, {
-            op = new LSTMOp<DType, CPU>(param);
-            *size = sizeof(DType) * param.outShapes->Size();
-        })
-        return op;
-    }
-
-    template <>
-    Operator* CreateOp<GPU>(Parameter &param, long *size) {
-        Operator *op = nullptr;
-        TYPE_SWITCH(param.type, DType, {
-            op = new LSTMOp<DType, GPU>(param);
-            *size = sizeof(DType) * param.outShapes->Size();
-        })
-        return op;
-    }
-
-
     LSTMOpProp::LSTMOpProp() {
         param = new Parameter(kFloat);
     }
@@ -87,7 +66,9 @@ namespace matrix {
         InferShape(inShape, outShape);
         param->inputShapes = inShape;
         param->outShapes = outShape;
-        BIND_DISPATCH(CreateOp, *param, &memorySize);
+        CREATE_OPERATOR(param, LSTMOp, {
+            memorySize = sizeof(DType) * param->outShapes->Size();
+        })
     }
 
 

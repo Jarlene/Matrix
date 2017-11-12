@@ -40,25 +40,7 @@ namespace matrix {
     }
 
 
-    template <>
-    Operator* CreateOp<CPU>(Parameter &param, long* size) {
-        Operator *op = nullptr;
-        TYPE_SWITCH(param.type, DType, {
-            op = new FlattenOp<DType, CPU>(param);
-            *size = 0;
-        })
-        return op;
-    }
 
-    template <>
-    Operator* CreateOp<GPU>(Parameter &param, long *size) {
-        Operator *op = nullptr;
-        TYPE_SWITCH(param.type, DType, {
-            op = new FlattenOp<DType, GPU>(param);
-            *size = 0;
-        })
-        return op;
-    }
 
     FlattenOpProp::FlattenOpProp() {
         param = new Parameter(kFloat);
@@ -85,7 +67,7 @@ namespace matrix {
         InferShape(inShape, outShape);
         param->inputShapes = inShape;
         param->outShapes = outShape;
-        BIND_DISPATCH(CreateOp, *param, &memorySize);
+        CREATE_OPERATOR(param, FlattenOp)
     }
 
 }

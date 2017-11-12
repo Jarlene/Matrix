@@ -49,33 +49,24 @@ namespace matrix {
 
 
 
-
-    template <>
-    Operator* CreateOp<CPU>(Parameter &param, long *size) {
-        Operator *op = nullptr;
-        TYPE_SWITCH(param.type, DType, {
-            op = new AddGradOp<DType, CPU>(param);
-            *size = sizeof(DType) * param.outShapes->Size();
-        })
-        return op;
-    }
-
-    template <>
-    Operator* CreateOp<GPU>(Parameter &param, long *size) {
-        Operator *op = nullptr;
-        TYPE_SWITCH(param.type, DType, {
-            op = new AddGradOp<DType, GPU>(param);
-            *size = sizeof(DType) * param.outShapes->Size();
-        })
-        return op;
-    }
-
     AddGradOpProp::AddGradOpProp(const MatrixType &type)  {
         param = new Parameter(type);
     }
 
     AddGradOpProp::AddGradOpProp() {
         param = new Parameter(MatrixType::kFloat);
+    }
+
+
+    void AddGradOpProp::InferShape(std::vector<Shape*> &inShape, Shape *outShape) {
+        if (param->args->count("input_idx")) {
+            int idx = get<int>(param->args->at("input_idx"));
+            outShape->reShape(*inShape.at(idx + 2));
+        }
+    }
+
+    AddGradOpProp::~AddGradOpProp() {
+        delete param;
     }
 
     Operator *AddGradOpProp::CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
@@ -88,18 +79,11 @@ namespace matrix {
         InferShape(inShape, outShape);
         param->inputShapes = inShape;
         param->outShapes = outShape;
-        BIND_DISPATCH(CreateOp, *param, &memorySize);
+        CREATE_OPERATOR(param, AddGradOp, {
+            memorySize = sizeof(DType) * param->outShapes->Size();
+        })
     }
 
-    void AddGradOpProp::InferShape(std::vector<Shape*> &inShape, Shape *outShape) {
-        if (param->args->count("input_idx")) {
-            int idx = get<int>(param->args->at("input_idx"));
-            outShape->reShape(*inShape.at(idx + 2));
-        }
-    }
 
-    AddGradOpProp::~AddGradOpProp() {
-        delete param;
-    }
 
 }

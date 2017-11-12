@@ -62,25 +62,6 @@ namespace matrix {
 
 
 
-    template <>
-    Operator* CreateOp<CPU>(Parameter &param, long *size) {
-        Operator *op = nullptr;
-        TYPE_SWITCH(param.type, DType, {
-            op = new AccuracyOp<DType, CPU>(param);
-            *size = sizeof(DType) * param.outShapes->Size();
-        })
-        return op;
-    }
-
-    template <>
-    Operator* CreateOp<GPU>(Parameter &param, long *size) {
-        Operator *op = nullptr;
-        TYPE_SWITCH(param.type, DType, {
-            op = new AccuracyOp<DType, GPU>(param);
-            *size = sizeof(DType) * param.outShapes->Size();
-        })
-        return op;
-    }
 
     AccuracyOpProp::AccuracyOpProp()  {
         param = new Parameter(MatrixType::kFloat);
@@ -111,7 +92,9 @@ namespace matrix {
         InferShape(inShape, outShape);
         param->inputShapes = inShape;
         param->outShapes = outShape;
-        BIND_DISPATCH(CreateOp, *param, &memorySize);
+        CREATE_OPERATOR(param, AccuracyOp, {
+            memorySize = sizeof(DType) * param->outShapes->Size();
+        })
     }
 
 }

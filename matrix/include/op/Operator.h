@@ -17,6 +17,10 @@
 #include "matrix/include/utils/ProduceShape.h"
 
 
+
+
+
+
 #define INIT_OPERATOR_PROPERTY(classname) \
 public: \
    classname(); \
@@ -95,6 +99,16 @@ private:                                                            \
                Logger::Global()->Fatal("switch type error %d\n", type); \
                break;       \
      }                          \
+
+
+
+#define CREATE_OPERATOR(param, name, ...) \
+   Operator *op = nullptr;  \
+   TYPE_SWITCH(param->type, DType, {  \
+      op = new name<DType, CPU>(*param); \
+      {__VA_ARGS__} \
+   }) \
+   return op; \
 
 namespace matrix {
 
@@ -232,8 +246,6 @@ namespace matrix {
         Parameter * param;
     };
 
-    template <typename xpu>
-    extern Operator* CreateOp(Parameter &param, long *size);
 }
 
 

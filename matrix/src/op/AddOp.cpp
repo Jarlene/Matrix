@@ -49,27 +49,6 @@ namespace matrix {
 
 
 
-
-    template <>
-    Operator* CreateOp<CPU>(Parameter &param, long *size) {
-        Operator *op = nullptr;
-        TYPE_SWITCH(param.type, DType, {
-            op = new AddOp<DType, CPU>(param);
-            *size = sizeof(DType) * param.outShapes->Size();
-        })
-        return op;
-    }
-
-    template <>
-    Operator* CreateOp<GPU>(Parameter &param, long *size) {
-        Operator *op = nullptr;
-        TYPE_SWITCH(param.type, DType, {
-            op = new AddOp<DType, GPU>(param);
-            *size = sizeof(DType) * param.outShapes->Size();
-        })
-        return op;
-    }
-
     AddOpProp::AddOpProp(const MatrixType &type)  {
         param = new Parameter(type);
     }
@@ -87,7 +66,9 @@ namespace matrix {
         InferShape(inShape, outShape);
         param->inputShapes = inShape;
         param->outShapes = outShape;
-        BIND_DISPATCH(CreateOp, *param, &memorySize);
+        CREATE_OPERATOR(param, AddOp, {
+            memorySize = sizeof(DType) * param->outShapes->Size();
+        })
     }
 
     void AddOpProp::InferShape(std::vector<Shape*> &inShape, Shape *outShape) {

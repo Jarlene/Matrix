@@ -55,26 +55,6 @@ namespace matrix {
 
 
 
-    template <>
-    Operator* CreateOp<CPU>(Parameter &param, long *size) {
-        Operator *op = nullptr;
-        TYPE_SWITCH(param.type, DType, {
-            op = new LossOp<DType, CPU>(param);
-            *size = sizeof(DType) * param.outShapes->Size();
-        })
-        return op;
-    }
-
-    template <>
-    Operator* CreateOp<GPU>(Parameter &param, long *size) {
-        Operator *op = nullptr;
-        TYPE_SWITCH(param.type, DType, {
-            op = new LossOp<DType, GPU>(param);
-            *size = sizeof(DType) * param.outShapes->Size();
-        })
-        return op;
-    }
-
 
 
     LossOpProp::LossOpProp() {
@@ -103,7 +83,9 @@ namespace matrix {
         InferShape(inShape, outShape);
         param->inputShapes = inShape;
         param->outShapes = outShape;
-        BIND_DISPATCH(CreateOp, *param, &memorySize);
+        CREATE_OPERATOR(param, LossOp, {
+            memorySize = sizeof(DType) * param->outShapes->Size();
+        })
     }
 
 

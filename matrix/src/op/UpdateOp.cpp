@@ -45,25 +45,6 @@ namespace matrix {
 
 
 
-
-    template <>
-    Operator* CreateOp<CPU>(Parameter &param, long *size) {
-        Operator *op = nullptr;
-        TYPE_SWITCH(param.type, DType, {
-            op = new UpdateOp<DType, CPU>(param);
-        })
-        return op;
-    }
-
-    template <>
-    Operator* CreateOp<GPU>(Parameter &param, long *size) {
-        Operator *op = nullptr;
-        TYPE_SWITCH(param.type, DType, {
-            op = new UpdateOp<DType, GPU>(param);
-        })
-        return op;
-    }
-
     UpdateOpProp::~UpdateOpProp() {
         delete param;
     }
@@ -88,7 +69,8 @@ namespace matrix {
         InferShape(inShape, outShape);
         param->inputShapes = inShape;
         param->outShapes = outShape;
-        BIND_DISPATCH(CreateOp, *param, &memorySize);
+
+        CREATE_OPERATOR(param, UpdateOp)
     }
 
 

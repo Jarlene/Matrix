@@ -38,23 +38,6 @@ namespace matrix {
     }
 
 
-    template <>
-    Operator* CreateOp<CPU>(Parameter &param, long* size) {
-        Operator *op = nullptr;
-        TYPE_SWITCH(param.type, DType, {
-            op = new FlattenGradOp<DType, CPU>(param);
-        })
-        return op;
-    }
-
-    template <>
-    Operator* CreateOp<GPU>(Parameter &param, long *size) {
-        Operator *op = nullptr;
-        TYPE_SWITCH(param.type, DType, {
-            op = new FlattenGradOp<DType, GPU>(param);
-        })
-        return op;
-    }
 
     FlattenGradOpProp::FlattenGradOpProp() {
         param = new Parameter(kFloat);
@@ -81,7 +64,8 @@ namespace matrix {
         InferShape(inShape, outShape);
         param->inputShapes = inShape;
         param->outShapes = outShape;
-        BIND_DISPATCH(CreateOp, *param, &memorySize);
+        CREATE_OPERATOR(param, FlattenGradOp)
+
     }
 
 

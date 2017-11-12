@@ -2,17 +2,19 @@
 // Created by Jarlene on 2017/7/25.
 //
 
-#include <eigen3/Eigen/Dense>
 #include <iostream>
 #include <matrix/include/base/Tensor.h>
 #include <matrix/include/utils/Optional.h>
+#ifdef USE_EIGEN
+#include <eigen3/Eigen/Dense>
 using Eigen::MatrixXd;
 using namespace Eigen;
+#endif
 using namespace matrix;
 using namespace std;
 
 int main() {
-
+#ifdef USE_EIGEN
     //数组转矩阵
     float *aMat = new float[20];
     for (int i = 0; i < 20; i++) {
@@ -49,6 +51,7 @@ int main() {
     auto A = TensorN(a,2,3);
     auto B = TensorN(b,3,2);
 //    A.print();
+#endif
     return 0;
 
 }
