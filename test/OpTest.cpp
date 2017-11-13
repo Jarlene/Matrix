@@ -24,12 +24,11 @@ namespace matrix {
             context.type = kFloat;
             Shape shape = ShapeN(5, 4);
             float *result = static_cast<float *>(malloc(sizeof(float) * shape.Size()));
-            Blob blob(result);
-            std::vector<Blob *> inputs;
+            std::vector<void *> inputs;
             std::vector<Shape *> inShape;
             std::map<std::string, Any> params;
             params["isTrain"] = true;
-            Operator *op = pro->CreateOperator(context, inputs, &blob, inShape, &shape, params);
+            Operator *op = pro->CreateOperator(context, inputs, result, inShape, &shape, params);
             op->AsyncRun();
             PrintMat(result, shape[0], shape[1], "variable");
             delete result;
@@ -48,13 +47,9 @@ namespace matrix {
             context.mode = RunMode::kCpu;
             context.phase = Phase::TEST;
             Shape shape = ShapeN(2, 3);
-            std::vector<Blob *> inputs;
-            std::vector<Blob *> outputs;
-            Blob ablob(a);
-            inputs.push_back(&ablob);
-            Blob bblob(b);
-            inputs.push_back(&bblob);
-            Blob resblob(res);
+            std::vector<void *> inputs;
+            inputs.push_back(a);
+            inputs.push_back(b);
 
             std::vector<Shape *> inShape;
             inShape.push_back(&shape);
@@ -62,7 +57,7 @@ namespace matrix {
 
             std::map<std::string, Any> params;
 
-            Operator *op = pro->CreateOperator(context, inputs, &resblob, inShape, &shape, params);
+            Operator *op = pro->CreateOperator(context, inputs, res, inShape, &shape, params);
 
             op->AsyncRun();
             int dim = shape.Size();
@@ -82,12 +77,11 @@ namespace matrix {
             context.mode = RunMode::kCpu;
             context.phase = Phase::TEST;
 
-            std::vector<Blob *> inputs;
-            Blob ablob(a);
-            Blob bblob(b);
+            std::vector<void *> inputs;
 
-            inputs.push_back(&ablob);
-            inputs.push_back(&bblob);
+
+            inputs.push_back(a);
+            inputs.push_back(b);
 
             std::vector<Shape *> inShape;
             Shape in1 = ShapeN(2, 3);
@@ -97,8 +91,7 @@ namespace matrix {
 
             std::map<std::string, Any> params;
             Shape out;
-            Blob cblob(c);
-            Operator *op = pro->CreateOperator(context, inputs, &cblob, inShape, &out, params);
+            Operator *op = pro->CreateOperator(context, inputs, c, inShape, &out, params);
 
             op->AsyncRun();
             PrintMat(c, out[0], out[1], "mul");
@@ -120,16 +113,12 @@ namespace matrix {
             context.mode = RunMode::kCpu;
             context.phase = Phase::TEST;
 
-            std::vector<Blob *> inputs;
+            std::vector<void *> inputs;
 
-            Blob ablob(a);
-            Blob bblob(b);
-            Blob cblob(c);
-            inputs.push_back(&ablob);
-            inputs.push_back(&bblob);
-            inputs.push_back(&cblob);
+            inputs.push_back(a);
+            inputs.push_back(b);
+            inputs.push_back(c);
 
-            Blob resblob(res);
 
             std::vector<Shape *> inShape;
 
@@ -144,7 +133,7 @@ namespace matrix {
 
             std::map<std::string, Any> params;
 
-            Operator *op = pro->CreateOperator(context, inputs, &resblob, inShape, &out, params);
+            Operator *op = pro->CreateOperator(context, inputs, res, inShape, &out, params);
 
             op->AsyncRun();
             int dim = out.Size();
@@ -173,18 +162,13 @@ namespace matrix {
             Context context;
             context.mode = RunMode::kCpu;
             context.phase = Phase::TEST;
-            std::vector<Blob *> inputs;
-            Blob pre_grad_blob(pre_grad);
-            Blob out_blob(outdata);
-            Blob data_blob(data);
-            Blob weight_blob(weight);
-            Blob bias_blob(bias);
+            std::vector<void *> inputs;
 
-            inputs.push_back(&pre_grad_blob);
-            inputs.push_back(&out_blob);
-            inputs.push_back(&data_blob);
-            inputs.push_back(&weight_blob);
-            inputs.push_back(&bias_blob);
+            inputs.push_back(pre_grad);
+            inputs.push_back(outdata);
+            inputs.push_back(data);
+            inputs.push_back(weight);
+            inputs.push_back(bias);
 
 
             std::vector<Shape *> inShape;
@@ -211,8 +195,7 @@ namespace matrix {
                                 11, 26,
                                 11, 23,
                                 15, 30};
-                Blob resblob(target);
-                Operator *op = pro->CreateOperator(context, inputs, &resblob, inShape, &out, params);
+                Operator *op = pro->CreateOperator(context, inputs, &target, inShape, &out, params);
                 op->AsyncRun();
                 PrintMat(target, 4, 2, "data_grad");
                 checkArrayEqual(res, target, out.Size());
@@ -220,16 +203,14 @@ namespace matrix {
                 float target[6] = {0};
                 float res[6] = {37, 17, 22,
                                 46, 22, 28};
-                Blob resblob(target);
-                Operator *op = pro->CreateOperator(context, inputs, &resblob, inShape, &out, params);
+                Operator *op = pro->CreateOperator(context, inputs, &target, inShape, &out, params);
                 op->AsyncRun();
                 PrintMat(target, 2, 3, "weight_grad");
                 checkArrayEqual(res, target, out.Size());
             } else if (index == 2) {
                 float target[4] = {0};
                 float res[4] = {6, 5, 4, 5};
-                Blob resblob(target);
-                Operator *op = pro->CreateOperator(context, inputs, &resblob, inShape, &out, params);
+                Operator *op = pro->CreateOperator(context, inputs, &target, inShape, &out, params);
                 op->AsyncRun();
                 PrintMat(target, 4, 1, "bias_grad");
                 checkArrayEqual(res, target, out.Size());
@@ -268,18 +249,14 @@ namespace matrix {
             context.mode = RunMode::kCpu;
             context.phase = Phase::TEST;
 
-            std::vector<Blob *> inputs;
+            std::vector<void *> inputs;
 
 
-            Blob data(a);
-            Blob weight(kernel);
-            Blob bias(b);
 
-            inputs.push_back(&data);
-            inputs.push_back(&weight);
-            inputs.push_back(&bias);
+            inputs.push_back(a);
+            inputs.push_back(kernel);
+            inputs.push_back(b);
 
-            Blob outBlob(res);
 
             std::vector<Shape *> inShape;
             Shape out = ShapeN(2, 2);
@@ -295,7 +272,7 @@ namespace matrix {
 //            params["filter"] = in2;
 //            params["bias"] = true;
 
-            Operator *op = pro->CreateOperator(context, inputs, &outBlob, inShape, &out, params);
+            Operator *op = pro->CreateOperator(context, inputs, res, inShape, &out, params);
 
             op->AsyncRun();
             int dim = out.Size();
@@ -340,21 +317,13 @@ namespace matrix {
             context.mode = RunMode::kCpu;
             context.phase = Phase::TEST;
 
-            std::vector<Blob *> inputs;
+            std::vector<void *> inputs;
 
-
-            Blob preGrad(pre_grad);
-            Blob selfOut(data);
-            Blob inputData(inputdata);
-            Blob weight(kernel);
-            Blob bias(b);
-
-
-            inputs.push_back(&preGrad);
-            inputs.push_back(&selfOut);
-            inputs.push_back(&inputData);
-            inputs.push_back(&weight);
-            inputs.push_back(&bias);
+            inputs.push_back(pre_grad);
+            inputs.push_back(data);
+            inputs.push_back(inputdata);
+            inputs.push_back(kernel);
+            inputs.push_back(b);
 
             std::vector<Shape *> inShape;
 
@@ -376,8 +345,7 @@ namespace matrix {
 
             params["input_idx"] = inputIdx;
             if (inputIdx == 0) {
-                Blob outBlob(input_grad);
-                Operator *op = pro->CreateOperator(context, inputs, &outBlob, inShape, &out, params);
+                Operator *op = pro->CreateOperator(context, inputs, input_grad, inShape, &out, params);
                 op->AsyncRun();
                 int dim = out.Size();
                 float target[25] = {1, 2, 3, 2, 1,
@@ -388,8 +356,7 @@ namespace matrix {
                 checkArrayEqual<float>(target, input_grad, dim);
                 PrintMat(input_grad, inshape[2], inshape[3], "input_grad");
             } else if (inputIdx == 1) {
-                Blob outBlob(filter_grad);
-                Operator *op = pro->CreateOperator(context, inputs, &outBlob, inShape, &out, params);
+                Operator *op = pro->CreateOperator(context, inputs, filter_grad, inShape, &out, params);
                 op->AsyncRun();
                 int dim = out.Size();
                 float target[9] = {5, 6, 6,
@@ -398,8 +365,7 @@ namespace matrix {
                 checkArrayEqual<float>(filter_grad, target, dim);
                 PrintMat(filter_grad, k[0], k[1], "input_filter");
             } else if (inputIdx == 2) {
-                Blob outBlob(bias_grad);
-                Operator *op = pro->CreateOperator(context, inputs, &outBlob, inShape, &out, params);
+                Operator *op = pro->CreateOperator(context, inputs, bias_grad, inShape, &out, params);
                 op->AsyncRun();
                 int dim = out.Size();
                 checkArrayEqual<float>(bias_grad, pre_grad, dim);
@@ -435,12 +401,9 @@ namespace matrix {
             params["filter"] = ShapeN(2, 2);
             params["type"] = PoolType::kAvg;
 
-            Blob blobIn(a);
-            Blob blobOut(b);
-
-            std::vector<Blob *> inputs;
-            inputs.push_back(&blobIn);
-            Operator *op = pro->CreateOperator(context, inputs, &blobOut, inShape, &out, params);
+            std::vector<void *> inputs;
+            inputs.push_back(a);
+            Operator *op = pro->CreateOperator(context, inputs, b, inShape, &out, params);
             op->AsyncRun();
             int dim = out.Size();
 
@@ -492,15 +455,10 @@ namespace matrix {
 
             auto pro = Registry::Global()->GetOp("grad_pooling");
 
-            std::vector<Blob *> inputs;
-            Blob pre(pre_grad);
-            Blob outB(out);
-            Blob inB(input);
-            inputs.push_back(&pre);
-            inputs.push_back(&outB);
-            inputs.push_back(&inB);
-
-            Blob blobOut(b);
+            std::vector<void *> inputs;
+            inputs.push_back(pre_grad);
+            inputs.push_back(out);
+            inputs.push_back(input);
 
             std::vector<Shape *> inShape;
             auto preShape = ShapeN(1, 1, 3, 3);
@@ -512,7 +470,7 @@ namespace matrix {
 
             Shape out_Shape;
 
-            Operator *op = pro->CreateOperator(context, inputs, &blobOut, inShape, &out_Shape, params);
+            Operator *op = pro->CreateOperator(context, inputs, b, inShape, &out_Shape, params);
             op->AsyncRun();
             int dim = out_Shape.Size();
             if (get<PoolType>(params["type"]) == kMax) {
@@ -536,15 +494,14 @@ namespace matrix {
         TEST_F(OpTest, ActivationOp) {
             float a[] = {1, 2, 3, 4, 5, 6};
             float b[6] = {0};
-            Blob in(a);
             Shape in_shape = ShapeN(3,2);
 
             Context context;
             context.mode = RunMode::kCpu;
             context.phase = Phase::TEST;
 
-            std::vector<Blob *> inputs;
-            inputs.push_back(&in);
+            std::vector<void *> inputs;
+            inputs.push_back(a);
             std::vector<Shape *> inShape;
             inShape.push_back(&in_shape);
             OpPtr pro = Registry::Global()->GetOp("activation");
@@ -553,8 +510,7 @@ namespace matrix {
             ActType type = kRelu;
             params["type"] = type;
             Shape out;
-            Blob outblob(b);
-            Operator *op = pro->CreateOperator(context, inputs, &outblob, inShape, &out, params);
+            Operator *op = pro->CreateOperator(context, inputs, b, inShape, &out, params);
             op->AsyncRun();
 
             switch (type) {
@@ -600,13 +556,10 @@ namespace matrix {
             context.mode = RunMode::kCpu;
             context.phase = Phase::TEST;
 
-            Blob in(a);
-            Blob pre(pre_grad);
-            Blob outBlob(b);
-            std::vector<Blob *> inputs;
-            inputs.push_back(&pre);
-            inputs.push_back(&outBlob);
-            inputs.push_back(&in);
+            std::vector<void *> inputs;
+            inputs.push_back(a);
+            inputs.push_back(pre_grad);
+            inputs.push_back(b);
 
             Shape pre_grad_shape = ShapeN(3, 2);
             Shape out_shape = ShapeN(3, 2);
@@ -623,8 +576,7 @@ namespace matrix {
             ActType type = kRelu;
             params["type"] = type;
             Shape out;
-            Blob outblob(c);
-            Operator *op = pro->CreateOperator(context, inputs, &outblob, inShape, &out, params);
+            Operator *op = pro->CreateOperator(context, inputs, c, inShape, &out, params);
             op->AsyncRun();
 
             switch (type) {
@@ -673,16 +625,11 @@ namespace matrix {
             context.mode = RunMode::kCpu;
             context.phase = Phase::TEST;
 
-
-            Blob input_blob(input);
-            Blob label_blob(label);
-
-            std::vector<Blob *> inputs;
-            inputs.push_back(&input_blob);
-            inputs.push_back(&label_blob);
+            std::vector<void *> inputs;
+            inputs.push_back(input);
+            inputs.push_back(label);
 
 
-            Blob outBlob(a);
 
             std::vector<Shape *> inShape;
             inShape.push_back(&input_shape);
@@ -694,7 +641,7 @@ namespace matrix {
             auto type = kCrossEntropy;
             params["type"] = type;
             Shape out;
-            Operator *op = pro->CreateOperator(context, inputs, &outBlob, inShape, &out, params);
+            Operator *op = pro->CreateOperator(context, inputs, a, inShape, &out, params);
             op->AsyncRun();
 
             PrintMat(a, 1, 1, "loss_out");
