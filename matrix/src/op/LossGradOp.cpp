@@ -72,7 +72,12 @@ namespace matrix {
 
     void LossGradOpProp::InferShape(std::vector<Shape*> &inShape, Shape *outShape) {
         assert(outShape != nullptr);
-        outShape->Append(1);
+        int idx = get<int>(param->args->at("input_idx"));
+        if (idx == 0) {
+            outShape->reShape(*inShape[2]);
+        } else if (idx == 1){
+            outShape->reShape(*inShape[3]);
+        }
     }
 
     Operator *LossGradOpProp::CreateOperator(Context context, std::vector<void *> &input, void *output,
