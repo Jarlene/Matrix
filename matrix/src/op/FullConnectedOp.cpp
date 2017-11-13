@@ -75,17 +75,6 @@ namespace matrix {
 
 
 
-    FullConnectedOpProp::FullConnectedOpProp() {
-        param = new Parameter(kFloat);
-    }
-
-    FullConnectedOpProp::FullConnectedOpProp(const MatrixType &type) {
-        param = new Parameter(type);
-    }
-
-    FullConnectedOpProp::~FullConnectedOpProp() {
-        delete param;
-    }
 
     void FullConnectedOpProp::InferShape(std::vector<Shape*> &inShape, Shape *outShape) {
         if (inShape.size() == 1) {
@@ -96,19 +85,7 @@ namespace matrix {
         ProduceMulOpShape(inShape, outShape);
     }
 
-    Operator *FullConnectedOpProp::CreateOperator(Context context, std::vector<void *> *input, void *output,
-                                                  std::vector<Shape *> *inShape, Shape *outShape,
-                                                  std::map<std::string, Any> &args) {
-        param->args = &args;
-        param->output = output;
-        InferShape(*inShape, outShape);
-        param->inputShapes = inShape;
-        param->inputs = input;
-        param->outShape = outShape;
-        CREATE_OPERATOR(context, param, FullConnectedOp, {
-            memorySize = sizeof(DType) * param->outShape->Size();
-        })
-    }
+    INIT_OPERATOR_PROPERTY_CREATE(FullConnectedOpProp, FullConnectedOp, true);
 
 
 }

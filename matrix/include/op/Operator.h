@@ -8,6 +8,7 @@
 #include <map>
 #include <vector>
 #include <initializer_list>
+#include "matrix/include/base/Blob.h"
 #include "matrix/include/utils/MathTensor.h"
 #include "matrix/include/api/MatrixType.h"
 #include "matrix/include/utils/Logger.h"
@@ -113,6 +114,34 @@ private:                                                            \
       {__VA_ARGS__} \
    }) \
    return op; \
+
+#define INIT_OPERATOR_PROPERTY_CREATE(classname, name, memory) \
+    classname::classname()  {  \
+        param = new Parameter(MatrixType::kFloat);\
+    }\
+    classname::classname(const MatrixType &type) { \
+        param = new Parameter(type); \
+    } \
+    classname::~classname() { \
+        delete param; \
+    }  \
+    Operator *classname::CreateOperator(Context context, std::vector<void*> *input, void *output, \
+                                    std::vector<Shape *> *inShape, Shape *outShape, \
+                                    std::map<std::string, Any> &args) { \
+        param->args = &args; \
+        param->output = output; \
+        InferShape(*inShape, outShape); \
+        param->inputShapes = inShape; \
+        param->inputs = input;\
+        param->outShape = outShape; \
+        CREATE_OPERATOR(context, param, name, { \
+            if (memory) { \
+                memorySize = sizeof(DType) * param->outShape->Size(); \
+            } else { \
+                memorySize = 0; \
+            }\
+        }) \
+    }\
 
 namespace matrix {
 
@@ -229,6 +258,12 @@ namespace matrix {
         OperatorProperty() = default;
         virtual void InferShape(std::vector<Shape*> &inShape, Shape *outShape)  = 0;
         virtual Operator* CreateOperator(Context context, std::vector<void *> *input, void *output,
+                                         std::vector<Shape *> *inShape, Shape *outShape,
+                                         std::map<std::string, Any> &args) {
+            return nullptr;
+        }
+
+        virtual Operator* CreateOperator(Context context, std::vector<Blob *> *input, Blob *output,
                                          std::vector<Shape *> *inShape, Shape *outShape,
                                          std::map<std::string, Any> &args) {
             return nullptr;

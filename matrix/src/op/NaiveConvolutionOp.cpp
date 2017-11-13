@@ -47,18 +47,6 @@ namespace matrix {
 
 
 
-    NaiveConvolutionOpProp::NaiveConvolutionOpProp() {
-        param = new Parameter(kFloat);
-    }
-
-    NaiveConvolutionOpProp::NaiveConvolutionOpProp(const MatrixType &type) {
-        param = new Parameter(type);
-    }
-
-    NaiveConvolutionOpProp::~NaiveConvolutionOpProp() {
-        delete param;
-    }
-
     void NaiveConvolutionOpProp::InferShape(std::vector<Shape *> &inShape, Shape *outShape) {
 
         Shape padding = ShapeN(0, 0);
@@ -122,19 +110,6 @@ namespace matrix {
 
     }
 
-    Operator *NaiveConvolutionOpProp::CreateOperator(Context context, std::vector<void *> *input, void *output,
-                                                     std::vector<Shape *> *inShape, Shape *outShape,
-                                                     std::map<std::string, Any> &args) {
-        param->args = &args;
-        param->output = output;
-        InferShape(*inShape, outShape);
-        param->inputShapes = inShape;
-        param->inputs = input;
-        param->outShape = outShape;
-        CREATE_OPERATOR(context, param, NaiveConvolutionOp, {
-            memorySize = sizeof(DType) * param->outShape->Size();
-        })
-    }
-
+    INIT_OPERATOR_PROPERTY_CREATE(NaiveConvolutionOpProp, NaiveConvolutionOp, true);
 
 }

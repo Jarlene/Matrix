@@ -52,35 +52,11 @@ namespace matrix {
 
 
 
-    OutputGradOpProp::OutputGradOpProp() {
-        param = new Parameter(kFloat);
-    }
-
-    OutputGradOpProp::OutputGradOpProp(const MatrixType &type) {
-        param = new Parameter(type);
-    }
-
-    OutputGradOpProp::~OutputGradOpProp() {
-        delete param;
-    }
-
     void OutputGradOpProp::InferShape(std::vector<Shape*> &inShape, Shape *outShape) {
         assert(outShape != nullptr);
         outShape->reShape(*inShape[0]);
     }
 
-    Operator *OutputGradOpProp::CreateOperator(Context context, std::vector<void *> *input, void *output,
-                                               std::vector<Shape *> *inShape, Shape *outShape,
-                                               std::map<std::string, Any> &args) {
-        param->args = &args;
-        param->output = output;
-        InferShape(*inShape, outShape);
-        param->inputShapes = inShape;
-        param->inputs = input;
-        param->outShape = outShape;
-        CREATE_OPERATOR(context, param, OutputGradOp, {
-            memorySize = sizeof(DType) * param->outShape->Size();
-        })
-    }
+    INIT_OPERATOR_PROPERTY_CREATE(OutputGradOpProp, OutputGradOp, true);
 
 }

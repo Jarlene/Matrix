@@ -49,13 +49,6 @@ namespace matrix {
 
 
 
-    AddGradOpProp::AddGradOpProp(const MatrixType &type)  {
-        param = new Parameter(type);
-    }
-
-    AddGradOpProp::AddGradOpProp() {
-        param = new Parameter(MatrixType::kFloat);
-    }
 
 
     void AddGradOpProp::InferShape(std::vector<Shape*> &inShape, Shape *outShape) {
@@ -65,24 +58,9 @@ namespace matrix {
         }
     }
 
-    AddGradOpProp::~AddGradOpProp() {
-        delete param;
-    }
 
-    Operator *AddGradOpProp::CreateOperator(Context context, std::vector<void *> *input, void *output,
-                                            std::vector<Shape *> *inShape, Shape *outShape,
-                                            std::map<std::string, Any> &args) {
-        // attention order
-        param->output = output;
-        param->args = &args;
-        InferShape(*inShape, outShape);
-        param->inputShapes = inShape;
-        param->inputs = input;
-        param->outShape = outShape;
-        CREATE_OPERATOR(context, param, AddGradOp, {
-            memorySize = sizeof(DType) * param->outShape->Size();
-        })
-    }
+
+    INIT_OPERATOR_PROPERTY_CREATE(AddGradOpProp, AddGradOp, true);
 
 
 

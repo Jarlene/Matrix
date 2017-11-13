@@ -155,17 +155,6 @@ namespace matrix {
     }
 
 
-    ConvolutionOpGradProp::ConvolutionOpGradProp() {
-        param = new Parameter(kFloat);
-    }
-
-    ConvolutionOpGradProp::ConvolutionOpGradProp(const MatrixType &type) {
-        param = new Parameter(type);
-    }
-
-    ConvolutionOpGradProp::~ConvolutionOpGradProp() {
-        delete param;
-    }
 
     void ConvolutionOpGradProp::InferShape(std::vector<Shape *> &inShape, Shape *outShape) {
         int index = get<int>(param->args->at("input_idx"));
@@ -191,20 +180,7 @@ namespace matrix {
         }
 
     }
-
-    Operator *ConvolutionOpGradProp::CreateOperator(Context context, std::vector<void *> *input, void *output,
-                                                    std::vector<Shape *> *inShape, Shape *outShape,
-                                                    std::map<std::string, Any> &args) {
-        param->args = &args;
-        param->output = output;
-        InferShape(*inShape, outShape);
-        param->inputShapes = inShape;
-        param->inputs = input;
-        param->outShape = outShape;
-        CREATE_OPERATOR(context, param, ConvolutionGradOp, {
-            memorySize = sizeof(DType) * param->outShape->Size();
-        })
-    }
+    INIT_OPERATOR_PROPERTY_CREATE(ConvolutionOpGradProp, ConvolutionGradOp, true);
 
 
 }

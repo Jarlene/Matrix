@@ -55,21 +55,6 @@ namespace matrix {
 
 
 
-
-
-
-    LossGradOpProp::LossGradOpProp() {
-        param = new Parameter(kFloat);
-    }
-
-    LossGradOpProp::LossGradOpProp(const MatrixType &type) {
-        param = new Parameter(type);
-    }
-
-    LossGradOpProp::~LossGradOpProp() {
-        delete param;
-    }
-
     void LossGradOpProp::InferShape(std::vector<Shape*> &inShape, Shape *outShape) {
         assert(outShape != nullptr);
         int idx = get<int>(param->args->at("input_idx"));
@@ -80,19 +65,6 @@ namespace matrix {
         }
     }
 
-    Operator *LossGradOpProp::CreateOperator(Context context, std::vector<void *> *input, void *output,
-                                             std::vector<Shape *> *inShape, Shape *outShape,
-                                             std::map<std::string, Any> &args) {
-        param->args = &args;
-        param->output = output;
-        InferShape(*inShape, outShape);
-        param->inputShapes = inShape;
-        param->inputs = input;
-        param->outShape = outShape;
-        CREATE_OPERATOR(context, param, LossGradOp, {
-            memorySize = sizeof(DType) * param->outShape->Size();
-        })
-    }
-
+    INIT_OPERATOR_PROPERTY_CREATE(LossGradOpProp, LossGradOp, true);
 
 }

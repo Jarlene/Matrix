@@ -39,34 +39,12 @@ namespace matrix {
 
 
 
-    FlattenGradOpProp::FlattenGradOpProp() {
-        param = new Parameter(kFloat);
-    }
-
-    FlattenGradOpProp::FlattenGradOpProp(const MatrixType &type) {
-        param = new Parameter(type);
-    }
-
-    FlattenGradOpProp::~FlattenGradOpProp() {
-        delete param;
-    }
 
     void FlattenGradOpProp::InferShape(std::vector<Shape *> &inShape, Shape *outShape) {
         outShape->reShape(ShapeN(inShape[0]->At(0), inShape[0]->StrideExclude(0)));
     }
 
-    Operator *FlattenGradOpProp::CreateOperator(Context context, std::vector<void *> *input, void *output,
-                                                std::vector<Shape *> *inShape, Shape *outShape,
-                                                std::map<std::string, Any> &args) {
-        param->args = &args;
-        param->output = output;
-        InferShape(*inShape, outShape);
-        param->inputShapes = inShape;
-        param->inputs = input;
-        param->outShape = outShape;
-        CREATE_OPERATOR(context, param, FlattenGradOp)
 
-    }
-
+    INIT_OPERATOR_PROPERTY_CREATE(FlattenGradOpProp, FlattenGradOp, false);
 
 }

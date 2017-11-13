@@ -61,41 +61,11 @@ namespace matrix {
 
 
 
-
-
-    AccuracyOpProp::AccuracyOpProp()  {
-        param = new Parameter(MatrixType::kFloat);
-
-    }
-
-    AccuracyOpProp::AccuracyOpProp(const MatrixType &type) {
-        param = new Parameter(type);
-    }
-
-    AccuracyOpProp::~AccuracyOpProp() {
-        delete param;
-    }
-
     void AccuracyOpProp::InferShape(std::vector<Shape*> &inShape, Shape *outShape) {
         if (outShape == nullptr) {
             Logger::Global()->Fatal("AccuracyOp  must has output shape. \n");
         }
         outShape->reShape(ShapeN(1));
     }
-
-    Operator *AccuracyOpProp::CreateOperator(Context context, std::vector<void *> *input, void *output,
-                                             std::vector<Shape *> *inShape, Shape *outShape,
-                                             std::map<std::string, Any> &args) {
-        param->args = &args;
-        param->output = output;
-        InferShape(*inShape, outShape);
-        param->inputShapes = inShape;
-        param->inputs = input;
-
-        param->outShape = outShape;
-        CREATE_OPERATOR(context, param, AccuracyOp, {
-            memorySize = sizeof(DType) * param->outShape->Size();
-        })
-    }
-
+    INIT_OPERATOR_PROPERTY_CREATE(AccuracyOpProp, AccuracyOp, true);
 }

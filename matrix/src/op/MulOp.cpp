@@ -44,38 +44,11 @@ namespace matrix {
 
 
 
-
-    MulOpProp::MulOpProp() {
-        param = new Parameter(kFloat);
-    }
-
-    MulOpProp::MulOpProp(const MatrixType &type) {
-        param = new Parameter(type);
-    }
-
-    MulOpProp::~MulOpProp() {
-        delete param;
-    }
-
     void MulOpProp::InferShape(std::vector<Shape*> &inShape, Shape *outShape) {
         assert(inShape.size() >= 2);
         assert(outShape != nullptr);
         ProduceMulOpShape(inShape, outShape);
     }
 
-    Operator *MulOpProp::CreateOperator(Context context, std::vector<void *> *input, void *output,
-                                        std::vector<Shape *> *inShape, Shape *outShape,
-                                        std::map<std::string, Any> &args) {
-        param->args = &args;
-        param->output = output;
-        InferShape(*inShape, outShape);
-        param->inputShapes = inShape;
-        param->inputs = input;
-        param->outShape = outShape;
-        CREATE_OPERATOR(context, param, MulOp, {
-            memorySize = sizeof(DType) * param->outShape->Size();
-        })
-    }
-
-
+    INIT_OPERATOR_PROPERTY_CREATE(MulOpProp, MulOp, true);
 }

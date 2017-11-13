@@ -53,35 +53,11 @@ namespace matrix {
     }
 
 
-
-    VariableOpProp::VariableOpProp() {
-        param = new Parameter(kFloat);
-    }
-
-    VariableOpProp::VariableOpProp(const MatrixType &type) {
-        param = new Parameter(type);
-    }
-
-    VariableOpProp::~VariableOpProp() {
-        delete param;
-    }
-
     void VariableOpProp::InferShape(std::vector<Shape*> &inShape, Shape* outShape) {
         if (outShape == nullptr) {
             Logger::Global()->Fatal("variable output shape must not null \n");
         }
     }
 
-    Operator *VariableOpProp::CreateOperator(Context context, std::vector<void *> *input, void *output,
-                                             std::vector<Shape *> *inShape, Shape *outShape,
-                                             std::map<std::string, Any> &args) {
-        param->args = &args;
-        param->output = output;
-        param->outShape = outShape;
-        param->outShape = outShape;
-        CREATE_OPERATOR(context, param, VariableOp, {
-            memorySize = sizeof(DType) * param->outShape->Size();
-        })
-    }
-
+    INIT_OPERATOR_PROPERTY_CREATE(VariableOpProp, VariableOp, true);
 }

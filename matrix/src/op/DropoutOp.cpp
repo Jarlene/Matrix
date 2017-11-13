@@ -34,36 +34,12 @@ namespace matrix {
 
 
 
-    DropoutOpProp::DropoutOpProp() {
-        param = new Parameter(kFloat);
-    }
-
-    DropoutOpProp::DropoutOpProp(const MatrixType &type) {
-        param = new Parameter(type);
-    }
-
-    DropoutOpProp::~DropoutOpProp() {
-        delete param;
-    }
 
     void DropoutOpProp::InferShape(std::vector<Shape*> &inShape, Shape* outShape) {
 
     }
 
-    Operator *DropoutOpProp::CreateOperator(Context context, std::vector<void *> *input, void *output,
-                                            std::vector<Shape *> *inShape, Shape *outShape,
-                                            std::map<std::string, Any> &args) {
-        param->args = &args;
-        param->output = output;
-        InferShape(*inShape, outShape);
-        param->inputShapes = inShape;
-        param->inputs = input;
-        param->outShape = outShape;
-
-        CREATE_OPERATOR(context, param, DropoutOp, {
-            memorySize = sizeof(DType) * param->outShape->Size();
-        })
-    }
+    INIT_OPERATOR_PROPERTY_CREATE(DropoutOpProp, DropoutOp, true);
 
 
 }

@@ -77,19 +77,6 @@ namespace matrix {
 
 
 
-
-    PoolingOpProp::PoolingOpProp() {
-        param = new Parameter(kFloat);
-    }
-
-    PoolingOpProp::PoolingOpProp(const MatrixType &type) {
-        param = new Parameter(type);
-    }
-
-    PoolingOpProp::~PoolingOpProp() {
-        delete param;
-    }
-
     void PoolingOpProp::InferShape(std::vector<Shape*> &inShape, Shape* outShape) {
         Shape padding = ShapeN(0, 0);
         Shape stride = ShapeN(1, 1);
@@ -122,19 +109,6 @@ namespace matrix {
         outShape->reShape(ShapeN(inShape[0]->At(0), inShape[0]->At(1), w, h));
     }
 
-    Operator *PoolingOpProp::CreateOperator(Context context, std::vector<void *> *input, void *output,
-                                            std::vector<Shape *> *inShape, Shape *outShape,
-                                            std::map<std::string, Any> &args) {
-        param->args = &args;
-        param->output = output;
-        InferShape(*inShape, outShape);
-        param->inputShapes = inShape;
-        param->inputs = input;
-        param->outShape = outShape;
-        CREATE_OPERATOR(context, param, PoolingOp, {
-            memorySize = sizeof(DType) * param->outShape->Size();
-        })
-    }
-
+    INIT_OPERATOR_PROPERTY_CREATE(PoolingOpProp, PoolingOp, true);
 
 }

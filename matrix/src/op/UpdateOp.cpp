@@ -44,34 +44,9 @@ namespace matrix {
     }
 
 
-
-    UpdateOpProp::~UpdateOpProp() {
-        delete param;
-    }
-
-    UpdateOpProp::UpdateOpProp(const MatrixType &type)  {
-        param = new Parameter(type);
-    }
-
-    UpdateOpProp::UpdateOpProp() {
-        param = new Parameter(MatrixType::kFloat);
-    }
-
     void UpdateOpProp::InferShape(std::vector<Shape*> &inShape, Shape* outShape) {
     }
 
-    Operator *UpdateOpProp::CreateOperator(Context context, std::vector<void *> *input, void *output,
-                                           std::vector<Shape *> *inShape, Shape *outShape,
-                                           std::map<std::string, Any> &args) {
-        param->args = &args;
-        param->output = output;
-        InferShape(*inShape, outShape);
-        param->inputShapes = inShape;
-        param->inputs = input;
-        param->outShape = outShape;
-        CREATE_OPERATOR(context, param, UpdateOp)
-    }
-
-
+    INIT_OPERATOR_PROPERTY_CREATE(UpdateOpProp, UpdateOp, true);
 
 }

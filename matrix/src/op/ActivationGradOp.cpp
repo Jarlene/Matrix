@@ -63,40 +63,13 @@ namespace matrix {
     }
 
 
-
-    ActivationOpGradProp::ActivationOpGradProp() {
-        param = new Parameter(kFloat);
-    }
-
-    ActivationOpGradProp::ActivationOpGradProp(const MatrixType &type) {
-        param = new Parameter(type);
-    }
-
-    ActivationOpGradProp::~ActivationOpGradProp() {
-        delete param;
-    }
-
     void ActivationOpGradProp::InferShape(std::vector<Shape*> &inShape, Shape* outShape) {
         assert(outShape != nullptr);
         outShape->reShape(*inShape[2]);
     }
 
 
-
-
-    Operator *ActivationOpGradProp::CreateOperator(Context context, std::vector<void *> *input, void *output,
-                                                   std::vector<Shape *> *inShape, Shape *outShape,
-                                                   std::map<std::string, Any> &args) {
-        param->args = &args;
-        param->output = output;
-        InferShape(*inShape, outShape);
-        param->inputShapes = inShape;
-        param->inputs = input;
-        param->outShape = outShape;
-        CREATE_OPERATOR(context, param, ActivationGradOp, {
-            memorySize = sizeof(DType) * param->outShape->Size();
-        })
-    }
+    INIT_OPERATOR_PROPERTY_CREATE(ActivationOpGradProp, ActivationGradOp, true);
 
 
 

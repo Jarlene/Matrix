@@ -49,39 +49,11 @@ namespace matrix {
 
 
 
-
-
-    OutputOpProp::OutputOpProp() {
-        param = new Parameter(kFloat);
-    }
-
-    OutputOpProp::OutputOpProp(const MatrixType &type) {
-        param = new Parameter(type);
-    }
-
-    OutputOpProp::~OutputOpProp() {
-        delete param;
-    }
-
     void OutputOpProp::InferShape(std::vector<Shape*> &inShape, Shape *outShape) {
         assert(outShape != nullptr);
         outShape->reShape(*inShape[0]);
     }
-
-    Operator *OutputOpProp::CreateOperator(Context context, std::vector<void *> *input, void *output,
-                                           std::vector<Shape *> *inShape, Shape *outShape,
-                                           std::map<std::string, Any> &args) {
-        param->args = &args;
-        param->output = output;
-        InferShape(*inShape, outShape);
-        param->inputShapes = inShape;
-        param->inputs = input;
-        param->outShape = outShape;
-        CREATE_OPERATOR(context, param, OutputOp, {
-            memorySize = sizeof(DType) * param->outShape->Size();
-        })
-    }
-
+    INIT_OPERATOR_PROPERTY_CREATE(OutputOpProp, OutputOp, true);
 
 
 }

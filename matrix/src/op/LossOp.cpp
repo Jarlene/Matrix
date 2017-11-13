@@ -53,40 +53,11 @@ namespace matrix {
     }
 
 
-
-
-
-
-    LossOpProp::LossOpProp() {
-        param = new Parameter(kFloat);
-    }
-
-    LossOpProp::LossOpProp(const MatrixType &type) {
-        param = new Parameter(type);
-    }
-
-    LossOpProp::~LossOpProp() {
-        delete param;
-    }
-
     void LossOpProp::InferShape(std::vector<Shape*> &inShape, Shape *outShape) {
         assert(outShape != nullptr);
         outShape->Append(1);
     }
 
-    Operator *LossOpProp::CreateOperator(Context context, std::vector<void *> *input, void *output,
-                                         std::vector<Shape *> *inShape, Shape *outShape,
-                                         std::map<std::string, Any> &args) {
-        param->args = &args;
-        param->output = output;
-        InferShape(*inShape, outShape);
-        param->inputShapes = inShape;
-        param->inputs = input;
-        param->outShape = outShape;
-        CREATE_OPERATOR(context, param, LossOp, {
-            memorySize = sizeof(DType) * param->outShape->Size();
-        })
-    }
-
+    INIT_OPERATOR_PROPERTY_CREATE(LossOpProp, LossOp, true);
 
 }

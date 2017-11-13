@@ -40,36 +40,10 @@ namespace matrix {
     }
 
 
-
-    LSTMOpProp::LSTMOpProp() {
-        param = new Parameter(kFloat);
-    }
-
-    LSTMOpProp::LSTMOpProp(const MatrixType &type) {
-        param = new Parameter(type);
-    }
-
-    LSTMOpProp::~LSTMOpProp() {
-        delete param;
-    }
-
     void LSTMOpProp::InferShape(std::vector<Shape*> &inShape, Shape *outShape) {
 
     }
 
-    Operator *LSTMOpProp::CreateOperator(Context context, std::vector<void *> *input, void *output,
-                                         std::vector<Shape *> *inShape, Shape *outShape,
-                                         std::map<std::string, Any> &args) {
-        param->args = &args;
-        param->output = output;
-        InferShape(*inShape, outShape);
-        param->inputShapes = inShape;
-        param->inputs = input;
-        param->outShape = outShape;
-        CREATE_OPERATOR(context, param, LSTMOp, {
-            memorySize = sizeof(DType) * param->outShape->Size();
-        })
-    }
-
+    INIT_OPERATOR_PROPERTY_CREATE(LSTMOpProp, LSTMOp, true);
 
 }

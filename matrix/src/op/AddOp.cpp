@@ -49,37 +49,12 @@ namespace matrix {
 
 
 
-    AddOpProp::AddOpProp(const MatrixType &type)  {
-        param = new Parameter(type);
-    }
-
-    AddOpProp::AddOpProp() {
-        param = new Parameter(MatrixType::kFloat);
-    }
 
     void AddOpProp::InferShape(std::vector<Shape*> &inShape, Shape *outShape) {
         outShape->reShape(*inShape.at(0));
     }
 
-    AddOpProp::~AddOpProp() {
-        delete param;
-    }
-
-    Operator *AddOpProp::CreateOperator(Context context, std::vector<void *> *input, void *output,
-                                        std::vector<Shape *> *inShape, Shape *outShape,
-                                        std::map<std::string, Any> &args) {
-        param->args = &args;
-        param->output = output;
-        InferShape(*inShape, outShape);
-        param->inputShapes = inShape;
-        param->inputs = input;
-        param->outShape = outShape;
-        CREATE_OPERATOR(context, param, AddOp, {
-            memorySize = sizeof(DType) * param->outShape->Size();
-        })
-    }
-
-
+    INIT_OPERATOR_PROPERTY_CREATE(AddOpProp, AddOp, true);
 
 
 

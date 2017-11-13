@@ -42,33 +42,12 @@ namespace matrix {
 
 
 
-    FlattenOpProp::FlattenOpProp() {
-        param = new Parameter(kFloat);
-    }
-
-    FlattenOpProp::FlattenOpProp(const MatrixType &type) {
-        param = new Parameter(type);
-    }
-
-    FlattenOpProp::~FlattenOpProp() {
-        delete param;
-    }
 
     void FlattenOpProp::InferShape(std::vector<Shape *> &inShape, Shape *outShape) {
         outShape->reShape(ShapeN(inShape[0]->At(0), inShape[0]->StrideExclude(0)));
     }
 
-    Operator *FlattenOpProp::CreateOperator(Context context, std::vector<void *> *input, void *output,
-                                            std::vector<Shape *> *inShape, Shape *outShape,
-                                            std::map<std::string, Any> &args) {
-        param->args = &args;
-        param->output = output;
-        InferShape(*inShape, outShape);
-        param->inputShapes = inShape;
-        param->inputs = input;
-        param->outShape = outShape;
-        CREATE_OPERATOR(context, param, FlattenOp)
-    }
+    INIT_OPERATOR_PROPERTY_CREATE(FlattenOpProp, FlattenOp, false);
 
 }
 

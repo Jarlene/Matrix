@@ -32,34 +32,11 @@ namespace matrix {
 
 
 
-    SubOpProp::SubOpProp() {
-        param = new Parameter(kFloat);
-    }
-
-    SubOpProp::SubOpProp(const MatrixType &type) {
-        param = new Parameter(type);
-    }
-
-    SubOpProp::~SubOpProp() {
-        delete param;
-    }
-
     void SubOpProp::InferShape(std::vector<Shape*> &inShape, Shape* outShape) {
 
     }
 
-    Operator *SubOpProp::CreateOperator(Context context, std::vector<void *> *input, void *output,
-                                        std::vector<Shape *> *inShape, Shape *outShape,
-                                        std::map<std::string, Any> &args) {
-        param->args = &args;
-        param->output = output;
-        InferShape(*inShape, outShape);
-        param->inputShapes = inShape;
-        param->inputs = input;
-        param->outShape = outShape;
-        CREATE_OPERATOR(context, param, SubOp, {
-            memorySize = sizeof(DType) * param->outShape->Size();
-        })
-    }
+
+    INIT_OPERATOR_PROPERTY_CREATE(SubOpProp, SubOp, true);
 
 }

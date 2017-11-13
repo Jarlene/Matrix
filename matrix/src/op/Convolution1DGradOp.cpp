@@ -42,36 +42,12 @@ namespace matrix {
 
 
 
-    Convolution1DGradOpProp::Convolution1DGradOpProp() {
-        param = new Parameter(kFloat);
-    }
-
-    Convolution1DGradOpProp::Convolution1DGradOpProp(const MatrixType &type) {
-        param = new Parameter(type);
-    }
-
-    Convolution1DGradOpProp::~Convolution1DGradOpProp() {
-        delete param;
-
-    }
-
     void Convolution1DGradOpProp::InferShape(std::vector<Shape *> &inShape, Shape *outShape) {
 
     }
 
-    Operator *Convolution1DGradOpProp::CreateOperator(Context context, std::vector<void *> *input, void *output,
-                                                      std::vector<Shape *> *inShape, Shape *outShape,
-                                                      std::map<std::string, Any> &args) {
-        param->args = &args;
-        param->output = output;
-        InferShape(*inShape, outShape);
-        param->inputShapes = inShape;
-        param->inputs = input;
-        param->outShape = outShape;
-        CREATE_OPERATOR(context, param, Convolution1DGradOp, {
-            memorySize = sizeof(DType) * param->outShape->Size();
-        })
-    }
+
+    INIT_OPERATOR_PROPERTY_CREATE(Convolution1DGradOpProp, Convolution1DGradOp, true);
 
 
 }

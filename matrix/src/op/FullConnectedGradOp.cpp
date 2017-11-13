@@ -64,18 +64,6 @@ namespace matrix {
 
 
 
-    FullConnectedGradOpProp::FullConnectedGradOpProp() {
-        param = new Parameter(kFloat);
-    }
-
-    FullConnectedGradOpProp::FullConnectedGradOpProp(const MatrixType &type) {
-        param = new Parameter(type);
-    }
-
-    FullConnectedGradOpProp::~FullConnectedGradOpProp() {
-        delete param;
-    }
-
     void FullConnectedGradOpProp::InferShape(std::vector<Shape*> &inShape, Shape *outShape) {
         if (param->args->count("input_idx")) {
             int idx = get<int>(param->args->at("input_idx"));
@@ -83,22 +71,7 @@ namespace matrix {
         }
 
     }
-
-    Operator *FullConnectedGradOpProp::CreateOperator(Context context, std::vector<void *> *input, void *output,
-                                                      std::vector<Shape *> *inShape, Shape *outShape,
-                                                      std::map<std::string, Any> &args) {
-
-        param->args = &args;
-        param->output = output;
-        InferShape(*inShape, outShape);
-        param->inputShapes = inShape;
-        param->inputs = input;
-        param->outShape = outShape;
-        CREATE_OPERATOR(context, param, FullConnectedGradOp, {
-            memorySize = sizeof(DType) * param->outShape->Size();
-        })
-    }
-
+    INIT_OPERATOR_PROPERTY_CREATE(FullConnectedGradOpProp, FullConnectedGradOp, true);
 
 
 }

@@ -167,17 +167,6 @@ namespace matrix {
     }
 
 
-    ConvolutionOpProp::ConvolutionOpProp() {
-        param = new Parameter(kFloat);
-    }
-
-    ConvolutionOpProp::ConvolutionOpProp(const MatrixType &type) {
-        param = new Parameter(type);
-    }
-
-    ConvolutionOpProp::~ConvolutionOpProp() {
-        delete param;
-    }
 
     void ConvolutionOpProp::InferShape(std::vector<Shape *> &inShape, Shape *outShape) {
 
@@ -245,19 +234,7 @@ namespace matrix {
         }
     }
 
-    Operator *ConvolutionOpProp::CreateOperator(Context context, std::vector<void *> *input, void *output,
-                                                std::vector<Shape *> *inShape, Shape *outShape,
-                                                std::map<std::string, Any> &args) {
-        param->args = &args;
-        param->output = output;
-        InferShape(*inShape, outShape);
-        param->inputShapes = inShape;
-        param->inputs = input;
-        param->outShape = outShape;
-        CREATE_OPERATOR(context, param, ConvolutionOp, {
-            memorySize = sizeof(DType) * param->outShape->Size();
-        })
-    }
+    INIT_OPERATOR_PROPERTY_CREATE(ConvolutionOpProp, ConvolutionOp, true);
 
 
 }
