@@ -74,10 +74,14 @@ namespace matrix {
                                             std::map<std::string, Any> &args) {
         // attention order
         param->output = output;
-        param->inputs = input;
         param->args = &args;
         InferShape(inShape, outShape);
-        param->inputShapes = inShape;
+        for(auto it = inShape.begin(); it != inShape.end(); ++it) {
+            param->inputShapes.push_back(*it);
+        }
+        for(auto it = input.begin(); it != input.end(); ++it) {
+            param->inputs.push_back(*it);
+        }
         param->outShape = outShape;
         CREATE_OPERATOR(context, param, AddGradOp, {
             memorySize = sizeof(DType) * param->outShape->Size();

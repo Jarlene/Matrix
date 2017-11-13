@@ -40,11 +40,16 @@ public: \
    }
 
 #define INIT_PARAMS  \
-    this->inputShapes = param.inputShapes; \
-    this->input = param.inputs; \
-    this->output = param.output; \
+    for(auto it = param.inputShapes.begin(); it != param.inputShapes.end(); ++it) { \
+        this->inputShapes.push_back(*it); \
+    } \
+    for(auto it = param.inputs.begin(); it != param.inputs.end(); ++it) { \
+        this->input.push_back(*it); \
+    } \
+    this->outputShape = param.outShape; \
     this->args = param.args; \
-    this->outputShape = param.outShape;\
+    this->output = param.output; \
+
 
 
 #define INPUT_TAG(first, ...)  \
