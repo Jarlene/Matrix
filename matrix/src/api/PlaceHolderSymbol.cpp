@@ -10,6 +10,7 @@ namespace matrix {
         auto symbol = PlaceHolderSymbol("placeHolder");
         symbol.nodePtr->outputShapes = shape;
         symbol.nodePtr->context.type = type;
+        symbol.nodePtr->isPlaceHolder = true;
         symbol.Build();
         return symbol;
     }

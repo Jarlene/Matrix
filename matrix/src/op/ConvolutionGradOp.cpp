@@ -22,21 +22,21 @@ namespace matrix {
             order = GetArgValue<ImageOrder>("order");
         }
 
-        int num = inputShapes[DATA]->At(0);
+        int num = inputShapes->at(DATA)->At(0);
         
         int channel = 1;
         int outSize = 1;
         int input_width = 0, input_height = 0;
         if (order == NCHW) {
-            channel = inputShapes[DATA]->At(1);
-            input_width = inputShapes[DATA]->At(2);
-            input_height = inputShapes[DATA]->At(3);
-            outSize = inputShapes[SELF_OUT]->At(2) * inputShapes[SELF_OUT]->At(3);
+            channel = inputShapes->at(DATA)->At(1);
+            input_width = inputShapes->at(DATA)->At(2);
+            input_height = inputShapes->at(DATA)->At(3);
+            outSize = inputShapes->at(SELF_OUT)->At(2) * inputShapes->at(SELF_OUT)->At(3);
         } else {
-            input_width = inputShapes[DATA]->At(1);
-            input_height = inputShapes[DATA]->At(2);
-            channel = inputShapes[DATA]->At(3);
-            outSize = inputShapes[SELF_OUT]->At(1) * inputShapes[SELF_OUT]->At(2);
+            input_width = inputShapes->at(DATA)->At(1);
+            input_height = inputShapes->at(DATA)->At(2);
+            channel = inputShapes->at(DATA)->At(3);
+            outSize = inputShapes->at(SELF_OUT)->At(1) * inputShapes->at(SELF_OUT)->At(2);
         }
 
         int filterNum = GetArgValue<int>("filter_num", channel);
@@ -48,7 +48,7 @@ namespace matrix {
 
 
 
-        Shape kernel = *inputShapes[KERNEL];
+        Shape kernel = *inputShapes->at(KERNEL);
         kernel.reShape(ShapeN(filterNum, channel, kernel[0], kernel[1]));
         Shape stride = GetArgValue<Shape>("stride", ShapeN(1, 1));
         Shape padding = GetArgValue<Shape>("padding", ShapeN(0, 0));
@@ -89,12 +89,12 @@ namespace matrix {
                             dilate[0],dilate[1], colData);
 
                 }
-                out += channel * inputShapes[DATA]->At(2) * inputShapes[DATA]->At(3);
-                preGrad += filterNum * inputShapes[SELF_OUT]->At(2) * inputShapes[SELF_OUT]->At(3);
+                out += channel * inputShapes->at(DATA)->At(2) * inputShapes->at(DATA)->At(3);
+                preGrad += filterNum * inputShapes->at(SELF_OUT)->At(2) * inputShapes->at(SELF_OUT)->At(3);
             }
 
         } else if (index == 1) {
-            int inputOffSize = filterNum / group * inputShapes[PRE_GRAG]->At(2) * inputShapes[PRE_GRAG]->At(3);
+            int inputOffSize = filterNum / group * inputShapes->at(PRE_GRAG)->At(2) * inputShapes->at(PRE_GRAG)->At(3);
             int outputOffset = channel / group * outputShape->At(2) * outputShape->At(3);
             int filterOffset = kernel.Size() / group;
             const T *inputData = Input<T>(DATA);
@@ -116,13 +116,13 @@ namespace matrix {
                                out + j * filterOffset);
 
                     inputData += channel * input_height * input_width;
-                    preGrad += filterNum * inputShapes[SELF_OUT]->At(2) * inputShapes[SELF_OUT]->At(3);
+                    preGrad += filterNum * inputShapes->at(SELF_OUT)->At(2) * inputShapes->at(SELF_OUT)->At(3);
                 }
             }
 
         } else if (index == 2) {
-            Tensor<T> pre(Input<T>(PRE_GRAG), *inputShapes[PRE_GRAG]);
-            Tensor<T> bias_grad(Output<T>(), *inputShapes[BIAS]);
+            Tensor<T> pre(Input<T>(PRE_GRAG), *inputShapes->at(PRE_GRAG));
+            Tensor<T> bias_grad(Output<T>(), *inputShapes->at(BIAS));
             Copy<T>(pre, bias_grad);
         } else {
             Logger::Global()->Fatal("ConvolutionGradOp do not support other inputs\n");
@@ -192,18 +192,14 @@ namespace matrix {
 
     }
 
-    Operator *ConvolutionOpGradProp::CreateOperator(Context context, std::vector<void *> &input, void *output,
-                                                    std::vector<Shape *> &inShape, Shape *outShape,
+    Operator *ConvolutionOpGradProp::CreateOperator(Context context, std::vector<void *> *input, void *output,
+                                                    std::vector<Shape *> *inShape, Shape *outShape,
                                                     std::map<std::string, Any> &args) {
         param->args = &args;
         param->output = output;
-        InferShape(inShape, outShape);
-        for(auto it = inShape.begin(); it != inShape.end(); ++it) {
-            param->inputShapes.push_back(*it);
-        }
-        for(auto it = input.begin(); it != input.end(); ++it) {
-            param->inputs.push_back(*it);
-        }
+        InferShape(*inShape, outShape);
+        param->inputShapes = inShape;
+        param->inputs = input;
         param->outShape = outShape;
         CREATE_OPERATOR(context, param, ConvolutionGradOp, {
             memorySize = sizeof(DType) * param->outShape->Size();

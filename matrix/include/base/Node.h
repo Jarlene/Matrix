@@ -17,7 +17,7 @@ namespace matrix {
     typedef std::shared_ptr<Node> NodePtr;
 
 
-    struct Node {
+    struct Node : public std::enable_shared_from_this<Node>{
         Node();
 
         size_t id_;
@@ -32,6 +32,8 @@ namespace matrix {
 
         std::vector<Shape*> inputShapes;
 
+        std::vector<void*> inputDates;
+
         Shape outputShapes;
 
         bool isVariable;
@@ -41,6 +43,8 @@ namespace matrix {
         long memorySize;
 
         bool isBackward = false;
+
+        bool isPlaceHolder = false;
 
         std::vector<NodePtr> inputs;
 

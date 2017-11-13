@@ -14,7 +14,7 @@ namespace matrix {
 
     template<class T, class Context>
     bool Convolution1DOp<T, Context>::Run() {
-        int num = inputShapes[DATA]->At(0);
+        int num = inputShapes->at(DATA)->At(0);
         int filterNum = GetArgValue<int>("filter_num");
         const T *inputData = Input<T>(DATA);
         const T *kernelData = Input<T>(KERNEL);
@@ -28,18 +28,18 @@ namespace matrix {
 
         int channel = 1;
         if (order == NCHW) {
-            channel = inputShapes[DATA]->At(1);
+            channel = inputShapes->at(DATA)->At(1);
         } else {
-            channel = inputShapes[DATA]->At(3);
+            channel = inputShapes->at(DATA)->At(3);
         }
 
-        Shape kernel = *inputShapes[KERNEL];
+        Shape kernel = *inputShapes->at(KERNEL);
         Shape stride = GetArgValue<Shape>("stride");
         Shape padding = GetArgValue<Shape>("padding");
         Shape dilate = GetArgValue<Shape>("dilate");
 
         NaiveConv<T>(inputData, num, channel,
-                     inputShapes[DATA]->At(2), inputShapes[DATA]->At(3),
+                     inputShapes->at(DATA)->At(2), inputShapes->at(DATA)->At(3),
                      stride[0], stride[1],
                      padding[0], padding[1],
                      kernel[2], kernel[3],
@@ -48,7 +48,7 @@ namespace matrix {
 
         if (InputSize() == 3) {
             Tensor<T> out(Output<T>(),*outputShape);
-            Tensor<T> bias(Input<T>(BIAS),*inputShapes[BIAS]);
+            Tensor<T> bias(Input<T>(BIAS),*inputShapes->at(BIAS));
             Add<T>(out, bias, out);
         } else {
             Logger::Global()->Fatal("ConvolutionOp do not support other inputs\n");
@@ -161,18 +161,14 @@ namespace matrix {
 
     }
 
-    Operator *Convolution1DOpProp::CreateOperator(Context context, std::vector<void *> &input, void *output,
-                                                  std::vector<Shape *> &inShape, Shape *outShape,
+    Operator *Convolution1DOpProp::CreateOperator(Context context, std::vector<void *> *input, void *output,
+                                                  std::vector<Shape *> *inShape, Shape *outShape,
                                                   std::map<std::string, Any> &args) {
         param->args = &args;
         param->output = output;
-        InferShape(inShape, outShape);
-        for(auto it = inShape.begin(); it != inShape.end(); ++it) {
-            param->inputShapes.push_back(*it);
-        }
-        for(auto it = input.begin(); it != input.end(); ++it) {
-            param->inputs.push_back(*it);
-        }
+        InferShape(*inShape, outShape);
+        param->inputShapes = inShape;
+        param->inputs = input;
         param->outShape = outShape;
         CREATE_OPERATOR(context, param, Convolution1DOp, {
             memorySize = sizeof(DType) * param->outShape->Size();

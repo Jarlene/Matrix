@@ -16,9 +16,9 @@ namespace matrix {
     bool OutputGradOp<T, Context>::Run() {
         LossMode mode = GetArgValue<LossMode>("type", kCrossEntropy);
 
-        Tensor<T> pre_grad(Input<T>(PRE_GRAD), *inputShapes[PRE_GRAD]);
-        Tensor<T> input(Input<T>(INPUT), *inputShapes[INPUT]);
-        Tensor<T> label(Input<T>(LABEL), *inputShapes[LABEL]);
+        Tensor<T> pre_grad(Input<T>(PRE_GRAD), *inputShapes->at(PRE_GRAD));
+        Tensor<T> input(Input<T>(INPUT), *inputShapes->at(INPUT));
+        Tensor<T> label(Input<T>(LABEL), *inputShapes->at(LABEL));
         Tensor<T> out(Output<T>(), *outputShape);
         Value<T>(out, pre_grad.Data()[0] / input.Size());
         if (mode == kCrossEntropy) {
@@ -69,18 +69,14 @@ namespace matrix {
         outShape->reShape(*inShape[0]);
     }
 
-    Operator *OutputGradOpProp::CreateOperator(Context context, std::vector<void *> &input, void *output,
-                                               std::vector<Shape *> &inShape, Shape *outShape,
+    Operator *OutputGradOpProp::CreateOperator(Context context, std::vector<void *> *input, void *output,
+                                               std::vector<Shape *> *inShape, Shape *outShape,
                                                std::map<std::string, Any> &args) {
         param->args = &args;
         param->output = output;
-        InferShape(inShape, outShape);
-        for(auto it = inShape.begin(); it != inShape.end(); ++it) {
-            param->inputShapes.push_back(*it);
-        }
-        for(auto it = input.begin(); it != input.end(); ++it) {
-            param->inputs.push_back(*it);
-        }
+        InferShape(*inShape, outShape);
+        param->inputShapes = inShape;
+        param->inputs = input;
         param->outShape = outShape;
         CREATE_OPERATOR(context, param, OutputGradOp, {
             memorySize = sizeof(DType) * param->outShape->Size();

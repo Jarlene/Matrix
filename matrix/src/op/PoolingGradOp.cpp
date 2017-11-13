@@ -22,10 +22,10 @@ namespace matrix {
         auto padding = GetArgValue<Shape>("padding", ShapeN(0 ,0));
         auto dilate = GetArgValue<Shape>("dilate", ShapeN(1, 1));
 
-        int batch_size = inputShapes[INPUT]->At(0);
-        int channel = inputShapes[INPUT]->At(1);
-        int input_width = inputShapes[INPUT]->At(2);
-        int input_height = inputShapes[INPUT]->At(3);
+        int batch_size = inputShapes->at(INPUT)->At(0);
+        int channel = inputShapes->at(INPUT)->At(1);
+        int input_width = inputShapes->at(INPUT)->At(2);
+        int input_height = inputShapes->at(INPUT)->At(3);
         int imageSize = input_height * input_width;
 
         int output_width = outputShape->At(2);
@@ -43,7 +43,7 @@ namespace matrix {
                 Tensor<int> maxIndex = GetArgValue<Tensor<int>>("max_index");
                 for (int i = 0; i < batch_size; ++i) {
                     for (int j = 0; j < channel; ++j) {
-                        for (int k = 0; k < inputShapes[PRE_GRAG]->Size(); ++k) {
+                        for (int k = 0; k < inputShapes->at(PRE_GRAG)->Size(); ++k) {
                             const int *idx = maxIndex.Data(k);
                             out[*idx] += pre_grad[k];
                         }
@@ -151,18 +151,14 @@ namespace matrix {
         outShape->reShape(*inShape[2]);
     }
 
-    Operator *PoolingGradOpProp::CreateOperator(Context context, std::vector<void *> &input, void *output,
-                                                std::vector<Shape *> &inShape, Shape *outShape,
+    Operator *PoolingGradOpProp::CreateOperator(Context context, std::vector<void *> *input, void *output,
+                                                std::vector<Shape *> *inShape, Shape *outShape,
                                                 std::map<std::string, Any> &args) {
         param->args = &args;
         param->output = output;
-        InferShape(inShape, outShape);
-        for(auto it = inShape.begin(); it != inShape.end(); ++it) {
-            param->inputShapes.push_back(*it);
-        }
-        for(auto it = input.begin(); it != input.end(); ++it) {
-            param->inputs.push_back(*it);
-        }
+        InferShape(*inShape, outShape);
+        param->inputShapes = inShape;
+        param->inputs = input;
         param->outShape = outShape;
         CREATE_OPERATOR(context, param, PoolingGradOp, {
             memorySize = sizeof(DType) * param->outShape->Size();

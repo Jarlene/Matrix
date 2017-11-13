@@ -13,8 +13,8 @@ namespace matrix {
     template <class T, class Context>
     bool OutputOp<T, Context>::Run() {
         LossMode outModel = GetArgValue<LossMode>("type", kCrossEntropy);
-        Tensor<T> data(Input<T>(DATA), *inputShapes[DATA]);
-        Tensor<T> label(Input<T>(LABEL), *inputShapes[LABEL]);
+        Tensor<T> data(Input<T>(DATA), *inputShapes->at(DATA));
+        Tensor<T> label(Input<T>(LABEL), *inputShapes->at(LABEL));
         Tensor<T> out(Output<T>(), *outputShape);
         if (outModel == LossMode::kCrossEntropy) {
             CrossEntropy<T>(data,label, out);
@@ -68,18 +68,14 @@ namespace matrix {
         outShape->reShape(*inShape[0]);
     }
 
-    Operator *OutputOpProp::CreateOperator(Context context, std::vector<void *> &input, void *output,
-                                           std::vector<Shape *> &inShape, Shape *outShape,
+    Operator *OutputOpProp::CreateOperator(Context context, std::vector<void *> *input, void *output,
+                                           std::vector<Shape *> *inShape, Shape *outShape,
                                            std::map<std::string, Any> &args) {
         param->args = &args;
         param->output = output;
-        InferShape(inShape, outShape);
-        for(auto it = inShape.begin(); it != inShape.end(); ++it) {
-            param->inputShapes.push_back(*it);
-        }
-        for(auto it = input.begin(); it != input.end(); ++it) {
-            param->inputs.push_back(*it);
-        }
+        InferShape(*inShape, outShape);
+        param->inputShapes = inShape;
+        param->inputs = input;
         param->outShape = outShape;
         CREATE_OPERATOR(context, param, OutputOp, {
             memorySize = sizeof(DType) * param->outShape->Size();

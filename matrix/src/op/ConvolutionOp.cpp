@@ -17,7 +17,7 @@ namespace matrix {
     template<class T, class Context>
     bool ConvolutionOp<T, Context>::Run() {
 
-        int num = inputShapes[DATA]->At(0);
+        int num = inputShapes->at(DATA)->At(0);
 
         ImageOrder order = NCHW;
         if (HasArg("order")) {
@@ -26,11 +26,11 @@ namespace matrix {
         int imageSize = 1;
         int channel = 1;
         if (order == NCHW) {
-            channel = inputShapes[DATA]->At(1);
-            imageSize = inputShapes[DATA]->At(2) * inputShapes[DATA]->At(3);
+            channel = inputShapes->at(DATA)->At(1);
+            imageSize = inputShapes->at(DATA)->At(2) * inputShapes->at(DATA)->At(3);
         } else {
-            imageSize = inputShapes[DATA]->At(1) * inputShapes[DATA]->At(2);
-            channel = inputShapes[DATA]->At(3);
+            imageSize = inputShapes->at(DATA)->At(1) * inputShapes->at(DATA)->At(2);
+            channel = inputShapes->at(DATA)->At(3);
         }
 
         int group = 1;
@@ -55,13 +55,13 @@ namespace matrix {
         T *outputData = Output<T>();
         if (InputSize()  == 2) {
             const T *kernelData = Input<T>(KERNEL);
-            kernel = *inputShapes[KERNEL];
+            kernel = *inputShapes->at(KERNEL);
             int colSize = channel / group * kernel.Size() * outputShape->At(2) * outputShape->At(3);
             T *colData = static_cast<T *>(MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(
                     colSize * sizeof(T)));
             for (int i = 0; i < num; ++i) {
                 for (int j = 0; j < group; ++j) {
-                    Img2Col<T>(inputData + j * input_offset, *inputShapes[DATA],
+                    Img2Col<T>(inputData + j * input_offset, *inputShapes->at(DATA),
                                kernel, stride,
                                padding, dilate,
                                colData, order);
@@ -77,13 +77,13 @@ namespace matrix {
             MemoryManager::Global()->GetCpuMemoryPool()->freeMemory(colData, colSize * sizeof(T));
         } else if (InputSize()  == 3) {
             const T *kernelData = Input<T>(KERNEL);
-            kernel = *inputShapes[KERNEL];
+            kernel = *inputShapes->at(KERNEL);
             int colSize = channel / group * kernel.Size() * outputShape->At(2) * outputShape->At(3);
             T *colData = static_cast<T *>(MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(
                     colSize * sizeof(T)));
             for (int i = 0; i < num; ++i) {
                 for (int j = 0; j < group; ++j) {
-                    Img2Col<T>(inputData + j * input_offset, *inputShapes[DATA],
+                    Img2Col<T>(inputData + j * input_offset, *inputShapes->at(DATA),
                                kernel, stride,
                                padding, dilate,
                                colData, order);
@@ -98,16 +98,16 @@ namespace matrix {
             }
 
             Tensor<T> out(Output<T>(), *outputShape);
-            Tensor<T> bias(Input<T>(BIAS), *inputShapes[BIAS]);
+            Tensor<T> bias(Input<T>(BIAS), *inputShapes->at(BIAS));
             Add<T>(out, bias, out);
             MemoryManager::Global()->GetCpuMemoryPool()->freeMemory(colData, colSize * sizeof(T));
         } else if (InputSize()  == 4) {
             const T *kernelData = Input<T>(KERNEL);
-            kernel = *inputShapes[KERNEL];
+            kernel = *inputShapes->at(KERNEL);
             T *colBuff = InputNonConst<T>(COLBUFFER);
             for (int i = 0; i < num; ++i) {
                 for (int j = 0; j < group; ++j) {
-                    Img2Col<T>(inputData + j * input_offset, *inputShapes[DATA],
+                    Img2Col<T>(inputData + j * input_offset, *inputShapes->at(DATA),
                                kernel, stride,
                                padding, dilate,
                                colBuff, order);
@@ -146,14 +146,14 @@ namespace matrix {
 
     template<class T, class Context>
     void ConvolutionOp<T, Context>::VariableNode(std::function<void(std::initializer_list<Shape *> shapes)> func) {
-        if (inputShapes.size() == 1) {
+        if (InputSize() == 1) {
             if (!HasArg("filter")) {
                 Logger::Global()->Fatal("ConvolutionOp no filter for input");
             }
             Shape filter = GetArgValue<Shape>("filter");
             if (HasArg("with_bias")) {
                 Shape bias;
-                bias.Append(inputShapes[0]->At(0));
+                bias.Append(inputShapes->at(0)->At(0));
                 func({&filter, &bias});
             } else {
                 func({&filter});
@@ -245,18 +245,14 @@ namespace matrix {
         }
     }
 
-    Operator *ConvolutionOpProp::CreateOperator(Context context, std::vector<void *> &input, void *output,
-                                                std::vector<Shape *> &inShape, Shape *outShape,
+    Operator *ConvolutionOpProp::CreateOperator(Context context, std::vector<void *> *input, void *output,
+                                                std::vector<Shape *> *inShape, Shape *outShape,
                                                 std::map<std::string, Any> &args) {
         param->args = &args;
         param->output = output;
-        InferShape(inShape, outShape);
-        for(auto it = inShape.begin(); it != inShape.end(); ++it) {
-            param->inputShapes.push_back(*it);
-        }
-        for(auto it = input.begin(); it != input.end(); ++it) {
-            param->inputs.push_back(*it);
-        }
+        InferShape(*inShape, outShape);
+        param->inputShapes = inShape;
+        param->inputs = input;
         param->outShape = outShape;
         CREATE_OPERATOR(context, param, ConvolutionOp, {
             memorySize = sizeof(DType) * param->outShape->Size();

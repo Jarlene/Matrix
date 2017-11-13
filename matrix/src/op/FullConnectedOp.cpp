@@ -14,14 +14,14 @@ namespace matrix {
     template <class T, class Context>
     bool FullConnectedOp<T, Context>::Run() {
         if (InputSize() == 2) {
-            Tensor<T> data(Input<T>(DATA), *inputShapes.at(DATA));
-            Tensor<T> weight(Input<T>(WEIGHT), *inputShapes.at(WEIGHT));
+            Tensor<T> data(Input<T>(DATA), *inputShapes->at(DATA));
+            Tensor<T> weight(Input<T>(WEIGHT), *inputShapes->at(WEIGHT));
             Tensor<T> out(Output<T>(), *outputShape);
             MatrixMul<T>(data, false, weight, false, out);
         } else if (InputSize()  == 3) {
-            Tensor<T> data(Input<T>(DATA), *inputShapes.at(DATA));
-            Tensor<T> weight(Input<T>(WEIGHT), *inputShapes.at(WEIGHT));
-            Tensor<T> bias(Input<T>(BIAS), *inputShapes.at(BIAS));
+            Tensor<T> data(Input<T>(DATA), *inputShapes->at(DATA));
+            Tensor<T> weight(Input<T>(WEIGHT), *inputShapes->at(WEIGHT));
+            Tensor<T> bias(Input<T>(BIAS), *inputShapes->at(BIAS));
             Tensor<T> out(Output<T>(), *outputShape);
             MatrixMul<T>(data, false, weight, false, out);
             Add<T>(out, bias, out);
@@ -52,20 +52,20 @@ namespace matrix {
 
     template <class T, class Context>
     void FullConnectedOp<T, Context>::VariableNode(std::function<void(std::initializer_list<Shape *> shapes)> func) {
-        if (inputShapes.size() == 1) {
+        if (InputSize() == 1) {
             Shape weight;
-            int rank = inputShapes[0]->Rank();
+            int rank = inputShapes->at(0)->Rank();
             for (int i = 0; i < rank - 2; ++i) {
-                weight.Append(inputShapes[0]->At(i));
+                weight.Append(inputShapes->at(0)->At(i));
             }
-            weight.Append(inputShapes[0]->At(rank - 1));
+            weight.Append(inputShapes->at(0)->At(rank - 1));
             if (!HasArg("hide_num")) {
                 Logger::Global()->Fatal("FullConnectedOp can not find hide_num params");
             }
             weight.Append(GetArgValue<int>("hide_num"));
             if(HasArg("with_bias")) {
                 Shape bias;
-                bias.Append(inputShapes[0]->At(0));
+                bias.Append(inputShapes->at(0)->At(0));
                 func({&weight, &bias});
             } else {
                 func({&weight});
@@ -96,18 +96,14 @@ namespace matrix {
         ProduceMulOpShape(inShape, outShape);
     }
 
-    Operator *FullConnectedOpProp::CreateOperator(Context context, std::vector<void *> &input, void *output,
-                                                  std::vector<Shape *> &inShape, Shape *outShape,
+    Operator *FullConnectedOpProp::CreateOperator(Context context, std::vector<void *> *input, void *output,
+                                                  std::vector<Shape *> *inShape, Shape *outShape,
                                                   std::map<std::string, Any> &args) {
         param->args = &args;
         param->output = output;
-        InferShape(inShape, outShape);
-        for(auto it = inShape.begin(); it != inShape.end(); ++it) {
-            param->inputShapes.push_back(*it);
-        }
-        for(auto it = input.begin(); it != input.end(); ++it) {
-            param->inputs.push_back(*it);
-        }
+        InferShape(*inShape, outShape);
+        param->inputShapes = inShape;
+        param->inputs = input;
         param->outShape = outShape;
         CREATE_OPERATOR(context, param, FullConnectedOp, {
             memorySize = sizeof(DType) * param->outShape->Size();

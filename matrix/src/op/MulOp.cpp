@@ -14,8 +14,8 @@ namespace matrix {
 
     template <class T, class Context>
     bool MulOp<T, Context>::Run() {
-        Tensor<T> data(Input<T>(INPUT1), *inputShapes.at(INPUT1));
-        Tensor<T> weight(Input<T>(INPUT2), *inputShapes.at(INPUT2));
+        Tensor<T> data(Input<T>(INPUT1), *inputShapes->at(INPUT1));
+        Tensor<T> weight(Input<T>(INPUT2), *inputShapes->at(INPUT2));
         Tensor<T> out(Output<T>(), *outputShape);
         MatrixMul<T>(data, false, weight, false, out);
         return true;
@@ -63,18 +63,14 @@ namespace matrix {
         ProduceMulOpShape(inShape, outShape);
     }
 
-    Operator *MulOpProp::CreateOperator(Context context, std::vector<void *> &input, void *output,
-                                        std::vector<Shape *> &inShape, Shape *outShape,
+    Operator *MulOpProp::CreateOperator(Context context, std::vector<void *> *input, void *output,
+                                        std::vector<Shape *> *inShape, Shape *outShape,
                                         std::map<std::string, Any> &args) {
         param->args = &args;
         param->output = output;
-        InferShape(inShape, outShape);
-        for(auto it = inShape.begin(); it != inShape.end(); ++it) {
-            param->inputShapes.push_back(*it);
-        }
-        for(auto it = input.begin(); it != input.end(); ++it) {
-            param->inputs.push_back(*it);
-        }
+        InferShape(*inShape, outShape);
+        param->inputShapes = inShape;
+        param->inputs = input;
         param->outShape = outShape;
         CREATE_OPERATOR(context, param, MulOp, {
             memorySize = sizeof(DType) * param->outShape->Size();

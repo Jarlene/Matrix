@@ -26,8 +26,8 @@ public: \
    classname(const MatrixType &type); \
    ~classname();  \
    virtual void InferShape(std::vector<Shape*> &inShape, Shape *outShape); \
-   virtual Operator* CreateOperator(Context context, std::vector<void*> &input, void* output, \
-                                 std::vector<Shape*> &inShape, Shape *outShape, \
+   virtual Operator* CreateOperator(Context context, std::vector<void*> *input, void* output, \
+                                 std::vector<Shape*> *inShape, Shape *outShape, \
                                  std::map<std::string, Any> &args) ; \
 
 #define BIND_DISPATCH(Method, ...)               \
@@ -40,12 +40,8 @@ public: \
    }
 
 #define INIT_PARAMS  \
-    for(auto it = param.inputShapes.begin(); it != param.inputShapes.end(); ++it) { \
-        this->inputShapes.push_back(*it); \
-    } \
-    for(auto it = param.inputs.begin(); it != param.inputs.end(); ++it) { \
-        this->input.push_back(*it); \
-    } \
+    this->input = param.inputs; \
+    this->inputShapes = param.inputShapes;\
     this->outputShape = param.outShape; \
     this->args = param.args; \
     this->output = param.output; \
@@ -128,8 +124,8 @@ namespace matrix {
         }
 
         virtual ~Operator() {
-            input.clear();
-            inputShapes.clear();
+            input->clear();
+            inputShapes->clear();
         }
 
         inline bool HasArg(const std::string &name) {
@@ -158,12 +154,12 @@ namespace matrix {
 
         template <class T>
         inline const T* Input(int idx) const {
-            return static_cast<T*>(input.at(idx));
+            return static_cast<T*>(input->at(idx));
         }
 
         template <class T>
         inline T* InputNonConst(int idx) {
-            return static_cast<T*>(input.at(idx));
+            return static_cast<T*>(input->at(idx));
         }
 
         template <class T>
@@ -173,7 +169,7 @@ namespace matrix {
 
 
         inline void FallThrow() {
-            output = input[0];
+            output = input->at(0);
         }
 
         virtual bool Run() {
@@ -185,7 +181,7 @@ namespace matrix {
         }
 
         inline const int InputSize() const {
-            return input.size();
+            return input->size();
         }
 
 
@@ -197,9 +193,9 @@ namespace matrix {
 
     protected:
         std::map<std::string, Any> *args{nullptr};
-        std::vector<void*> input;
+        std::vector<void*> *input {nullptr};
         void* output{nullptr};
-        std::vector<Shape*> inputShapes;
+        std::vector<Shape*> *inputShapes{nullptr};
         Shape* outputShape{nullptr};
     };
 
@@ -219,8 +215,8 @@ namespace matrix {
 
         }
 
-        std::vector<void*> inputs;
-        std::vector<Shape*> inputShapes;
+        std::vector<void*> *inputs{nullptr};
+        std::vector<Shape*> *inputShapes{nullptr};
         void* output {nullptr};
         Shape* outShape{nullptr};
         std::map<std::string, Any> *args{nullptr};
@@ -232,8 +228,8 @@ namespace matrix {
     public:
         OperatorProperty() = default;
         virtual void InferShape(std::vector<Shape*> &inShape, Shape *outShape)  = 0;
-        virtual Operator* CreateOperator(Context context, std::vector<void*> &input, void* output,
-                                         std::vector<Shape*> &inShape, Shape* outShape,
+        virtual Operator* CreateOperator(Context context, std::vector<void *> *input, void *output,
+                                         std::vector<Shape *> *inShape, Shape *outShape,
                                          std::map<std::string, Any> &args) {
             return nullptr;
         }

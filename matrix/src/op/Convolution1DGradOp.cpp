@@ -59,18 +59,14 @@ namespace matrix {
 
     }
 
-    Operator *Convolution1DGradOpProp::CreateOperator(Context context, std::vector<void *> &input, void *output,
-                                                      std::vector<Shape *> &inShape, Shape *outShape,
+    Operator *Convolution1DGradOpProp::CreateOperator(Context context, std::vector<void *> *input, void *output,
+                                                      std::vector<Shape *> *inShape, Shape *outShape,
                                                       std::map<std::string, Any> &args) {
         param->args = &args;
         param->output = output;
-        InferShape(inShape, outShape);
-        for(auto it = inShape.begin(); it != inShape.end(); ++it) {
-            param->inputShapes.push_back(*it);
-        }
-        for(auto it = input.begin(); it != input.end(); ++it) {
-            param->inputs.push_back(*it);
-        }
+        InferShape(*inShape, outShape);
+        param->inputShapes = inShape;
+        param->inputs = input;
         param->outShape = outShape;
         CREATE_OPERATOR(context, param, Convolution1DGradOp, {
             memorySize = sizeof(DType) * param->outShape->Size();

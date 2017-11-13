@@ -23,10 +23,10 @@ namespace matrix {
         auto padding = GetArgValue<Shape>("padding", ShapeN(0 ,0));
         auto dilate = GetArgValue<Shape>("dilate", ShapeN(1, 1));
 
-        int batch_size = inputShapes[0]->At(0);
-        int channel = inputShapes[0]->At(1);
-        int input_width = inputShapes[0]->At(2);
-        int input_height = inputShapes[0]->At(3);
+        int batch_size = inputShapes->at(0)->At(0);
+        int channel = inputShapes->at(0)->At(1);
+        int input_width = inputShapes->at(0)->At(2);
+        int input_height = inputShapes->at(0)->At(3);
 
 
         int group = 1;
@@ -122,18 +122,14 @@ namespace matrix {
         outShape->reShape(ShapeN(inShape[0]->At(0), inShape[0]->At(1), w, h));
     }
 
-    Operator *PoolingOpProp::CreateOperator(Context context, std::vector<void *> &input, void *output,
-                                            std::vector<Shape *> &inShape, Shape *outShape,
+    Operator *PoolingOpProp::CreateOperator(Context context, std::vector<void *> *input, void *output,
+                                            std::vector<Shape *> *inShape, Shape *outShape,
                                             std::map<std::string, Any> &args) {
         param->args = &args;
         param->output = output;
-        InferShape(inShape, outShape);
-        for(auto it = inShape.begin(); it != inShape.end(); ++it) {
-            param->inputShapes.push_back(*it);
-        }
-        for(auto it = input.begin(); it != input.end(); ++it) {
-            param->inputs.push_back(*it);
-        }
+        InferShape(*inShape, outShape);
+        param->inputShapes = inShape;
+        param->inputs = input;
         param->outShape = outShape;
         CREATE_OPERATOR(context, param, PoolingOp, {
             memorySize = sizeof(DType) * param->outShape->Size();

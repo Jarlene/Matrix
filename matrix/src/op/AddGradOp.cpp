@@ -16,10 +16,10 @@ namespace matrix {
 
     template <class T, class xpu>
     bool AddGradOp<T, xpu>::Run() {
-        if (inputShapes.size() < 2) {
+        if (InputSize() < 2) {
             Logger::Global()->Fatal("input shape size less then 2 \n");
         }
-        Tensor<T> pre_grad(Input<T>(PRE_GRAD), *inputShapes[PRE_GRAD]);
+        Tensor<T> pre_grad(Input<T>(PRE_GRAD), *inputShapes->at(PRE_GRAD));
         Tensor<T> out_grad(Output<T>(), *outputShape);
         Copy(pre_grad, out_grad);
         return true;
@@ -69,19 +69,15 @@ namespace matrix {
         delete param;
     }
 
-    Operator *AddGradOpProp::CreateOperator(Context context, std::vector<void *> &input, void *output,
-                                            std::vector<Shape *> &inShape, Shape *outShape,
+    Operator *AddGradOpProp::CreateOperator(Context context, std::vector<void *> *input, void *output,
+                                            std::vector<Shape *> *inShape, Shape *outShape,
                                             std::map<std::string, Any> &args) {
         // attention order
         param->output = output;
         param->args = &args;
-        InferShape(inShape, outShape);
-        for(auto it = inShape.begin(); it != inShape.end(); ++it) {
-            param->inputShapes.push_back(*it);
-        }
-        for(auto it = input.begin(); it != input.end(); ++it) {
-            param->inputs.push_back(*it);
-        }
+        InferShape(*inShape, outShape);
+        param->inputShapes = inShape;
+        param->inputs = input;
         param->outShape = outShape;
         CREATE_OPERATOR(context, param, AddGradOp, {
             memorySize = sizeof(DType) * param->outShape->Size();

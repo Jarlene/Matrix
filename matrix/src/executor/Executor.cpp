@@ -27,11 +27,11 @@ namespace matrix {
             }
         };
         auto compute =[&](NodePtr node) {
-            if (node->op != nullptr) {
-                node->op->AsyncRun();
-            }
             {
                 std::unique_lock<std::mutex> lock (mutex_);
+                if (node->op != nullptr && !node->isPlaceHolder) {
+                    node->op->AsyncRun();
+                }
                 callback(node);
             }
 

@@ -8,19 +8,15 @@ namespace matrix {
     template<class T, class Context>
     NaiveConvolutionOp<T, Context>::NaiveConvolutionOp(Parameter &param) {
         INIT_PARAMS
-        if (HasArg("col_buffer")) {
-            Shape col = GetArgValue<Shape>("col_buffer");
-            inputShapes.push_back(&col);
-        }
     }
 
     template<class T, class Context>
     bool NaiveConvolutionOp<T, Context>::Run() {
-        if (input.size() <= 2) {
+        if (InputSize() <= 2) {
 
-        } else if (input.size() == 3) {
+        } else if (InputSize() == 3) {
 
-        } else if (input.size() == 4) {
+        } else if (InputSize() == 4) {
 
         }
 
@@ -126,18 +122,14 @@ namespace matrix {
 
     }
 
-    Operator *NaiveConvolutionOpProp::CreateOperator(Context context, std::vector<void *> &input, void *output,
-                                                     std::vector<Shape *> &inShape, Shape *outShape,
+    Operator *NaiveConvolutionOpProp::CreateOperator(Context context, std::vector<void *> *input, void *output,
+                                                     std::vector<Shape *> *inShape, Shape *outShape,
                                                      std::map<std::string, Any> &args) {
         param->args = &args;
         param->output = output;
-        InferShape(inShape, outShape);
-        for(auto it = inShape.begin(); it != inShape.end(); ++it) {
-            param->inputShapes.push_back(*it);
-        }
-        for(auto it = input.begin(); it != input.end(); ++it) {
-            param->inputs.push_back(*it);
-        }
+        InferShape(*inShape, outShape);
+        param->inputShapes = inShape;
+        param->inputs = input;
         param->outShape = outShape;
         CREATE_OPERATOR(context, param, NaiveConvolutionOp, {
             memorySize = sizeof(DType) * param->outShape->Size();

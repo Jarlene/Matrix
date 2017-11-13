@@ -20,8 +20,8 @@ namespace matrix {
 
     template <class T, class Context>
     bool AccuracyOp<T, Context>::Run() {
-        int N = inputShapes[PREDICTION]->At(0);
-        int D = inputShapes[PREDICTION]->At(1);
+        int N = inputShapes->at(PREDICTION)->At(0);
+        int D = inputShapes->at(PREDICTION)->At(1);
         int correct = 0;
         for (int i = 0; i < N; ++i) {
             auto label = static_cast<int>(Input<T>(LABEL)[i]);
@@ -83,18 +83,15 @@ namespace matrix {
         outShape->reShape(ShapeN(1));
     }
 
-    Operator *AccuracyOpProp::CreateOperator(Context context, std::vector<void *> &input, void *output,
-                                             std::vector<Shape *> &inShape, Shape *outShape,
+    Operator *AccuracyOpProp::CreateOperator(Context context, std::vector<void *> *input, void *output,
+                                             std::vector<Shape *> *inShape, Shape *outShape,
                                              std::map<std::string, Any> &args) {
         param->args = &args;
         param->output = output;
-        InferShape(inShape, outShape);
-        for(auto it = inShape.begin(); it != inShape.end(); ++it) {
-            param->inputShapes.push_back(*it);
-        }
-        for(auto it = input.begin(); it != input.end(); ++it) {
-            param->inputs.push_back(*it);
-        }
+        InferShape(*inShape, outShape);
+        param->inputShapes = inShape;
+        param->inputs = input;
+
         param->outShape = outShape;
         CREATE_OPERATOR(context, param, AccuracyOp, {
             memorySize = sizeof(DType) * param->outShape->Size();
