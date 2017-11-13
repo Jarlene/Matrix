@@ -12,15 +12,15 @@ namespace matrix {
 
     template <class T, class Context>
     bool OutputOp<T, Context>::Run() {
-        auto outModel = OutputMode::kSoftmax;
-        if (HasArg("type")) {
-            outModel = GetArgValue<OutputMode>("type");
-        }
+        LossMode outModel = GetArgValue<LossMode>("type", kCrossEntropy);
         Tensor<T> data(Input<T>(DATA), *inputShapes[DATA]);
+        Tensor<T> label(Input<T>(LABEL), *inputShapes[LABEL]);
         Tensor<T> out(Output<T>(), *outputShape);
-        if (outModel == OutputMode::kSoftmax) {
-            Softmax<T>(data, out);
-        } else {
+        if (outModel == LossMode::kCrossEntropy) {
+            CrossEntropy<T>(data,label, out);
+        } else if (outModel == kMSE) {
+            RMSLoss<T>(data, label, out);
+        } else{
             Logger::Global()->Fatal("OutputOp not support other output.\n");
         }
         return true;

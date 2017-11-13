@@ -130,8 +130,18 @@ namespace matrix {
     }
 
     template <class T>
+    void CrossEntropyGrad(const Tensor<T> &data, const Tensor<T> &label, Tensor<T> &out) {
+        CrossEntropyGrad(data.Size(), data.Data(), label.Size(), label.Data(), out.MutableData());
+    }
+
+    template <class T>
     void RMSLoss(const Tensor<T> &data, const Tensor<T> &label, Tensor<T> &out) {
         RMSLoss<T>(data.Size(), data.Data(), label.Size(), label.Data(), out.MutableData());
+    }
+
+    template <class T>
+    void RMSLossGrad(const Tensor<T> &data, const Tensor<T> &label, Tensor<T> &out) {
+        RMSLossGrad<T>(data.Size(), data.Data(), label.Size(), label.Data(), out.MutableData());
     }
 
     template <class T>

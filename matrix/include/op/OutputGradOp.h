@@ -15,6 +15,7 @@ namespace matrix {
     class OutputGradOp : public Operator {
         SAME_FUNCTION(OutputGrad);
         DISABLE_COPY_AND_ASSIGN(OutputGrad);
+        INPUT_TAG(PRE_GRAD, OUT, INPUT, LABEL);
     };
 
 

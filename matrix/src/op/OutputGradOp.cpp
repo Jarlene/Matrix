@@ -14,8 +14,18 @@ namespace matrix {
 
     template <class T, class Context>
     bool OutputGradOp<T, Context>::Run() {
+        LossMode mode = GetArgValue<LossMode>("type", kCrossEntropy);
 
-
+        Tensor<T> pre_grad(Input<T>(PRE_GRAD), *inputShapes[PRE_GRAD]);
+        Tensor<T> input(Input<T>(INPUT), *inputShapes[INPUT]);
+        Tensor<T> label(Input<T>(LABEL), *inputShapes[LABEL]);
+        Tensor<T> out(Output<T>(), *outputShape);
+        Value<T>(out, pre_grad.Data()[0] / input.Size());
+        if (mode == kCrossEntropy) {
+            CrossEntropyGrad<T>(input, label, out);
+        } else if (mode == kMSE) {
+            RMSLossGrad<T>(input, label, out);
+        }
         return true;
     }
 
