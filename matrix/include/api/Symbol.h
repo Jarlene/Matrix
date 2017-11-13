@@ -44,6 +44,12 @@ namespace matrix {
 
         Symbol operator/(const Symbol &symbol);
 
+        template <class T>
+        void PrintMatrix() {
+            auto data = static_cast<T*>(nodePtr->data_);
+            Logger::PrintMat<T>(data, nodePtr->outputShapes[0], nodePtr->outputShapes[1], nodePtr->nodeName);
+        }
+
     protected:
         friend class Graph;
         friend class ParameterCollection;

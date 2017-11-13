@@ -19,8 +19,8 @@ namespace matrix {
         if (inputShapes.size() < 2) {
             Logger::Global()->Fatal("input shape size less then 2 \n");
         }
-        Tensor<T> pre_grad = Inputs()[PRE_GRAD]-> template GeneratorTensor<T>(*inputShapes[PRE_GRAD]);
-        Tensor<T> out_grad = Outputs()-> template GeneratorTensor<T>(*outputShapes);
+        Tensor<T> pre_grad(Input<T>(PRE_GRAD), *inputShapes[PRE_GRAD]);
+        Tensor<T> out_grad(Output<T>(), *outputShape);
         Copy(pre_grad, out_grad);
         return true;
 
@@ -69,18 +69,18 @@ namespace matrix {
         delete param;
     }
 
-    Operator *AddGradOpProp::CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
-                                        std::vector<Shape*> &inShape, Shape *outShape,
-                                        std::map<std::string, Any> &args) {
+    Operator *AddGradOpProp::CreateOperator(Context context, std::vector<void *> &input, void *output,
+                                            std::vector<Shape *> &inShape, Shape *outShape,
+                                            std::map<std::string, Any> &args) {
         // attention order
-        param->outputs = output;
+        param->output = output;
         param->inputs = input;
         param->args = &args;
         InferShape(inShape, outShape);
         param->inputShapes = inShape;
-        param->outShapes = outShape;
+        param->outShape = outShape;
         CREATE_OPERATOR(param, AddGradOp, {
-            memorySize = sizeof(DType) * param->outShapes->Size();
+            memorySize = sizeof(DType) * param->outShape->Size();
         })
     }
 

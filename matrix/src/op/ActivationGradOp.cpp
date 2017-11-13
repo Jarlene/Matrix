@@ -19,10 +19,10 @@ namespace matrix {
             type = GetArgValue<ActType>("type");
         }
 
-        Tensor<T> pre = Inputs()[PRE_GRAD]-> template GeneratorTensor<T>(*inputShapes[PRE_GRAD]);
-        Tensor<T> out = Inputs()[OUT]-> template GeneratorTensor<T>(*inputShapes[OUT]);
-        Tensor<T> input = Inputs()[INPUT]-> template GeneratorTensor<T>(*inputShapes[INPUT]);
-        Tensor<T> gradOut = Outputs()-> template GeneratorTensor<T>(*outputShapes);
+        Tensor<T> pre(Input<T>(PRE_GRAD),*inputShapes[PRE_GRAD]);
+        Tensor<T> out (Input<T>(OUT), *inputShapes[OUT]);
+        Tensor<T> input(Input<T>(INPUT), *inputShapes[INPUT]);
+        Tensor<T> gradOut(Output<T>() ,*outputShape);
 
         switch (type) {
             case kSigmoid:
@@ -84,17 +84,17 @@ namespace matrix {
 
 
 
-    Operator *ActivationOpGradProp::CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
-                                                   std::vector<Shape*> &inShape, Shape* outShape,
+    Operator *ActivationOpGradProp::CreateOperator(Context context, std::vector<void *> &input, void *output,
+                                                   std::vector<Shape *> &inShape, Shape *outShape,
                                                    std::map<std::string, Any> &args) {
         param->args = &args;
         param->inputs = input;
-        param->outputs = output;
+        param->output = output;
         InferShape(inShape, outShape);
         param->inputShapes = inShape;
-        param->outShapes = outShape;
+        param->outShape = outShape;
         CREATE_OPERATOR(param, ActivationGradOp, {
-            memorySize = sizeof(DType) * param->outShapes->Size();
+            memorySize = sizeof(DType) * param->outShape->Size();
         })
     }
 

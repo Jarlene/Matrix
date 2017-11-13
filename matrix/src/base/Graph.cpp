@@ -105,7 +105,7 @@ namespace matrix {
 //
 //            }
 //        }
-//        MemoryManager::Global()->GetCpuMemoryPool()->PrintMemory();
+        MemoryManager::Global()->GetCpuMemoryPool()->PrintMemory();
     }
 
     void Graph::SaveVariableData(std::string &file) {
@@ -169,20 +169,20 @@ namespace matrix {
 
 
         // todo:: add optimizer to add applyGradNode
-        for (auto &it : variableNodes_) {
-            auto applyGradNode = Node::Create();
-            applyGradNode->inputs.push_back(it.first);
-            applyGradNode->inputs.push_back(it.second);
-            applyGradNode->context = it.first->context;
-            applyGradNode->opName = "applyGrad";
-            applyGradNode->nodeName = it.first->nodeName + "_apply_" + it.second->nodeName;
-            applyGradNode->params["learning_rate"] = 0.001f;
-            applyGradNode->params["apply_mode"] = kMomentum;
-            applyGradNode->params["momentum_factor"] = 0.9f;
-            applyGradNode->Build();
-            nodes_.push_back(applyGradNode);
-
-        }
+//        for (auto &it : variableNodes_) {
+//            auto applyGradNode = Node::Create();
+//            applyGradNode->inputs.push_back(it.first);
+//            applyGradNode->inputs.push_back(it.second);
+//            applyGradNode->context = it.first->context;
+//            applyGradNode->opName = "applyGrad";
+//            applyGradNode->nodeName = it.first->nodeName + "_apply_" + it.second->nodeName;
+//            applyGradNode->params["learning_rate"] = 0.001f;
+//            applyGradNode->params["apply_mode"] = kMomentum;
+//            applyGradNode->params["momentum_factor"] = 0.9f;
+//            applyGradNode->Build();
+//            nodes_.push_back(applyGradNode);
+//
+//        }
     }
 
     bool Graph::less(const NodePtr &lhs, const NodePtr &rhs) {

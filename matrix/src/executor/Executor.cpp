@@ -17,12 +17,12 @@ namespace matrix {
 
         auto callback = [&](const NodePtr node) {
             for (auto &item : node->outputs) {
-                auto shareItem = std::shared_ptr<Node>(item);
-                int val = depen_.Take(shareItem);
+
+                int val = depen_.Take(item.lock());
                 if (val <= 1) {
-                    this->ready_.Put(shareItem);
+                    this->ready_.Put(item.lock());
                 } else {
-                    depen_.Put(shareItem, val - 1);
+                    depen_.Put(item.lock(), val - 1);
                 }
             }
         };
@@ -70,9 +70,7 @@ namespace matrix {
         ready_.Clear();
         for(auto &item : graph_->GetGraphNodes()) {
             int size = item->inputs.size();
-            if (item->op == nullptr && size == 0) {
-                ready_.Put(item);
-            } else if (size == 0 && item->op != nullptr) {
+            if (item->op == nullptr || size == 0) {
                 ready_.Put(item);
             } else {
                 if (!depen_.HasKey(item)) {
@@ -80,5 +78,9 @@ namespace matrix {
                 }
             }
         }
+    }
+
+    Executor::~Executor() {
+        delete graph_;
     }
 }

@@ -1,11 +1,10 @@
 //
 // Created by Jarlene on 2017/7/18.
 //
-
+#include <matrix/include/utils/Logger.h>
 #include <matrix/include/api/Symbol.h>
 #include <matrix/include/api/VariableSymbol.h>
 #include <matrix/include/api/PlaceHolderSymbol.h>
-#include <matrix/include/models/AlexNet.h>
 #include <matrix/include/executor/Executor.h>
 #include "include/DataSet.h"
 

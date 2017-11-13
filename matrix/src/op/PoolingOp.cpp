@@ -40,9 +40,9 @@ namespace matrix {
 
         if (type == kMax) {
             int *maxIndex = static_cast<int*>(MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(
-                    batch_size * outputShapes->At(2) * outputShapes->At(3) * sizeof(int)));
+                    batch_size * outputShape->At(2) * outputShape->At(3) * sizeof(int)));
             Shape maxShape;
-            maxShape.Append(batch_size * outputShapes->At(2) * outputShapes->At(3));
+            maxShape.Append(batch_size * outputShape->At(2) * outputShape->At(3));
             Tensor<int> maxTensor(maxIndex, maxShape);
             pooling2D(input, batch_size, channel/group, input_width, input_height, stride[0], stride[1],
                       padding[0], padding[1],filter[2], filter[3], dilate[0], dilate[1],out,type, maxIndex);
@@ -122,17 +122,17 @@ namespace matrix {
         outShape->reShape(ShapeN(inShape[0]->At(0), inShape[0]->At(1), w, h));
     }
 
-    Operator *PoolingOpProp::CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
-                                            std::vector<Shape*> &inShape, Shape* outShape,
+    Operator *PoolingOpProp::CreateOperator(Context context, std::vector<void *> &input, void *output,
+                                            std::vector<Shape *> &inShape, Shape *outShape,
                                             std::map<std::string, Any> &args) {
         param->args = &args;
         param->inputs = input;
-        param->outputs = output;
+        param->output = output;
         InferShape(inShape, outShape);
         param->inputShapes = inShape;
-        param->outShapes = outShape;
+        param->outShape = outShape;
         CREATE_OPERATOR(param, PoolingOp, {
-            memorySize = sizeof(DType) * param->outShapes->Size();
+            memorySize = sizeof(DType) * param->outShape->Size();
         })
     }
 

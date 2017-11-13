@@ -28,12 +28,12 @@ namespace matrix {
         int input_height = inputShapes[INPUT]->At(3);
         int imageSize = input_height * input_width;
 
-        int output_width = outputShapes->At(2);
-        int output_height = outputShapes->At(3);
+        int output_width = outputShape->At(2);
+        int output_height = outputShape->At(3);
 
         const T * pre_grad = Input<T>(PRE_GRAG);
         T * out = Output<T>();
-        Value<T>(outputShapes->Size(), out, T(0));
+        Value<T>(outputShape->Size(), out, T(0));
         switch (type) {
             case kMax:
             {
@@ -151,17 +151,17 @@ namespace matrix {
         outShape->reShape(*inShape[2]);
     }
 
-    Operator *PoolingGradOpProp::CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
-                                            std::vector<Shape*> &inShape, Shape* outShape,
-                                            std::map<std::string, Any> &args) {
+    Operator *PoolingGradOpProp::CreateOperator(Context context, std::vector<void *> &input, void *output,
+                                                std::vector<Shape *> &inShape, Shape *outShape,
+                                                std::map<std::string, Any> &args) {
         param->args = &args;
         param->inputs = input;
-        param->outputs = output;
+        param->output = output;
         InferShape(inShape, outShape);
         param->inputShapes = inShape;
-        param->outShapes = outShape;
+        param->outShape = outShape;
         CREATE_OPERATOR(param, PoolingGradOp, {
-            memorySize = sizeof(DType) * param->outShapes->Size();
+            memorySize = sizeof(DType) * param->outShape->Size();
         })
     }
 

@@ -18,9 +18,9 @@ namespace matrix {
         if (inputShapes.size() < 2) {
             Logger::Global()->Fatal("input shape size less then 2 \n");
         }
-        Tensor<T> t1 = Inputs()[INPUT1]-> template GeneratorTensor<T>(*inputShapes.at(0));
-        Tensor<T> t2 = Inputs()[INPUT2]-> template GeneratorTensor<T>(*inputShapes.at(1));
-        Tensor<T> out = Outputs()-> template GeneratorTensor<T>(*outputShapes);
+        Tensor<T> t1(Input<T>(INPUT1), *inputShapes.at(0));
+        Tensor<T> t2 (Input<T>(INPUT2), *inputShapes.at(1));
+        Tensor<T> out(Output<T>(), *outputShape);
         Add(t1, t2, out);
         return true;
 
@@ -57,17 +57,17 @@ namespace matrix {
         param = new Parameter(MatrixType::kFloat);
     }
 
-    Operator *AddOpProp::CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
-                                        std::vector<Shape*> &inShape, Shape *outShape,
+    Operator *AddOpProp::CreateOperator(Context context, std::vector<void *> &input, void *output,
+                                        std::vector<Shape *> &inShape, Shape *outShape,
                                         std::map<std::string, Any> &args) {
         param->args = &args;
         param->inputs = input;
-        param->outputs = output;
+        param->output = output;
         InferShape(inShape, outShape);
         param->inputShapes = inShape;
-        param->outShapes = outShape;
+        param->outShape = outShape;
         CREATE_OPERATOR(param, AddOp, {
-            memorySize = sizeof(DType) * param->outShapes->Size();
+            memorySize = sizeof(DType) * param->outShape->Size();
         })
     }
 

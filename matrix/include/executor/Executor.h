@@ -18,6 +18,7 @@ namespace matrix {
     class Executor {
     public:
         Executor(const Symbol &symbol,  Context &context);
+        ~Executor();
         std::vector<void*> runAsync();
         std::vector<void*> runSync();
 
@@ -28,7 +29,7 @@ namespace matrix {
         std::vector<NodePtr> fetches_;
         BlockQueue<NodePtr> ready_;
         BlockMap<NodePtr, int> depen_;
-        Graph* graph_;
+        Graph* graph_{nullptr};
         std::mutex mutex_;
     };
 }

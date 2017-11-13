@@ -18,9 +18,9 @@ namespace matrix {
         if (HasArg("type")) {
             lossModel = GetArgValue<LossMode>("type");
         }
-        Tensor<T> data = Inputs()[DATA]->template GeneratorTensor<T>(inputShapes[DATA]);
-        Tensor<T> label = Inputs()[LABEL]->template GeneratorTensor<T>(inputShapes[LABEL]);
-        Tensor<T> out = Outputs()-> template GeneratorTensor<T>(outputShapes);
+        Tensor<T> data(Input<T>(DATA), *inputShapes[DATA]);
+        Tensor<T> label(Input<T>(LABEL), *inputShapes[LABEL]);
+        Tensor<T> out(Output<T>(), *outputShape);
         if (lossModel == LossMode::kCrossEntropy) {
             CrossEntropy<T>(data, label, out);
         } else if (lossModel == LossMode::kMSE) {
@@ -74,17 +74,17 @@ namespace matrix {
         outShape->Append(1);
     }
 
-    Operator *LossOpProp::CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
-                                         std::vector<Shape*> &inShape, Shape *outShape,
+    Operator *LossOpProp::CreateOperator(Context context, std::vector<void *> &input, void *output,
+                                         std::vector<Shape *> &inShape, Shape *outShape,
                                          std::map<std::string, Any> &args) {
         param->args = &args;
         param->inputs = input;
-        param->outputs = output;
+        param->output = output;
         InferShape(inShape, outShape);
         param->inputShapes = inShape;
-        param->outShapes = outShape;
+        param->outShape = outShape;
         CREATE_OPERATOR(param, LossOp, {
-            memorySize = sizeof(DType) * param->outShapes->Size();
+            memorySize = sizeof(DType) * param->outShape->Size();
         })
     }
 

@@ -59,7 +59,7 @@ namespace matrix {
         int outputOffset = filterNum / group * outSize;
         int filterOffset = kernel.Size() / group;
 
-        const T *preGrad = Inputs()[PRE_GRAG]-> template Get<T>();
+        const T *preGrad = Input<T>(PRE_GRAG);
         T *out = Output<T>();
         int index = GetArgValue<int>("input_idx", -1);
         int colSize = channel / group * kernel[2] * kernel[3] * outSize;
@@ -67,7 +67,7 @@ namespace matrix {
 
         if (index == 0) {
 
-            const T *filterData = Inputs()[KERNEL]-> template Get<T>();
+            const T *filterData = Input<T>(KERNEL);
 
             int K = filterNum / group;
             int N = outSize;
@@ -95,11 +95,11 @@ namespace matrix {
 
         } else if (index == 1) {
             int inputOffSize = filterNum / group * inputShapes[PRE_GRAG]->At(2) * inputShapes[PRE_GRAG]->At(3);
-            int outputOffset = channel / group * outputShapes->At(2) * outputShapes->At(3);
+            int outputOffset = channel / group * outputShape->At(2) * outputShape->At(3);
             int filterOffset = kernel.Size() / group;
-            const T *inputData = Inputs()[DATA]-> template Get<T>();
+            const T *inputData = Input<T>(DATA);
             int M = channel / group;
-            int K = outputShapes->At(2) * outputShapes->At(3);
+            int K = outputShape->At(2) * outputShape->At(3);
             int N = filterNum / group *  kernel[2] * kernel[3];
             for (int i = 0; i < num; ++i) {
                 for (int j = 0; j < group; ++j) {
@@ -121,9 +121,9 @@ namespace matrix {
             }
 
         } else if (index == 2) {
-            auto pre = Inputs()[PRE_GRAG]-> template GeneratorTensor<T>(inputShapes[PRE_GRAG]);
-            auto bias_grad = Outputs()->template GeneratorTensor<T>(inputShapes[BIAS]);
-            Copy(pre, bias_grad);
+            Tensor<T> pre(Input<T>(PRE_GRAG), *inputShapes[PRE_GRAG]);
+            Tensor<T> bias_grad(Output<T>(), *inputShapes[BIAS]);
+            Copy<T>(pre, bias_grad);
         } else {
             Logger::Global()->Fatal("ConvolutionGradOp do not support other inputs\n");
         }
@@ -192,17 +192,17 @@ namespace matrix {
 
     }
 
-    Operator *ConvolutionOpGradProp::CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
-                                                    std::vector<Shape*> &inShape, Shape *outShape,
+    Operator *ConvolutionOpGradProp::CreateOperator(Context context, std::vector<void *> &input, void *output,
+                                                    std::vector<Shape *> &inShape, Shape *outShape,
                                                     std::map<std::string, Any> &args) {
         param->args = &args;
         param->inputs = input;
-        param->outputs = output;
+        param->output = output;
         InferShape(inShape, outShape);
         param->inputShapes = inShape;
-        param->outShapes = outShape;
+        param->outShape = outShape;
         CREATE_OPERATOR(param, ConvolutionGradOp, {
-            memorySize = sizeof(DType) * param->outShapes->Size();
+            memorySize = sizeof(DType) * param->outShape->Size();
         })
     }
 

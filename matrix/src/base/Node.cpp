@@ -47,17 +47,14 @@ namespace matrix {
         if (opPtr == nullptr) {
             return;
         }
-        std::vector<Blob*> inputs;
-        std::vector<Blob*> outputs;
+        std::vector<void*> inputs;
         std::vector<Shape*> in;
         for(NodePtr node : this->inputs) {
-            Blob blob(node->data_);
-            inputs.push_back(&blob);
+            inputs.push_back(node->data_);
             inputShapes.push_back(&node->outputShapes);
         }
 
-        Blob oB(this->data_);
-        op = opPtr->CreateOperator(this->context, inputs, &oB, inputShapes, &outputShapes, params);
+        op = opPtr->CreateOperator(this->context, inputs, this->data_, inputShapes, &outputShapes, params);
 
         bool rebuild = false;
         auto generatorVariableFunc = [this, &rebuild](std::initializer_list<Shape *> shapes) {

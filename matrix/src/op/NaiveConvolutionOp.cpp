@@ -16,11 +16,11 @@ namespace matrix {
 
     template<class T, class Context>
     bool NaiveConvolutionOp<T, Context>::Run() {
-        if (Inputs().size() <= 2) {
+        if (input.size() <= 2) {
 
-        } else if (Inputs().size() == 3) {
+        } else if (input.size() == 3) {
 
-        } else if (Inputs().size() == 4) {
+        } else if (input.size() == 4) {
 
         }
 
@@ -126,17 +126,17 @@ namespace matrix {
 
     }
 
-    Operator *NaiveConvolutionOpProp::CreateOperator(Context context, std::vector<Blob *> &input, Blob *output,
+    Operator *NaiveConvolutionOpProp::CreateOperator(Context context, std::vector<void *> &input, void *output,
                                                      std::vector<Shape *> &inShape, Shape *outShape,
                                                      std::map<std::string, Any> &args) {
         param->args = &args;
         param->inputs = input;
-        param->outputs = output;
+        param->output = output;
         InferShape(inShape, outShape);
         param->inputShapes = inShape;
-        param->outShapes = outShape;
+        param->outShape = outShape;
         CREATE_OPERATOR(param, NaiveConvolutionOp, {
-            memorySize = sizeof(DType) * param->outShapes->Size();
+            memorySize = sizeof(DType) * param->outShape->Size();
         })
     }
 

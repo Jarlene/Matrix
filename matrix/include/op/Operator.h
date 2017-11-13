@@ -27,7 +27,7 @@ public: \
    classname(const MatrixType &type); \
    ~classname();  \
    virtual void InferShape(std::vector<Shape*> &inShape, Shape *outShape); \
-   virtual Operator* CreateOperator(Context context, std::vector<Blob*> &input, Blob* output, \
+   virtual Operator* CreateOperator(Context context, std::vector<void*> &input, void* output, \
                                  std::vector<Shape*> &inShape, Shape *outShape, \
                                  std::map<std::string, Any> &args) ; \
 
@@ -43,9 +43,9 @@ public: \
 #define INIT_PARAMS  \
     this->inputShapes = param.inputShapes; \
     this->input = param.inputs; \
-    this->output = param.outputs; \
+    this->output = param.output; \
     this->args = param.args; \
-    this->outputShapes = param.outShapes;\
+    this->outputShape = param.outShape;\
 
 
 #define INPUT_TAG(first, ...)  \
@@ -150,26 +150,19 @@ namespace matrix {
 
         template <class T>
         inline const T* Input(int idx) {
-            return input.at(idx)->Get<T>();
+            return static_cast<T*>(input.at(idx));
         }
 
         template <class T>
         inline T* InputNonConst(int idx) {
-            return input.at(idx)->GetMutable<T>();
+            return static_cast<T*>(input.at(idx));
         }
 
         template <class T>
         inline T* Output() {
-            return output->GetMutable<T>();
+            return static_cast<T*>(output);
         }
 
-        inline const std::vector<Blob*> Inputs() const {
-            return input;
-        }
-
-        inline const Blob* Outputs() const {
-            return output;
-        }
 
         inline void FallThrow() {
             output = input[0];
@@ -193,10 +186,10 @@ namespace matrix {
 
     protected:
         std::map<std::string, Any> *args{nullptr};
-        std::vector<Blob*> input;
-        Blob* output{nullptr};
+        std::vector<void*> input;
+        void* output{nullptr};
         std::vector<Shape*> inputShapes;
-        Shape* outputShapes{nullptr};
+        Shape* outputShape{nullptr};
     };
 
     class State {
@@ -215,10 +208,10 @@ namespace matrix {
 
         }
 
-        std::vector<Blob*> inputs;
+        std::vector<void*> inputs;
         std::vector<Shape*> inputShapes;
-        Blob* outputs {nullptr};
-        Shape* outShapes{nullptr};
+        void* output {nullptr};
+        Shape* outShape{nullptr};
         std::map<std::string, Any> *args{nullptr};
     };
 
@@ -228,7 +221,7 @@ namespace matrix {
     public:
         OperatorProperty() = default;
         virtual void InferShape(std::vector<Shape*> &inShape, Shape *outShape)  = 0;
-        virtual Operator* CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
+        virtual Operator* CreateOperator(Context context, std::vector<void*> &input, void* output,
                                          std::vector<Shape*> &inShape, Shape* outShape,
                                          std::map<std::string, Any> &args) {
             return nullptr;

@@ -59,17 +59,17 @@ namespace matrix {
         outShape->reShape(*inShape[0]);
     }
 
-    Operator *OutputGradOpProp::CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
-                                           std::vector<Shape*> &inShape, Shape *outShape,
-                                           std::map<std::string, Any> &args) {
+    Operator *OutputGradOpProp::CreateOperator(Context context, std::vector<void *> &input, void *output,
+                                               std::vector<Shape *> &inShape, Shape *outShape,
+                                               std::map<std::string, Any> &args) {
         param->args = &args;
         param->inputs = input;
-        param->outputs = output;
+        param->output = output;
         InferShape(inShape, outShape);
         param->inputShapes = inShape;
-        param->outShapes = outShape;
+        param->outShape = outShape;
         CREATE_OPERATOR(param, OutputGradOp, {
-            memorySize = sizeof(DType) * param->outShapes->Size();
+            memorySize = sizeof(DType) * param->outShape->Size();
         })
     }
 

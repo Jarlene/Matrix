@@ -18,11 +18,11 @@ namespace matrix {
             Logger::Global()->Fatal("FullConnectedGradOp not support. \n");
         }
         int idx = GetArgValue<int>("input_idx");
-        Tensor<T> pre_grad = Inputs()[PRE_GRAD]-> template GeneratorTensor<T>(inputShapes[PRE_GRAD]);
-        Tensor<T> data = Inputs()[DATA]-> template GeneratorTensor<T>(inputShapes[DATA]);
-        Tensor<T> weight = Inputs()[WEIGHT]-> template GeneratorTensor<T>(inputShapes[WEIGHT]);
+        Tensor<T> pre_grad(Input<T>(PRE_GRAD), *inputShapes[PRE_GRAD]);
+        Tensor<T> data(Input<T>(DATA), *inputShapes[DATA]);
+        Tensor<T> weight(Input<T>(WEIGHT), *inputShapes[WEIGHT]);
 
-        Tensor<T> out = Outputs()-> template GeneratorTensor<T>(outputShapes);
+        Tensor<T> out(Output<T>(), *outputShape);
         switch (idx + 2) {
             case DATA:
                 MatrixMul<T>(pre_grad, false, weight, true, out);
@@ -84,18 +84,18 @@ namespace matrix {
 
     }
 
-    Operator *FullConnectedGradOpProp::CreateOperator(Context context, std::vector<Blob*> &input, Blob* output,
-                                                  std::vector<Shape*> &inShape, Shape *outShape,
-                                                  std::map<std::string, Any> &args) {
+    Operator *FullConnectedGradOpProp::CreateOperator(Context context, std::vector<void *> &input, void *output,
+                                                      std::vector<Shape *> &inShape, Shape *outShape,
+                                                      std::map<std::string, Any> &args) {
 
         param->args = &args;
         param->inputs = input;
-        param->outputs = output;
+        param->output = output;
         InferShape(inShape, outShape);
         param->inputShapes = inShape;
-        param->outShapes = outShape;
+        param->outShape = outShape;
         CREATE_OPERATOR(param, FullConnectedGradOp, {
-            memorySize = sizeof(DType) * param->outShapes->Size();
+            memorySize = sizeof(DType) * param->outShape->Size();
         })
     }
 

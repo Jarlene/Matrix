@@ -46,9 +46,9 @@ namespace matrix {
                      dilate[0], dilate[1],
                      filterNum, kernelData, outputData);
 
-        if (Inputs().size() == 3) {
-            Tensor<T> out = Outputs()->template GeneratorTensor<T>(outputShapes);
-            Tensor<T> bias = Inputs()[BIAS]->template GeneratorTensor<T>(inputShapes[BIAS]);
+        if (input.size() == 3) {
+            Tensor<T> out(Output<T>(),*outputShape);
+            Tensor<T> bias(Input<T>(BIAS),*inputShapes[BIAS]);
             Add<T>(out, bias, out);
         } else {
             Logger::Global()->Fatal("ConvolutionOp do not support other inputs\n");
@@ -161,17 +161,17 @@ namespace matrix {
 
     }
 
-    Operator *Convolution1DOpProp::CreateOperator(Context context, std::vector<Blob *> &input, Blob *output,
+    Operator *Convolution1DOpProp::CreateOperator(Context context, std::vector<void *> &input, void *output,
                                                   std::vector<Shape *> &inShape, Shape *outShape,
                                                   std::map<std::string, Any> &args) {
         param->args = &args;
         param->inputs = input;
-        param->outputs = output;
+        param->output = output;
         InferShape(inShape, outShape);
         param->inputShapes = inShape;
-        param->outShapes = outShape;
+        param->outShape = outShape;
         CREATE_OPERATOR(param, Convolution1DOp, {
-            memorySize = sizeof(DType) * param->outShapes->Size();
+            memorySize = sizeof(DType) * param->outShape->Size();
         })
     }
 
