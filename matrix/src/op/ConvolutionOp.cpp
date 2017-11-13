@@ -53,7 +53,7 @@ namespace matrix {
 
         const T *inputData = Input<T>(DATA);
         T *outputData = Output<T>();
-        if (input.size() == 2) {
+        if (InputSize()  == 2) {
             const T *kernelData = Input<T>(KERNEL);
             kernel = *inputShapes[KERNEL];
             int colSize = channel / group * kernel.Size() * outputShape->At(2) * outputShape->At(3);
@@ -75,7 +75,7 @@ namespace matrix {
                 outputData += filterNum * outputShape->At(2) * outputShape->At(3);
             }
             MemoryManager::Global()->GetCpuMemoryPool()->freeMemory(colData, colSize * sizeof(T));
-        } else if (input.size() == 3) {
+        } else if (InputSize()  == 3) {
             const T *kernelData = Input<T>(KERNEL);
             kernel = *inputShapes[KERNEL];
             int colSize = channel / group * kernel.Size() * outputShape->At(2) * outputShape->At(3);
@@ -101,7 +101,7 @@ namespace matrix {
             Tensor<T> bias(Input<T>(BIAS), *inputShapes[BIAS]);
             Add<T>(out, bias, out);
             MemoryManager::Global()->GetCpuMemoryPool()->freeMemory(colData, colSize * sizeof(T));
-        } else if (input.size() == 4) {
+        } else if (InputSize()  == 4) {
             const T *kernelData = Input<T>(KERNEL);
             kernel = *inputShapes[KERNEL];
             T *colBuff = InputNonConst<T>(COLBUFFER);

@@ -46,7 +46,7 @@ namespace matrix {
                      dilate[0], dilate[1],
                      filterNum, kernelData, outputData);
 
-        if (input.size() == 3) {
+        if (InputSize() == 3) {
             Tensor<T> out(Output<T>(),*outputShape);
             Tensor<T> bias(Input<T>(BIAS),*inputShapes[BIAS]);
             Add<T>(out, bias, out);

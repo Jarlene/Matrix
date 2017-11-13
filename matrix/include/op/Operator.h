@@ -157,7 +157,7 @@ namespace matrix {
 
 
         template <class T>
-        inline const T* Input(int idx) {
+        inline const T* Input(int idx) const {
             return static_cast<T*>(input.at(idx));
         }
 
@@ -184,6 +184,9 @@ namespace matrix {
 
         }
 
+        inline const int InputSize() const {
+            return input.size();
+        }
 
 
         virtual void VariableNode(std::function<void(std::initializer_list<Shape *> shapes)> func) {

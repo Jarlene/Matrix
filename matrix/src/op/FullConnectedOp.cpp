@@ -13,12 +13,12 @@ namespace matrix {
 
     template <class T, class Context>
     bool FullConnectedOp<T, Context>::Run() {
-        if (input.size() == 2) {
+        if (InputSize() == 2) {
             Tensor<T> data(Input<T>(DATA), *inputShapes.at(DATA));
             Tensor<T> weight(Input<T>(WEIGHT), *inputShapes.at(WEIGHT));
             Tensor<T> out(Output<T>(), *outputShape);
             MatrixMul<T>(data, false, weight, false, out);
-        } else if (input.size() == 3) {
+        } else if (InputSize()  == 3) {
             Tensor<T> data(Input<T>(DATA), *inputShapes.at(DATA));
             Tensor<T> weight(Input<T>(WEIGHT), *inputShapes.at(WEIGHT));
             Tensor<T> bias(Input<T>(BIAS), *inputShapes.at(BIAS));
