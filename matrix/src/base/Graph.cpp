@@ -137,6 +137,8 @@ namespace matrix {
         ones->nodeName = "ones";
         ones->outputShapes = out->outputShapes;
         ones->context = out->context;
+        ones->isBackward = true;
+        ones->params["isTrain"] = true;
         ones->params["constant"] = 1;
         ones->Build();
         gradMap[out] = ones;
