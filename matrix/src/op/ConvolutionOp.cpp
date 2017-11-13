@@ -44,29 +44,6 @@ namespace matrix {
         Shape padding = GetArgValue<Shape>("padding", ShapeN(0, 0));
         Shape dilate = GetArgValue<Shape>("dilate", ShapeN(1, 1));
 
-        if (input.size() == 1) {
-
-            if (!HasArg("filter")) {
-                Logger::Global()->Fatal("ConvolutionOp input size is 1, should has filter param\n");
-            }
-            kernel = GetArgValue<Shape>("filter");
-            bool hasBias = GetArgValue<bool>("bias", true);
-            kernel.reShape(ShapeN(num, filterNum, kernel[0], kernel[1]));
-            T *kernelData = static_cast<T *>(MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(
-                    kernel.Size() * sizeof(T)));
-            Random<T>(kernel.Size(),kernelData, T(0.0), T(1.0));
-            inputShapes.push_back(&kernel);
-            Blob kernelBlob(kernelData);
-            input.push_back(&kernelBlob);
-            if (hasBias) {
-                inputShapes.push_back(outputShape);
-                T *biasData = static_cast<T*>(MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(
-                        outputShape->Size() * sizeof(T)));
-                Random<T>(outputShape->Size(),biasData, T(0.0), T(1.0));
-                Blob biasBlob(biasData);
-                input.push_back(&biasBlob);
-            }
-        }
 
         const int input_offset = channel / group * imageSize;
 
