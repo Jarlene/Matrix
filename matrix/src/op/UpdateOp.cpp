@@ -70,7 +70,7 @@ namespace matrix {
         param->inputShapes = inShape;
         param->outShape = outShape;
 
-        CREATE_OPERATOR(param, UpdateOp)
+        CREATE_OPERATOR(context, param, UpdateOp)
     }
 
 

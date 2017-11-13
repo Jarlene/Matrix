@@ -160,7 +160,7 @@ namespace matrix {
         InferShape(inShape, outShape);
         param->inputShapes = inShape;
         param->outShape = outShape;
-        CREATE_OPERATOR(param, PoolingGradOp, {
+        CREATE_OPERATOR(context, param, PoolingGradOp, {
             memorySize = sizeof(DType) * param->outShape->Size();
         })
     }

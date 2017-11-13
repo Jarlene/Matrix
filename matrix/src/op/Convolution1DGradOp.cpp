@@ -68,7 +68,7 @@ namespace matrix {
         InferShape(inShape, outShape);
         param->inputShapes = inShape;
         param->outShape = outShape;
-        CREATE_OPERATOR(param, Convolution1DGradOp, {
+        CREATE_OPERATOR(context, param, Convolution1DGradOp, {
             memorySize = sizeof(DType) * param->outShape->Size();
         })
     }

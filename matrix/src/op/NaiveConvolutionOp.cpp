@@ -135,7 +135,7 @@ namespace matrix {
         InferShape(inShape, outShape);
         param->inputShapes = inShape;
         param->outShape = outShape;
-        CREATE_OPERATOR(param, NaiveConvolutionOp, {
+        CREATE_OPERATOR(context, param, NaiveConvolutionOp, {
             memorySize = sizeof(DType) * param->outShape->Size();
         })
     }

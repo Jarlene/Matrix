@@ -101,10 +101,14 @@ private:                                                            \
 
 
 
-#define CREATE_OPERATOR(param, name, ...) \
+#define CREATE_OPERATOR(context, param, name, ...) \
    Operator *op = nullptr;  \
    TYPE_SWITCH(param->type, DType, {  \
-      op = new name<DType, CPU>(*param); \
+      if (context.mode == kCpu) { \
+         op = new name<DType, CPU>(*param); \
+      } else if (context.mode == kGpu) { \
+         op = new name<DType, GPU>(*param); \
+      }\
       {__VA_ARGS__} \
    }) \
    return op; \

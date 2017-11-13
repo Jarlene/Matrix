@@ -60,7 +60,7 @@ namespace matrix {
         param->inputShapes = inShape;
         param->outShape = outShape;
 
-        CREATE_OPERATOR(param, DropoutOp, {
+        CREATE_OPERATOR(context, param, DropoutOp, {
             memorySize = sizeof(DType) * param->outShape->Size();
         })
     }

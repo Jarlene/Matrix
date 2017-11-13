@@ -57,6 +57,14 @@ namespace matrix {
         param = new Parameter(MatrixType::kFloat);
     }
 
+    void AddOpProp::InferShape(std::vector<Shape*> &inShape, Shape *outShape) {
+        outShape->reShape(*inShape.at(0));
+    }
+
+    AddOpProp::~AddOpProp() {
+        delete param;
+    }
+
     Operator *AddOpProp::CreateOperator(Context context, std::vector<void *> &input, void *output,
                                         std::vector<Shape *> &inShape, Shape *outShape,
                                         std::map<std::string, Any> &args) {
@@ -66,18 +74,12 @@ namespace matrix {
         InferShape(inShape, outShape);
         param->inputShapes = inShape;
         param->outShape = outShape;
-        CREATE_OPERATOR(param, AddOp, {
+        CREATE_OPERATOR(context, param, AddOp, {
             memorySize = sizeof(DType) * param->outShape->Size();
         })
     }
 
-    void AddOpProp::InferShape(std::vector<Shape*> &inShape, Shape *outShape) {
-        outShape->reShape(*inShape.at(0));
-    }
 
-    AddOpProp::~AddOpProp() {
-        delete param;
-    }
 
 
 

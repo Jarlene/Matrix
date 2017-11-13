@@ -92,7 +92,7 @@ namespace matrix {
         InferShape(inShape, outShape);
         param->inputShapes = inShape;
         param->outShape = outShape;
-        CREATE_OPERATOR(param, AccuracyOp, {
+        CREATE_OPERATOR(context, param, AccuracyOp, {
             memorySize = sizeof(DType) * param->outShape->Size();
         })
     }
