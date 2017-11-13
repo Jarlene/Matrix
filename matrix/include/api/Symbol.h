@@ -32,7 +32,7 @@ namespace matrix {
 
         Symbol &On(const RunMode &mode = kCpu);
 
-        Symbol &Build();
+        Symbol &Build(const std::string &symbol_name = "unknow");
 
         Symbol &operator=(const Symbol &symbol);
 

@@ -23,7 +23,6 @@ namespace matrix {
         if (this->nodePtr->context.type == kInvalid) {
             this->nodePtr->context.type = symbol.nodePtr->context.type;
         }
-        symbol.nodePtr->nodeName = name;
         return *this;
     }
 
@@ -32,8 +31,10 @@ namespace matrix {
         return *this;
     }
 
-    Symbol &Symbol::Build() {
+    Symbol &Symbol::Build(const std::string &symbol_name) {
+        this->nodePtr->nodeName = symbol_name;
         this->nodePtr->Build();
+
         return *this;
     }
 
