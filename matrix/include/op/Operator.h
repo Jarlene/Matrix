@@ -31,15 +31,6 @@ public: \
                                  std::vector<Shape*> *inShape, Shape *outShape, \
                                  std::map<std::string, Any> &args) ; \
 
-#define BIND_DISPATCH(Method, ...)               \
-   if (context.mode == RunMode::kCpu) {          \
-      return Method<CPU>(__VA_ARGS__);            \
-   } else if (context.mode == RunMode::kGpu) {       \
-      return Method<GPU>(__VA_ARGS__);              \
-   } else {                                            \
-      return Method<CPU>(__VA_ARGS__);               \
-   }
-
 #define INIT_PARAMS  \
     this->input = param.inputs; \
     this->inputShapes = param.inputShapes;\
@@ -52,8 +43,6 @@ public: \
 #define INPUT_TAG(first, ...)  \
   enum InputTags {first = 0, __VA_ARGS__} \
 
-#define OUTPUT_TAG(first, ...)  \
-  enum OutputTags {first = 0, __VA_ARGS__} \
 
 #define SAME_FUNCTION(classname)  \
 public:                           \
