@@ -195,7 +195,7 @@ namespace matrix {
         }
 
         inline const int InputSize() const {
-            return input->size();
+            return inputShapes->size();
         }
 
         inline void SetData(std::vector<void *> *input, void *output) {
