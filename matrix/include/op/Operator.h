@@ -27,16 +27,14 @@ public: \
    classname(const MatrixType &type); \
    ~classname();  \
    virtual void InferShape(std::vector<Shape*> &inShape, Shape *outShape); \
-   virtual Operator* CreateOperator(Context context, std::vector<void*> *input, void* output, \
+   virtual Operator* CreateOperator(Context context,  \
                                  std::vector<Shape*> *inShape, Shape *outShape, \
                                  std::map<std::string, Any> &args) ; \
 
 #define INIT_PARAMS  \
-    this->input = param.inputs; \
     this->inputShapes = param.inputShapes;\
     this->outputShape = param.outShape; \
     this->args = param.args; \
-    this->output = param.output; \
 
 
 
@@ -114,14 +112,12 @@ private:                                                            \
     classname::~classname() { \
         delete param; \
     }  \
-    Operator *classname::CreateOperator(Context context, std::vector<void*> *input, void *output, \
+    Operator *classname::CreateOperator(Context context, \
                                     std::vector<Shape *> *inShape, Shape *outShape, \
                                     std::map<std::string, Any> &args) { \
         param->args = &args; \
-        param->output = output; \
         InferShape(*inShape, outShape); \
         param->inputShapes = inShape; \
-        param->inputs = input;\
         param->outShape = outShape; \
         CREATE_OPERATOR(context, param, name, { \
             if (memory) { \
@@ -237,9 +233,7 @@ namespace matrix {
 
         }
 
-        std::vector<void*> *inputs{nullptr};
         std::vector<Shape*> *inputShapes{nullptr};
-        void* output {nullptr};
         Shape* outShape{nullptr};
         std::map<std::string, Any> *args{nullptr};
     };
@@ -250,7 +244,7 @@ namespace matrix {
     public:
         OperatorProperty() = default;
         virtual void InferShape(std::vector<Shape*> &inShape, Shape *outShape)  = 0;
-        virtual Operator* CreateOperator(Context context, std::vector<void *> *input, void *output,
+        virtual Operator* CreateOperator(Context context,
                                          std::vector<Shape *> *inShape, Shape *outShape,
                                          std::map<std::string, Any> &args) {
             return nullptr;

@@ -51,11 +51,10 @@ namespace matrix {
             return;
         }
         for(NodePtr node : this->inputs) {
-            inputDates.push_back(node->data_);
             inputShapes.push_back(&node->outputShapes);
         }
 
-        op = opPtr->CreateOperator(this->context, &inputDates, this->data_, &inputShapes, &outputShapes, params);
+        op = opPtr->CreateOperator(this->context, &inputShapes, &outputShapes, params);
         bool rebuild = false;
         auto generatorVariableFunc = [this, &rebuild](std::initializer_list<Shape *> shapes) {
             rebuild = true;
