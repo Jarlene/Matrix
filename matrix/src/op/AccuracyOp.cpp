@@ -21,7 +21,7 @@ namespace matrix {
     template <class T, class Context>
     bool AccuracyOp<T, Context>::Run() {
         int N = inputShapes->at(PREDICTION)->At(0);
-        int D = inputShapes->at(PREDICTION)->At(1);
+        int D = inputShapes->at(LABEL)->At(1);
         int correct = 0;
         for (int i = 0; i < N; ++i) {
             auto label = static_cast<int>(Input<T>(LABEL)[i]);
