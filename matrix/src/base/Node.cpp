@@ -89,4 +89,12 @@ namespace matrix {
         return memorySize;
     }
 
+    void Node::SetData() {
+        inputDates.clear();
+        for (auto it = inputs.begin(); it != inputs.end(); it++) {
+            inputDates.push_back((*it)->data_);
+        }
+        op->SetData(&inputDates, data_);
+    }
+
 }

@@ -30,6 +30,7 @@ namespace matrix {
             {
                 std::unique_lock<std::mutex> lock (mutex_);
                 if (node->op != nullptr && !node->isPlaceHolder) {
+                    node->SetData();
                     node->op->AsyncRun();
                 }
                 callback(node);

@@ -202,6 +202,10 @@ namespace matrix {
             return input->size();
         }
 
+        inline void SetData(std::vector<void *> *input, void *output) {
+            this->input = input;
+            this->output = output;
+        }
 
         virtual void VariableNode(std::function<void(std::initializer_list<Shape *> shapes)> func) {
         }
@@ -252,11 +256,6 @@ namespace matrix {
             return nullptr;
         }
 
-        virtual Operator* CreateOperator(Context context, std::vector<Blob *> *input, Blob *output,
-                                         std::vector<Shape *> *inShape, Shape *outShape,
-                                         std::map<std::string, Any> &args) {
-            return nullptr;
-        }
 
         void SwitchType(const MatrixType &type) {
             this->param->type = type;

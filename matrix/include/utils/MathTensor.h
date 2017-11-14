@@ -69,7 +69,10 @@ namespace matrix {
 
     }
 
-
+    template <class T>
+    void Scale(Tensor<T> &out, T val) {
+        Scale<T>(out.Size(), out.MutableData(), val);
+    }
 
     template <class T>
     void Sub(const Tensor<T> &a, const Tensor<T> &b,  Tensor<T> &c) {
@@ -150,8 +153,11 @@ namespace matrix {
     }
 
     template <class T>
-    void SoftMaxCrossEntropy(const Tensor<T> &data, const Tensor<T> &label, Tensor<T> &out) {
-
+    void SoftmaxGrad(const Tensor<T> &data, const Tensor<T> &label, Tensor<T> &out) {
+        for (int i = 0; i < label.Size(); ++i) {
+            int idx = (int)label.Data()[i];
+            SoftmaxGrad(data.Size(), data.Data(), idx, out.MutableData());
+        }
     }
 
 

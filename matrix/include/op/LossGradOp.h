@@ -16,7 +16,7 @@ namespace matrix {
     class LossGradOp : public Operator{
     SAME_FUNCTION(LossGrad);
     DISABLE_COPY_AND_ASSIGN(LossGrad);
-        INPUT_TAG(DATA, LABEL);
+        INPUT_TAG(PRE_GRAD, SELF_OUT, DATA, LABEL);
     };
 
 

@@ -52,6 +52,8 @@ namespace matrix {
 
         std::map<std::string, Any> params;
 
+        void SetData();
+
         long getMemorySize();
 
         void Build();

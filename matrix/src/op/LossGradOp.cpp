@@ -15,20 +15,20 @@ namespace matrix {
 
     template <class T, class Context>
     bool LossGradOp<T, Context>::Run() {
-        auto lossModel = LossMode::kCrossEntropy;
-        if (HasArg("type")) {
-            lossModel = GetArgValue<LossMode>("type");
-        }
+        auto lossModel = GetArgValue<LossMode>("type", LossMode::kCrossEntropy);
+        Tensor<T> pre(Input<T>(PRE_GRAD), *inputShapes->at(PRE_GRAD));
         Tensor<T> data(Input<T>(DATA), *inputShapes->at(DATA));
         Tensor<T> label(Input<T>(LABEL), *inputShapes->at(LABEL));
         Tensor<T> out(Output<T>(), *outputShape);
+
         if (lossModel == LossMode::kCrossEntropy) {
-            CrossEntropy<T>(data, label, out);
+            CrossEntropyGrad<T>(data, label, out);
         } else if (lossModel == LossMode::kMSE) {
-            RMSLoss<T>(data, label, out);
+            RMSLossGrad<T>(data, label, out);
         } else {
             Logger::Global()->Fatal("LossOp not support other loss.\n");
         }
+        Scale<T>(out, pre.Data()[0]/data.Size());
         return true;
     }
 

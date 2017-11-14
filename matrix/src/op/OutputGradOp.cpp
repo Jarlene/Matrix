@@ -14,17 +14,14 @@ namespace matrix {
 
     template <class T, class Context>
     bool OutputGradOp<T, Context>::Run() {
-        LossMode mode = GetArgValue<LossMode>("type", kCrossEntropy);
-
+        auto mode = GetArgValue<OutputMode>("type", kSoftmax);
         Tensor<T> pre_grad(Input<T>(PRE_GRAD), *inputShapes->at(PRE_GRAD));
         Tensor<T> input(Input<T>(INPUT), *inputShapes->at(INPUT));
-        Tensor<T> label(Input<T>(LABEL), *inputShapes->at(LABEL));
         Tensor<T> out(Output<T>(), *outputShape);
-        Value<T>(out, pre_grad.Data()[0] / input.Size());
-        if (mode == kCrossEntropy) {
-            CrossEntropyGrad<T>(input, label, out);
-        } else if (mode == kMSE) {
-            RMSLossGrad<T>(input, label, out);
+        if (mode == kSoftmax) {
+//            SoftmaxGrad<T>(input, out);
+        } else  {
+            Logger::Global()->Fatal("OutputGradOp not support other out put.\n");
         }
         return true;
     }

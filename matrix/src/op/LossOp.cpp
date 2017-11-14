@@ -14,10 +14,7 @@ namespace matrix {
 
     template <class T, class Context>
     bool LossOp<T, Context>::Run() {
-        auto lossModel = LossMode::kCrossEntropy;
-        if (HasArg("type")) {
-            lossModel = GetArgValue<LossMode>("type");
-        }
+        auto lossModel = GetArgValue<LossMode>("type", LossMode::kCrossEntropy);
         Tensor<T> data(Input<T>(DATA), *inputShapes->at(DATA));
         Tensor<T> label(Input<T>(LABEL), *inputShapes->at(LABEL));
         Tensor<T> out(Output<T>(), *outputShape);
@@ -25,6 +22,8 @@ namespace matrix {
             CrossEntropy<T>(data, label, out);
         } else if (lossModel == LossMode::kMSE) {
             RMSLoss<T>(data, label, out);
+        } else if (lossModel == kLikelihood) {
+
         } else {
             Logger::Global()->Fatal("LossOp not support other loss.\n");
         }

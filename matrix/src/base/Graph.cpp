@@ -139,7 +139,7 @@ namespace matrix {
         ones->context = out->context;
         ones->isBackward = true;
         ones->params["isTrain"] = true;
-        ones->params["constant"] = 1;
+        ones->params["constant"] = 1.0f;
         ones->Build();
         gradMap[out] = ones;
 

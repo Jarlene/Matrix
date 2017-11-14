@@ -604,6 +604,16 @@ namespace matrix {
     }
 
     template <class T>
+    inline void Scale(const int N, T* out, T val) {
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+        for (int i = 0; i < N; ++i) {
+            out[i] *= val;
+        }
+    }
+
+    template <class T>
     inline void Random(const int N, T *out, T mu, T sigma) {
         gettimeofday(&tv,NULL);
         std::normal_distribution<T> dist_normal(mu, sigma);
@@ -808,6 +818,18 @@ namespace matrix {
     }
 
 
+
+
+    template <class T>
+    inline void SoftmaxGrad(const int N, const T* x,  int idx, T* y) {
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+        for (int i = 0; i < N; ++i) {
+            y[i] = (i == idx) ? x[i] / (T(1.0) - x[i]) : -x[i] * x[idx];
+        }
+    }
+
     /// cross-entropy
     /// \tparam T
     /// \param N prediction data length
@@ -861,7 +883,7 @@ namespace matrix {
 #endif
             for (int i = 0; i < M; ++i) {
                 for (int j = 0; j < N / M; ++j) {
-                    out[i * M + j] = -in2[i] / std::log(in1[i * M + j]);
+                    out[i * M + j] = -in2[i] / in1[i * M + j];
                 }
             }
         }
@@ -882,7 +904,7 @@ namespace matrix {
 #pragma omp parallel for
 #endif
             for (int i = 0; i < N; ++i) {
-                out[0] += std::pow((in1[i] - in2[i]), 2);
+                out[0] += T(0.5) * std::pow((in1[i] - in2[i]), 2);
             }
         } else {
 #ifdef USE_MP
@@ -890,7 +912,7 @@ namespace matrix {
 #endif
             for (int i = 0; i < M; ++i) {
                 for (int j = 0; j < N / M; ++j) {
-                    out[0] += std::pow((in1[i*M + j] - in2[i]), 2);
+                    out[0] += T(0.5) * std::pow((in1[i*M + j] - in2[i]), 2);
                 }
             }
         }
