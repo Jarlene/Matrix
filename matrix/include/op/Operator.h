@@ -138,8 +138,21 @@ namespace matrix {
         }
 
         virtual ~Operator() {
-            input->clear();
-            inputShapes->clear();
+            if (input != nullptr) {
+                input->clear();
+                free(input);
+                input = nullptr;
+            }
+
+            if (output != nullptr) {
+                free(output);
+                output = nullptr;
+            }
+
+            if (inputShapes != nullptr) {
+                inputShapes->clear();
+            }
+
         }
 
         inline bool HasArg(const std::string &name) {
