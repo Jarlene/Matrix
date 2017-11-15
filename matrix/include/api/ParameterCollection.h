@@ -14,6 +14,11 @@ namespace matrix {
         void add(const Symbol &express);
         void add_param(const Symbol &symbol);
         void add_input(const Symbol &symbol);
+
+    private:
+        std::vector<NodePtr> express;
+        std::vector<NodePtr> params;
+        std::vector<NodePtr> inputs;
     };
 
 }

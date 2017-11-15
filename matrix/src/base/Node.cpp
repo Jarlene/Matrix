@@ -53,7 +53,6 @@ namespace matrix {
         for(NodePtr node : this->inputs) {
             inputShapes.push_back(&node->outputShapes);
         }
-
         op = opPtr->CreateOperator(this->context, &inputShapes, &outputShapes, params);
         bool rebuild = false;
         auto generatorVariableFunc = [this, &rebuild](std::initializer_list<Shape *> shapes) {
@@ -74,7 +73,9 @@ namespace matrix {
             }
 
         };
-        op->VariableNode(generatorVariableFunc);
+        if (op != nullptr) {
+            op->VariableNode(generatorVariableFunc);
+        }
         memorySize = opPtr->GetMemorySize();
         if (rebuild) {
             delete  this->op;

@@ -9,7 +9,7 @@
 
 namespace matrix {
 
-    class AdmaxOptimizer : public BaseOptimizer<2> {
+    class AdmaxOptimizer : public BaseOptimizer {
 
     };
 }

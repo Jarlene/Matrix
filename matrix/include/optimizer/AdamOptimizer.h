@@ -9,7 +9,7 @@
 
 namespace matrix {
 
-    class AdamOptimizer : public BaseOptimizer<2> {
+    class AdamOptimizer : public BaseOptimizer {
 
     };
 }

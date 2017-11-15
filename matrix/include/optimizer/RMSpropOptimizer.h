@@ -9,7 +9,7 @@
 
 namespace matrix {
 
-    class RMSpropOptimizer : public BaseOptimizer<1> {
+    class RMSpropOptimizer : public BaseOptimizer {
 
     };
 }

@@ -9,10 +9,10 @@
 
 namespace matrix {
 
-    class SGDOptimizer : public BaseOptimizer<0> {
+    class SGDOptimizer : public BaseOptimizer {
     public:
         explicit SGDOptimizer(float learning_rate = 0.001);
-        virtual void Update(std::vector<Blob> dx, std::vector<Blob> x) override ;
+        virtual std::vector<NodePtr> GeneratorUpdate(const std::map<NodePtr, NodePtr> &variableNodes) override ;
     private:
         float learning_rate;
     };

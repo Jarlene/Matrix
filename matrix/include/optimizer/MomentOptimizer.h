@@ -10,7 +10,7 @@
 namespace matrix {
 
 
-    class MomentOptimizer : public BaseOptimizer<1> {
+    class MomentOptimizer : public BaseOptimizer {
 
     };
 }

@@ -9,6 +9,26 @@
 namespace matrix {
 
 
+
+    static void addNode(std::vector<NodePtr> &stack, NodePtr &node) {
+        stack.push_back(node);
+        for (auto &item : node->inputs) {
+            stack.push_back(item);
+            addNode(stack, item);
+        }
+    }
+
+    static NodePtr AddGrad(const NodePtr &first, const NodePtr &second) {
+        auto res = Node::Create();
+        res->opName = "add";
+        res->nodeName = first->nodeName + "_add_" + second->nodeName;
+        res->isBackward = false;
+        res->inputs.push_back(first);
+        res->inputs.push_back(second);
+        res->Build();
+        return res;
+    }
+
     void static GraphAddNodes(std::vector<NodePtr> &vector, const NodePtr &node) {
 
         auto it = std::find(vector.begin(), vector.end(), node);
@@ -22,7 +42,7 @@ namespace matrix {
 
     }
 
-    Graph::Graph(const Symbol &symbol, bool isTrain) {
+    Graph::Graph(const Symbol &symbol, BaseOptimizer* optimizer,  bool isTrain) : optimizer(optimizer), isTrain(isTrain) {
         if (isTrain) {
             GeneratorGradNodes(symbol);
         }
@@ -143,25 +163,28 @@ namespace matrix {
         ones->Build();
         gradMap[out] = ones;
 
-        std::vector<NodePtr> stack;
-        stack.push_back(out);
 
-        while(!stack.empty()) {
-            auto pre = stack.back();
-            stack.pop_back();
+        std::vector<NodePtr> forward;
+        addNode(forward, out);
+        sort(forward.begin(), forward.end(), less);
+        forward.erase(unique(forward.begin(), forward.end()), forward.end());
+
+        while (!forward.empty()) {
+            auto pre = forward.back();
+            forward.pop_back();
             int index = 0;
             for (auto &item : pre->inputs) {
                 auto grad_node = item->GetGradNode(index, pre, gradMap[pre]);
-                gradMap[item] = grad_node;
-                auto it = std::find(stack.begin(), stack.end(), item);
-                if (it == stack.end()) {
-                    stack.push_back(item);
+                if (gradMap.count(item)) {
+                    nodes_.push_back(gradMap[item]);
+                    nodes_.push_back(grad_node);
+                    auto add = AddGrad(gradMap[item], grad_node);
+                    gradMap[item] = add;
+                } else {
+                    gradMap[item] = grad_node;
                 }
-                index++;
             }
         }
-
-
         for (auto &it : gradMap) {
             nodes_.push_back(it.second);
             if (it.first->isVariable) {
@@ -169,22 +192,9 @@ namespace matrix {
             }
         }
 
-
-        // todo:: add optimizer to add applyGradNode
-//        for (auto &it : variableNodes_) {
-//            auto applyGradNode = Node::Create();
-//            applyGradNode->inputs.push_back(it.first);
-//            applyGradNode->inputs.push_back(it.second);
-//            applyGradNode->context = it.first->context;
-//            applyGradNode->opName = "applyGrad";
-//            applyGradNode->nodeName = it.first->nodeName + "_apply_" + it.second->nodeName;
-//            applyGradNode->params["learning_rate"] = 0.001f;
-//            applyGradNode->params["apply_mode"] = kMomentum;
-//            applyGradNode->params["momentum_factor"] = 0.9f;
-//            applyGradNode->Build();
-//            nodes_.push_back(applyGradNode);
-//
-//        }
+        if (optimizer != nullptr) {
+            optimizer-> GeneratorUpdate(variableNodes_);
+        }
     }
 
     bool Graph::less(const NodePtr &lhs, const NodePtr &rhs) {

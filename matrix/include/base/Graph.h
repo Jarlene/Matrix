@@ -15,7 +15,7 @@ namespace matrix {
 
     class Graph {
     public:
-        Graph(const Symbol &symbol,  bool isTrain);
+        Graph(const Symbol &symbol, BaseOptimizer* optimizer,  bool isTrain);
 
         ~Graph();
 
@@ -47,6 +47,8 @@ namespace matrix {
         std::vector<NodePtr> nodes_;
         /// the first is variable, the second is grad_variabl
         std::map<NodePtr, NodePtr> variableNodes_;
+        BaseOptimizer *optimizer;
+        bool isTrain;
     };
 
 

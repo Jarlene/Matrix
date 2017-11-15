@@ -41,8 +41,9 @@ namespace matrix {
 
     template<class T>
     Symbol ConstantSymbol::Create(const std::string &name,  T *values, Shape &shape) {
-        auto symbol = ConstantSymbol(name);
+        auto symbol = ConstantSymbol();
         symbol.nodePtr->data_ = values;
+        symbol.nodePtr->nodeName = name;
         symbol.nodePtr->outputShapes = shape;
         symbol.Build();
         return symbol;
@@ -51,17 +52,18 @@ namespace matrix {
     template<class T>
     Symbol ConstantSymbol::Create(const std::string &name, const std::vector<T> &values, Shape &shape) {
         auto symbol = ConstantSymbol(name);
+        symbol.nodePtr->nodeName = name;
         symbol.nodePtr->data_ = values.data();
         symbol.nodePtr->outputShapes = shape;
         symbol.Build();
         return symbol;
     }
 
-    ConstantSymbol::ConstantSymbol() {
+    ConstantSymbol::ConstantSymbol() : Symbol("") {
 
     }
 
-    ConstantSymbol::ConstantSymbol(const std::string &name) : Symbol(name) {
+    ConstantSymbol::ConstantSymbol(const std::string &name) : Symbol("") {
 
     }
 }

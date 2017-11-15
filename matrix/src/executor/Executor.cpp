@@ -6,8 +6,8 @@
 
 namespace matrix {
 
-    Executor::Executor(const Symbol &symbol,  Context &context) {
-        graph_ = new Graph(symbol,  context.phase == Phase::TRAIN);
+    Executor::Executor(const Symbol &symbol,  Context &context, BaseOptimizer *optimizer) {
+        graph_ = new Graph(symbol, optimizer, context.phase == Phase::TRAIN);
         graph_->Optimize();
         graph_->AllocateGraph(fetches_);
     }

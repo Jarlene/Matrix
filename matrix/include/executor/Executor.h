@@ -17,7 +17,7 @@ namespace matrix {
 
     class Executor {
     public:
-        Executor(const Symbol &symbol,  Context &context);
+        Executor(const Symbol &symbol,  Context &context, BaseOptimizer *optimizer);
         ~Executor();
         std::vector<void*> runAsync();
         std::vector<void*> runSync();

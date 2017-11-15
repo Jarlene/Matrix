@@ -5,13 +5,12 @@
 #ifndef MATRIX_BASEOPTIMIZER_H
 #define MATRIX_BASEOPTIMIZER_H
 
-#include <unordered_map>
-
-#include "matrix/include/base/Blob.h"
+#include <map>
+#include "matrix/include/base/Node.h"
+#include "matrix/include/utils/Math.h"
 
 namespace matrix {
 
-    template<int N>
     class BaseOptimizer {
     public:
         BaseOptimizer() = default;
@@ -26,12 +25,7 @@ namespace matrix {
 
         virtual ~BaseOptimizer() = default;
 
-        virtual void Update(std::vector<Blob> dx, std::vector<Blob> x) = 0;
-
-        virtual void Reset() {}
-
-    protected:
-//        std::unordered_map<>
+        virtual std::vector<NodePtr> GeneratorUpdate(const std::map<NodePtr, NodePtr> &variableNodes) = 0;
     };
 
 }

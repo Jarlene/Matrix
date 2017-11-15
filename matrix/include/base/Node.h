@@ -22,7 +22,7 @@ namespace matrix {
 
         size_t id_;
 
-        std::string nodeName;
+        std::string nodeName = "";
 
         std::string opName;
 

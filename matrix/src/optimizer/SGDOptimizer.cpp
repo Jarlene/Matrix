@@ -7,16 +7,13 @@
 namespace matrix {
 
 
-    void SGDOptimizer::Update(std::vector<Blob> dx, std::vector<Blob> x) {
-        int size = dx.size();
-        for (int i = 0; i < size; ++i) {
-            Blob di = dx.at(i);
-            Blob xi = x.at(i);
-        }
-
-    }
-
     SGDOptimizer::SGDOptimizer(float learning_rate) : learning_rate(learning_rate){
 
     }
+
+    std::vector<NodePtr> SGDOptimizer::GeneratorUpdate(const std::map<NodePtr, NodePtr> &variableNodes) {
+
+        return std::vector<NodePtr>();
+    }
+
 }
