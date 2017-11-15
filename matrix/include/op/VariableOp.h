@@ -16,6 +16,8 @@ namespace matrix {
     SAME_FUNCTION(Variable);
     DISABLE_COPY_AND_ASSIGN(Variable);
         INPUT_TAG(INPUT);
+    private:
+        bool init = false;
     };
 
 

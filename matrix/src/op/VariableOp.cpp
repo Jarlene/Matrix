@@ -14,16 +14,18 @@ namespace matrix {
 
     template <class T, class xpu>
     bool VariableOp<T, xpu>::Run() {
-
-        if (HasArg("isTrain")) {
-            Tensor<T> out(Output<T>(), *outputShape);
-            if (HasArg("constant")) {
-                T val = GetArgValue<T>("constant", T(0.1));
-                Value<T>(out, val);
-            } else {
-                T mu  = GetArgValue<T>("mu", T(0));
-                T sigma = GetArgValue<T>("sigma", T(1));
-                Random<T>(out, mu, sigma);
+        if (!init) {
+            if (HasArg("isTrain")) {
+                Tensor<T> out(Output<T>(), *outputShape);
+                if (HasArg("constant")) {
+                    T val = GetArgValue<T>("constant", T(0.1));
+                    Value<T>(out, val);
+                } else {
+                    T mu  = GetArgValue<T>("mu", T(0));
+                    T sigma = GetArgValue<T>("sigma", T(1));
+                    Random<T>(out, mu, sigma);
+                }
+                init = true;
             }
         }
         return true;

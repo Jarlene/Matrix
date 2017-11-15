@@ -29,6 +29,11 @@ namespace matrix {
 
     }
 
+    template <class T>
+    void ApplyNode(Tensor<T> &out,  Tensor<T> &grad, T &learning_rate) {
+        CPUAxpy(out.Size(), learning_rate, grad.Data(), 1, out.MutableData(), 1);
+    }
+
 
     template <class T>
     void MatrixMul(const Tensor<T> &a, const bool ATran,  const Tensor<T> &b, const bool BTran, Tensor<T> &c, T beta = T(0)) {

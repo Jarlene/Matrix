@@ -12,8 +12,18 @@ namespace matrix {
     }
 
     std::vector<NodePtr> SGDOptimizer::GeneratorUpdate(const std::map<NodePtr, NodePtr> &variableNodes) {
-
-        return std::vector<NodePtr>();
+        std::vector<NodePtr> result;
+        for(auto &it : variableNodes) {
+            auto node = Node::Create();
+            node->opName = "applyGrad";
+            node->params["learning_rate"] = learning_rate;
+            node->params["type"] = kSGD;
+            node->inputs.push_back(it.first);
+            node->inputs.push_back(it.second);
+            node->Build();
+            result.push_back(node);
+        }
+        return result;
     }
 
 }

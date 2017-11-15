@@ -34,10 +34,10 @@ namespace matrix {
         void AppendNode(const NodePtr &node);
 
         const std::vector<NodePtr> &GetGraphNodes() const;
-
+        static bool less(const NodePtr &lhs, const NodePtr &rhs);
     private:
 
-        static bool less(const NodePtr &lhs, const NodePtr &rhs);
+
         void Unique();
 
         void GeneratorGradNodes(const Symbol &symbol);

@@ -55,6 +55,7 @@ namespace matrix {
     std::vector<void *> Executor::runSync() {
         for (auto &node : graph_->GetGraphNodes()) {
             if (node->op != nullptr) {
+                node->SetData();
                 node->op->AsyncRun();
             }
         }
@@ -68,8 +69,12 @@ namespace matrix {
     void Executor::Init() {
         depen_.Clear();
         ready_.Clear();
+        std::vector<NodePtr> input;
         for(auto &item : graph_->GetGraphNodes()) {
-            int size = item->inputs.size();
+            input.insert(input.end(), item->inputs.begin(), item->inputs.end());
+            sort(input.begin(), input.end(), Graph::less);
+            input.erase(unique(input.begin(), input.end()), input.end());
+            int size = input.size();
             if (item->op == nullptr || size == 0) {
                 ready_.Put(item);
             } else {
@@ -77,7 +82,9 @@ namespace matrix {
                     depen_.Put(item, size);
                 }
             }
+            input.clear();
         }
+        ready_.Unique();
     }
 
     Executor::~Executor() {

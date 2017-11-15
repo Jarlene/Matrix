@@ -183,6 +183,7 @@ namespace matrix {
                 } else {
                     gradMap[item] = grad_node;
                 }
+                index++;
             }
         }
         for (auto &it : gradMap) {
@@ -193,7 +194,8 @@ namespace matrix {
         }
 
         if (optimizer != nullptr) {
-            optimizer-> GeneratorUpdate(variableNodes_);
+            auto apply = optimizer-> GeneratorUpdate(variableNodes_);
+            nodes_.insert(nodes_.end(), apply.begin(), apply.end());
         }
     }
 
