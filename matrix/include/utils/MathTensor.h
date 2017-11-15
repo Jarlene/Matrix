@@ -158,10 +158,9 @@ namespace matrix {
     }
 
     template <class T>
-    void SoftmaxGrad(const Tensor<T> &data, const Tensor<T> &label, Tensor<T> &out) {
-        for (int i = 0; i < label.Size(); ++i) {
-            int idx = (int)label.Data()[i];
-            SoftmaxGrad(data.Size(), data.Data(), idx, out.MutableData());
+    void SoftmaxGrad(const Tensor<T> &data, const Tensor<T> &pre_grad, Tensor<T> &out) {
+        for (int i = 0; i < out.Size(); ++i) {
+            SoftmaxGrad(data.Size(), data.Data(), pre_grad.Data(),  i, out.MutableData());
         }
     }
 

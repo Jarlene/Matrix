@@ -821,12 +821,13 @@ namespace matrix {
 
 
     template <class T>
-    inline void SoftmaxGrad(const int N, const T* x,  int idx, T* y) {
+    inline void SoftmaxGrad(const int N, const T* x, const T* pre, int idx, T* y) {
 #ifdef USE_MP
 #pragma omp parallel for
 #endif
         for (int i = 0; i < N; ++i) {
-            y[i] = (i == idx) ? x[i] / (T(1.0) - x[i]) : -x[i] * x[idx];
+            y[i] = (i == idx) ? x[i] * (T(1.0) - x[i]) : -x[i] * x[idx];
+            y[i] *= pre[i];
         }
     }
 

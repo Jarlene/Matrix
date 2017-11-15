@@ -16,12 +16,13 @@ namespace matrix {
     bool OutputGradOp<T, Context>::Run() {
         auto mode = GetArgValue<OutputMode>("type", kSoftmax);
         Tensor<T> pre_grad(Input<T>(PRE_GRAD), *inputShapes->at(PRE_GRAD));
+        Tensor<T> selfOut(Input<T>(OUT), *inputShapes->at(OUT));
         Tensor<T> input(Input<T>(INPUT), *inputShapes->at(INPUT));
         Tensor<T> out(Output<T>(), *outputShape);
         if (mode == kSoftmax) {
-//            SoftmaxGrad<T>(input, out);
+            SoftmaxGrad<T>(selfOut, pre_grad,  out);
         } else  {
-            Logger::Global()->Fatal("OutputGradOp not support other out put.\n");
+            Logger::Global()->Fatal("OutputGradOp not support other out put.");
         }
         return true;
     }
