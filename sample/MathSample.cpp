@@ -15,8 +15,8 @@ int main() {
     float a[] = {2};
 
     auto s1 = ShapeN(1,1);
-    auto as = ConstantSymbol::Create<float>("a", a, s1);
-    auto bs = VariableSymbol::Create("c", ShapeN(1,1));
+    auto as = ConstantSymbol::Create<float>("as", a, s1);
+    auto bs = VariableSymbol::Create("bs", ShapeN(1,1));
     auto cs = as + bs;
 
     auto ds = cs * cs + bs;

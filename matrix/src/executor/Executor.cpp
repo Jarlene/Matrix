@@ -24,12 +24,14 @@ namespace matrix {
                     Logger::Global()->Fatal("exception on node %d==> %s", node->id_ , e.what());
                 }
             }
-            {
-                std::unique_lock<std::mutex> lock (this->mutex_);
-                for (auto &item : node->outputs) {
+            std::unique_lock<std::mutex> lock (this->mutex_);
+            for (auto &item : node->outputs) {
+                if(graph_->GetNode(item.lock()->id_)) {
                     item.lock()->depens_.remove(node);
                     if (item.lock()->depens_.empty()) {
-                        ready_.Put(item.lock());
+                        if (!ready_.Has(item.lock())) {
+                            ready_.Put(item.lock());
+                        }
                     }
                 }
             }
@@ -46,9 +48,15 @@ namespace matrix {
         };
 
         ThreadPool pool(CPU_CORES);
-        while (ready_.Size() != 0){
+        int size = graph_->GetGraphNodes().size();
+        while (true){
             auto node = ready_.Take();
+            Logger::Global()->Info("run no idx %d", node->id_);
             pool.enqueue(compute, node);
+            size--;
+            if (size == 0) {
+                break;
+            }
         }
         for (auto it : graph_->GetUpdateNodes()) {
             pool.enqueue(updateFunc, it);
@@ -80,12 +88,16 @@ namespace matrix {
 
     void Executor::Init() {
         for(auto &item : graph_->GetGraphNodes()) {
+            if (item->op == nullptr) {
+                ready_.Put(item);
+                continue;
+            }
             item->depens_.clear();
             item->depens_.insert(item->depens_.end(), item->inputs.begin(), item->inputs.end());
             item->depens_.sort();
             item->depens_.unique();
             int size = item->depens_.size();
-            if (item->op == nullptr || size == 0) {
+            if (size == 0) {
                 ready_.Put(item);
             }
         }
