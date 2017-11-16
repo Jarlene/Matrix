@@ -11,7 +11,7 @@ namespace matrix {
         symbol.nodePtr->outputShapes = shape;
         symbol.nodePtr->context.type = type;
         symbol.nodePtr->isPlaceHolder = true;
-        symbol.Build();
+        symbol.Build(name);
         return symbol;
     }
 

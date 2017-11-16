@@ -14,7 +14,7 @@ namespace matrix {
         symbol.nodePtr->nodeName = name;
         symbol.SetParam("isTrain", true);
         symbol.nodePtr->isVariable = true;
-        symbol.Build();
+        symbol.Build(name);
         return symbol;
     }
 
@@ -33,7 +33,7 @@ namespace matrix {
         symbol.nodePtr->outputShapes = ShapeN(0,0);
         symbol.nodePtr->nodeName = name;
         symbol.nodePtr->context.type = type;
-        symbol.Build();
+        symbol.Build(name);
         return symbol;
     }
 

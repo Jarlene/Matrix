@@ -19,16 +19,14 @@ namespace matrix {
     public:
         Executor(const Symbol &symbol,  Context &context, BaseOptimizer *optimizer);
         ~Executor();
-        std::vector<void*> runAsync();
-        std::vector<void*> runSync();
+        void runAsync();
+        void runSync();
 
     private:
         void Init();
 
     private:
-        std::vector<NodePtr> fetches_;
         BlockQueue<NodePtr> ready_;
-        BlockMap<NodePtr, int> depen_;
         Graph* graph_{nullptr};
         std::mutex mutex_;
     };

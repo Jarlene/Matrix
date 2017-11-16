@@ -67,6 +67,9 @@ namespace matrix {
         if (this->Size() != shape.Size()) {
             return false;
         }
+        if (Rank() != shape.Rank()) {
+            return false;
+        }
         for (int i = 0; i < Rank(); ++i) {
             if (this->shape_[i] != shape.shape_[i]) {
                 return false;
@@ -84,7 +87,7 @@ namespace matrix {
     }
 
     bool Shape::isVector() {
-        return Rank() == 1 && Size() > 1;
+        return Rank() == 1;
     }
 
     bool Shape::isMatrix() {

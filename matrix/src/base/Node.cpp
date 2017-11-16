@@ -54,6 +54,9 @@ namespace matrix {
             inputShapes.push_back(&node->outputShapes);
         }
         op = opPtr->CreateOperator(this->context, &inputShapes, &outputShapes, params);
+        if (op == nullptr) {
+            Logger::Global()->Fatal("can not find the op %s", this->opName.c_str());
+        }
         bool rebuild = false;
         auto generatorVariableFunc = [this, &rebuild](std::initializer_list<Shape *> shapes) {
             rebuild = true;
@@ -95,6 +98,14 @@ namespace matrix {
             inputDates.push_back((*it)->data_);
         }
         op->SetData(&inputDates, data_);
+    }
+
+    bool Node::operator==(const NodePtr &node) {
+        return this->id_ == node->id_;
+    }
+
+    bool Node::operator<(const NodePtr &node) {
+        return this->id_ < node->id_;
     }
 
 }

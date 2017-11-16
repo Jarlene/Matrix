@@ -20,6 +20,9 @@ namespace matrix {
             node->params["type"] = kSGD;
             node->inputs.push_back(it.first);
             node->inputs.push_back(it.second);
+            it.first->outputs.push_back(std::weak_ptr<Node>(node));
+            it.second->outputs.push_back(std::weak_ptr<Node>(node));
+            node->nodeName = it.first->nodeName + "_apply_" + it.second->nodeName;
             node->Build();
             result.push_back(node);
         }

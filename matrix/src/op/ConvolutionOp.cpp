@@ -151,9 +151,19 @@ namespace matrix {
                 Logger::Global()->Fatal("ConvolutionOp no filter for input");
             }
             Shape filter = GetArgValue<Shape>("filter");
+
+            int filter_num = GetArgValue<int>("filter_num");
+            ImageOrder order = GetArgValue<ImageOrder>("order", NCHW);
+            int channel = 0;
+            if (order == NCHW) {
+                channel = inputShapes->at(DATA)->At(1);
+            } else {
+                channel = inputShapes->at(DATA)->At(3);
+            }
+            filter.reShape(ShapeN(filter_num, channel, filter[0], filter[1]));
             if (HasArg("with_bias")) {
                 Shape bias;
-                bias.Append(inputShapes->at(0)->At(0));
+                bias.Append(inputShapes->at(DATA)->At(0));
                 func({&filter, &bias});
             } else {
                 func({&filter});
@@ -202,35 +212,21 @@ namespace matrix {
         if (param->args->count("group")) {
             group = get<int>(param->args->at("group"));
         }
-        int filter_num = 1;
-
-
         Shape in = *inShape[0];
         Shape kernel = *inShape[1];
 
         int n = in[0];
-        int kernel_h = kernel[0];
-        int kernel_w = kernel[1];
+        int kernel_h = kernel[2];
+        int kernel_w = kernel[3];
+        int filter_num = kernel[0];
         if (order == NCHW) {
-            int channel = in[1];
-            int height = (in[2] + 2 * padding[0] - (dilate[0] * (kernel[0] - 1) + 1)) / stride[0] + 1;
-            int width = (in[3] + 2 * padding[1] - (dilate[1] * (kernel[1] - 1) + 1)) / stride[1] + 1;
-            filter_num = channel;
-            if (param->args->count("filter_num")) {
-                filter_num = get<int>(param->args->at("filter_num"));
-            }
+            int height = (in[2] + 2 * padding[0] - (dilate[0] * (kernel_h - 1) + 1)) / stride[0] + 1;
+            int width = (in[3] + 2 * padding[1] - (dilate[1] * (kernel_w - 1) + 1)) / stride[1] + 1;
             outShape->reShape(ShapeN(n, filter_num, height, width));
-            inShape[1]->reShape(ShapeN(filter_num, channel, kernel_h, kernel_w));
         } else {
-            int height = (in[1] + 2 * padding[0] - (dilate[0] * (kernel[0] - 1) + 1)) / stride[0] + 1;
-            int width = (in[2] + 2 * padding[1] - (dilate[1] * (kernel[1] - 1) + 1)) / stride[1] + 1;
-            int channel = in[3];
-            filter_num = channel;
-            if (param->args->count("filter_num")) {
-                filter_num = get<int>(param->args->at("filter_num"));
-            }
+            int height = (in[1] + 2 * padding[0] - (dilate[0] * (kernel_h - 1) + 1)) / stride[0] + 1;
+            int width = (in[2] + 2 * padding[1] - (dilate[1] * (kernel_w - 1) + 1)) / stride[1] + 1;
             outShape->reShape(ShapeN(n, height, width, filter_num));
-            inShape[1]->reShape(ShapeN(filter_num, channel, kernel_h, kernel_w));
         }
     }
 

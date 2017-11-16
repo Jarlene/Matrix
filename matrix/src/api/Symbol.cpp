@@ -32,6 +32,7 @@ namespace matrix {
     }
 
     Symbol &Symbol::Build(const std::string &symbol_name) {
+        this->nodePtr->nodeName = symbol_name;
         this->nodePtr->Build();
         return *this;
     }

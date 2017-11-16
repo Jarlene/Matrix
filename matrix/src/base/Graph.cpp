@@ -25,31 +25,21 @@ namespace matrix {
         res->isBackward = false;
         res->inputs.push_back(first);
         res->inputs.push_back(second);
+        first->outputs.push_back(std::weak_ptr<Node>(res));
+        second->outputs.push_back(std::weak_ptr<Node>(res));
         res->Build();
         return res;
     }
 
-    void static GraphAddNodes(std::vector<NodePtr> &vector, const NodePtr &node) {
-
-        auto it = std::find(vector.begin(), vector.end(), node);
-        if (it == vector.end()) {
-            vector.push_back(node);
-        }
-
-        for (auto &e : node->inputs) {
-            GraphAddNodes(vector, e);
-        }
-
-    }
 
     Graph::Graph(const Symbol &symbol, BaseOptimizer* optimizer,  bool isTrain) : optimizer(optimizer), isTrain(isTrain) {
         if (isTrain) {
             GeneratorGradNodes(symbol);
         }
-        GraphAddNodes(nodes_, symbol.GetNode());
     }
 
     Graph::~Graph() {
+        delete optimizer;
         MemoryManager::Global()->GetCpuMemoryPool()->freeAll();
     }
 
@@ -75,9 +65,10 @@ namespace matrix {
         Unique();
     }
 
-    void Graph::AllocateGraph(const std::vector<NodePtr> &fetch) {
-        for(auto node : nodes_) {
-            if (node->op != nullptr && node->memorySize > 0 && node->data_ == nullptr) {
+    void Graph::AllocateGraph() {
+        for(auto &node : nodes_) {
+            if (node->op != nullptr && node->memorySize > 0
+                && node->data_ == nullptr && !node->isPlaceHolder) {
                 node->data_ = MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(node->memorySize);
             }
         }
@@ -145,7 +136,7 @@ namespace matrix {
     }
 
     void Graph::Unique() {
-        sort(nodes_.begin(), nodes_.end(), less);
+        sort(nodes_.begin(), nodes_.end(), Node::less);
         nodes_.erase(unique(nodes_.begin(), nodes_.end()), nodes_.end());
     }
 
@@ -166,9 +157,9 @@ namespace matrix {
 
         std::vector<NodePtr> forward;
         addNode(forward, out);
-        sort(forward.begin(), forward.end(), less);
+        sort(forward.begin(), forward.end(), Node::less);
         forward.erase(unique(forward.begin(), forward.end()), forward.end());
-
+        nodes_.insert(nodes_.end(), forward.begin(), forward.end());
         while (!forward.empty()) {
             auto pre = forward.back();
             forward.pop_back();
@@ -195,11 +186,12 @@ namespace matrix {
 
         if (optimizer != nullptr) {
             auto apply = optimizer-> GeneratorUpdate(variableNodes_);
-            nodes_.insert(nodes_.end(), apply.begin(), apply.end());
+            variables.insert(variables.end(), apply.begin(), apply.end());
         }
     }
 
-    bool Graph::less(const NodePtr &lhs, const NodePtr &rhs) {
-        return lhs->id_ < rhs->id_;
+    const std::vector<NodePtr> &Graph::GetUpdateNodes() const {
+        return variables;
     }
+
 }

@@ -41,10 +41,10 @@ namespace matrix {
 
 
     void FlattenGradOpProp::InferShape(std::vector<Shape *> &inShape, Shape *outShape) {
-        outShape->reShape(ShapeN(inShape[0]->At(0), inShape[0]->StrideExclude(0)));
+        outShape->reShape(*inShape[2]);
     }
 
 
-    INIT_OPERATOR_PROPERTY_CREATE(FlattenGradOpProp, FlattenGradOp, false);
+    INIT_OPERATOR_PROPERTY_CREATE(FlattenGradOpProp, FlattenGradOp, true);
 
 }

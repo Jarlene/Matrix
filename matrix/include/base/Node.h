@@ -7,6 +7,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <list>
 #include "matrix/include/utils/Any.h"
 #include "matrix/include/utils/Registry.h"
 
@@ -50,6 +51,8 @@ namespace matrix {
 
         std::vector<NodeWeakPtr> outputs;
 
+        std::list<NodePtr> depens_;
+
         std::map<std::string, Any> params;
 
         void SetData();
@@ -59,6 +62,19 @@ namespace matrix {
         void Build();
         NodePtr  GetGradNode(int input_index, NodePtr &pre, NodePtr &preGrad);
         static NodePtr Create();
+
+        bool operator==(const NodePtr &node);
+
+        bool operator<(const NodePtr &node);
+
+        static bool less(const NodePtr &lhs, const NodePtr &rhs) {
+            return lhs->id_ < rhs->id_;
+        }
+
+        static bool large(const NodePtr &lhs, const NodePtr &rhs) {
+            return lhs->id_ > rhs->id_;
+        }
+
 
     };
 }

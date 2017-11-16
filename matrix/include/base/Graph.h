@@ -25,7 +25,7 @@ namespace matrix {
 
         void Optimize();
 
-        void AllocateGraph(const std::vector<NodePtr> &fetch);
+        void AllocateGraph();
 
         void SaveVariableData(std::string &file);
 
@@ -34,7 +34,8 @@ namespace matrix {
         void AppendNode(const NodePtr &node);
 
         const std::vector<NodePtr> &GetGraphNodes() const;
-        static bool less(const NodePtr &lhs, const NodePtr &rhs);
+
+        const std::vector<NodePtr> &GetUpdateNodes() const ;
     private:
 
 
@@ -45,6 +46,7 @@ namespace matrix {
     private:
         std::map<int, int> graphColor_;
         std::vector<NodePtr> nodes_;
+        std::vector<NodePtr> variables;
         /// the first is variable, the second is grad_variabl
         std::map<NodePtr, NodePtr> variableNodes_;
         BaseOptimizer *optimizer;

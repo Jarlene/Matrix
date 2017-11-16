@@ -211,7 +211,7 @@ namespace matrix {
             return inputShapes->size();
         }
 
-        inline void SetData(std::vector<void *> *input, void *output) {
+        virtual void SetData(std::vector<void *> *input, void *output) {
             this->input = input;
             this->output = output;
         }

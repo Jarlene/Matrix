@@ -16,11 +16,11 @@ namespace matrix {
         static Symbol Create(const std::string &name, const T &value);
 
         template <class T>
-        static Symbol Create(const std::string &name,  T *values, Shape &shape);
+        static Symbol Create(const std::string &name,  T *values,const Shape &shape);
 
 
         template <class T>
-        static Symbol Create(const std::string &name, const std::vector<T> &values, Shape &shape);
+        static Symbol Create(const std::string &name, const std::vector<T> &values, const Shape &shape);
 
     private:
         ConstantSymbol();
@@ -35,27 +35,25 @@ namespace matrix {
         auto symbol = ConstantSymbol(name);
         T* s = const_cast<T*>(&value);
         symbol.nodePtr->data_ = s;
-        symbol.Build();
+        symbol.Build(name);
         return symbol;
     }
 
     template<class T>
-    Symbol ConstantSymbol::Create(const std::string &name,  T *values, Shape &shape) {
+    Symbol ConstantSymbol::Create(const std::string &name,  T *values, const Shape &shape) {
         auto symbol = ConstantSymbol();
         symbol.nodePtr->data_ = values;
-        symbol.nodePtr->nodeName = name;
         symbol.nodePtr->outputShapes = shape;
-        symbol.Build();
+        symbol.Build(name);
         return symbol;
     }
 
     template<class T>
-    Symbol ConstantSymbol::Create(const std::string &name, const std::vector<T> &values, Shape &shape) {
+    Symbol ConstantSymbol::Create(const std::string &name, const std::vector<T> &values, const Shape &shape) {
         auto symbol = ConstantSymbol(name);
-        symbol.nodePtr->nodeName = name;
         symbol.nodePtr->data_ = values.data();
         symbol.nodePtr->outputShapes = shape;
-        symbol.Build();
+        symbol.Build(name);
         return symbol;
     }
 

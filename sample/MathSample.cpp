@@ -3,36 +3,34 @@
 //
 
 #include <matrix/include/api/ConstantSymbol.h>
+#include <matrix/include/api/VariableSymbol.h>
 #include <matrix/include/executor/Executor.h>
+#include <matrix/include/optimizer/SGDOptimizer.h>
 
 using namespace matrix;
 
 int main() {
 
 
-    float a[] = {1, 2, 3,
-                 4, 5, 6};
-    float b[] = {2, 3,
-                 4, 5,
-                 6, 7};
+    float a[] = {2};
 
-    auto s1 = ShapeN(2, 3);
+    auto s1 = ShapeN(1,1);
     auto as = ConstantSymbol::Create<float>("a", a, s1);
-    auto s2 = ShapeN(3, 2);
-    auto bs = ConstantSymbol::Create<float>("b", b, s2);
+    auto bs = VariableSymbol::Create("c", ShapeN(1,1));
+    auto cs = as + bs;
 
-    auto cs = as * bs;
+    auto ds = cs * cs + bs;
 
     Context context;
     context.type = kFloat;
-    context.phase = TEST;
+    context.phase = TRAIN;
     context.mode = kCpu;
 
-    auto executor = std::make_shared<Executor>(cs, context);
-    executor->runAsync();
-
-    cs.PrintMatrix<float>();
-
-
+    auto opt = new SGDOptimizer(0.1f);
+    auto executor = std::make_shared<Executor>(ds, context, opt);
+    for (int i = 0; i < 10; ++i) {
+        executor->runAsync();
+        bs.PrintMatrix<float>();
+    }
     return 0;
 }

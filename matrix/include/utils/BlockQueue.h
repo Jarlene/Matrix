@@ -50,6 +50,20 @@ namespace matrix {
             }
         }
 
+        bool Has(const T &t) {
+            bool has = false;
+            {
+                std::unique_lock<std::mutex> lock (mutex_);
+                for (auto &it : queue_) {
+                    if (it == t) {
+                        has = true;
+                        break;
+                    }
+                }
+            }
+            return has;
+        }
+
         void Clear() {
             {
                 std::unique_lock<std::mutex> lock (mutex_);

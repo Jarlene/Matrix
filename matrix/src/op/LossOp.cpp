@@ -18,6 +18,7 @@ namespace matrix {
         Tensor<T> data(Input<T>(DATA), *inputShapes->at(DATA));
         Tensor<T> label(Input<T>(LABEL), *inputShapes->at(LABEL));
         Tensor<T> out(Output<T>(), *outputShape);
+        Value(out, T(0));
         if (lossModel == LossMode::kCrossEntropy) {
             CrossEntropy<T>(data, label, out);
         } else if (lossModel == LossMode::kMSE) {

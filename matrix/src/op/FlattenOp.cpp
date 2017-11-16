@@ -47,7 +47,7 @@ namespace matrix {
         outShape->reShape(ShapeN(inShape[0]->At(0), inShape[0]->StrideExclude(0)));
     }
 
-    INIT_OPERATOR_PROPERTY_CREATE(FlattenOpProp, FlattenOp, false);
+    INIT_OPERATOR_PROPERTY_CREATE(FlattenOpProp, FlattenOp, true);
 
 }
 

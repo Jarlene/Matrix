@@ -3,7 +3,7 @@
 //
 #include <matrix/include/utils/Logger.h>
 #include <matrix/include/api/Symbol.h>
-#include <matrix/include/api/VariableSymbol.h>
+#include <matrix/include/optimizer/SGDOptimizer.h>
 #include <matrix/include/api/PlaceHolderSymbol.h>
 #include <matrix/include/executor/Executor.h>
 #include "include/DataSet.h"
@@ -20,23 +20,23 @@ Symbol LogisticRegression(Symbol input, int hideNum, int classNum) {
             .SetInput("data", input)
             .SetParam("hide_num", hideNum)
             .SetParam("with_bias", true)
-            .Build();
+            .Build("f1");
 
     auto act1 = Symbol("activation")
             .SetInput("y1", y1)
             .SetParam("type", kSigmoid)
-            .Build();
+            .Build("act1");
 
     auto y2 = Symbol("fullConnected")
             .SetInput("act1", act1)
             .SetParam("hide_num", classNum)
             .SetParam("with_bias", true)
-            .Build();
+            .Build("y2");
 
     auto out = Symbol("output")
             .SetInput("y2", y2)
             .SetParam("type", kSoftmax)
-            .Build();
+            .Build("out");
 
     return out;
 }
@@ -53,18 +53,18 @@ Symbol Connvolution(Symbol &input, int batchSize, int classNum) {
             .SetParam("dilate", ShapeN(1,1))
             .SetParam("filter_num", 8)
             .SetParam("group", 1)
-            .Build();
+            .Build("conv1");
 
     auto act = Symbol("activation")
             .SetInput("conv1", conv1)
             .SetParam("type", ActType::kRelu)
-            .Build();
+            .Build("act");
 
     auto pool1 = Symbol("pooling")
             .SetInput("act", act)
             .SetParam("filter", ShapeN(3,3))
-            .SetParam("type", PoolType::kMax)
-            .Build();
+            .SetParam("type", PoolType::kAvg)
+            .Build("pool1");
 
 
     auto conv2 = Symbol("convolution")
@@ -76,35 +76,35 @@ Symbol Connvolution(Symbol &input, int batchSize, int classNum) {
             .SetParam("dilate", ShapeN(1,1))
             .SetParam("filter_num", 16)
             .SetParam("group", 1)
-            .Build();
+            .Build("conv2");
 
     auto act2 = Symbol("activation")
             .SetInput("conv2", conv2)
             .SetParam("type", ActType::kRelu)
-            .Build();
+            .Build("act2");
 
     auto pool2 = Symbol("pooling")
             .SetInput("act2", act2)
             .SetParam("filter", ShapeN(2,2))
-            .SetParam("type", PoolType::kMax)
-            .Build();
+            .SetParam("type", PoolType::kAvg)
+            .Build("pool2");
 
     auto flatten = Symbol("flatten")
             .SetInput("pool2", pool2)
-            .Build();
+            .Build("flatten");
 
     auto fully = Symbol("fullConnected")
             .SetInput("flatten", flatten)
             .SetParam("hide_num", classNum)
             .SetParam("with_bias", true)
-            .Build();
+            .Build("fc");
 
     auto out = Symbol("output")
             .SetInput("fully", fully)
             .SetParam("type", kSoftmax)
-            .Build();
+            .Build("out");
 
-    return fully;
+    return out;
 }
 
 
@@ -132,25 +132,35 @@ int main() {
             .SetInput("logistic", logistic)
             .SetInput("y", label)
             .SetParam("type", kCrossEntropy)
-            .Build();
+            .Build("loss");
 
-    auto prediction = Symbol("prediction")
-            .SetInput("logistic", logistic)
-            .SetInput("y", label)
-            .Build();
+//    auto prediction = Symbol("prediction")
+//            .SetInput("logistic", logistic)
+//            .SetInput("y", label)
+//            .Build("prediction");
+//
+//
+//    auto acc = Symbol("accuracy")
+//            .SetInput("logistic", logistic)
+//            .SetInput("y", label)
+//            .Build("acc");
+
 
     Context context;
     context.type = kFloat;
     context.phase = TRAIN;
     context.mode = kCpu;
+    auto opt = new SGDOptimizer;
     DataSet trainSet(trainImagePath, trainLabelPath);
-    auto executor = std::make_shared<Executor>(loss, context);
+    auto executor = std::make_shared<Executor>(loss, context, opt);
 
     for (int i = 0; i < epochSize; ++i) {
         trainSet.GetBatchData(batchSize, imageData, labelData);
         image.Fill(imageData);
         label.Fill(labelData);
         executor->runAsync();
+//        logistic.PrintMatrix<float>();
+        loss.PrintMatrix<float>();
     }
 
     free(imageData);

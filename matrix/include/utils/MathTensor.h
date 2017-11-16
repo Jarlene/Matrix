@@ -62,7 +62,6 @@ namespace matrix {
 
     template <class T>
     void Add(const Tensor<T> &a, const Tensor<T> &b, Tensor<T> &c) {
-        assert(a.GetShape() == c.GetShape());
         int size = a.Size();
         if (a.GetShape() == b.GetShape()) {
             Add<T>(size, a.Data(), b.Data(), c.MutableData());

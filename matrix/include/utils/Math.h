@@ -905,7 +905,7 @@ namespace matrix {
 #pragma omp parallel for
 #endif
             for (int i = 0; i < N; ++i) {
-                out[0] += T(0.5) * std::pow((in1[i] - in2[i]), 2);
+                out[0] += T(0.5) * (in1[i] - in2[i]) * (in1[i] - in2[i]);
             }
         } else {
 #ifdef USE_MP
@@ -913,7 +913,7 @@ namespace matrix {
 #endif
             for (int i = 0; i < M; ++i) {
                 for (int j = 0; j < N / M; ++j) {
-                    out[0] += T(0.5) * std::pow((in1[i*M + j] - in2[i]), 2);
+                    out[0] += T(0.5) * (in1[i] - in2[i]) * (in1[i] - in2[i]);
                 }
             }
         }
@@ -935,7 +935,7 @@ namespace matrix {
 #pragma omp parallel for
 #endif
             for (int i = 0; i < N; ++i) {
-                out[i] = 2 * (in1[i] - in2[i]);
+                out[i] = (in1[i] - in2[i]);
             }
         } else {
 #ifdef USE_MP
@@ -943,7 +943,7 @@ namespace matrix {
 #endif
             for (int i = 0; i < M; ++i) {
                 for (int j = 0; j < N / M; ++j) {
-                    out[i * M + j] = 2 * (in1[i * M + j] - in2[i]);
+                    out[i * M + j] = (in1[i * M + j] - in2[i]);
                 }
             }
         }
