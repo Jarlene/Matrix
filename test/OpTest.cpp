@@ -265,7 +265,7 @@ namespace matrix {
             std::vector<Shape *> inShape;
             Shape out = ShapeN(2, 2);
             Shape in1 = ShapeN(1, 1, 5, 5);
-            Shape in2 = ShapeN(3, 3);
+            Shape in2 = ShapeN(1, 1, 3, 3);
             inShape.push_back(&in1);
             inShape.push_back(&in2);
             inShape.push_back(&in2);
@@ -334,7 +334,7 @@ namespace matrix {
             Shape inshape = ShapeN(1, 1, 5, 5);
             Shape preg = ShapeN(1, 1, 3, 3);
             Shape self_out = ShapeN(1, 1, 3, 3);
-            Shape k = ShapeN(3, 3);
+            Shape k = ShapeN(1, 1, 3, 3);
             inShape.push_back(&preg);
             inShape.push_back(&self_out);
             inShape.push_back(&inshape);
