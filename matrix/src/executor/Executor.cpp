@@ -24,7 +24,7 @@ namespace matrix {
                     Logger::Global()->Fatal("exception on node %d==> %s", node->id_ , e.what());
                 }
             }
-            std::unique_lock<std::mutex> lock (this->mutex_);
+
             for (auto &item : node->outputs) {
                 if(graph_->GetNode(item.lock()->id_)) {
                     item.lock()->depens_.remove(node);
@@ -51,7 +51,6 @@ namespace matrix {
         int size = graph_->GetGraphNodes().size();
         while (true){
             auto node = ready_.Take();
-            Logger::Global()->Info("run no idx %d", node->id_);
             pool.enqueue(compute, node);
             size--;
             if (size == 0) {

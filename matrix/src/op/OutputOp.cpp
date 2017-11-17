@@ -17,8 +17,6 @@ namespace matrix {
         Tensor<T> out(Output<T>(), *outputShape);
         if (outModel == kSoftmax) {
             Softmax<T>(data, out);
-        } else if (outModel == kSig){
-            Sigmoid(data, out);
         } else {
             Logger::Global()->Fatal("OutputOp not support other output.");
         }
