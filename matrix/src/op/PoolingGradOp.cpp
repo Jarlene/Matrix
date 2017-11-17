@@ -59,10 +59,10 @@ namespace matrix {
                     for (int j = 0; j < channel; ++j) {
                         for (int ph = 0; ph < output_height; ++ph) {
                             int hstart = std::max(ph * stride[1] - padding[1], 0);
-                            int hend = std::min(hstart + filter[3], input_height);
+                            int hend = std::min(hstart + filter[1], input_height);
                             for (int pw = 0; pw < output_width; ++pw) {
                                 int wstart = std::max(pw * stride[0] - padding[0], 0);
-                                int wend = std::min(wstart + filter[2], input_width);
+                                int wend = std::min(wstart + filter[0], input_width);
                                 int pool_size = (hend - hstart) * (wend - wstart);
                                 T scale = 1.0 / pool_size;
                                 for (int h = hstart; h < hend; ++h) {
@@ -116,7 +116,7 @@ namespace matrix {
         if (param->args->count("filter")) {
             auto s = get<Shape>(param->args->at("filter"));
             filter.reShape(s);
-            get<Shape>(param->args->at("filter")).reShape(ShapeN(inShape[2]->At(0), inShape[2]->At(1), filter[0], filter[1]));
+//            get<Shape>(param->args->at("filter")).reShape(ShapeN(inShape[2]->At(0), inShape[2]->At(1), filter[0], filter[1]));
         } else {
             Logger::Global()->Fatal("PoolingOp cant not support no filter \n");
         }

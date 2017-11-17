@@ -21,7 +21,9 @@ namespace matrix {
         Tensor<T> out(Output<T>(), *outputShape);
         if (mode == kSoftmax) {
             SoftmaxGrad<T>(selfOut, pre_grad,  out);
-        } else  {
+        } else if(mode == kSig) {
+            SigmoidGrad(input, out);
+        } else {
             Logger::Global()->Fatal("OutputGradOp not support other out put.");
         }
         return true;

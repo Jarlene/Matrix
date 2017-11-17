@@ -40,16 +40,15 @@ namespace matrix {
 
         if (type == kMax) {
             int *maxIndex = static_cast<int*>(MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(
-                    batch_size * outputShape->At(2) * outputShape->At(3) * sizeof(int)));
-            Shape maxShape;
-            maxShape.Append(batch_size * outputShape->At(2) * outputShape->At(3));
+                    batch_size * channel * outputShape->At(2) * outputShape->At(3) * sizeof(int)));
+            Shape maxShape = ShapeN(batch_size, channel ,  outputShape->At(2) * outputShape->At(3));
             Tensor<int> maxTensor(maxIndex, maxShape);
             pooling2D(input, batch_size, channel/group, input_width, input_height, stride[0], stride[1],
-                      padding[0], padding[1],filter[2], filter[3], dilate[0], dilate[1],out,type, maxIndex);
+                      padding[0], padding[1],filter[0], filter[1], dilate[0], dilate[1],out,type, maxIndex);
             args->insert(std::pair<std::string, Any>("max_index", maxTensor));
         } else {
             pooling2D(input, batch_size, channel/group, input_width, input_height, stride[0], stride[1],
-                      padding[0], padding[1],filter[2], filter[3], dilate[0], dilate[1], out, type);
+                      padding[0], padding[1],filter[0], filter[1], dilate[0], dilate[1], out, type);
         }
         return true;
     }
@@ -85,7 +84,7 @@ namespace matrix {
         if (param->args->count("filter")) {
             auto s = get<Shape>(param->args->at("filter"));
             filter.reShape(s);
-            get<Shape>(param->args->at("filter")).reShape(ShapeN(inShape[0]->At(0), inShape[0]->At(1), filter[0], filter[1]));
+//            get<Shape>(param->args->at("filter")).reShape(ShapeN(inShape[0]->At(0), inShape[0]->At(1), filter[0], filter[1]));
         } else {
             Logger::Global()->Fatal("PoolingOp cant not support no filter \n");
         }
