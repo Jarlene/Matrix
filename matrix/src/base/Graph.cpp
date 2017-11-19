@@ -160,6 +160,7 @@ namespace matrix {
         sort(forward.begin(), forward.end(), Node::less);
         forward.erase(unique(forward.begin(), forward.end()), forward.end());
         nodes_.insert(nodes_.end(), forward.begin(), forward.end());
+        this->forward.insert(this->forward.end(), forward.begin(), forward.end());
         while (!forward.empty()) {
             auto pre = forward.back();
             forward.pop_back();
@@ -192,6 +193,18 @@ namespace matrix {
 
     const std::vector<NodePtr> &Graph::GetUpdateNodes() const {
         return variables;
+    }
+
+    const std::vector<NodePtr> &Graph::GetForwardNodes() const {
+        return forward;
+    }
+
+    NodePtr &Graph::Accuracy(const Symbol &symbol) {
+        auto node = symbol.GetNode();
+        if (node->data_ == nullptr) {
+            node->data_ = MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(node->memorySize);
+        }
+        return node;
     }
 
 }

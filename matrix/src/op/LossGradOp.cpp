@@ -25,6 +25,8 @@ namespace matrix {
             CrossEntropyGrad<T>(data, label, out);
         } else if (lossModel == LossMode::kMSE) {
             RMSLossGrad<T>(data, label, out);
+        } else if (lossModel == kSoftmaxCrossEntropy) {
+            SoftmaxCrossEntropyGrad(data, label, out);
         } else {
             Logger::Global()->Fatal("LossOp not support other loss.\n");
         }

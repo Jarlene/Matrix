@@ -825,15 +825,10 @@ namespace matrix {
 #ifdef USE_MP
 #pragma omp parallel for
 #endif
-        for (int i = 0; i < N; ++i) {
-            T sum = T(0);
-            for (int j = 0; j < D; ++j) {
-                sum += x[i * D + j];
-            }
-            for (int j = 0; j < D; ++j) {
-                y[i * D + j] = pre[i * D + j] * x[i * D + j] * (T(1.0) - sum);
-            }
+        for (int i = 0; i < N*D; ++i) {
+            y[i] =  x[i]* (T(1.0) - x[i])* (pre[i]);
         }
+
     }
 
     /// cross-entropy
@@ -845,25 +840,19 @@ namespace matrix {
     /// \param out
     template <class T>
     inline void CrossEntropy(const int N, const T *in1, const int M, const T *in2, T *out) {
-        if (N == M) {
-#ifdef USE_MP
-#pragma omp parallel for
-#endif
-            for (int i = 0; i < N; ++i) {
-                out[0] += T(-1) * in2[i] * log(in1[i]);
-            }
-
-        } else {
+        int class_num = N / M;
 #ifdef USE_MP
 #pragma omp parallel for
 #endif
             for (int i = 0; i < M; ++i) {
-                for (int j = 0; j < N / M; ++j) {
-                    out[0] += T(-1) * in2[i] * log(in1[i * M + j]);
+                int label = (int)in2[i];
+                for (int j = 0; j < class_num; ++j) {
+                    if (j == label) {
+                        out[0] += T(-1) * log(in1[i * class_num + j]);
+                    }
                 }
             }
-        }
-        out[0] /= N;
+        out[0] /= M;
     }
 
 
@@ -876,20 +865,16 @@ namespace matrix {
     /// \param out
     template <class T>
     inline void CrossEntropyGrad(const int N, const T *in1, const int M, const T *in2, T *out) {
-        if (N == M) {
+
+        int class_num = N / M;
 #ifdef USE_MP
 #pragma omp parallel for
 #endif
-            for (int i = 0; i < N; ++i) {
-                out[i] = -in2[i] / in1[i];
-            }
-        } else {
-#ifdef USE_MP
-#pragma omp parallel for
-#endif
-            for (int i = 0; i < M; ++i) {
-                for (int j = 0; j < N / M; ++j) {
-                    out[i * M + j] = -in2[i] / in1[i * M + j];
+        for (int i = 0; i < M; ++i) {
+            int label = (int)in2[i];
+            for (int j = 0; j < class_num; ++j) {
+                if (j == label) {
+                    out[i * class_num + j] = T(-1.0) / in1[i * class_num + j];
                 }
             }
         }
@@ -951,6 +936,46 @@ namespace matrix {
                     out[i * M + j] = (in1[i * M + j] - in2[i]);
                 }
             }
+        }
+    }
+
+
+    template <class T>
+    inline void SoftmaxCrossEntropy(const int N, const T *data, const int M, const T *label, T *out) {
+        int class_num = N/M;
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+        for (int i = 0; i < M; ++i) {
+
+            T max = data[i * class_num];
+            for (int j = 1; j < class_num; ++j) {
+                if (max < data[i * class_num + j]) {
+                    max = data[i * class_num + j];
+                }
+            }
+            T sum = T(0.0);
+            for (int j = 0; j < class_num; ++j) {
+                sum += exp(data[i * class_num +j] - max);
+            }
+
+            out[0] += log(sum) - data[static_cast<int>(label[i])] + max;
+        }
+
+        out[0] /= N;
+    }
+
+    template <class T>
+    inline void SoftmaxCrossEntropyGrad(const int N, const T *data, const int M, const T *label, T *out) {
+        int class_num = N / M;
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+        for (int i = 0; i < M; ++i) {
+            const T *d = data + i * class_num;
+            T *o = out + i * class_num;
+            Softmax<T>(class_num, d, o);
+            o[static_cast<int>(label[i])] -= 1;
         }
     }
 

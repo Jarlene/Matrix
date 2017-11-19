@@ -42,6 +42,10 @@ namespace matrix {
             return data_;
         }
 
+        T* MutableData(int offset) {
+            return data_ + offset;
+        }
+
         Tensor &operator=(const Tensor<T> other) {
             shape_ = other.shape_;
             data_ = other.data_;

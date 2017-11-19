@@ -36,6 +36,10 @@ namespace matrix {
         const std::vector<NodePtr> &GetGraphNodes() const;
 
         const std::vector<NodePtr> &GetUpdateNodes() const ;
+
+        const std::vector<NodePtr> &GetForwardNodes() const ;
+
+        NodePtr &Accuracy(const Symbol &symbol);
     private:
 
 
@@ -45,6 +49,7 @@ namespace matrix {
 
     private:
         std::map<int, int> graphColor_;
+        std::vector<NodePtr> forward;
         std::vector<NodePtr> nodes_;
         std::vector<NodePtr> variables;
         /// the first is variable, the second is grad_variabl

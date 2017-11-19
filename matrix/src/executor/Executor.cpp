@@ -12,10 +12,11 @@ namespace matrix {
         graph_->AllocateGraph();
     }
 
-    void Executor::runAsync() {
+    void Executor::train(const Symbol &symbol) {
         Init();
 
         auto compute =[&](NodePtr &node) {
+            std::lock_guard<std::mutex> lock (mutex_);
             if (node->op != nullptr && !node->isPlaceHolder) {
                 node->SetData();
                 try {
@@ -57,33 +58,13 @@ namespace matrix {
                 break;
             }
         }
+        graph_->Accuracy(symbol)->SetData();
+        graph_->Accuracy(symbol)->op->AsyncRun();
         for (auto it : graph_->GetUpdateNodes()) {
             pool.enqueue(updateFunc, it);
         }
     }
 
-    void Executor::runSync() {
-        for (auto &node : graph_->GetGraphNodes()) {
-            if (node->op != nullptr) {
-                node->SetData();
-                try {
-                    node->op->AsyncRun();
-                } catch (std::exception &e){
-                    Logger::Global()->Fatal("exception on node %d==> %s", node->id_ , e.what());
-                }
-            }
-        }
-        for (auto &it : graph_->GetUpdateNodes()) {
-            if (it->op != nullptr) {
-                it->SetData();
-                try {
-                    it->op->AsyncRun();
-                } catch (std::exception &e){
-                    Logger::Global()->Fatal("exception on node %d==> %s", it->id_ , e.what());
-                }
-            }
-        }
-    }
 
     void Executor::Init() {
         for(auto &item : graph_->GetGraphNodes()) {
@@ -104,5 +85,10 @@ namespace matrix {
 
     Executor::~Executor() {
         delete graph_;
+    }
+
+
+    void Executor::evaluating() {
+
     }
 }

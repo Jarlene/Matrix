@@ -25,6 +25,8 @@ namespace matrix {
             RMSLoss<T>(data, label, out);
         } else if (lossModel == kLikelihood) {
 
+        } else if (lossModel == kSoftmaxCrossEntropy) {
+            SoftmaxCrossEntropy(data, label, out);
         } else {
             Logger::Global()->Fatal("LossOp not support other loss.\n");
         }

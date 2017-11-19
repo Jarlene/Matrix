@@ -163,13 +163,7 @@ namespace matrix {
                 outShape->reShape(*inShape[2]);
                 break;
             case 1:
-            {
-                int output_channel = get<int>(param->args->at("filter_num"));
-                int input_channel = inShape[2]->At(1);
-                outShape->reShape(ShapeN(output_channel, input_channel, inShape[3]->At(0), inShape[3]->At(1)));
-
-            }
-
+                outShape->reShape(*inShape[3]);
                 break;
             case 2:
                 outShape->reShape(*inShape[4]);

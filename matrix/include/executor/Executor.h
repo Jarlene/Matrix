@@ -19,8 +19,8 @@ namespace matrix {
     public:
         Executor(const Symbol &symbol,  Context &context, BaseOptimizer *optimizer);
         ~Executor();
-        void runAsync();
-        void runSync();
+        void train(const Symbol &symbol);
+        void evaluating();
 
     private:
         void Init();
