@@ -149,6 +149,20 @@ namespace matrix {
         }
 
 
+        TEST_F(MathTest, CrossEntropy) {
+            float a[] = {0.1, 0.3, 0.1, 0.5,
+                         0.4, 0.2, 0.1, 0.3,
+                         0.01, 0.7, 0.13, 0.16,
+                         0.1, 0.3, 0.4, 0.2};
+            float label[] = {3, 0, 1, 2};
+
+            float out = 0;
+            CrossEntropy(16, a, 4, label, &out);
+            PrintMat(&out, 1, 1, "out");
+            float target = -log(0.5) - log(0.4) - log(0.7) - log(0.4);
+            EXPECT_EQ(out, target/4);
+        }
+
 
     }
 }

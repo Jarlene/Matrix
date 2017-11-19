@@ -153,12 +153,28 @@ namespace matrix {
 
     template <class T>
     void Softmax(const Tensor<T> &data, Tensor<T> &out) {
-        Softmax<T>(data.Size(), data.Data(), out.MutableData());
+        int batch_size = data.GetShape()[0];
+        int class_num = data.GetShape()[1];
+        for (int i = 0; i < batch_size; ++i) {
+            Softmax<T>(class_num,  data.Data(i * class_num), out.MutableData(i * class_num));
+        }
+
     }
 
     template <class T>
     void SoftmaxGrad(const Tensor<T> &data, const Tensor<T> &pre_grad, Tensor<T> &out) {
         SoftmaxGrad(data.GetShape()[0], data.GetShape()[1], data.Data(), pre_grad.Data(), out.MutableData());
+    }
+
+
+    template <class T>
+    void SoftmaxCrossEntropy(const Tensor<T> &data, const Tensor<T> &label, Tensor<T> &out) {
+        SoftmaxCrossEntropy(data.Size(), data.Data(), label.Size(), label.Data(), out.MutableData());
+    }
+
+    template <class T>
+    void SoftmaxCrossEntropyGrad(const Tensor<T> &data, const Tensor<T> &label, Tensor<T> &out) {
+        SoftmaxCrossEntropyGrad(data.Size(), data.Data(), label.Size(), label.Data(), out.MutableData());
     }
 
 
