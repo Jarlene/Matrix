@@ -1470,7 +1470,7 @@ namespace matrix {
                         const int padding_width, const int padding_height,
                         const int filter_width, const int filter_height,
                         const int dilation_width, const int dilation_height,
-                          T *output,  int type = 0, int *mask = nullptr) {
+                          T *output,  int type = 0, T *mask = nullptr) {
 
         const int output_width =
                 (input_width + 2 * padding_width - (dilation_width * (filter_width - 1) + 1)) / stride_width + 1;
@@ -1506,7 +1506,7 @@ namespace matrix {
                             }
                             output[ph * output_width + pw] = ele;
                             if (mask != nullptr) {
-                                mask[ph * output_width + pw] = index;
+                                mask[ph * output_width + pw] = T(index);
                             }
                         } else if (type == 1) {
                             ele = T(0);

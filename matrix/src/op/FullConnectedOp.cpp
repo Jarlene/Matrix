@@ -46,7 +46,7 @@ namespace matrix {
     }
 
     template <class T, class Context>
-    void FullConnectedOp<T, Context>::VariableNode(std::function<void(std::initializer_list<Shape *> shapes)> func) {
+    bool FullConnectedOp<T, Context>::VariableNode(std::function<void(std::initializer_list<Shape *> shapes)> func) {
         if (InputSize() == 1) {
             Shape weight;
             int rank = inputShapes->at(0)->Rank();
@@ -65,7 +65,9 @@ namespace matrix {
             } else {
                 func({&weight});
             }
+            return true;
         }
+        return false;
     };
 
 

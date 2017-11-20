@@ -28,8 +28,8 @@ namespace matrix {
         int input_height = inputShapes->at(INPUT)->At(3);
         int imageSize = input_height * input_width;
 
-        int output_width = outputShape->At(2);
-        int output_height = outputShape->At(3);
+        int output_width = inputShapes->at(SELF_OUT)->At(2);
+        int output_height = inputShapes->at(SELF_OUT)->At(3);
 
         const T * pre_grad = Input<T>(PRE_GRAG);
         T * out = Output<T>();
@@ -37,19 +37,21 @@ namespace matrix {
         switch (type) {
             case kMax:
             {
-                if (!HasArg("max_index")) {
-                    Logger::Global()->Fatal("PoolingGradOp--> not max_index in param, please check\n");
-                }
-                Tensor<int> maxIndex = GetArgValue<Tensor<int>>("max_index");
+                T *maxIndex = InputNonConst<T>(MAX_INDEX);
                 for (int i = 0; i < batch_size; ++i) {
                     for (int j = 0; j < channel; ++j) {
-                        for (int k = 0; k < inputShapes->at(PRE_GRAG)->Size(); ++k) {
-                            const int *idx = maxIndex.Data(k);
-                            out[*idx] += pre_grad[k];
+                        for (int ph = 0; ph < output_height; ++ph) {
+                            for (int pw = 0; pw < output_height; ++pw) {
+                                const int output_idx = ph * output_width + pw;
+                                const int input_idx = static_cast<int>(maxIndex[output_idx]);
+                                out[input_idx] += pre_grad[output_idx];
+                            }
                         }
+
                     }
-                    pre_grad +=  output_width * output_height;
-                    out +=  imageSize;
+                    out += imageSize;
+                    pre_grad += output_width * output_height;
+                    maxIndex += output_width * output_height;
                 }
             }
                 break;

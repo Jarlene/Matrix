@@ -12,6 +12,8 @@ using namespace matrix;
 
 const string trainImagePath = "../../data/train-images-idx3-ubyte";
 const string trainLabelPath = "../../data/train-labels-idx1-ubyte";
+const string testImagePath = "../../t10k-images-idx3-ubyte";
+const string testLabelPath = "../../t10k-labels-idx1-ubyte";
 
 
 Symbol LogisticRegression(Symbol input, int hideNum, int classNum) {
@@ -51,7 +53,7 @@ Symbol Connvolution(Symbol &input, int batchSize, int classNum) {
             .SetParam("padding", ShapeN(0,0))
             .SetParam("stride", ShapeN(1,1))
             .SetParam("dilate", ShapeN(1,1))
-            .SetParam("filter_num", 8)
+            .SetParam("filter_num", 16)
             .SetParam("group", 1)
             .Build("conv1");
 
@@ -62,8 +64,8 @@ Symbol Connvolution(Symbol &input, int batchSize, int classNum) {
 
     auto pool1 = Symbol("pooling")
             .SetInput("act", act)
-            .SetParam("filter", ShapeN(3,3))
-            .SetParam("type", PoolType::kAvg)
+            .SetParam("filter", ShapeN(2,2))
+            .SetParam("type", PoolType::kMax)
             .Build("pool1");
 
 
@@ -74,7 +76,7 @@ Symbol Connvolution(Symbol &input, int batchSize, int classNum) {
             .SetParam("padding", ShapeN(0,0))
             .SetParam("stride", ShapeN(1,1))
             .SetParam("dilate", ShapeN(1,1))
-            .SetParam("filter_num", 16)
+            .SetParam("filter_num", 32)
             .SetParam("group", 1)
             .Build("conv2");
 
@@ -86,21 +88,27 @@ Symbol Connvolution(Symbol &input, int batchSize, int classNum) {
     auto pool2 = Symbol("pooling")
             .SetInput("act2", act2)
             .SetParam("filter", ShapeN(2,2))
-            .SetParam("type", PoolType::kAvg)
+            .SetParam("type", PoolType::kMax)
             .Build("pool2");
 
     auto flatten = Symbol("flatten")
             .SetInput("pool2", pool2)
             .Build("flatten");
 
-    auto fully = Symbol("fullConnected")
+    auto fc = Symbol("fullConnected")
             .SetInput("flatten", flatten)
+            .SetParam("hide_num", 64)
+            .SetParam("with_bias", true)
+            .Build("fc1");
+
+    auto fc2 = Symbol("fullConnected")
+            .SetInput("flatten", fc)
             .SetParam("hide_num", classNum)
             .SetParam("with_bias", true)
-            .Build("fc");
+            .Build("fc2");
 
     auto out = Symbol("output")
-            .SetInput("fully", fully)
+            .SetInput("fully", fc2)
             .SetParam("type", kSoftmax)
             .Build("out");
 
@@ -111,11 +119,11 @@ Symbol Connvolution(Symbol &input, int batchSize, int classNum) {
 
 int main() {
     const int batchSize = 100;
-    const int epochSize = 10;
+    const int epochSize = 1;
     const int classNum = 10;
     const int hideNum = 128;
 
-    Shape imageShape = ShapeN(batchSize, 784);
+    Shape imageShape = ShapeN(batchSize, 1, 28, 28);
     Shape labelShape = ShapeN(batchSize);
     auto image = PlaceHolderSymbol::Create("image", imageShape);
     auto label = PlaceHolderSymbol::Create("label", labelShape);
@@ -124,9 +132,9 @@ int main() {
     float* labelData = static_cast<float *>(malloc(sizeof(float) * labelShape.Size()));
 
 
-//    auto convolution = Connvolution(image, batchSize, classNum);
+    auto logistic = Connvolution(image, batchSize, classNum);
 
-    auto logistic = LogisticRegression(image, hideNum, classNum);
+//    auto logistic = LogisticRegression(image, hideNum, classNum);
 
     auto loss = Symbol("loss")
             .SetInput("logistic", logistic)
@@ -140,27 +148,28 @@ int main() {
 //            .Build("prediction");
 //
 //
-//    auto acc = Symbol("accuracy")
-//            .SetInput("logistic", logistic)
-//            .SetInput("y", label)
-//            .Build("acc");
+    auto acc = Symbol("accuracy")
+            .SetInput("logistic", logistic)
+            .SetInput("y", label)
+            .Build("acc");
 
 
     Context context;
     context.type = kFloat;
     context.phase = TRAIN;
     context.mode = kCpu;
-    auto opt = new SGDOptimizer;
+    auto opt = new SGDOptimizer(0.01f);
     DataSet trainSet(trainImagePath, trainLabelPath);
+//    DataSet testSet(testImagePath, testLabelPath);
     auto executor = std::make_shared<Executor>(loss, context, opt);
-
+    trainSet.GetBatchData(batchSize, imageData, labelData);
+    image.Fill(imageData);
+    label.Fill(labelData);
     for (int i = 0; i < epochSize; ++i) {
-        trainSet.GetBatchData(batchSize, imageData, labelData);
-        image.Fill(imageData);
-        label.Fill(labelData);
-        executor->runAsync();
-//        logistic.PrintMatrix<float>();
-        loss.PrintMatrix<float>();
+        executor->train(&acc);
+        loss.PrintMatrix();
+        acc.PrintMatrix();
+        trainSet.Reset();
     }
 
     free(imageData);

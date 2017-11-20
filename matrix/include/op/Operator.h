@@ -216,7 +216,12 @@ namespace matrix {
             this->output = output;
         }
 
-        virtual void VariableNode(std::function<void(std::initializer_list<Shape *> shapes)> func) {
+        virtual bool VariableNode(std::function<void(std::initializer_list<Shape *> shapes)> func) {
+            return false;
+        }
+
+        virtual bool ShareNodes(std::function<void(std::initializer_list<Shape *> shapes)> func) {
+            return false;
         }
 
         virtual bool RunOnDevice() = 0;

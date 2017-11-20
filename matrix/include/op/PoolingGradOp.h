@@ -16,7 +16,7 @@ namespace matrix {
     class PoolingGradOp : public Operator {
     SAME_FUNCTION(PoolingGrad);
     DISABLE_COPY_AND_ASSIGN(PoolingGrad)
-        INPUT_TAG(PRE_GRAG, SELF_OUT, INPUT);
+        INPUT_TAG(PRE_GRAG, SELF_OUT, INPUT, MAX_INDEX);
     };
 
 

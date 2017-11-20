@@ -12,12 +12,12 @@ namespace matrix {
         graph_->AllocateGraph();
     }
 
-    void Executor::train(const Symbol &symbol) {
+    void Executor::train(const Symbol *symbol) {
         Init();
 
         auto compute =[&](NodePtr &node) {
             std::lock_guard<std::mutex> lock (mutex_);
-            if (node->op != nullptr && !node->isPlaceHolder) {
+            if (node->op != nullptr && !node->isPlaceHolder && !node->isShared) {
                 node->SetData();
                 try {
                     node->op->AsyncRun();
@@ -68,7 +68,7 @@ namespace matrix {
 
     void Executor::Init() {
         for(auto &item : graph_->GetGraphNodes()) {
-            if (item->op == nullptr) {
+            if (item->op == nullptr || item->isShared) {
                 ready_.Put(item);
                 continue;
             }

@@ -39,7 +39,7 @@ namespace matrix {
         }
         int filterNum = GetArgValue<int>("filter_num", channel);
 
-        Shape kernel;
+        Shape kernel = *inputShapes->at(KERNEL);
         Shape stride = GetArgValue<Shape>("stride", ShapeN(1, 1));
         Shape padding = GetArgValue<Shape>("padding", ShapeN(0, 0));
         Shape dilate = GetArgValue<Shape>("dilate", ShapeN(1, 1));
@@ -47,80 +47,34 @@ namespace matrix {
 
         const int input_offset = channel / group * imageSize;
 
-        const int output_offset = outputShape->Size() / outputShape->At(0) / group;
+        const int output_offset = outputShape->At(1) * outputShape->At(2) * outputShape->At(3) / group;
 
         const int filter_offset = kernel.Size() / group;
 
         const T *inputData = Input<T>(DATA);
+        const T *kernelData = Input<T>(KERNEL);
         T *outputData = Output<T>();
-        if (InputSize()  == 2) {
-            const T *kernelData = Input<T>(KERNEL);
-            kernel = *inputShapes->at(KERNEL);
-            int colSize = channel / group * kernel.Size() * outputShape->At(2) * outputShape->At(3);
-            T *colData = static_cast<T *>(MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(
-                    colSize * sizeof(T)));
-            for (int i = 0; i < num; ++i) {
-                for (int j = 0; j < group; ++j) {
-                    Img2Col<T>(inputData + j * input_offset, *inputShapes->at(DATA),
-                               kernel, stride,
-                               padding, dilate,
-                               colData, order);
-                    int M = filterNum / group;
-                    int N = outputShape->At(2) * outputShape->At(3);
-                    int K = channel / group * kernel.At(2) * kernel.At(3);
-                    CPUGemm<T>(NoTrans, NoTrans, M, N, K, T(1.0), kernelData + j * filter_offset, colData,
-                               T(0.0), outputData + j * output_offset);
-                }
-                inputData += channel * imageSize;
-                outputData += filterNum * outputShape->At(2) * outputShape->At(3);
-            }
-            MemoryManager::Global()->GetCpuMemoryPool()->freeMemory(colData, colSize * sizeof(T));
-        } else if (InputSize()  == 3) {
-            const T *kernelData = Input<T>(KERNEL);
-            kernel = *inputShapes->at(KERNEL);
-            int colSize = channel / group * kernel.Size() * outputShape->At(2) * outputShape->At(3);
-            T *colData = static_cast<T *>(MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(
-                    colSize * sizeof(T)));
-            for (int i = 0; i < num; ++i) {
-                for (int j = 0; j < group; ++j) {
-                    Img2Col<T>(inputData + j * input_offset, *inputShapes->at(DATA),
-                               kernel, stride,
-                               padding, dilate,
-                               colData, order);
-                    int M = filterNum / group;
-                    int N = outputShape->At(2) * outputShape->At(3);
-                    int K = channel / group * kernel.At(2) * kernel.At(3);
-                    CPUGemm<T>(NoTrans, NoTrans, M, N, K, T(1.0), kernelData + j * filter_offset, colData,
-                               T(0.0), outputData + j * output_offset);
-                }
-                inputData += channel * imageSize;
-                outputData += filterNum * outputShape->At(2) * outputShape->At(3);
-            }
+        T *colData = InputNonConst<T>(InputSize() - 1);
 
+        for (int i = 0; i < num; ++i) {
+            for (int j = 0; j < group; ++j) {
+                Img2Col<T>(inputData + j * input_offset, *inputShapes->at(DATA),
+                           kernel, stride,
+                           padding, dilate,
+                           colData, order);
+                int M = filterNum / group;
+                int N = outputShape->At(2) * outputShape->At(3);
+                int K = channel / group * kernel.At(2) * kernel.At(3);
+                CPUGemm<T>(NoTrans, NoTrans, M, N, K, T(1.0), kernelData + j * filter_offset, colData,
+                           T(0.0), outputData + j * output_offset);
+            }
+            inputData += channel * imageSize;
+            outputData += filterNum * outputShape->At(2) * outputShape->At(3);
+        }
+        if (InputSize()  == 4) {
             Tensor<T> out(Output<T>(), *outputShape);
             Tensor<T> bias(Input<T>(BIAS), *inputShapes->at(BIAS));
             Add<T>(out, bias, out);
-            MemoryManager::Global()->GetCpuMemoryPool()->freeMemory(colData, colSize * sizeof(T));
-        } else if (InputSize()  == 4) {
-            const T *kernelData = Input<T>(KERNEL);
-            kernel = *inputShapes->at(KERNEL);
-            T *colBuff = InputNonConst<T>(COLBUFFER);
-            for (int i = 0; i < num; ++i) {
-                for (int j = 0; j < group; ++j) {
-                    Img2Col<T>(inputData + j * input_offset, *inputShapes->at(DATA),
-                               kernel, stride,
-                               padding, dilate,
-                               colBuff, order);
-                    int M = filterNum / group;
-                    int N = outputShape->At(2) * outputShape->At(3);
-                    int K = channel / group * kernel.At(2) * kernel.At(3);
-                    CPUGemm<T>(NoTrans, NoTrans, M, N, K, T(1.0), kernelData + j * filter_offset, colBuff,
-                               T(0.0), outputData + j * output_offset);
-                }
-                inputData += channel * imageSize;
-                outputData += filterNum * outputShape->At(2) * outputShape->At(3);
-            }
-
         } else {
             Logger::Global()->Fatal("ConvolutionOp do not support other inputs\n");
         }
@@ -145,7 +99,7 @@ namespace matrix {
     }
 
     template<class T, class Context>
-    void ConvolutionOp<T, Context>::VariableNode(std::function<void(std::initializer_list<Shape *> shapes)> func) {
+    bool ConvolutionOp<T, Context>::VariableNode(std::function<void(std::initializer_list<Shape *> shapes)> func) {
         if (InputSize() == 1) {
             if (!HasArg("filter")) {
                 Logger::Global()->Fatal("ConvolutionOp no filter for input");
@@ -168,7 +122,9 @@ namespace matrix {
             } else {
                 func({&filter});
             }
+            return true;
         }
+        return false;
     };
 
     template<class T, class Context>
@@ -176,6 +132,43 @@ namespace matrix {
         return false;
     }
 
+    template<class T, class Context>
+    bool ConvolutionOp<T, Context>::ShareNodes(std::function<void(std::initializer_list<Shape *> shapes)> func) {
+        if (InputSize() < 4) {
+            int group = GetArgValue<int>("group", 1);
+            if (InputSize() == 1) {
+                if (!HasArg("filter")) {
+                    Logger::Global()->Fatal("ConvolutionOp no filter for input");
+                }
+                Shape filter = GetArgValue<Shape>("filter");
+                int filter_num = GetArgValue<int>("filter_num");
+                ImageOrder order = GetArgValue<ImageOrder>("order", NCHW);
+                int channel = 0;
+                if (order == NCHW) {
+                    channel = inputShapes->at(DATA)->At(1);
+                } else {
+                    channel = inputShapes->at(DATA)->At(3);
+                }
+                filter.reShape(ShapeN(filter_num, channel, filter[0], filter[1]));
+                auto colShape = ShapeN(channel/group, inputShapes->at(KERNEL)->At(2) * inputShapes->at(KERNEL)->At(3),
+                                       outputShape->At(2) * outputShape->At(3));
+                func({&colShape});
+            } else {
+                ImageOrder order = GetArgValue<ImageOrder>("order", NCHW);
+                int channel = 0;
+                if (order == NCHW) {
+                    channel = inputShapes->at(DATA)->At(1);
+                } else {
+                    channel = inputShapes->at(DATA)->At(3);
+                }
+                auto colShape = ShapeN(channel/group, inputShapes->at(KERNEL)->At(2) * inputShapes->at(KERNEL)->At(3),
+                                       outputShape->At(2) * outputShape->At(3));
+                func({&colShape});
+            }
+            return true;
+        }
+        return false;
+    }
 
 
     void ConvolutionOpProp::InferShape(std::vector<Shape *> &inShape, Shape *outShape) {

@@ -136,16 +136,16 @@ namespace matrix {
 
 
             float b[9] = {0};
-            int c[9] = {0};
+            float c[9] = {0};
             PrintMat(a, 4, 4, "orig_data");
             pooling2D(a, 1, 1, 4, 4, 1, 1, 0, 0, 2, 2, 1, 1, b, kMax, c);
             PrintMat(b, 1, 9, "out");
             PrintMat(c, 1, 9, "index");
 
             float target[] = {4, 6, 6, 7, 6, 6, 7, 10, 10};
-            int indexTarget[] = {4, 6, 6, 8, 6, 6, 8, 14, 14};
+            float indexTarget[] = {4, 6, 6, 8, 6, 6, 8, 14, 14};
             checkArrayEqual<float>(b, target, 9);
-            checkArrayEqual<int>(c, indexTarget, 9);
+            checkArrayEqual<float>(c, indexTarget, 9);
         }
 
 

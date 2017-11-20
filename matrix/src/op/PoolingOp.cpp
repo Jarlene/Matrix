@@ -28,24 +28,15 @@ namespace matrix {
         int input_width = inputShapes->at(0)->At(2);
         int input_height = inputShapes->at(0)->At(3);
 
+        int group = GetArgValue<int>("group" , 1);
 
-        int group = 1;
-        if (HasArg("group")) {
-            group = GetArgValue<int>("group");
-        }
-
-        const T* input = Input<T>(0);
+        const T* input = Input<T>(DATA);
         T* out = Output<T>();
 
-
         if (type == kMax) {
-            int *maxIndex = static_cast<int*>(MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(
-                    batch_size * channel * outputShape->At(2) * outputShape->At(3) * sizeof(int)));
-            Shape maxShape = ShapeN(batch_size, channel ,  outputShape->At(2) * outputShape->At(3));
-            Tensor<int> maxTensor(maxIndex, maxShape);
+            T * maxIndex = InputNonConst<T>(MAX_INDEX);
             pooling2D(input, batch_size, channel/group, input_width, input_height, stride[0], stride[1],
-                      padding[0], padding[1],filter[0], filter[1], dilate[0], dilate[1],out,type, maxIndex);
-            args->insert(std::pair<std::string, Any>("max_index", maxTensor));
+                      padding[0], padding[1],filter[0], filter[1], dilate[0], dilate[1],out, type, maxIndex);
         } else {
             pooling2D(input, batch_size, channel/group, input_width, input_height, stride[0], stride[1],
                       padding[0], padding[1],filter[0], filter[1], dilate[0], dilate[1], out, type);
@@ -74,6 +65,17 @@ namespace matrix {
 
     }
 
+    template <class T, class Context>
+    bool PoolingOp<T, Context>::ShareNodes(std::function<void(std::initializer_list<Shape *> shapes)> func) {
+        if (GetArgValue<PoolType>("type", kMax) == kMax && InputSize() == 1) {
+            int batch_size = inputShapes->at(0)->At(0);
+            int channel = inputShapes->at(0)->At(1);
+            auto colShape = ShapeN(batch_size, channel, outputShape->At(2) * outputShape->At(3));
+            func({&colShape});
+            return true;
+        }
+        return false;
+    }
 
 
     void PoolingOpProp::InferShape(std::vector<Shape*> &inShape, Shape* outShape) {

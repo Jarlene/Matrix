@@ -39,7 +39,7 @@ namespace matrix {
 
         const std::vector<NodePtr> &GetForwardNodes() const ;
 
-        NodePtr &Accuracy(const Symbol &symbol);
+        NodePtr &Accuracy(const Symbol *symbol);
     private:
 
 

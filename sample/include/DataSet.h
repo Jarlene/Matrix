@@ -23,24 +23,30 @@ public:
         oneDataSize = MniData[0].size();
     }
 
+    void Reset() {
+        currentBatchIndx = 0;
+    }
 
-    void GetBatchData(int batchSize, float* data, float* label) {
+    bool GetBatchData(int batchSize, float* data, float* label) {
         if (data == nullptr || label == nullptr) {
             cout<< "the input DcgeTensor in null ptr " << endl;
         }
 
-        if (currentBatchIndx + batchSize >= allDataSize) {
-            currentBatchIndx = 0;
-        }
         for (int i = 0; i < batchSize; ++i) {
             for (int j = 0; j < oneDataSize; ++j) {
                 data[i * oneDataSize +j] =  MniData[currentBatchIndx+i][j];
             }
         }
+
         for (int k = 0; k < batchSize; ++k) {
             label[k] = MniLabel[currentBatchIndx + k];
         }
+
         currentBatchIndx += batchSize;
+        if (currentBatchIndx == MniData.size()){
+            return false;
+        }
+        return true;
     }
 
 private:

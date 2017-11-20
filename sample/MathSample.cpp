@@ -29,8 +29,8 @@ int main() {
     auto opt = new SGDOptimizer(0.1f);
     auto executor = std::make_shared<Executor>(ds, context, opt);
     for (int i = 0; i < 10; ++i) {
-        executor->runAsync();
-        bs.PrintMatrix<float>();
+        executor->train();
+        bs.PrintMatrix();
     }
     return 0;
 }

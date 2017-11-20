@@ -62,18 +62,15 @@ namespace matrix {
         const T *preGrad = Input<T>(PRE_GRAG);
         T *out = Output<T>();
         int index = GetArgValue<int>("input_idx", -1);
-        int colSize = channel / group * kernel[2] * kernel[3] * outSize;
-        T *colData = static_cast<T *>(MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(colSize * sizeof(T)));
+
+        T *colData = InputNonConst<T>(InputSize() - 1);
 
         if (index == 0) {
-
             const T *filterData = Input<T>(KERNEL);
-
             int K = filterNum / group;
             int N = outSize;
             int M = channel / group * kernel[2] * kernel[3];
 
-            Value<T>(colSize, colData, T(0.0));
             for (int i = 0; i < num; ++i) {
                 for (int j = 0; j < group; ++j) {
                     CPUGemm<T>(Trans, NoTrans, M, N, K, T(1.0),
@@ -94,9 +91,6 @@ namespace matrix {
             }
 
         } else if (index == 1) {
-            int inputOffSize = filterNum / group * inputShapes->at(PRE_GRAG)->At(2) * inputShapes->at(PRE_GRAG)->At(3);
-            int outputOffset = channel / group * outputShape->At(2) * outputShape->At(3);
-            int filterOffset = kernel.Size() / group;
             const T *inputData = Input<T>(DATA);
             int M = channel / group;
             int K = outputShape->At(2) * outputShape->At(3);
@@ -127,8 +121,6 @@ namespace matrix {
         } else {
             Logger::Global()->Fatal("ConvolutionGradOp do not support other inputs\n");
         }
-
-        MemoryManager::Global()->GetCpuMemoryPool()->freeMemory(colData, colSize * sizeof(T));
         return true;
     }
 

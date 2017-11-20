@@ -167,6 +167,9 @@ namespace matrix {
             int index = 0;
             for (auto &item : pre->inputs) {
                 auto grad_node = item->GetGradNode(index, pre, gradMap[pre]);
+                if (grad_node == nullptr) {
+                    continue;
+                }
                 if (gradMap.count(item)) {
                     nodes_.push_back(gradMap[item]);
                     nodes_.push_back(grad_node);
@@ -199,8 +202,8 @@ namespace matrix {
         return forward;
     }
 
-    NodePtr &Graph::Accuracy(const Symbol &symbol) {
-        auto node = symbol.GetNode();
+    NodePtr &Graph::Accuracy(const Symbol *symbol) {
+        auto node = symbol->GetNode();
         if (node->data_ == nullptr) {
             node->data_ = MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(node->memorySize);
         }

@@ -239,6 +239,8 @@ namespace matrix {
                          1, 2, 1,
                          2, 1, 3};
 
+            float col[81] = {0};
+
             float c[] = {5, 6, 7,
                          3, 6, 6,
                          3, 5, 9};
@@ -260,16 +262,18 @@ namespace matrix {
             inputs.push_back(a);
             inputs.push_back(kernel);
             inputs.push_back(b);
+            inputs.push_back(col);
 
 
             std::vector<Shape *> inShape;
             Shape out = ShapeN(2, 2);
             Shape in1 = ShapeN(1, 1, 5, 5);
             Shape in2 = ShapeN(1, 1, 3, 3);
+            Shape cols = ShapeN(1, 9, 9);
             inShape.push_back(&in1);
             inShape.push_back(&in2);
             inShape.push_back(&in2);
-
+            inShape.push_back(&cols);
 
             std::map<std::string, Any> params;
             params["filter_num"] = 1;
@@ -393,6 +397,7 @@ namespace matrix {
             float c[9] = {4, 6, 6,
                           7, 6, 6,
                           7, 10, 10};
+            float maxIndex[9] = {0};
 
             Context context;
             context.mode = RunMode::kCpu;
@@ -401,27 +406,26 @@ namespace matrix {
             auto pro = Registry::Global()->GetOp("pooling");
             std::vector<Shape *> inShape;
             auto in = ShapeN(1, 1, 4, 4);
+            auto cols = ShapeN(1, 1, 3, 3);
             inShape.push_back(&in);
-
+            inShape.push_back(&cols);
             Shape out;
             std::map<std::string, Any> params;
             params["filter"] = ShapeN(2, 2);
-            params["type"] = PoolType::kAvg;
+            params["type"] = PoolType::kMax;
 
             std::vector<void *> inputs;
             inputs.push_back(a);
+            inputs.push_back(maxIndex);
             Operator *op = pro->CreateOperator(context,  &inShape, &out, params);
             op->SetData(&inputs, b);
             op->AsyncRun();
             int dim = out.Size();
 
-
             PrintMat(b, 3, 3, "pool_out");
             if (get<PoolType>(params["type"]) == kMax) {
                 checkArrayEqual<float>(b, c, dim);
-                ASSERT_TRUE(params.count("max_index") > 0);
-                auto maxIndex = get<Tensor<int>>(params["max_index"]);
-                PrintMat(maxIndex.Data(), 1, 9, "max_index");
+                PrintMat(maxIndex, 1, 9, "max_index");
             } else {
                 float target[] = {2.5, 2, 1.75,
                                   2.333333, 1.333333, 1.333333,
@@ -447,15 +451,11 @@ namespace matrix {
                              7, 1, 3, 5,
                              1, 3, 10, 2};
 
-
-            int index[] = {4, 6, 6, 8, 6, 6, 8, 14, 14};
-
-            Tensor<int> maxIndex(index, ShapeN(9));
+            float index[] = {4, 6, 6, 8, 6, 6, 8, 14, 14};
 
             std::map<std::string, Any> params;
             params["filter"] = ShapeN(2, 2);
-            params["type"] = PoolType::kAvg;
-            params["max_index"] = maxIndex;
+            params["type"] = PoolType::kMax;
 
             Context context;
             context.mode = RunMode::kCpu;
@@ -467,6 +467,7 @@ namespace matrix {
             inputs.push_back(pre_grad);
             inputs.push_back(out);
             inputs.push_back(input);
+            inputs.push_back(index);
 
             std::vector<Shape *> inShape;
             auto preShape = ShapeN(1, 1, 3, 3);
@@ -475,6 +476,7 @@ namespace matrix {
             inShape.push_back(&preShape);
             inShape.push_back(&outShape);
             inShape.push_back(&inputShape);
+            inShape.push_back(&outShape);
 
             Shape out_Shape;
 

@@ -18,6 +18,9 @@ namespace matrix {
     }
 
     NodePtr Node::GetGradNode(int input_index, NodePtr &pre, NodePtr &preGrad) {
+        if(this->isShared) {
+            return nullptr;
+        }
         auto t = Node::Create();
         t->isBackward = true;
         t->opName = "grad_" + pre->opName;
@@ -46,7 +49,8 @@ namespace matrix {
     }
 
     void Node::Build() {
-        OpPtr opPtr = Registry::Global()->GetOp(this->opName, context.type);
+
+        GET_REGISTRY_OP_PROPERTY(this->opName, context.type);
         if (opPtr == nullptr) {
             return;
         }
@@ -57,9 +61,7 @@ namespace matrix {
         if (op == nullptr) {
             Logger::Global()->Fatal("can not find the op %s", this->opName.c_str());
         }
-        bool rebuild = false;
-        auto generatorVariableFunc = [this, &rebuild](std::initializer_list<Shape *> shapes) {
-            rebuild = true;
+        auto generatorVariableFunc = [this](std::initializer_list<Shape *> shapes) {
             for(auto shape = shapes.begin(); shape != shapes.end(); shape++) {
                 if (*shape != nullptr) {
                     NodePtr var = Node::Create();
@@ -76,16 +78,41 @@ namespace matrix {
             }
 
         };
+        auto generatorSharedFunc = [this](std::initializer_list<Shape *> shapes) {
+            for(auto shape = shapes.begin(); shape != shapes.end(); shape++) {
+                if (*shape != nullptr) {
+                    NodePtr var = Node::Create();
+                    var->opName = "variable";
+                    var->nodeName = this->nodeName + "_shared";
+                    var->outputShapes.reShape(**shape);
+                    var->isVariable = false;
+                    var->isShared = true;
+                    var->context.type = context.type;
+
+                    var->outputs.push_back(std::weak_ptr<Node>(this->shared_from_this()));
+                    var->Build();
+                    this->inputs.push_back(var);
+                }
+            }
+        };
         if (op != nullptr) {
-            op->VariableNode(generatorVariableFunc);
+            bool rebuild = op->VariableNode(generatorVariableFunc);
+            if (rebuild) {
+                delete  this->op;
+                this->op = nullptr;
+                this->inputShapes.clear();
+                Build();
+            } else {
+                bool shared = op->ShareNodes(generatorSharedFunc);
+                if (shared) {
+                    delete  this->op;
+                    this->op = nullptr;
+                    this->inputShapes.clear();
+                    Build();
+                }
+            }
         }
         memorySize = opPtr->GetMemorySize();
-        if (rebuild) {
-            delete  this->op;
-            this->op = nullptr;
-            this->inputShapes.clear();
-            Build();
-        }
     }
 
     long Node::getMemorySize() {

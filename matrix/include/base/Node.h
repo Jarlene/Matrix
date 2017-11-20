@@ -39,6 +39,8 @@ namespace matrix {
 
         bool isVariable;
 
+        bool isShared = false;
+
         void* data_ {nullptr};
 
         long memorySize;
