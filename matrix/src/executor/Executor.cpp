@@ -16,7 +16,7 @@ namespace matrix {
         Init();
 
         auto compute =[&](NodePtr &node) {
-            std::lock_guard<std::mutex> lock (mutex_);
+
             if (node->op != nullptr && !node->isPlaceHolder && !node->isShared) {
                 node->SetData();
                 try {
@@ -26,16 +26,20 @@ namespace matrix {
                 }
             }
 
-            for (auto &item : node->outputs) {
-                if(graph_->GetNode(item.lock()->id_)) {
-                    item.lock()->depens_.remove(node);
-                    if (item.lock()->depens_.empty()) {
-                        if (!ready_.Has(item.lock())) {
-                            ready_.Put(item.lock());
+            {
+                std::lock_guard<std::mutex> lock (mutex_);
+                for (auto &item : node->outputs) {
+                    if(graph_->GetNode(item.lock()->id_)) {
+                        item.lock()->depens_.remove(node);
+                        if (item.lock()->depens_.empty()) {
+                            if (!ready_.Has(item.lock())) {
+                                ready_.Put(item.lock());
+                            }
                         }
                     }
                 }
             }
+
 
         };
 
@@ -58,8 +62,10 @@ namespace matrix {
                 break;
             }
         }
-        graph_->Accuracy(symbol)->SetData();
-        graph_->Accuracy(symbol)->op->AsyncRun();
+        if (symbol != nullptr) {
+            graph_->Accuracy(symbol)->SetData();
+            graph_->Accuracy(symbol)->op->AsyncRun();
+        }
         for (auto it : graph_->GetUpdateNodes()) {
             pool.enqueue(updateFunc, it);
         }
