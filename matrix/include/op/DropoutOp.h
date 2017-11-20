@@ -13,7 +13,9 @@ namespace matrix {
     template <class T, class Context>
     class DropoutOp : public Operator {
     SAME_FUNCTION(Dropout);
+        virtual bool ShareNodes(std::function<void(std::initializer_list<Shape *> shapes)> func) override ;
     DISABLE_COPY_AND_ASSIGN(Dropout);
+        INPUT_TAG(DATA, MASK);
     };
 
 
