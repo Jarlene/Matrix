@@ -245,9 +245,7 @@ namespace matrix {
                          3, 6, 6,
                          3, 5, 9};
 
-            float res[] = {0, 0, 0,
-                           0, 0, 0,
-                           0, 0, 0};
+            float res[9] = {0};
 
             OpPtr pro = Registry::Global()->GetOp("convolution");
 
@@ -266,7 +264,8 @@ namespace matrix {
 
 
             std::vector<Shape *> inShape;
-            Shape out = ShapeN(2, 2);
+            Shape out;
+
             Shape in1 = ShapeN(1, 1, 5, 5);
             Shape in2 = ShapeN(1, 1, 3, 3);
             Shape cols = ShapeN(1, 9, 9);
@@ -276,10 +275,6 @@ namespace matrix {
             inShape.push_back(&cols);
 
             std::map<std::string, Any> params;
-            params["filter_num"] = 1;
-//            params["filter"] = in2;
-//            params["bias"] = true;
-
             Operator *op = pro->CreateOperator(context, &inShape, &out, params);
             op->SetData(&inputs, res);
             op->AsyncRun();
@@ -317,6 +312,7 @@ namespace matrix {
 
             float filter_grad[9] = {0};
             float bias_grad[9] = {0};
+            float col[9*9] = {0};
 
 
             OpPtr pro = Registry::Global()->GetOp("grad_convolution");
@@ -332,6 +328,7 @@ namespace matrix {
             inputs.push_back(inputdata);
             inputs.push_back(kernel);
             inputs.push_back(b);
+            inputs.push_back(col);
 
             std::vector<Shape *> inShape;
 
@@ -339,17 +336,17 @@ namespace matrix {
             Shape preg = ShapeN(1, 1, 3, 3);
             Shape self_out = ShapeN(1, 1, 3, 3);
             Shape k = ShapeN(1, 1, 3, 3);
+            Shape cols = ShapeN(1, 9, 9);
             inShape.push_back(&preg);
             inShape.push_back(&self_out);
             inShape.push_back(&inshape);
             inShape.push_back(&k);
             inShape.push_back(&self_out);
-
+            inShape.push_back(&cols);
             Shape out;
 
             std::map<std::string, Any> params;
-            params["filter_num"] = 1;
-            int inputIdx = 2;
+            int inputIdx = 0;
 
             params["input_idx"] = inputIdx;
             if (inputIdx == 0) {

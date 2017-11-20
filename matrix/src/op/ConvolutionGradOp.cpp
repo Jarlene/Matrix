@@ -49,7 +49,6 @@ namespace matrix {
 
 
         Shape kernel = *inputShapes->at(KERNEL);
-        kernel.reShape(ShapeN(filterNum, channel, kernel[0], kernel[1]));
         Shape stride = GetArgValue<Shape>("stride", ShapeN(1, 1));
         Shape padding = GetArgValue<Shape>("padding", ShapeN(0, 0));
         Shape dilate = GetArgValue<Shape>("dilate", ShapeN(1, 1));
