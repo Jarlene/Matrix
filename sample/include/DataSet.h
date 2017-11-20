@@ -29,19 +29,13 @@ public:
 
     bool GetBatchData(int batchSize, float* data, float* label) {
         if (data == nullptr || label == nullptr) {
-            cout<< "the input DcgeTensor in null ptr " << endl;
+            cout<< "the input is null ptr " << endl;
         }
 
         for (int i = 0; i < batchSize; ++i) {
-            for (int j = 0; j < oneDataSize; ++j) {
-                data[i * oneDataSize +j] =  MniData[currentBatchIndx+i][j];
-            }
+            memcpy(data + i * oneDataSize, MniData[currentBatchIndx + i].data(), oneDataSize);
         }
-
-        for (int k = 0; k < batchSize; ++k) {
-            label[k] = MniLabel[currentBatchIndx + k];
-        }
-
+        memcpy(label, MniLabel.data(), batchSize);
         currentBatchIndx += batchSize;
         if (currentBatchIndx == MniData.size()){
             return false;
