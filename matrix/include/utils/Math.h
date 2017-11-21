@@ -822,11 +822,25 @@ namespace matrix {
 
     template <class T>
     inline void SoftmaxGrad(const int N, const int D, const T* x, const T* pre,  T* y) {
+        Mul(N * D, x, pre, y);
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+        for (int i = 0; i < N; ++i) {
+            T sum = T(0);
+            for (int j = 0; j < D; ++j) {
+                sum += y[i * D + j];
+            }
+            for (int j = 0; j < D; ++j) {
+                y[i * D + j] = sum;
+            }
+        }
+
 #ifdef USE_MP
 #pragma omp parallel for
 #endif
         for (int i = 0; i < N*D; ++i) {
-            y[i] =  x[i]* (T(1.0) - x[i])* (pre[i]);
+            y[i] =  x[i]* (pre[i] - y[i]);
         }
 
     }
@@ -846,11 +860,8 @@ namespace matrix {
 #endif
             for (int i = 0; i < M; ++i) {
                 int label = (int)in2[i];
-                for (int j = 0; j < class_num; ++j) {
-                    if (j == label) {
-                        out[0] += T(-1) * log(in1[i * class_num + j]);
-                    }
-                }
+                int index = i * class_num + label;
+                out[0] += T(-1) * log(in1[index]);
             }
         out[0] /= M;
     }
@@ -872,11 +883,8 @@ namespace matrix {
 #endif
         for (int i = 0; i < M; ++i) {
             int label = (int)in2[i];
-            for (int j = 0; j < class_num; ++j) {
-                if (j == label) {
-                    out[i * class_num + j] = T(-1.0) / in1[i * class_num + j];
-                }
-            }
+            int index = i * class_num + label;
+            out[index] = T(-1.0) / in1[index];
         }
     }
 

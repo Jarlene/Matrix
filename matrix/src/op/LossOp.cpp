@@ -28,7 +28,7 @@ namespace matrix {
         } else if (lossModel == kSoftmaxCrossEntropy) {
             SoftmaxCrossEntropy(data, label, out);
         } else {
-            Logger::Global()->Fatal("LossOp not support other loss.\n");
+            Logger::Global()->Fatal("LossOp not support other loss.");
         }
         return true;
     }

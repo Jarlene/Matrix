@@ -16,9 +16,8 @@ namespace matrix {
     bool ConcatOp<T, Context>::Run() {
         T *out = Output<T>();
         for (int i = 0; i < InputSize(); ++i) {
-
+            memcpy(out + i * inputShapes->at(i)->Size(), Input<T>(i), inputShapes->at(i)->Size());
         }
-
         return true;
     }
 
