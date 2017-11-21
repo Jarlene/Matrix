@@ -202,7 +202,7 @@ namespace matrix {
         return forward;
     }
 
-    NodePtr &Graph::Accuracy(const Symbol *symbol) {
+    NodePtr Graph::Accuracy(const Symbol *symbol) {
         auto node = symbol->GetNode();
         if (node->data_ == nullptr) {
             node->data_ = MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(node->memorySize);

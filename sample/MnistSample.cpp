@@ -118,12 +118,12 @@ Symbol Connvolution(Symbol &input, int batchSize, int classNum) {
 
 
 int main() {
-    const int batchSize = 100;
-    const int epochSize = 1;
+    const int batchSize = 300;
+    const int epochSize = 10000;
     const int classNum = 10;
     const int hideNum = 128;
 
-    Shape imageShape = ShapeN(batchSize, 1, 28, 28);
+    Shape imageShape = ShapeN(batchSize,  784);
     Shape labelShape = ShapeN(batchSize);
     auto image = PlaceHolderSymbol::Create("image", imageShape);
     auto label = PlaceHolderSymbol::Create("label", labelShape);
@@ -132,9 +132,9 @@ int main() {
     float* labelData = static_cast<float *>(malloc(sizeof(float) * labelShape.Size()));
 
 
-    auto logistic = Connvolution(image, batchSize, classNum);
+//    auto logistic = Connvolution(image, batchSize, classNum);
 
-//    auto logistic = LogisticRegression(image, hideNum, classNum);
+    auto logistic = LogisticRegression(image, hideNum, classNum);
 
     auto loss = Symbol("loss")
             .SetInput("logistic", logistic)
@@ -142,12 +142,6 @@ int main() {
             .SetParam("type", kCrossEntropy)
             .Build("loss");
 
-//    auto prediction = Symbol("prediction")
-//            .SetInput("logistic", logistic)
-//            .SetInput("y", label)
-//            .Build("prediction");
-//
-//
     auto acc = Symbol("accuracy")
             .SetInput("logistic", logistic)
             .SetInput("y", label)

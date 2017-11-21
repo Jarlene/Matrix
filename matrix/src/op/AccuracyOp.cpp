@@ -38,7 +38,7 @@ namespace matrix {
             }
         }
         assert(correct <= N);
-        Output<T>()[0] = T((correct * 1.0)/N);
+        Output<T>()[0] = correct * T(1.0) / N;
         return true;
     }
 

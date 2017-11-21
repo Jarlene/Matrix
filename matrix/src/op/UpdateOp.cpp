@@ -2,6 +2,7 @@
 // Created by  Jarlene on 2017/8/9.
 //
 
+#include <matrix/include/optimizer/BaseOptimizer.h>
 #include "matrix/include/op/UpdateOp.h"
 
 namespace matrix {
@@ -21,9 +22,60 @@ namespace matrix {
         Tensor<T> grad_variable(Input<T>(GRAD_VARIABLE), *inputShapes->at(GRAD_VARIABLE));
         auto type = GetArgValue<ApplyGradMode>("type", kSGD);
         float learning_rate = GetArgValue<float>("learning_rate", 0.001f);
-        T learn = T(-1*learning_rate);
-        ApplyNode<T>(variable, grad_variable, learn);
-        // todo::sgd now
+        switch (type) {
+            case kSGD:
+            {
+                T learn = T(-1*learning_rate);
+                ApplyNode<T>(variable, grad_variable, learn);
+            }
+                break;
+            case kMomentum:
+            {
+                float mon = GetArgValue<float>("momentum", 0.9f);
+                T learn = T(-1*learning_rate);
+                Scale(variable, T(1 + mon));
+                ApplyNode<T>(variable, grad_variable, learn);
+            }
+                break;
+            case kNesterov:
+            {
+
+            }
+                break;
+            case kAdagrad:
+            {
+
+            }
+                break;
+            case kAdadelta:
+            {
+
+            }
+                break;
+            case kRMSprop:
+            {
+
+            }
+                break;
+            case kAdam:
+            {
+
+            }
+                break;
+            case kAdamax:
+            {
+
+            }
+                break;
+            case kNadam:
+            {
+
+            }
+                break;
+            default:
+            Logger::Global()->Fatal("UpdateOp can not support");
+                break;
+        }
         return true;
 
     }

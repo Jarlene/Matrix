@@ -17,6 +17,8 @@ namespace matrix {
     SAME_FUNCTION(Update);
     DISABLE_COPY_AND_ASSIGN(Update);
         INPUT_TAG(VARIABLE, GRAD_VARIABLE);
+    public:
+        T * pre{nullptr};
     };
 
 

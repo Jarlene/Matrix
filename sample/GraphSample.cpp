@@ -16,25 +16,23 @@ int main(int argc, char *argv[]) {
     auto as = ConstantSymbol::Create("a", &a, ShapeN(1, 1));
     auto bs = VariableSymbol::Create("b", ShapeN(1, 1));
 
+    float b = 1;
+    auto ts = ConstantSymbol::Create("ts", &b, ShapeN(1, 1));
+
     auto cs = as + bs;
 
-//    auto ds = Symbol("activation")
-//            .SetInput("cs", cs)
-//            .SetParam("type", kSigmoid)
-//            .Build("act1");
-//
-//    auto es = Symbol("activation")
-//            .SetInput("cs", cs)
-//            .SetParam("type", kRelu)
-//            .Build("act2");
-//
-    auto fs = cs * cs;
+    auto ds = Symbol("activation")
+            .SetInput("cs", cs)
+            .SetParam("type", kSigmoid)
+            .Build("act1");
 
-    auto loss = Symbol("loss")
-            .SetInput("logistic", fs)
-            .SetInput("y", as)
-            .SetParam("type", kCrossEntropy)
-            .Build("loss");
+    auto es = Symbol("activation")
+            .SetInput("cs", cs)
+            .SetParam("type", kSigmoid)
+            .Build("act2");
+
+    auto fs = ds * es;
+
 
     Context context;
     context.type = kFloat;
@@ -42,11 +40,11 @@ int main(int argc, char *argv[]) {
     context.mode = kCpu;
 
     auto opt = new SGDOptimizer(0.001f);
-    auto executor = std::make_shared<Executor>(loss, context, opt);
-    for (int i = 0; i < 100; ++i) {
+    auto executor = std::make_shared<Executor>(fs, context, opt);
+    for (int i = 0; i < 5000; ++i) {
         executor->train();
-        loss.PrintMatrix();
-        if ((1+i)%100 == 0) {
+        fs.PrintMatrix();
+        if ((1 + i) % 100 == 0) {
             bs.PrintMatrix();
         }
     }

@@ -15,6 +15,7 @@ namespace matrix {
     template <class T, class Context>
     class RNNOp : public Operator {
     SAME_FUNCTION(RNN);
+        virtual bool VariableNode(std::function<void(std::initializer_list<Shape *> shapes)> func) override ;
     DISABLE_COPY_AND_ASSIGN(RNN);
     };
 
@@ -22,7 +23,9 @@ namespace matrix {
     template <class T>
     class RNNState : public State {
     public:
-
+        Shape *shape{nullptr};
+        T *ht{nullptr};
+        virtual void clear() override ;
     };
 
 

@@ -51,7 +51,7 @@ namespace matrix {
         auto s = Symbol("add")
                 .SetInput("first", *this)
                 .SetInput("second", symbol)
-                .Build();
+                .Build("add");
         return s;
     }
 
@@ -59,7 +59,7 @@ namespace matrix {
         auto s = Symbol("sub")
                 .SetInput("first", *this)
                 .SetInput("second", symbol)
-                .Build();
+                .Build("sub");
         return s;
     }
 
@@ -67,7 +67,7 @@ namespace matrix {
         auto s = Symbol("mul")
                 .SetInput("first", *this)
                 .SetInput("second", symbol)
-                .Build();
+                .Build("mul");
         return s;
     }
 
@@ -75,7 +75,7 @@ namespace matrix {
         auto s = Symbol("div")
                 .SetInput("first", *this)
                 .SetInput("second", symbol)
-                .Build();
+                .Build("div");
         return s;
     }
 
