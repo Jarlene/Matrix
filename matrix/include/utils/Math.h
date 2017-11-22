@@ -790,18 +790,8 @@ namespace matrix {
     /// \param y
     template <class T>
     inline void Softmax(const int N, const T* x, T* y) {
-        T max = x[0];
-#ifdef USE_MP
-#pragma omp parallel for
-#endif
-        for (int i=1; i<N; ++i) {
-            if (max < x[i]) {
-                max = x[i];
-            }
-        }
-
+        const T max = *std::max_element(x, x + N);
         T sum = (T)0;
-
 #ifdef USE_MP
 #pragma omp parallel for
 #endif
@@ -822,25 +812,12 @@ namespace matrix {
 
     template <class T>
     inline void SoftmaxGrad(const int N, const int D, const T* x, const T* pre,  T* y) {
-        Mul(N * D, x, pre, y);
-#ifdef USE_MP
-#pragma omp parallel for
-#endif
-        for (int i = 0; i < N; ++i) {
-            T sum = T(0);
-            for (int j = 0; j < D; ++j) {
-                sum += y[i * D + j];
-            }
-            for (int j = 0; j < D; ++j) {
-                y[i * D + j] = sum;
-            }
-        }
 
 #ifdef USE_MP
 #pragma omp parallel for
 #endif
-        for (int i = 0; i < N*D; ++i) {
-            y[i] =  x[i]* (pre[i] - y[i]);
+        for (int i = 0; i < N * D; ++i) {
+            y[i] = pre[i] * x[i] * (T(1) - x[i]);
         }
 
     }
@@ -956,12 +933,7 @@ namespace matrix {
 #endif
         for (int i = 0; i < M; ++i) {
 
-            T max = data[i * class_num];
-            for (int j = 1; j < class_num; ++j) {
-                if (max < data[i * class_num + j]) {
-                    max = data[i * class_num + j];
-                }
-            }
+            T max = *std::max_element(data + i * class_num, data + (i + 1) * class_num);
             T sum = T(0.0);
             for (int j = 0; j < class_num; ++j) {
                 sum += exp(data[i * class_num +j] - max);
@@ -970,7 +942,7 @@ namespace matrix {
             out[0] += log(sum) - data[static_cast<int>(label[i])] + max;
         }
 
-        out[0] /= N;
+        out[0] /= M;
     }
 
     template <class T>
