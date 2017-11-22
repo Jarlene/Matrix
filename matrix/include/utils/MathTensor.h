@@ -62,13 +62,18 @@ namespace matrix {
 
     template <class T>
     void Add(const Tensor<T> &a, const Tensor<T> &b, Tensor<T> &c) {
-        int size = a.Size();
         if (a.GetShape() == b.GetShape()) {
+            int size = a.Size();
             Add<T>(size, a.Data(), b.Data(), c.MutableData());
         } else if (a.GetShape()[0] == b.GetShape()[0] && b.Rank() == 1) {
             Add<T>(a.GetShape()[0], a.GetShape()[1], a.Data(), b.Data(), c.MutableData());
+        } else if (a.GetShape()[1] == b.GetShape()[0] && b.Rank() == 1) {
+            int size = b.GetShape()[0];
+            for (int i = 0; i < a.GetShape()[0]; ++i) {
+                Add<T>(size, a.Data(i * size), b.Data(), c.MutableData(i * size));
+            }
         } else {
-            Logger::Global()->Fatal("Add not support add method now \n");
+            Logger::Global()->Fatal("Add not support add method now.");
         }
 
     }

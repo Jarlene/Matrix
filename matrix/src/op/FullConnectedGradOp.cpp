@@ -3,6 +3,7 @@
 //
 
 
+#include "matrix/include/op/ReduceOp.h"
 #include "matrix/include/op/FullConnectedGradOp.h"
 
 namespace matrix {
@@ -31,7 +32,7 @@ namespace matrix {
                 MatrixMul<T>(data, true, pre_grad, false, out);
                 break;
             case BIAS:
-                Copy<T>(pre_grad, out);
+                Sum(pre_grad, 1, out);
                 break;
             default:
                 Logger::Global()->Fatal("FullConnectedGradOp not support. \n");

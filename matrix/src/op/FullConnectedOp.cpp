@@ -60,7 +60,7 @@ namespace matrix {
             weight.Append(GetArgValue<int>("hide_num"));
             if(HasArg("with_bias")) {
                 Shape bias;
-                bias.Append(inputShapes->at(0)->At(0));
+                bias.Append(GetArgValue<int>("hide_num"));
                 func({&weight, &bias});
             } else {
                 func({&weight});

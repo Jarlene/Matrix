@@ -52,6 +52,15 @@ namespace matrix {
             return *this;
         }
 
+        bool operator==(T val) {
+            for (int i = 0; i < shape_.Size(); ++i) {
+                if (data_[i] != val) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
 
         const Shape &GetShape() const {
             return shape_;

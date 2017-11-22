@@ -72,7 +72,10 @@ namespace matrix {
             outputData += filterNum * outputShape->At(2) * outputShape->At(3);
         }
         if (InputSize()  == 4) {
-            Tensor<T> out(Output<T>(), *outputShape);
+            Shape flatten;
+            flatten.Append(outputShape->Size() / filterNum);
+            flatten.Append(filterNum);
+            Tensor<T> out(Output<T>(), flatten);
             Tensor<T> bias(Input<T>(BIAS), *inputShapes->at(BIAS));
             Add<T>(out, bias, out);
         } else {
@@ -117,7 +120,7 @@ namespace matrix {
             filter.reShape(ShapeN(filter_num, channel, filter[0], filter[1]));
             if (HasArg("with_bias")) {
                 Shape bias;
-                bias.Append(inputShapes->at(DATA)->At(0));
+                bias.Append(filter_num);
                 func({&filter, &bias});
             } else {
                 func({&filter});

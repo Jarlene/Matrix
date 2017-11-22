@@ -17,6 +17,7 @@ namespace matrix {
     bool LossGradOp<T, Context>::Run() {
         auto lossModel = GetArgValue<LossMode>("type", LossMode::kCrossEntropy);
         Tensor<T> pre(Input<T>(PRE_GRAD), *inputShapes->at(PRE_GRAD));
+        Tensor<T> selfOut(Input<T>(SELF_OUT), *inputShapes->at(SELF_OUT));
         Tensor<T> data(Input<T>(DATA), *inputShapes->at(DATA));
         Tensor<T> label(Input<T>(LABEL), *inputShapes->at(LABEL));
         Tensor<T> out(Output<T>(), *outputShape);

@@ -816,8 +816,17 @@ namespace matrix {
 #ifdef USE_MP
 #pragma omp parallel for
 #endif
-        for (int i = 0; i < N * D; ++i) {
-            y[i] = pre[i] * x[i] * (T(1) - x[i]);
+
+        for (int i = 0; i < N; ++i) {
+
+            T sum = T(0);
+            for (int j = 0; j < D; ++j) {
+                sum += x[i * D + j] * pre[i * D + j];
+            }
+
+            for (int k = 0; k < D; ++k) {
+                y[i * D + k] = x[i * D + k] * (pre[i * D + k] - sum);
+            }
         }
 
     }

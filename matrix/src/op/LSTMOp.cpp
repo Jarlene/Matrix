@@ -39,6 +39,16 @@ namespace matrix {
 
     }
 
+    template <class T, class Context>
+    bool LSTMOp<T, Context>::ShareNodes(std::function<void(std::initializer_list<Shape *> shapes)> func) {
+        return Operator::ShareNodes(func);
+    }
+
+    template <class T, class Context>
+    bool LSTMOp<T, Context>::VariableNode(std::function<void(std::initializer_list<Shape *> shapes)> func) {
+        return Operator::VariableNode(func);
+    }
+
 
     void LSTMOpProp::InferShape(std::vector<Shape*> &inShape, Shape *outShape) {
 

@@ -15,8 +15,10 @@ namespace matrix {
     template <class T, class Context>
     class LSTMOp : public Operator {
     SAME_FUNCTION(LSTM);
+        virtual bool VariableNode(std::function<void(std::initializer_list<Shape *> shapes)> func) override ;
+        virtual bool ShareNodes(std::function<void(std::initializer_list<Shape *> shapes)> func) override ;
     DISABLE_COPY_AND_ASSIGN(LSTM);
-
+        INPUT_TAG(INPUT, CELL);
 
     };
 
