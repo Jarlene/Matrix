@@ -13,12 +13,14 @@ namespace matrix {
 
     template <class T, class Context>
     bool ConcatGradOp<T, Context>::Run() {
-        T *out = Output<T>();
         int idx = GetArgValue<int>("input_idx", -1);
         if(idx == -1) {
             Logger::Global()->Fatal("ConcatGradOp need input idx");
         }
-        memcpy(out, Input<T>(idx), inputShapes->at(idx)->Size());
+        T *out = Output<T>();
+        T *pre_grad = Input<T>(0);
+        int size = inputShapes->at(idx)->Size();
+        memcpy(out, pre_grad + idx * size, size);
         return true;
     }
 
