@@ -6,6 +6,7 @@
 #include <matrix/include/base/Tensor.h>
 #include <matrix/include/utils/MathTensor.h>
 #include <matrix/include/op/ReduceOp.h>
+
 namespace matrix {
 
     namespace Test {
@@ -60,8 +61,8 @@ namespace matrix {
 
 
         TEST_F(MathTest, im2col) {
-            float  a[] = {0, 1, 2,
-                          3, 4, 5};
+            float a[] = {0, 1, 2,
+                         3, 4, 5};
 
             float b[8] = {0};
 
@@ -121,7 +122,7 @@ namespace matrix {
             float c[] = {4, 4, 4,
                          2, 4, 5,
                          1, 4, 6};
-            
+
             NaiveConv(a, 1, 1, 5, 5, 1, 1, 0, 0, 3, 3, 1, 1, 1, kernel, b);
             checkArrayEqual<float>(b, c, 9);
         }
@@ -132,7 +133,6 @@ namespace matrix {
                          4, 2, 6, 2,
                          7, 1, 3, 5,
                          1, 3, 10, 2};
-
 
 
             float b[9] = {0};
@@ -148,6 +148,39 @@ namespace matrix {
             checkArrayEqual<float>(c, indexTarget, 9);
         }
 
+        TEST_F(MathTest, Softmax) {
+            float a[] = {2, 1, 3, 5,
+                         3, 2, 6, 1,
+                         8, 2, 4, 6,
+                         5, 9, 3, 2};
+            float b[16] = {0};
+            float target[16] = {0.0414, 0.0152, 0.1125, 0.8310,
+                                0.0463, 0.0170, 0.9304, 0.0063,
+                                0.8650, 0.0021, 0.0158, 0.1171,
+                                0.0179, 0.9788, 0.0024, 0.0009};
+            for (int i = 0; i < 4; ++i) {
+                Softmax(4, a + 4 * i, b + 4 * i);
+            }
+            checkArrayEqual(b, target, 16);
+            PrintMat(b, 4, 4, "softmax_out");
+        }
+
+        TEST_F(MathTest, SoftmaxGrad) {
+            float pre[16] = {0, 0, 0, -1.20337,
+                             0, 0, -1.07481, 0,
+                             0, -476.19, 0, 0,
+                             0, -1.02166, 0, 0};
+            float a[] = {0.0414, 0.0152, 0.1125, 0.8310,
+                         0.0463, 0.0170, 0.9304, 0.0063,
+                         0.8650, 0.0021, 0.0158, 0.1171,
+                         0.0179, 0.9788, 0.0024, 0.0009};
+            float b[16] = {0};
+            float target[] = {};
+            SoftmaxGrad(4, 4, a, pre, b);
+            PrintMat(b, 4, 4, "softmaxgrad_out");
+            checkArrayEqual(b, target, 16);
+        }
+
 
         TEST_F(MathTest, CrossEntropy) {
             float a[] = {0.1, 0.3, 0.1, 0.5,
@@ -158,11 +191,22 @@ namespace matrix {
 
             float out = 0;
             CrossEntropy(16, a, 4, label, &out);
-            PrintMat(&out, 1, 1, "out");
+            PrintMat(&out, 1, 1, "crossEntropy_out");
             float target = -log(0.5) - log(0.4) - log(0.7) - log(0.4);
-            EXPECT_EQ(out, target/4);
+            EXPECT_EQ(out, target / 4);
         }
 
+        TEST_F(MathTest, CrossEntropyGrad) {
+            float a[] = {0.0414, 0.0152, 0.1125, 0.8310,
+                         0.0463, 0.0170, 0.9304, 0.0063,
+                         0.8650, 0.0021, 0.0158, 0.1171,
+                         0.0179, 0.9788, 0.0024, 0.0009};
+            float label[] = {3, 2, 1, 1};
+
+            float out[16] = {0};
+            CrossEntropyGrad(16, a, 4, label, out);
+            PrintMat(out, 4, 4, "crossEntropygrad_out");
+        }
 
     }
 }
