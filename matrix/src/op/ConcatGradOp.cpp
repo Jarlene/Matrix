@@ -18,7 +18,7 @@ namespace matrix {
             Logger::Global()->Fatal("ConcatGradOp need input idx");
         }
         T *out = Output<T>();
-        T *pre_grad = Input<T>(0);
+        const T *pre_grad = Input<T>(0);
         int size = inputShapes->at(idx)->Size();
         memcpy(out, pre_grad + idx * size, size);
         return true;
