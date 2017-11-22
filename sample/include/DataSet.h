@@ -33,9 +33,9 @@ public:
         }
 
         for (int i = 0; i < batchSize; ++i) {
-            memcpy(data + i * oneDataSize, MniData[currentBatchIndx + i].data(), oneDataSize);
+            memcpy(data + i * oneDataSize, MniData[currentBatchIndx + i].data(), oneDataSize * sizeof(float));
         }
-        memcpy(label, MniLabel.data(), batchSize);
+        memcpy(label, MniLabel.data(), batchSize * sizeof(float));
         currentBatchIndx += batchSize;
         if (currentBatchIndx == MniData.size()){
             return false;
