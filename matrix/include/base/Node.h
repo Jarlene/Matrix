@@ -77,6 +77,55 @@ namespace matrix {
             return lhs->id_ > rhs->id_;
         }
 
+        void PrintMatrix() {
+            switch(context.type) {
+                case kFloat:
+                {
+                    auto data = static_cast<float*>(data_);
+                    if (outputShapes.Rank() == 2) {
+                        Logger::PrintMat<float>(data, outputShapes[0], outputShapes[1], nodeName);
+                    } else {
+                        Logger::PrintMat<float>(data, outputShapes[0], 1, nodeName);
+                    }
+                }
+
+                    break;
+                case kInt:
+                {
+                    auto data = static_cast<int*>(data_);
+                    if (outputShapes.Rank() == 2) {
+                        Logger::PrintMat<int>(data, outputShapes[0], outputShapes[1], nodeName);
+                    } else {
+                        Logger::PrintMat<int>(data, outputShapes[0], 1, nodeName);
+                    }
+                }
+
+                    break;
+                case kLong:
+                {
+                    auto data = static_cast<long*>(data_);
+                    if (outputShapes.Rank() == 2) {
+                        Logger::PrintMat<long>(data, outputShapes[0], outputShapes[1], nodeName);
+                    } else {
+                        Logger::PrintMat<long>(data, outputShapes[0], 1, nodeName);
+                    }
+                }
+                    break;
+                case kDouble:
+                {
+                    auto data = static_cast<double*>(data_);
+                    if (outputShapes.Rank() == 2) {
+                        Logger::PrintMat<double>(data, outputShapes[0], outputShapes[1], nodeName);
+                    } else {
+                        Logger::PrintMat<double>(data, outputShapes[0], 1, nodeName);
+                    }
+                }
+                    break;
+                default:
+                    Logger::Global()->Error("can not print data");
+                    break;
+            }
+        }
 
     };
 }

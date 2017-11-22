@@ -45,56 +45,7 @@ namespace matrix {
         Symbol operator/(const Symbol &symbol);
 
         void PrintMatrix() {
-
-            switch (nodePtr->context.type) {
-                case kFloat:
-                {
-                    auto data = static_cast<float*>(nodePtr->data_);
-                    if (nodePtr->outputShapes.Rank() == 2) {
-                        Logger::PrintMat<float>(data, nodePtr->outputShapes[0], nodePtr->outputShapes[1], nodePtr->nodeName);
-                    } else {
-                        Logger::PrintMat<float>(data, nodePtr->outputShapes[0], 1, nodePtr->nodeName);
-                    }
-                }
-
-                    break;
-                case kInt:
-                {
-                    auto data = static_cast<int*>(nodePtr->data_);
-                    if (nodePtr->outputShapes.Rank() == 2) {
-                        Logger::PrintMat<int>(data, nodePtr->outputShapes[0], nodePtr->outputShapes[1], nodePtr->nodeName);
-                    } else {
-                        Logger::PrintMat<int>(data, nodePtr->outputShapes[0], 1, nodePtr->nodeName);
-                    }
-                }
-
-                    break;
-                case kLong:
-                {
-                    auto data = static_cast<long*>(nodePtr->data_);
-                    if (nodePtr->outputShapes.Rank() == 2) {
-                        Logger::PrintMat<long>(data, nodePtr->outputShapes[0], nodePtr->outputShapes[1], nodePtr->nodeName);
-                    } else {
-                        Logger::PrintMat<long>(data, nodePtr->outputShapes[0], 1, nodePtr->nodeName);
-                    }
-                }
-                    break;
-                case kDouble:
-                {
-                    auto data = static_cast<double*>(nodePtr->data_);
-                    if (nodePtr->outputShapes.Rank() == 2) {
-                        Logger::PrintMat<double>(data, nodePtr->outputShapes[0], nodePtr->outputShapes[1], nodePtr->nodeName);
-                    } else {
-                        Logger::PrintMat<double>(data, nodePtr->outputShapes[0], 1, nodePtr->nodeName);
-                    }
-                }
-                    break;
-                default:
-                Logger::Global()->Error("can not print data");
-                    break;
-            }
-
-
+            nodePtr->PrintMatrix();
         }
 
     protected:
