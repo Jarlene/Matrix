@@ -20,6 +20,7 @@ namespace matrix {
         Executor(const Symbol &symbol,  Context &context, BaseOptimizer *optimizer);
         ~Executor();
         void train(const Symbol *symbol = nullptr);
+        void update();
         void evaluating();
 
     private:

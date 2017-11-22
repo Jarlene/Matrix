@@ -43,15 +43,6 @@ namespace matrix {
 
         };
 
-        auto updateFunc = [&](NodePtr &node) {
-            node->SetData();
-            try {
-                node->op->AsyncRun();
-            } catch (std::exception &e){
-                Logger::Global()->Fatal("exception on node %d==> %s", node->id_ , e.what());
-            }
-        };
-
         ThreadPool pool(CPU_CORES);
         int size = graph_->GetGraphNodes().size();
         while (true){
@@ -66,9 +57,7 @@ namespace matrix {
             graph_->Accuracy(symbol)->SetData();
             graph_->Accuracy(symbol)->op->AsyncRun();
         }
-        for (auto it : graph_->GetUpdateNodes()) {
-            pool.enqueue(updateFunc, it);
-        }
+
     }
 
 
@@ -96,5 +85,22 @@ namespace matrix {
 
     void Executor::evaluating() {
 
+    }
+
+    void Executor::update() {
+
+        auto updateFunc = [&](NodePtr &node) {
+            try {
+                node->SetData();
+                node->op->AsyncRun();
+            } catch (std::exception &e){
+                Logger::Global()->Fatal("exception on node %d==> %s", node->id_ , e.what());
+            }
+        };
+
+        ThreadPool pool(CPU_CORES);
+        for (auto it : graph_->GetUpdateNodes()) {
+            pool.enqueue(updateFunc, it);
+        }
     }
 }
