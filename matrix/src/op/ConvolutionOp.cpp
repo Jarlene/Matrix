@@ -73,13 +73,11 @@ namespace matrix {
         }
         if (InputSize()  == 4) {
             Shape flatten;
-            flatten.Append(outputShape->Size() / filterNum);
             flatten.Append(filterNum);
+            flatten.Append(outputShape->Size() / filterNum);
             Tensor<T> out(Output<T>(), flatten);
             Tensor<T> bias(Input<T>(BIAS), *inputShapes->at(BIAS));
             Add<T>(out, bias, out);
-        } else {
-            Logger::Global()->Fatal("ConvolutionOp do not support other inputs\n");
         }
         return true;
     }
@@ -137,7 +135,8 @@ namespace matrix {
 
     template<class T, class Context>
     bool ConvolutionOp<T, Context>::ShareNodes(std::function<void(std::initializer_list<Shape *> shapes)> func) {
-        if (InputSize() < 4) {
+        bool with_bias = GetArgValue<bool>("with_bias", true);
+        if ((InputSize() < 4 && with_bias) || (InputSize() < 3 && !with_bias)) {
             int group = GetArgValue<int>("group", 1);
             if (InputSize() == 1) {
                 if (!HasArg("filter")) {
