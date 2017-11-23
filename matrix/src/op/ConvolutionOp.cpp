@@ -24,19 +24,19 @@ namespace matrix {
             order = GetArgValue<ImageOrder>("order");
         }
         int imageSize = 1;
+        int outsize = 1;
         int channel = 1;
         if (order == NCHW) {
             channel = inputShapes->at(DATA)->At(1);
             imageSize = inputShapes->at(DATA)->At(2) * inputShapes->at(DATA)->At(3);
+            outsize = outputShape->At(2) * outputShape->At(3);
         } else {
             imageSize = inputShapes->at(DATA)->At(1) * inputShapes->at(DATA)->At(2);
             channel = inputShapes->at(DATA)->At(3);
+            outsize = outputShape->At(1) * outputShape->At(2);
         }
 
-        int group = 1;
-        if (HasArg("group")) {
-            group = GetArgValue<int>("group");
-        }
+        int group = GetArgValue<int>("group", 1);
         int filterNum = GetArgValue<int>("filter_num", channel);
 
         Shape kernel = *inputShapes->at(KERNEL);
@@ -63,13 +63,13 @@ namespace matrix {
                            padding, dilate,
                            colData, order);
                 int M = filterNum / group;
-                int N = outputShape->At(2) * outputShape->At(3);
+                int N = outsize;
                 int K = channel / group * kernel.At(2) * kernel.At(3);
                 CPUGemm<T>(NoTrans, NoTrans, M, N, K, T(1.0), kernelData + j * filter_offset, colData,
                            T(0.0), outputData + j * output_offset);
             }
-            inputData += channel * imageSize;
-            outputData += filterNum * outputShape->At(2) * outputShape->At(3);
+            inputData += input_offset * group;
+            outputData += output_offset * group;
         }
         if (InputSize()  == 4) {
             Shape flatten;
@@ -109,7 +109,6 @@ namespace matrix {
             }
             Shape filter = GetArgValue<Shape>("filter");
 
-            int filter_num = GetArgValue<int>("filter_num");
             ImageOrder order = GetArgValue<ImageOrder>("order", NCHW);
             int channel = 0;
             if (order == NCHW) {
@@ -117,8 +116,9 @@ namespace matrix {
             } else {
                 channel = inputShapes->at(DATA)->At(3);
             }
+            int filter_num = GetArgValue<int>("filter_num", channel);
             filter.reShape(ShapeN(filter_num, channel, filter[0], filter[1]));
-            if (HasArg("with_bias")) {
+            if (HasArg("with_bias") && GetArgValue<bool>("with_bias")) {
                 Shape bias;
                 bias.Append(filter_num);
                 func({&filter, &bias});
@@ -204,10 +204,6 @@ namespace matrix {
         }
 
 
-        int group = 1;
-        if (param->args->count("group")) {
-            group = get<int>(param->args->at("group"));
-        }
         Shape in = *inShape[0];
         Shape kernel = *inShape[1];
 
