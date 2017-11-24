@@ -17,11 +17,7 @@ namespace matrix {
 
     template<class T, class Context>
     bool ConvolutionGradOp<T, Context>::Run() {
-        ImageOrder order = NCHW;
-        if (HasArg("order")) {
-            order = GetArgValue<ImageOrder>("order");
-        }
-
+        ImageOrder order = GetArgValue<ImageOrder>("order", NCHW);
         int num = inputShapes->at(DATA)->At(0);
         
         int channel = 1;
@@ -40,13 +36,7 @@ namespace matrix {
         }
 
         int filterNum = GetArgValue<int>("filter_num", channel);
-
-        int group = 1;
-        if (HasArg("group")) {
-            group = GetArgValue<int>("group");
-        }
-
-
+        int group = GetArgValue<int>("group", 1);
 
         Shape kernel = *inputShapes->at(KERNEL);
         Shape stride = GetArgValue<Shape>("stride", ShapeN(1, 1));
@@ -115,12 +105,10 @@ namespace matrix {
 
         } else if (index == 2) {
             for (int i = 0; i < num; ++i) {
-                for (int j = 0; j < group; ++j) {
-                    Shape flatten = ShapeN(filterNum, outSize / group);
-                    Tensor<T> pre(Input<T>(PRE_GRAG) + i * flatten.Size(), flatten);
-                    Tensor<T> bias_grad(Output<T>(), *inputShapes->at(BIAS));
-                    SumAdd(pre, 0, bias_grad);
-                }
+                Shape flatten = ShapeN(filterNum, outSize);
+                Tensor<T> pre(Input<T>(PRE_GRAG) + i * flatten.Size(), flatten);
+                Tensor<T> bias_grad(Output<T>(), *inputShapes->at(BIAS));
+                SumAdd(pre, 1, bias_grad);
             }
         } else {
             Logger::Global()->Fatal("ConvolutionGradOp do not support other inputs\n");
