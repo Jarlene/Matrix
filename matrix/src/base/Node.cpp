@@ -66,7 +66,7 @@ namespace matrix {
                 if (*shape != nullptr) {
                     NodePtr var = Node::Create();
                     var->opName = "variable";
-                    var->nodeName = this->nodeName + "_variable";
+                    var->nodeName = this->nodeName + "_variable_" + std::to_string(var->id_);
                     var->outputShapes.reShape(**shape);
                     var->isVariable = context.phase == TRAIN;
                     var->context.type = context.type;
@@ -83,7 +83,7 @@ namespace matrix {
                 if (*shape != nullptr) {
                     NodePtr var = Node::Create();
                     var->opName = "variable";
-                    var->nodeName = this->nodeName + "_shared";
+                    var->nodeName = this->nodeName + "_shared_" + std::to_string(var->id_);
                     var->outputShapes.reShape(**shape);
                     var->isVariable = false;
                     var->isShared = true;

@@ -16,18 +16,20 @@ namespace matrix {
         Init();
 
         auto compute =[&](NodePtr &node) {
-
+            std::lock_guard<std::mutex> lock (mutex_);
             if (node->op != nullptr && !node->isPlaceHolder && !node->isShared) {
                 node->SetData();
                 try {
                     node->op->AsyncRun();
+                    node->PrintMatrix();
+//                    Logger::Global()->Info(node->ToString().c_str());
                 } catch (std::exception &e){
-                    Logger::Global()->Fatal("exception on node %d==> %s", node->id_ , e.what());
+                    Logger::Global()->Fatal("exception on node %d==> %s", node->ToString().c_str(), e.what());
                 }
             }
 
             {
-                std::lock_guard<std::mutex> lock (mutex_);
+
                 for (auto &item : node->outputs) {
                     if(graph_->GetNode(item.lock()->id_)) {
                         item.lock()->depens_.remove(node);
@@ -83,8 +85,11 @@ namespace matrix {
     }
 
 
-    void Executor::evaluating() {
-
+    void Executor::evaluating(const Symbol *symbol) {
+        if (symbol != nullptr) {
+            graph_->Accuracy(symbol)->SetData();
+            graph_->Accuracy(symbol)->op->AsyncRun();
+        }
     }
 
     void Executor::update() {
@@ -94,7 +99,7 @@ namespace matrix {
                 node->SetData();
                 node->op->AsyncRun();
             } catch (std::exception &e){
-                Logger::Global()->Fatal("exception on node %d==> %s", node->id_ , e.what());
+                Logger::Global()->Fatal("exception on node %s==> %s", node->ToString().c_str() , e.what());
             }
         };
 

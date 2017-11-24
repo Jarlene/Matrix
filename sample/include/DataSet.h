@@ -31,6 +31,14 @@ public:
         if (data == nullptr || label == nullptr) {
             cout<< "the input is null ptr " << endl;
         }
+        if (batchSize == -1) {
+            for (int i = 0; i < allDataSize; ++i) {
+                memcpy(data + i * oneDataSize, MniData[currentBatchIndx + i].data(), oneDataSize * sizeof(float));
+            }
+            memcpy(label, MniLabel.data(), allDataSize * sizeof(float));
+            return false;
+        }
+
         if (currentBatchIndx >= MniData.size()){
             return false;
         }

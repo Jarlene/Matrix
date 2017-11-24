@@ -92,6 +92,12 @@ namespace matrix {
     }
 
     template <class T>
+    void Div(const Tensor<T> &a, const Tensor<T> &b,  Tensor<T> &c) {
+
+    }
+
+
+    template <class T>
     void Sigmoid(const Tensor<T> &input, Tensor<T> &out) {
         assert(input.GetShape() == out.GetShape());
         Sigmoid<T>(input.Size(), input.Data(), out.MutableData());

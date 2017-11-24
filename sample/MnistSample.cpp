@@ -22,7 +22,7 @@ Symbol LogisticRegression(Symbol input, int hideNum, int classNum) {
             .SetInput("data", input)
             .SetParam("hide_num", hideNum)
             .SetParam("with_bias", true)
-            .Build("f1");
+            .Build("y1");
 
     auto act1 = Symbol("activation")
             .SetInput("y1", y1)
@@ -118,12 +118,12 @@ Symbol Connvolution(Symbol &input, int batchSize, int classNum) {
 
 
 int main() {
-    const int batchSize = 300;
-    const int epochSize = 10000;
+    const int batchSize = 100;
+    const int epochSize = 200;
     const int classNum = 10;
     const int hideNum = 128;
 
-    Shape imageShape = ShapeN(batchSize,  784);
+    Shape imageShape = ShapeN(batchSize,  1, 28, 28);
     Shape labelShape = ShapeN(batchSize);
     auto image = PlaceHolderSymbol::Create("image", imageShape);
     auto label = PlaceHolderSymbol::Create("label", labelShape);
@@ -132,9 +132,9 @@ int main() {
     float* labelData = static_cast<float *>(malloc(sizeof(float) * labelShape.Size()));
 
 
-//    auto logistic = Connvolution(image, batchSize, classNum);
+    auto logistic = Connvolution(image, batchSize, classNum);
 
-    auto logistic = LogisticRegression(image, hideNum, classNum);
+//    auto logistic = LogisticRegression(image, hideNum, classNum);
 
     auto loss = Symbol("loss")
             .SetInput("logistic", logistic)
@@ -156,11 +156,14 @@ int main() {
     DataSet trainSet(trainImagePath, trainLabelPath);
 //    DataSet testSet(testImagePath, testLabelPath);
     auto executor = std::make_shared<Executor>(loss, context, opt);
-    trainSet.GetBatchData(batchSize, imageData, labelData);
-    image.Fill(imageData);
-    label.Fill(labelData);
+
     for (int i = 0; i < epochSize; ++i) {
-        executor->train(&acc);
+        while (trainSet.GetBatchData(batchSize, imageData, labelData)) {
+            image.Fill(imageData);
+            label.Fill(labelData);
+            executor->train(&acc);
+            executor->update();
+        }
         loss.PrintMatrix();
         acc.PrintMatrix();
         trainSet.Reset();

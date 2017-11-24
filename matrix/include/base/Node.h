@@ -127,6 +127,11 @@ namespace matrix {
             }
         }
 
+
+        std::string ToString() {
+            return nodeName + "_" + std::to_string(id_);
+        }
+
     };
 }
 

@@ -21,7 +21,7 @@ namespace matrix {
         ~Executor();
         void train(const Symbol *symbol = nullptr);
         void update();
-        void evaluating();
+        void evaluating(const Symbol *symbol = nullptr);
 
     private:
         void Init();

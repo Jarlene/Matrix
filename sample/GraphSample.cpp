@@ -21,17 +21,17 @@ int main(int argc, char *argv[]) {
 
     auto cs = as + bs;
 
-    auto ds = Symbol("activation")
-            .SetInput("cs", cs)
-            .SetParam("type", kSigmoid)
-            .Build("act1");
+//    auto ds = Symbol("activation")
+//            .SetInput("cs", cs)
+//            .SetParam("type", kSigmoid)
+//            .Build("act1");
+//
+//    auto es = Symbol("activation")
+//            .SetInput("cs", cs)
+//            .SetParam("type", kSigmoid)
+//            .Build("act2");
 
-    auto es = Symbol("activation")
-            .SetInput("cs", cs)
-            .SetParam("type", kSigmoid)
-            .Build("act2");
-
-    auto fs = ds * es;
+    auto fs = cs * cs + bs;
 
 
     Context context;
@@ -41,8 +41,9 @@ int main(int argc, char *argv[]) {
 
     auto opt = new SGDOptimizer(0.001f);
     auto executor = std::make_shared<Executor>(fs, context, opt);
-    for (int i = 0; i < 5000; ++i) {
+    for (int i = 0; i < 500; ++i) {
         executor->train();
+        executor->update();
         fs.PrintMatrix();
         if ((1 + i) % 100 == 0) {
             bs.PrintMatrix();

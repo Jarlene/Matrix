@@ -114,12 +114,14 @@ namespace matrix {
             }
 
         } else if (index == 2) {
-            Shape flatten;
-            flatten.Append(filterNum);
-            flatten.Append(inputShapes->at(PRE_GRAG)->Size() / filterNum);
-            Tensor<T> pre(Input<T>(PRE_GRAG), flatten);
-            Tensor<T> bias_grad(Output<T>(), *inputShapes->at(BIAS));
-            Sum(pre, 0, bias_grad);
+            for (int i = 0; i < num; ++i) {
+                for (int j = 0; j < group; ++j) {
+                    Shape flatten = ShapeN(filterNum, outSize / group);
+                    Tensor<T> pre(Input<T>(PRE_GRAG) + i * flatten.Size(), flatten);
+                    Tensor<T> bias_grad(Output<T>(), *inputShapes->at(BIAS));
+                    SumAdd(pre, 0, bias_grad);
+                }
+            }
         } else {
             Logger::Global()->Fatal("ConvolutionGradOp do not support other inputs\n");
         }

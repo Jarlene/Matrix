@@ -22,6 +22,13 @@ if (USE_BLAS)
                 COMMAND  git clone https://github.com/xianyi/OpenBLAS.git ${BLAS_SOURCES_DIR}
                 RESULT_VARIABLE error_code
         )
+    else()
+        set(ouput_msg "")
+        execute_process(
+                COMMAND git pull
+                OUTPUT_VARIABLE ouput_msg
+        )
+        string(FIND "${ouput_msg}" "up-to-date." error_code)
     endif ()
 
     if (NOT error_code)

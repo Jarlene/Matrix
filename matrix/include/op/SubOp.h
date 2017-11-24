@@ -15,6 +15,7 @@ namespace matrix {
     class SubOp : public Operator {
     SAME_FUNCTION(Sub);
     DISABLE_COPY_AND_ASSIGN(Sub);
+        INPUT_TAG(INPUT1,INPUT2);
     };
 
 

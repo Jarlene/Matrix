@@ -15,6 +15,7 @@ namespace matrix {
     class DivOp : public Operator {
     SAME_FUNCTION(Div);
     DISABLE_COPY_AND_ASSIGN(Div);
+        INPUT_TAG(INPUT1,INPUT2);
     };
 
 

@@ -72,12 +72,21 @@ namespace matrix {
             outputData += output_offset * group;
         }
         if (InputSize()  == 4) {
-            Shape flatten;
-            flatten.Append(filterNum);
-            flatten.Append(outputShape->Size() / filterNum);
-            Tensor<T> out(Output<T>(), flatten);
-            Tensor<T> bias(Input<T>(BIAS), *inputShapes->at(BIAS));
-            Add<T>(out, bias, out);
+            if (order == NCHW) {
+                for (int i = 0; i < num; ++i) {
+                    Shape flatten = ShapeN(outputShape->At(1), output_offset * group/outputShape->At(1));
+                    Tensor<T> out(Output<T>() + i * output_offset * group, flatten);
+                    Tensor<T> bias(Input<T>(BIAS), *inputShapes->at(BIAS));
+                    Add<T>(out, bias, out);
+                }
+            } else {
+                for (int i = 0; i < num; ++i) {
+                    Shape flatten = ShapeN(output_offset * group/outputShape->At(3), outputShape->At(3));
+                    Tensor<T> out(Output<T>() + i * output_offset * group, flatten);
+                    Tensor<T> bias(Input<T>(BIAS), *inputShapes->at(BIAS));
+                    Add<T>(out, bias, out);
+                }
+            }
         }
         return true;
     }
