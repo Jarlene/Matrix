@@ -62,11 +62,12 @@ namespace matrix {
             Logger::Global()->Fatal("can not find the op %s", this->opName.c_str());
         }
         auto generatorVariableFunc = [this](std::initializer_list<Shape *> shapes) {
+            int idx = 0;
             for(auto shape = shapes.begin(); shape != shapes.end(); shape++) {
                 if (*shape != nullptr) {
                     NodePtr var = Node::Create();
                     var->opName = "variable";
-                    var->nodeName = this->nodeName + "_variable_" + std::to_string(var->id_);
+                    var->nodeName = this->nodeName + "_variable_" + std::to_string(idx);
                     var->outputShapes.reShape(**shape);
                     var->isVariable = context.phase == TRAIN;
                     var->context.type = context.type;
@@ -74,16 +75,18 @@ namespace matrix {
                     var->outputs.push_back(std::weak_ptr<Node>(this->shared_from_this()));
                     var->Build();
                     this->inputs.push_back(var);
+                    idx++;
                 }
             }
 
         };
         auto generatorSharedFunc = [this](std::initializer_list<Shape *> shapes) {
+            int idx = 0;
             for(auto shape = shapes.begin(); shape != shapes.end(); shape++) {
                 if (*shape != nullptr) {
                     NodePtr var = Node::Create();
                     var->opName = "variable";
-                    var->nodeName = this->nodeName + "_shared_" + std::to_string(var->id_);
+                    var->nodeName = this->nodeName + "_shared_" + std::to_string(idx);
                     var->outputShapes.reShape(**shape);
                     var->isVariable = false;
                     var->isShared = true;
@@ -92,6 +95,7 @@ namespace matrix {
                     var->outputs.push_back(std::weak_ptr<Node>(this->shared_from_this()));
                     var->Build();
                     this->inputs.push_back(var);
+                    idx++;
                 }
             }
         };

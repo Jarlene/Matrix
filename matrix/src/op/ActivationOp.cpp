@@ -14,10 +14,7 @@ namespace matrix {
 
     template <class T, class Context>
     bool ActivationOp<T, Context>::Run() {
-        auto type = ActType::kSigmoid;
-        if (HasArg("type")) {
-            type = GetArgValue<ActType>("type");
-        }
+        auto type = GetArgValue<ActType>("type", kSigmoid);
         Tensor<T> data(Input<T>(DATA) , *inputShapes->at(DATA));
         Tensor<T> out(Output<T>(), *outputShape);
         switch (type) {

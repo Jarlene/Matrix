@@ -8,6 +8,7 @@
 #include <map>
 #include <vector>
 #include <list>
+#include <sstream>
 #include "matrix/include/utils/Any.h"
 #include "matrix/include/utils/Registry.h"
 
@@ -78,6 +79,31 @@ namespace matrix {
         }
 
         void PrintMatrix() {
+//            if (outputShapes.Rank() == 2) {
+//                std::ostringstream stream;
+//                std::ofstream ofile;
+//                ofile.open("/Users/jarlene/Code/Cpp/AI/Matrix/" + this->ToString() + ".txt");
+//                for (int i = 0; i < outputShapes[0]; ++i) {
+//                    for (int j = 0; j < outputShapes[1]; ++j) {
+//                        stream << (static_cast<float*>(data_))[i * outputShapes[1] + j] << "     ";
+//                    }
+//                    stream << "\n";
+//                }
+//
+//                ofile << stream.str();
+//                ofile.close();
+//            } else if (outputShapes.Rank() == 1) {
+//                std::ostringstream stream;
+//                std::ofstream ofile;
+//                ofile.open("/Users/jarlene/Code/Cpp/AI/Matrix/" + this->ToString() + ".txt");
+//                for (int i = 0; i < outputShapes[0]; ++i) {
+//                    stream << (static_cast<float*>(data_))[i] << "     " << "\n";
+//                }
+//                ofile << stream.str();
+//                ofile.close();
+//            }
+
+
             switch(context.type) {
                 case kFloat:
                 {
