@@ -235,15 +235,13 @@ namespace matrix {
                               1, 0, 0};
 
 
-            float b[] = {1, 2, 3,
-                         1, 2, 1,
-                         2, 1, 3};
+            float b[] = {1};
 
             float col[81] = {0};
 
-            float c[] = {5, 6, 7,
-                         3, 6, 6,
-                         3, 5, 9};
+            float c[] = {5, 5, 5,
+                         3, 5, 6,
+                         2, 5, 7};
 
             float res[9] = {0};
 
@@ -266,12 +264,13 @@ namespace matrix {
             std::vector<Shape *> inShape;
             Shape out;
 
-            Shape in1 = ShapeN(1, 1, 5, 5);
-            Shape in2 = ShapeN(1, 1, 3, 3);
+            Shape dataShape = ShapeN(1, 1, 5, 5);
+            Shape filterShape = ShapeN(1, 1, 3, 3);
+            Shape biasShape = ShapeN(1);
             Shape cols = ShapeN(1, 9, 9);
-            inShape.push_back(&in1);
-            inShape.push_back(&in2);
-            inShape.push_back(&in2);
+            inShape.push_back(&dataShape);
+            inShape.push_back(&filterShape);
+            inShape.push_back(&biasShape);
             inShape.push_back(&cols);
 
             std::map<std::string, Any> params;
@@ -279,7 +278,109 @@ namespace matrix {
             op->SetData(&inputs, res);
             op->AsyncRun();
             int dim = out.Size();
+            PrintMat(res, 3, 3, "convolution_out");
             checkArrayEqual<float>(c, res, dim);
+        }
+
+        TEST_F(OpTest, MulitChannelConovolutionOp) {
+            float data[] = {1, 1, 1, 0, 0,
+                            0, 1, 1, 1, 0,
+                            0, 0, 1, 1, 1,
+                            0, 0, 1, 1, 0,
+                            0, 1, 1, 0, 0,
+                            1, 1, 1, 0, 0,
+                            0, 1, 1, 1, 0,
+                            0, 0, 1, 1, 1,
+                            0, 0, 1, 1, 0,
+                            0, 1, 1, 0, 0,
+                            1, 1, 1, 0, 0,
+                            0, 1, 1, 1, 0,
+                            0, 0, 1, 1, 1,
+                            0, 0, 1, 1, 0,
+                            0, 1, 1, 0, 0};
+
+            float kernel[] = {1, 1, 1,
+                              1, 1, 0,
+                              1, 0, 0,
+                              1, 1, 1,
+                              1, 1, 0,
+                              1, 0, 0,
+                              1, 1, 1,
+                              1, 1, 0,
+                              1, 0, 0,
+                              1, 1, 1,
+                              1, 1, 0,
+                              1, 0, 0,
+                              1, 1, 1,
+                              1, 1, 0,
+                              1, 0, 0,
+                              1, 1, 1,
+                              1, 1, 0,
+                              1, 0, 0,
+                              1, 1, 1,
+                              1, 1, 0,
+                              1, 0, 0,
+                              1, 1, 1,
+                              1, 1, 0,
+                              1, 0, 0,
+                              1, 1, 1,
+                              1, 1, 0,
+                              1, 0, 0};
+
+
+            float b[3] = {1, 1, 0};
+
+
+
+            float col[81 * 3] = {0};
+
+            float target[] = {13, 13, 13,
+                              7, 13, 16,
+                              4, 13, 19,
+                              13, 13, 13,
+                              7, 13, 16,
+                              4, 13, 19,
+                              12, 12, 12,
+                              6, 12, 15,
+                              3, 12, 18};
+
+            float res[9*3] = {0};
+
+            OpPtr pro = Registry::Global()->GetOp("convolution");
+
+            Context context;
+            context.mode = RunMode::kCpu;
+            context.phase = Phase::TEST;
+
+            std::vector<void *> inputs;
+
+
+
+            inputs.push_back(data);
+            inputs.push_back(kernel);
+            inputs.push_back(b);
+            inputs.push_back(col);
+
+
+            std::vector<Shape *> inShape;
+            Shape out;
+
+            Shape dataShape = ShapeN(1, 3, 5, 5);
+            Shape filterShape = ShapeN(3, 3, 3, 3);
+            Shape biasShape = ShapeN(3);
+            Shape cols = ShapeN(3, 9, 9);
+            inShape.push_back(&dataShape);
+            inShape.push_back(&filterShape);
+            inShape.push_back(&biasShape);
+            inShape.push_back(&cols);
+
+            std::map<std::string, Any> params;
+            Operator *op = pro->CreateOperator(context, &inShape, &out, params);
+            op->SetData(&inputs, res);
+            op->AsyncRun();
+            int dim = out.Size();
+            PrintMat(res, 9, 3, "convolution_mulit_channel");
+            checkArrayEqual<float>(target, res, dim);
         }
 
         TEST_F(OpTest, ConvolutionGradOp) {
@@ -656,6 +757,8 @@ namespace matrix {
             op->AsyncRun();
 
             PrintMat(a, 1, 1, "loss_out");
+            float target = (-log(0.3f) - log(0.1f) -log(0.5f)) / 3;
+            EXPECT_FLOAT_EQ(a[0], target);
         }
     }
 }
