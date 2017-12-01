@@ -44,7 +44,7 @@ namespace matrix {
             w.reShape(ShapeN(inputShapes->at(0)->At(rank - 1), hideNum));
             if(HasArg("with_bias")) {
                 Shape b;
-                b.reShape(ShapeN(inputShapes->at(0)->At(0)));
+                b.Append(hideNum);
                 func({&w, &b});
             } else {
                 func({&w});
@@ -59,6 +59,7 @@ namespace matrix {
         if (inShape.size() == 1) {
             return;
         }
+
 
 
 

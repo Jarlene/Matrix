@@ -50,6 +50,30 @@ namespace matrix {
                               int depth) override;
     };
 
+
+    template <typename N>
+    class DFSVisitor : public Visitor<N> {
+    public:
+        DFSVisitor();
+        void visit(const N* node) override;
+        const std::vector <const N*>& traverseChildren(const N& node, int depth = -1) override;
+        const std::vector <const N*>& traverseParents(const N& node, int depth = -1) override;
+        const std::vector <const N*>& traverseUndirected(const N& node, int depth = -1) override;
+    protected:
+        std::unordered_set<const N*> visited;
+        std::vector <const N*> result;
+        enum class enumVisitType {
+            CHILDREN = 0,
+            PARENTS,
+            UNDIRECTED
+        };
+        virtual void traverse(const std::unordered_set<const N*>& nodes, DFSVisitor<N>::enumVisitType visittype,
+                              int depth);
+        bool alreadyVisited(const N* node) const;
+    };
+
+
+
     class DAGGraph {
 
     };

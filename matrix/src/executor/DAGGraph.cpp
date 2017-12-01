@@ -2,6 +2,7 @@
 // Created by Jarlene on 2017/11/17.
 //
 
+#include <assert.h>
 #include <queue>
 #include "matrix/include/executor/DAGGraph.h"
 
@@ -50,7 +51,7 @@ namespace matrix {
 
         for (auto const &node : nodes) {
             if (visited.find(node) == visited.end()) {  // if node is not listed as already being visited
-                node->accept(*this);                      // mark as visited and add to results
+                this->visit(node);                      // mark as visited and add to results
                 nodeQueue.push(node);                         // put into the queue
                 nodeDepth.push(0);
             }
@@ -62,8 +63,7 @@ namespace matrix {
                 ((visittype == pt::CHILDREN) | (visittype == pt::UNDIRECTED))) {  // use the children
                 for (auto node : nodeQueue.front()->children()) {
                     if (visited.find(node) == visited.end()) {  // check node is not already being visited
-                        node->accept(*this);
-
+                        this->visit(node);
                         nodeQueue.push(node);
                         nodeDepth.push(curdepth + 1);
                     }
@@ -74,7 +74,7 @@ namespace matrix {
                 for (auto node : nodeQueue.front()->parents()) {
 
                     if (visited.find(node) == visited.end()) {  // check node is not already being visited
-                        node->accept(*this);
+                        this->visit(node);
 
                         nodeQueue.push(node);
                         nodeDepth.push(curdepth + 1);
@@ -89,6 +89,11 @@ namespace matrix {
     template<typename N>
     bool BFSVisitor<N>::alreadyVisited(const N *node) const {
         return !(visited.find(node) == visited.end());
+    }
+
+    template<typename N>
+    BFSVisitor<N>::BFSVisitor() : Visitor<N>(), visited() {
+
     }
 
     template<typename N>
@@ -107,7 +112,7 @@ namespace matrix {
             // Only process a node if not already visited
             if (BFSVisitor<N>::visited.find(node) == BFSVisitor<N>::visited.end()) {
                 // this will add the node to the "result" and mark the node as visited
-                node->accept(*this);
+                this->visit(node);
 
                 // Now add in all the children/parent/undirected links for the next depth
                 // and store these into visitnextnodes
@@ -126,5 +131,40 @@ namespace matrix {
         traverse(visitnextnodes, visittype, depth);
     }
 
+    template<typename N>
+    DFSVisitor<N>::DFSVisitor() : Visitor<N>(), visited() {
+
+    }
+
+    template<typename N>
+    void DFSVisitor<N>::visit(const N *node) {
+
+    }
+
+    template<typename N>
+    const std::vector<const N *> &DFSVisitor<N>::traverseChildren(const N &node, int depth) {
+        return std::vector<const N *>();
+    }
+
+    template<typename N>
+    const std::vector<const N *> &DFSVisitor<N>::traverseParents(const N &node, int depth) {
+        return std::vector<const N *>();
+    }
+
+    template<typename N>
+    const std::vector<const N *> &DFSVisitor<N>::traverseUndirected(const N &node, int depth) {
+        return std::vector<const N *>();
+    }
+
+    template<typename N>
+    void DFSVisitor<N>::traverse(const std::unordered_set<const N *> &nodes, DFSVisitor<N>::enumVisitType visittype,
+                              int depth) {
+
+    }
+
+    template<typename N>
+    bool DFSVisitor<N>::alreadyVisited(const N *node) const {
+        return false;
+    }
 
 }
