@@ -154,6 +154,10 @@ namespace matrix {
             if (inputShapes != nullptr) {
                 inputShapes->clear();
             }
+            if (context != nullptr) {
+                delete context;
+                context = nullptr;
+            }
 
         }
 

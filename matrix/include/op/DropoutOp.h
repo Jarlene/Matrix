@@ -10,7 +10,7 @@
 namespace matrix {
 
 
-    template <class T, class Context>
+    template <class T, class xpu>
     class DropoutOp : public Operator {
     SAME_FUNCTION(Dropout);
         virtual bool ShareNodes(std::function<void(std::initializer_list<Shape *> shapes)> func) override ;

@@ -1,18 +1,17 @@
 //
-// Created by Jarlene on 2017/8/2.
+// Created by 郑珊 on 2017/12/2.
 //
 
-#include "matrix/include/op/DropoutOp.h"
+#include "matrix/include/op/DropoutGradOp.h"
 
 namespace matrix {
-
     template <class T, class xpu>
-    DropoutOp<T, xpu>::DropoutOp(Parameter &param) {
+    DropoutGradOp<T, xpu>::DropoutGradOp(Parameter &param) {
         INIT_PARAMS
     }
 
     template <class T, class xpu>
-    bool DropoutOp<T, xpu>::Run() {
+    bool DropoutGradOp<T, xpu>::Run() {
         bool isTrain = this->context->phase == TRAIN;
         const T * data = Input<T>(DATA);
         T *out = Output<T>();
@@ -36,7 +35,7 @@ namespace matrix {
     }
 
     template <class T, class xpu>
-    void DropoutOp<T, xpu>::AsyncRun() {
+    void DropoutGradOp<T, xpu>::AsyncRun() {
         if (xpu::mode == RunMode::kCpu) {
             Run();
         } else {
@@ -47,29 +46,19 @@ namespace matrix {
     }
 
     template <class T, class xpu>
-    bool DropoutOp<T, xpu>::RunOnDevice() {
+    bool DropoutGradOp<T, xpu>::RunOnDevice() {
         return false;
     }
 
     template <class T, class xpu>
-    DropoutOp<T, xpu>::~DropoutOp() {
+    DropoutGradOp<T, xpu>::~DropoutGradOp() {
 
     }
 
-    template <class T, class xpu>
-    bool DropoutOp<T, xpu>::ShareNodes(std::function<void(std::initializer_list<Shape *> shapes)> func) {
-        bool isTrain = this->context->phase == TRAIN;
-        if (InputSize() == 1 && isTrain) {
-            Shape mask;
-            mask.reShape(*inputShapes->at(0));
-            func({&mask});
-            return true;
-        }
-        return false;
-    }
 
 
-    void DropoutOpProp::InferShape(std::vector<Shape*> &inShape, Shape* outShape) {
+
+    void DropoutGradOpProp::InferShape(std::vector<Shape*> &inShape, Shape* outShape) {
         if (param->context->phase == TRAIN) {
             outShape->reShape(*inShape[0]);
             return;
@@ -77,7 +66,7 @@ namespace matrix {
         outShape->reShape(ShapeN(0));
     }
 
-    INIT_OPERATOR_PROPERTY_CREATE(DropoutOpProp, DropoutOp, true);
+    INIT_OPERATOR_PROPERTY_CREATE(DropoutGradOpProp, DropoutGradOp, true);
 
 
 }
