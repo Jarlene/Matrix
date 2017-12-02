@@ -5,13 +5,13 @@
 namespace matrix {
 
 
-    template<class T, class Context>
-    NaiveConvolutionOp<T, Context>::NaiveConvolutionOp(Parameter &param) {
+    template<class T, class xpu>
+    NaiveConvolutionOp<T, xpu>::NaiveConvolutionOp(Parameter &param) {
         INIT_PARAMS
     }
 
-    template<class T, class Context>
-    bool NaiveConvolutionOp<T, Context>::Run() {
+    template<class T, class xpu>
+    bool NaiveConvolutionOp<T, xpu>::Run() {
         if (InputSize() <= 2) {
 
         } else if (InputSize() == 3) {
@@ -24,9 +24,9 @@ namespace matrix {
     }
 
 
-    template<class T, class Context>
-    void NaiveConvolutionOp<T, Context>::AsyncRun() {
-        if (Context::mode == RunMode::kCpu) {
+    template<class T, class xpu>
+    void NaiveConvolutionOp<T, xpu>::AsyncRun() {
+        if (xpu::mode == RunMode::kCpu) {
             Run();
         } else {
             if (!RunOnDevice()) {
@@ -35,13 +35,13 @@ namespace matrix {
         }
     }
 
-    template<class T, class Context>
-    NaiveConvolutionOp<T, Context>::~NaiveConvolutionOp() {
+    template<class T, class xpu>
+    NaiveConvolutionOp<T, xpu>::~NaiveConvolutionOp() {
 
     }
 
-    template<class T, class Context>
-    bool NaiveConvolutionOp<T, Context>::RunOnDevice() {
+    template<class T, class xpu>
+    bool NaiveConvolutionOp<T, xpu>::RunOnDevice() {
         return false;
     }
 

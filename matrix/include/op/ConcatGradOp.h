@@ -9,7 +9,7 @@
 
 namespace matrix {
 
-    template <class T, class Context>
+    template <class T, class xpu>
     class ConcatGradOp : public Operator {
     SAME_FUNCTION(ConcatGrad);
     DISABLE_COPY_AND_ASSIGN(ConcatGrad);

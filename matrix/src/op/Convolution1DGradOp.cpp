@@ -7,8 +7,8 @@
 
 namespace matrix {
 
-    template<class T, class Context>
-    Convolution1DGradOp<T, Context>::Convolution1DGradOp(Parameter &param) {
+    template<class T, class xpu>
+    Convolution1DGradOp<T, xpu>::Convolution1DGradOp(Parameter &param) {
         INIT_PARAMS
 
     }

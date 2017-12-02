@@ -6,28 +6,28 @@
 
 namespace matrix {
 
-    template <class T, class Context>
-    GRUOp<T, Context>::GRUOp(Parameter &param) {
+    template <class T, class xpu>
+    GRUOp<T, xpu>::GRUOp(Parameter &param) {
         INIT_PARAMS
     }
 
-    template <class T, class Context>
-    bool GRUOp<T, Context>::Run() {
+    template <class T, class xpu>
+    bool GRUOp<T, xpu>::Run() {
         return Operator::Run();
     }
 
-    template <class T, class Context>
-    void GRUOp<T, Context>::AsyncRun() {
+    template <class T, class xpu>
+    void GRUOp<T, xpu>::AsyncRun() {
         Operator::AsyncRun();
     }
 
-    template <class T, class Context>
-    bool GRUOp<T, Context>::RunOnDevice() {
+    template <class T, class xpu>
+    bool GRUOp<T, xpu>::RunOnDevice() {
         return false;
     }
 
-    template <class T, class Context>
-    GRUOp<T, Context>::~GRUOp() {
+    template <class T, class xpu>
+    GRUOp<T, xpu>::~GRUOp() {
 
     }
 

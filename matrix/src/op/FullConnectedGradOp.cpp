@@ -8,13 +8,13 @@
 
 namespace matrix {
 
-    template <class T, class Context>
-    FullConnectedGradOp<T, Context>::FullConnectedGradOp(Parameter &param) {
+    template <class T, class xpu>
+    FullConnectedGradOp<T, xpu>::FullConnectedGradOp(Parameter &param) {
         INIT_PARAMS
     }
 
-    template <class T, class Context>
-    bool FullConnectedGradOp<T, Context>::Run() {
+    template <class T, class xpu>
+    bool FullConnectedGradOp<T, xpu>::Run() {
         if (!HasArg("input_idx")) {
             Logger::Global()->Fatal("FullConnectedGradOp not support. \n");
         }
@@ -41,9 +41,9 @@ namespace matrix {
         return true;
     }
 
-    template <class T, class Context>
-    void FullConnectedGradOp<T, Context>::AsyncRun() {
-        if (Context::mode == RunMode::kCpu) {
+    template <class T, class xpu>
+    void FullConnectedGradOp<T, xpu>::AsyncRun() {
+        if (xpu::mode == RunMode::kCpu) {
             Run();
         } else {
             if (!RunOnDevice()) {
@@ -52,13 +52,13 @@ namespace matrix {
         }
     }
 
-    template <class T, class Context>
-    FullConnectedGradOp<T, Context>::~FullConnectedGradOp() {
+    template <class T, class xpu>
+    FullConnectedGradOp<T, xpu>::~FullConnectedGradOp() {
 
     }
 
-    template <class T, class Context>
-    bool FullConnectedGradOp<T, Context>::RunOnDevice() {
+    template <class T, class xpu>
+    bool FullConnectedGradOp<T, xpu>::RunOnDevice() {
         return false;
     }
 

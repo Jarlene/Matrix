@@ -7,13 +7,13 @@
 namespace matrix {
 
 
-    template <class T, class Context>
-    ActivationOp<T, Context>::ActivationOp(Parameter &param) {
+    template <class T, class xpu>
+    ActivationOp<T, xpu>::ActivationOp(Parameter &param) {
         INIT_PARAMS
     }
 
-    template <class T, class Context>
-    bool ActivationOp<T, Context>::Run() {
+    template <class T, class xpu>
+    bool ActivationOp<T, xpu>::Run() {
         auto type = GetArgValue<ActType>("type", kSigmoid);
         Tensor<T> data(Input<T>(DATA) , *inputShapes->at(DATA));
         Tensor<T> out(Output<T>(), *outputShape);
@@ -34,24 +34,24 @@ namespace matrix {
         return true;
     }
 
-    template <class T, class Context>
-    void ActivationOp<T, Context>::AsyncRun() {
-        if (Context::mode == RunMode::kCpu) {
+    template <class T, class xpu>
+    void ActivationOp<T, xpu>::AsyncRun() {
+        if (xpu::mode == RunMode::kCpu) {
             Run();
-        } else if (Context::mode == RunMode::kGpu){
+        } else if (xpu::mode == RunMode::kGpu){
             if (!RunOnDevice()) {
                 Run();
             }
         }
     }
 
-    template <class T, class Context>
-    bool ActivationOp<T, Context>::RunOnDevice() {
+    template <class T, class xpu>
+    bool ActivationOp<T, xpu>::RunOnDevice() {
         return false;
     }
 
-    template <class T, class Context>
-    ActivationOp<T, Context>::~ActivationOp() {
+    template <class T, class xpu>
+    ActivationOp<T, xpu>::~ActivationOp() {
 
     }
 

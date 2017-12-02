@@ -7,20 +7,20 @@
 namespace matrix {
 
 
-    template <class T, class Context>
-    FlattenOp<T, Context>::FlattenOp(Parameter &param) {
+    template <class T, class xpu>
+    FlattenOp<T, xpu>::FlattenOp(Parameter &param) {
         INIT_PARAMS
     }
 
-    template <class T, class Context>
-    bool FlattenOp<T, Context>::Run() {
+    template <class T, class xpu>
+    bool FlattenOp<T, xpu>::Run() {
         FallThrow();
         return true;
     }
 
-    template <class T, class Context>
-    void FlattenOp<T, Context>::AsyncRun() {
-        if (Context::mode == RunMode::kCpu) {
+    template <class T, class xpu>
+    void FlattenOp<T, xpu>::AsyncRun() {
+        if (xpu::mode == RunMode::kCpu) {
             Run();
         } else {
             if (!RunOnDevice()) {
@@ -29,13 +29,13 @@ namespace matrix {
         }
     }
 
-    template <class T, class Context>
-    bool FlattenOp<T, Context>::RunOnDevice() {
+    template <class T, class xpu>
+    bool FlattenOp<T, xpu>::RunOnDevice() {
         return false;
     }
 
-    template <class T, class Context>
-    FlattenOp<T, Context>::~FlattenOp() {
+    template <class T, class xpu>
+    FlattenOp<T, xpu>::~FlattenOp() {
 
     }
 

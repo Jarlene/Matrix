@@ -12,7 +12,7 @@ namespace matrix {
 
 
 
-    template <class T, class Context>
+    template <class T, class xpu>
     class ActivationGradOp : public Operator {
         SAME_FUNCTION(ActivationGrad);
         DISABLE_COPY_AND_ASSIGN(ActivationGrad);

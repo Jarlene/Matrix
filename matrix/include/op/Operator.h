@@ -35,6 +35,7 @@ public: \
     this->inputShapes = param.inputShapes;\
     this->outputShape = param.outShape; \
     this->args = param.args; \
+    this->context = param.context;\
 
 
 
@@ -115,6 +116,7 @@ private:                                                            \
     Operator *classname::CreateOperator(Context context, \
                                     std::vector<Shape *> *inShape, Shape *outShape, \
                                     std::map<std::string, Any> &args) { \
+        param->context = &context;\
         param->args = &args; \
         InferShape(*inShape, outShape); \
         param->inputShapes = inShape; \
@@ -233,6 +235,7 @@ namespace matrix {
         void* output{nullptr};
         std::vector<Shape*> *inputShapes{nullptr};
         Shape* outputShape{nullptr};
+        Context * context;
     };
 
     class State {
@@ -254,6 +257,7 @@ namespace matrix {
         std::vector<Shape*> *inputShapes{nullptr};
         Shape* outShape{nullptr};
         std::map<std::string, Any> *args{nullptr};
+        Context *context;
     };
 
 

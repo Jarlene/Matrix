@@ -5,13 +5,13 @@
 #include "matrix/include/op/OutputOp.h"
 
 namespace matrix {
-    template <class T, class Context>
-    OutputOp<T, Context>::OutputOp(Parameter &param) {
+    template <class T, class xpu>
+    OutputOp<T, xpu>::OutputOp(Parameter &param) {
         INIT_PARAMS
     }
 
-    template <class T, class Context>
-    bool OutputOp<T, Context>::Run() {
+    template <class T, class xpu>
+    bool OutputOp<T, xpu>::Run() {
         auto outModel = GetArgValue<OutputMode>("type", kSoftmax);
         Tensor<T> data(Input<T>(DATA), *inputShapes->at(DATA));
         Tensor<T> out(Output<T>(), *outputShape);
@@ -23,9 +23,9 @@ namespace matrix {
         return true;
     }
 
-    template <class T, class Context>
-    void OutputOp<T, Context>::AsyncRun() {
-        if (Context::mode == RunMode::kCpu) {
+    template <class T, class xpu>
+    void OutputOp<T, xpu>::AsyncRun() {
+        if (xpu::mode == RunMode::kCpu) {
             Run();
         } else {
             if (!RunOnDevice()) {
@@ -34,13 +34,13 @@ namespace matrix {
         }
     }
 
-    template <class T, class Context>
-    bool OutputOp<T, Context>::RunOnDevice() {
+    template <class T, class xpu>
+    bool OutputOp<T, xpu>::RunOnDevice() {
         return false;
     }
 
-    template <class T, class Context>
-    OutputOp<T, Context>::~OutputOp() {
+    template <class T, class xpu>
+    OutputOp<T, xpu>::~OutputOp() {
 
     }
 

@@ -12,7 +12,7 @@ namespace matrix {
 
 
 
-    template <class T, class Context>
+    template <class T, class xpu>
     class FlattenGradOp : public Operator {
     SAME_FUNCTION(FlattenGrad);
     DISABLE_COPY_AND_ASSIGN(FlattenGrad);

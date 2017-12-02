@@ -7,13 +7,13 @@
 
 namespace matrix {
 
-    template <class T, class Context>
-    LossOp<T, Context>::LossOp(Parameter &param) {
+    template <class T, class xpu>
+    LossOp<T, xpu>::LossOp(Parameter &param) {
         INIT_PARAMS
     }
 
-    template <class T, class Context>
-    bool LossOp<T, Context>::Run() {
+    template <class T, class xpu>
+    bool LossOp<T, xpu>::Run() {
         auto lossModel = GetArgValue<LossMode>("type", LossMode::kCrossEntropy);
         Tensor<T> data(Input<T>(DATA), *inputShapes->at(DATA));
         Tensor<T> label(Input<T>(LABEL), *inputShapes->at(LABEL));
@@ -33,9 +33,9 @@ namespace matrix {
         return true;
     }
 
-    template <class T, class Context>
-    void LossOp<T, Context>::AsyncRun() {
-        if (Context::mode == RunMode::kCpu) {
+    template <class T, class xpu>
+    void LossOp<T, xpu>::AsyncRun() {
+        if (xpu::mode == RunMode::kCpu) {
             Run();
         } else {
             if (!RunOnDevice()) {
@@ -44,13 +44,13 @@ namespace matrix {
         }
     }
 
-    template <class T, class Context>
-    LossOp<T, Context>::~LossOp() {
+    template <class T, class xpu>
+    LossOp<T, xpu>::~LossOp() {
 
     }
 
-    template <class T, class Context>
-    bool LossOp<T, Context>::RunOnDevice() {
+    template <class T, class xpu>
+    bool LossOp<T, xpu>::RunOnDevice() {
         return false;
     }
 

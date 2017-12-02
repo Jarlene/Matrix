@@ -7,20 +7,20 @@
 namespace matrix {
 
 
-    template <class T, class Context>
-    LSTMGradOp<T, Context>::LSTMGradOp(Parameter &param) {
+    template <class T, class xpu>
+    LSTMGradOp<T, xpu>::LSTMGradOp(Parameter &param) {
         INIT_PARAMS
     }
 
-    template <class T, class Context>
-    bool LSTMGradOp<T, Context>::Run() {
+    template <class T, class xpu>
+    bool LSTMGradOp<T, xpu>::Run() {
 
         return true;
     }
 
-    template <class T, class Context>
-    void LSTMGradOp<T, Context>::AsyncRun() {
-        if (Context::mode == RunMode::kCpu) {
+    template <class T, class xpu>
+    void LSTMGradOp<T, xpu>::AsyncRun() {
+        if (xpu::mode == RunMode::kCpu) {
             Run();
         } else {
             if (!RunOnDevice()) {
@@ -29,13 +29,13 @@ namespace matrix {
         }
     }
 
-    template <class T, class Context>
-    bool LSTMGradOp<T, Context>::RunOnDevice() {
+    template <class T, class xpu>
+    bool LSTMGradOp<T, xpu>::RunOnDevice() {
         return false;
     }
 
-    template <class T, class Context>
-    LSTMGradOp<T, Context>::~LSTMGradOp() {
+    template <class T, class xpu>
+    LSTMGradOp<T, xpu>::~LSTMGradOp() {
 
     }
 

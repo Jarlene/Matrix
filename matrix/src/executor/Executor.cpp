@@ -21,7 +21,6 @@ namespace matrix {
                 node->SetData();
                 try {
                     node->op->AsyncRun();
-                    Logger::Global()->Info(node->ToString().c_str());
                 } catch (std::exception &e){
                     Logger::Global()->Fatal("exception on node %d==> %s", node->ToString().c_str(), e.what());
                 }

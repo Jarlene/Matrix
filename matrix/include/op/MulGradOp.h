@@ -11,7 +11,7 @@ namespace matrix {
 
 
 
-    template <class T, class Context>
+    template <class T, class xpu>
     class MulGradOp : public Operator {
     SAME_FUNCTION(MulGrad);
     DISABLE_COPY_AND_ASSIGN(MulGrad);

@@ -12,7 +12,7 @@ namespace matrix {
 
 
 
-    template <class T, class Context>
+    template <class T, class xpu>
     class LSTMOp : public Operator {
     SAME_FUNCTION(LSTM);
         virtual bool VariableNode(std::function<void(std::initializer_list<Shape *> shapes)> func) override ;

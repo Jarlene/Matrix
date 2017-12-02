@@ -5,20 +5,20 @@
 #include "matrix/include/op/FlattenGradOp.h"
 
 namespace matrix {
-    template <class T, class Context>
-    FlattenGradOp<T, Context>::FlattenGradOp(Parameter &param) {
+    template <class T, class xpu>
+    FlattenGradOp<T, xpu>::FlattenGradOp(Parameter &param) {
         INIT_PARAMS
     }
 
-    template <class T, class Context>
-    bool FlattenGradOp<T, Context>::Run() {
+    template <class T, class xpu>
+    bool FlattenGradOp<T, xpu>::Run() {
         FallThrow();
         return true;
     }
 
-    template <class T, class Context>
-    void FlattenGradOp<T, Context>::AsyncRun() {
-        if (Context::mode == RunMode::kCpu) {
+    template <class T, class xpu>
+    void FlattenGradOp<T, xpu>::AsyncRun() {
+        if (xpu::mode == RunMode::kCpu) {
             Run();
         } else {
             if (!RunOnDevice()) {
@@ -27,13 +27,13 @@ namespace matrix {
         }
     }
 
-    template <class T, class Context>
-    bool FlattenGradOp<T, Context>::RunOnDevice() {
+    template <class T, class xpu>
+    bool FlattenGradOp<T, xpu>::RunOnDevice() {
         return false;
     }
 
-    template <class T, class Context>
-    FlattenGradOp<T, Context>::~FlattenGradOp() {
+    template <class T, class xpu>
+    FlattenGradOp<T, xpu>::~FlattenGradOp() {
 
     }
 

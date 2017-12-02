@@ -9,14 +9,14 @@
 
 namespace matrix {
 
-    template<class T, class Context>
-    ConvolutionGradOp<T, Context>::ConvolutionGradOp(Parameter &param) {
+    template<class T, class xpu>
+    ConvolutionGradOp<T, xpu>::ConvolutionGradOp(Parameter &param) {
         INIT_PARAMS
 
     }
 
-    template<class T, class Context>
-    bool ConvolutionGradOp<T, Context>::Run() {
+    template<class T, class xpu>
+    bool ConvolutionGradOp<T, xpu>::Run() {
         ImageOrder order = GetArgValue<ImageOrder>("order", NCHW);
         int num = inputShapes->at(DATA)->At(0);
         
@@ -119,9 +119,9 @@ namespace matrix {
     }
 
 
-    template<class T, class Context>
-    void ConvolutionGradOp<T, Context>::AsyncRun() {
-        if (Context::mode == RunMode::kCpu) {
+    template<class T, class xpu>
+    void ConvolutionGradOp<T, xpu>::AsyncRun() {
+        if (xpu::mode == RunMode::kCpu) {
             Run();
         } else {
             if (!RunOnDevice()) {
@@ -130,13 +130,13 @@ namespace matrix {
         }
     }
 
-    template<class T, class Context>
-    ConvolutionGradOp<T, Context>::~ConvolutionGradOp() {
+    template<class T, class xpu>
+    ConvolutionGradOp<T, xpu>::~ConvolutionGradOp() {
 
     }
 
-    template<class T, class Context>
-    bool ConvolutionGradOp<T, Context>::RunOnDevice() {
+    template<class T, class xpu>
+    bool ConvolutionGradOp<T, xpu>::RunOnDevice() {
         return false;
     }
 

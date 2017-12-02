@@ -6,14 +6,14 @@
 
 namespace matrix {
 
-    template <class T, class Context>
-    ActivationGradOp<T, Context>::ActivationGradOp(Parameter &param) {
+    template <class T, class xpu>
+    ActivationGradOp<T, xpu>::ActivationGradOp(Parameter &param) {
         INIT_PARAMS
 
     }
 
-    template <class T, class Context>
-    bool ActivationGradOp<T, Context>::Run() {
+    template <class T, class xpu>
+    bool ActivationGradOp<T, xpu>::Run() {
         auto type = ActType::kSigmoid;
         if (HasArg("type")) {
             type = GetArgValue<ActType>("type");
@@ -41,24 +41,24 @@ namespace matrix {
         return true;
     }
 
-    template <class T, class Context>
-    void ActivationGradOp<T, Context>::AsyncRun() {
-        if (Context::mode == RunMode::kCpu) {
+    template <class T, class xpu>
+    void ActivationGradOp<T, xpu>::AsyncRun() {
+        if (xpu::mode == RunMode::kCpu) {
             Run();
-        } else if (Context::mode == RunMode::kGpu){
+        } else if (xpu::mode == RunMode::kGpu){
             if (!RunOnDevice()) {
                 Run();
             }
         }
     }
 
-    template <class T, class Context>
-    bool ActivationGradOp<T, Context>::RunOnDevice() {
+    template <class T, class xpu>
+    bool ActivationGradOp<T, xpu>::RunOnDevice() {
         return false;
     }
 
-    template <class T, class Context>
-    ActivationGradOp<T, Context>::~ActivationGradOp() {
+    template <class T, class xpu>
+    ActivationGradOp<T, xpu>::~ActivationGradOp() {
 
     }
 

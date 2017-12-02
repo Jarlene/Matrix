@@ -7,20 +7,20 @@
 
 namespace matrix {
 
-    template <class T, class Context>
-    BatchNormalizationOp<T, Context>::BatchNormalizationOp(Parameter &param) {
+    template <class T, class xpu>
+    BatchNormalizationOp<T, xpu>::BatchNormalizationOp(Parameter &param) {
         INIT_PARAMS
     }
 
-    template <class T, class Context>
-    bool BatchNormalizationOp<T, Context>::Run() {
+    template <class T, class xpu>
+    bool BatchNormalizationOp<T, xpu>::Run() {
 
         return true;
     }
 
-    template <class T, class Context>
-    void BatchNormalizationOp<T, Context>::AsyncRun() {
-        if (Context::mode == RunMode::kCpu) {
+    template <class T, class xpu>
+    void BatchNormalizationOp<T, xpu>::AsyncRun() {
+        if (xpu::mode == RunMode::kCpu) {
             Run();
         } else {
             if (!RunOnDevice()) {
@@ -29,13 +29,13 @@ namespace matrix {
         }
     }
 
-    template <class T, class Context>
-    bool BatchNormalizationOp<T, Context>::RunOnDevice() {
+    template <class T, class xpu>
+    bool BatchNormalizationOp<T, xpu>::RunOnDevice() {
         return false;
     }
 
-    template <class T, class Context>
-    BatchNormalizationOp<T, Context>::~BatchNormalizationOp() {
+    template <class T, class xpu>
+    BatchNormalizationOp<T, xpu>::~BatchNormalizationOp() {
 
     }
 

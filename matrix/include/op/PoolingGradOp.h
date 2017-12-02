@@ -12,7 +12,7 @@ namespace matrix {
 
 
 
-    template <class T, class Context>
+    template <class T, class xpu>
     class PoolingGradOp : public Operator {
     SAME_FUNCTION(PoolingGrad);
     DISABLE_COPY_AND_ASSIGN(PoolingGrad)

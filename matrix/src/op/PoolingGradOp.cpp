@@ -9,13 +9,13 @@
 
 namespace matrix {
 
-    template <class T, class Context>
-    PoolingGradOp<T, Context>::PoolingGradOp(Parameter &param) {
+    template <class T, class xpu>
+    PoolingGradOp<T, xpu>::PoolingGradOp(Parameter &param) {
         INIT_PARAMS
     }
 
-    template <class T, class Context>
-    bool PoolingGradOp<T, Context>::Run() {
+    template <class T, class xpu>
+    bool PoolingGradOp<T, xpu>::Run() {
         PoolType  type = GetArgValue<PoolType>("type", kMax);
         auto filter = GetArgValue<Shape>("filter");
         auto stride = GetArgValue<Shape>("stride", ShapeN(1, 1));
@@ -87,9 +87,9 @@ namespace matrix {
         return true;
     }
 
-    template <class T, class Context>
-    void PoolingGradOp<T, Context>::AsyncRun() {
-        if (Context::mode == RunMode::kCpu) {
+    template <class T, class xpu>
+    void PoolingGradOp<T, xpu>::AsyncRun() {
+        if (xpu::mode == RunMode::kCpu) {
             Run();
         } else {
             if (!RunOnDevice()) {
@@ -98,13 +98,13 @@ namespace matrix {
         }
     }
 
-    template <class T, class Context>
-    bool PoolingGradOp<T, Context>::RunOnDevice() {
+    template <class T, class xpu>
+    bool PoolingGradOp<T, xpu>::RunOnDevice() {
         return false;
     }
 
-    template <class T, class Context>
-    PoolingGradOp<T, Context>::~PoolingGradOp() {
+    template <class T, class xpu>
+    PoolingGradOp<T, xpu>::~PoolingGradOp() {
 
     }
 

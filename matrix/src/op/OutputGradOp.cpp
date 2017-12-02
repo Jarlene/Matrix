@@ -7,13 +7,13 @@
 namespace matrix {
 
 
-    template <class T, class Context>
-    OutputGradOp<T, Context>::OutputGradOp(Parameter &param) {
+    template <class T, class xpu>
+    OutputGradOp<T, xpu>::OutputGradOp(Parameter &param) {
         INIT_PARAMS
     }
 
-    template <class T, class Context>
-    bool OutputGradOp<T, Context>::Run() {
+    template <class T, class xpu>
+    bool OutputGradOp<T, xpu>::Run() {
         auto mode = GetArgValue<OutputMode>("type", kSoftmax);
         Tensor<T> pre_grad(Input<T>(PRE_GRAD), *inputShapes->at(PRE_GRAD));
         Tensor<T> selfOut(Input<T>(OUT), *inputShapes->at(OUT));
@@ -27,9 +27,9 @@ namespace matrix {
         return true;
     }
 
-    template <class T, class Context>
-    void OutputGradOp<T, Context>::AsyncRun() {
-        if (Context::mode == RunMode::kCpu) {
+    template <class T, class xpu>
+    void OutputGradOp<T, xpu>::AsyncRun() {
+        if (xpu::mode == RunMode::kCpu) {
             Run();
         } else {
             if (!RunOnDevice()) {
@@ -38,13 +38,13 @@ namespace matrix {
         }
     }
 
-    template <class T, class Context>
-    bool OutputGradOp<T, Context>::RunOnDevice() {
+    template <class T, class xpu>
+    bool OutputGradOp<T, xpu>::RunOnDevice() {
         return false;
     }
 
-    template <class T, class Context>
-    OutputGradOp<T, Context>::~OutputGradOp() {
+    template <class T, class xpu>
+    OutputGradOp<T, xpu>::~OutputGradOp() {
 
     }
 

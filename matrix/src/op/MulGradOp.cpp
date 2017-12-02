@@ -6,13 +6,13 @@
 namespace matrix {
 
 
-    template <class T, class Context>
-    MulGradOp<T, Context>::MulGradOp(Parameter &param) {
+    template <class T, class xpu>
+    MulGradOp<T, xpu>::MulGradOp(Parameter &param) {
         INIT_PARAMS
     }
 
-    template <class T, class Context>
-    bool MulGradOp<T, Context>::Run() {
+    template <class T, class xpu>
+    bool MulGradOp<T, xpu>::Run() {
         if (!HasArg("input_idx")) {
             Logger::Global()->Fatal("MulGradOp not support.");
         }
@@ -31,9 +31,9 @@ namespace matrix {
         return true;
     }
 
-    template <class T, class Context>
-    void MulGradOp<T, Context>::AsyncRun() {
-        if (Context::mode == RunMode::kCpu) {
+    template <class T, class xpu>
+    void MulGradOp<T, xpu>::AsyncRun() {
+        if (xpu::mode == RunMode::kCpu) {
             Run();
         } else {
             if (!RunOnDevice()) {
@@ -42,13 +42,13 @@ namespace matrix {
         }
     }
 
-    template <class T, class Context>
-    bool MulGradOp<T, Context>::RunOnDevice() {
+    template <class T, class xpu>
+    bool MulGradOp<T, xpu>::RunOnDevice() {
         return false;
     }
 
-    template <class T, class Context>
-    MulGradOp<T, Context>::~MulGradOp() {
+    template <class T, class xpu>
+    MulGradOp<T, xpu>::~MulGradOp() {
 
     }
 

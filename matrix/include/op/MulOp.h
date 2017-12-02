@@ -11,7 +11,7 @@ namespace matrix {
 
 
 
-    template <class T, class Context>
+    template <class T, class xpu>
     class MulOp : public Operator {
     SAME_FUNCTION(Mul);
     DISABLE_COPY_AND_ASSIGN(Mul);

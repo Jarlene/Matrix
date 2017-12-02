@@ -11,7 +11,7 @@ namespace matrix {
 
 
 
-    template <class T, class Context>
+    template <class T, class xpu>
     class NaiveConvolutionOp : public Operator {
         SAME_FUNCTION(NaiveConvolution);
         DISABLE_COPY_AND_ASSIGN(NaiveConvolution);

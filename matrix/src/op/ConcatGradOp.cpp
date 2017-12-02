@@ -6,13 +6,13 @@
 
 
 namespace matrix {
-    template <class T, class Context>
-    ConcatGradOp<T, Context>::ConcatGradOp(Parameter &param) {
+    template <class T, class xpu>
+    ConcatGradOp<T, xpu>::ConcatGradOp(Parameter &param) {
         INIT_PARAMS
     }
 
-    template <class T, class Context>
-    bool ConcatGradOp<T, Context>::Run() {
+    template <class T, class xpu>
+    bool ConcatGradOp<T, xpu>::Run() {
         int idx = GetArgValue<int>("input_idx", -1);
         if(idx == -1) {
             Logger::Global()->Fatal("ConcatGradOp need input idx");
@@ -24,9 +24,9 @@ namespace matrix {
         return true;
     }
 
-    template <class T, class Context>
-    void ConcatGradOp<T, Context>::AsyncRun() {
-        if (Context::mode == RunMode::kCpu) {
+    template <class T, class xpu>
+    void ConcatGradOp<T, xpu>::AsyncRun() {
+        if (xpu::mode == RunMode::kCpu) {
             Run();
         } else {
             if (!RunOnDevice()) {
@@ -35,13 +35,13 @@ namespace matrix {
         }
     }
 
-    template <class T, class Context>
-    bool ConcatGradOp<T, Context>::RunOnDevice() {
+    template <class T, class xpu>
+    bool ConcatGradOp<T, xpu>::RunOnDevice() {
         return false;
     }
 
-    template <class T, class Context>
-    ConcatGradOp<T, Context>::~ConcatGradOp() {
+    template <class T, class xpu>
+    ConcatGradOp<T, xpu>::~ConcatGradOp() {
 
     }
 

@@ -6,28 +6,28 @@
 
 namespace matrix {
 
-    template <class T, class Context>
-    PredictionOp<T, Context>::PredictionOp(Parameter &param) {
+    template <class T, class xpu>
+    PredictionOp<T, xpu>::PredictionOp(Parameter &param) {
         INIT_PARAMS
     }
 
-    template <class T, class Context>
-    bool PredictionOp<T, Context>::Run() {
+    template <class T, class xpu>
+    bool PredictionOp<T, xpu>::Run() {
         return PredictionOp::Run();
     }
 
-    template <class T, class Context>
-    void PredictionOp<T, Context>::AsyncRun() {
+    template <class T, class xpu>
+    void PredictionOp<T, xpu>::AsyncRun() {
         Operator::AsyncRun();
     }
 
-    template <class T, class Context>
-    bool PredictionOp<T, Context>::RunOnDevice() {
+    template <class T, class xpu>
+    bool PredictionOp<T, xpu>::RunOnDevice() {
         return false;
     }
 
-    template <class T, class Context>
-    PredictionOp<T, Context>::~PredictionOp() {
+    template <class T, class xpu>
+    PredictionOp<T, xpu>::~PredictionOp() {
 
     }
 

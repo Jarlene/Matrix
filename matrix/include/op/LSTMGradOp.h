@@ -9,7 +9,7 @@
 namespace matrix {
 
 
-    template <class T, class Context>
+    template <class T, class xpu>
     class LSTMGradOp : public Operator {
     SAME_FUNCTION(LSTMGrad);
     DISABLE_COPY_AND_ASSIGN(LSTMGrad);

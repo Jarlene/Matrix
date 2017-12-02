@@ -12,7 +12,7 @@ namespace matrix {
 
 
 
-    template <class T, class Context>
+    template <class T, class xpu>
     class ConvolutionGradOp : public Operator {
     SAME_FUNCTION(ConvolutionGrad);
     DISABLE_COPY_AND_ASSIGN(ConvolutionGrad);

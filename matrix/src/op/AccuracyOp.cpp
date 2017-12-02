@@ -8,18 +8,18 @@
 namespace matrix {
 
 
-    template <class T, class Context>
-    AccuracyOp<T, Context>::AccuracyOp(Parameter &param) {
+    template <class T, class xpu>
+    AccuracyOp<T, xpu>::AccuracyOp(Parameter &param) {
         INIT_PARAMS
     }
 
-    template <class T, class Context>
-    bool AccuracyOp<T, Context>::RunOnDevice() {
+    template <class T, class xpu>
+    bool AccuracyOp<T, xpu>::RunOnDevice() {
         return false;
     }
 
-    template <class T, class Context>
-    bool AccuracyOp<T, Context>::Run() {
+    template <class T, class xpu>
+    bool AccuracyOp<T, xpu>::Run() {
         int N = inputShapes->at(PREDICTION)->At(0);
         int D = inputShapes->at(PREDICTION)->At(1);
         int correct = 0;
@@ -42,19 +42,19 @@ namespace matrix {
         return true;
     }
 
-    template <class T, class Context>
-    void AccuracyOp<T, Context>::AsyncRun() {
-        if (Context::mode == RunMode::kCpu) {
+    template <class T, class xpu>
+    void AccuracyOp<T, xpu>::AsyncRun() {
+        if (xpu::mode == RunMode::kCpu) {
             Run();
-        } else if (Context::mode == RunMode::kGpu){
+        } else if (xpu::mode == RunMode::kGpu){
             if (!RunOnDevice()) {
                 Run();
             }
         }
     }
 
-    template <class T, class Context>
-    AccuracyOp<T, Context>::~AccuracyOp() {
+    template <class T, class xpu>
+    AccuracyOp<T, xpu>::~AccuracyOp() {
 
     }
 

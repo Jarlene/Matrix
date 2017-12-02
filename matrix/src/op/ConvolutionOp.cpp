@@ -8,14 +8,14 @@
 
 namespace matrix {
 
-    template<class T, class Context>
-    ConvolutionOp<T, Context>::ConvolutionOp(Parameter &param) {
+    template<class T, class xpu>
+    ConvolutionOp<T, xpu>::ConvolutionOp(Parameter &param) {
         INIT_PARAMS
 
     }
 
-    template<class T, class Context>
-    bool ConvolutionOp<T, Context>::Run() {
+    template<class T, class xpu>
+    bool ConvolutionOp<T, xpu>::Run() {
 
         int num = inputShapes->at(DATA)->At(0);
 
@@ -92,9 +92,9 @@ namespace matrix {
     }
 
 
-    template<class T, class Context>
-    void ConvolutionOp<T, Context>::AsyncRun() {
-        if (Context::mode == RunMode::kCpu) {
+    template<class T, class xpu>
+    void ConvolutionOp<T, xpu>::AsyncRun() {
+        if (xpu::mode == RunMode::kCpu) {
             Run();
         } else {
             if (!RunOnDevice()) {
@@ -103,13 +103,13 @@ namespace matrix {
         }
     }
 
-    template<class T, class Context>
-    ConvolutionOp<T, Context>::~ConvolutionOp() {
+    template<class T, class xpu>
+    ConvolutionOp<T, xpu>::~ConvolutionOp() {
 
     }
 
-    template<class T, class Context>
-    bool ConvolutionOp<T, Context>::VariableNode(std::function<void(std::initializer_list<Shape *> shapes)> func) {
+    template<class T, class xpu>
+    bool ConvolutionOp<T, xpu>::VariableNode(std::function<void(std::initializer_list<Shape *> shapes)> func) {
         if (InputSize() == 1) {
             if (!HasArg("filter")) {
                 Logger::Global()->Fatal("ConvolutionOp no filter for input");
@@ -137,13 +137,13 @@ namespace matrix {
         return false;
     };
 
-    template<class T, class Context>
-    bool ConvolutionOp<T, Context>::RunOnDevice() {
+    template<class T, class xpu>
+    bool ConvolutionOp<T, xpu>::RunOnDevice() {
         return false;
     }
 
-    template<class T, class Context>
-    bool ConvolutionOp<T, Context>::ShareNodes(std::function<void(std::initializer_list<Shape *> shapes)> func) {
+    template<class T, class xpu>
+    bool ConvolutionOp<T, xpu>::ShareNodes(std::function<void(std::initializer_list<Shape *> shapes)> func) {
         bool with_bias = GetArgValue<bool>("with_bias", true);
         if ((InputSize() < 4 && with_bias) || (InputSize() < 3 && !with_bias)) {
             int group = GetArgValue<int>("group", 1);

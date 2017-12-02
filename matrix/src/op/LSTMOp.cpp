@@ -6,13 +6,13 @@
 
 namespace matrix {
 
-    template <class T, class Context>
-    LSTMOp<T, Context>::LSTMOp(Parameter &param) {
+    template <class T, class xpu>
+    LSTMOp<T, xpu>::LSTMOp(Parameter &param) {
         INIT_PARAMS
     }
 
-    template <class T, class Context>
-    bool LSTMOp<T, Context>::Run() {
+    template <class T, class xpu>
+    bool LSTMOp<T, xpu>::Run() {
         int hide_num = GetArgValue<int>("hide_num");
         const T *wi = Input<T>(WEIGHT);
         const T *wf = Input<T>(WEIGHT) + hide_num;
@@ -50,9 +50,9 @@ namespace matrix {
         return true;
     }
 
-    template <class T, class Context>
-    void LSTMOp<T, Context>::AsyncRun() {
-        if (Context::mode == RunMode::kCpu) {
+    template <class T, class xpu>
+    void LSTMOp<T, xpu>::AsyncRun() {
+        if (xpu::mode == RunMode::kCpu) {
             Run();
         } else {
             if (!RunOnDevice()) {
@@ -61,20 +61,20 @@ namespace matrix {
         }
     }
 
-    template <class T, class Context>
-    bool LSTMOp<T, Context>::RunOnDevice() {
+    template <class T, class xpu>
+    bool LSTMOp<T, xpu>::RunOnDevice() {
         return false;
     }
 
-    template <class T, class Context>
-    LSTMOp<T, Context>::~LSTMOp() {
+    template <class T, class xpu>
+    LSTMOp<T, xpu>::~LSTMOp() {
 
     }
 
 
 
-    template <class T, class Context>
-    bool LSTMOp<T, Context>::VariableNode(std::function<void(std::initializer_list<Shape *> shapes)> func) {
+    template <class T, class xpu>
+    bool LSTMOp<T, xpu>::VariableNode(std::function<void(std::initializer_list<Shape *> shapes)> func) {
         bool bias = GetArgValue<bool>("with_bias", true);
         int hide_num = GetArgValue<int>("hide_num");
         if (bias) {
@@ -95,8 +95,8 @@ namespace matrix {
         return false;
     }
 
-    template <class T, class Context>
-    bool LSTMOp<T, Context>::ShareNodes(std::function<void(std::initializer_list<Shape *> shapes)> func) {
+    template <class T, class xpu>
+    bool LSTMOp<T, xpu>::ShareNodes(std::function<void(std::initializer_list<Shape *> shapes)> func) {
         bool bias = GetArgValue<bool>("with_bias", true);
         int hide_num = GetArgValue<int>("hide_num");
         if ((bias && InputSize() < 4) || (!bias && InputSize() < 3)) {

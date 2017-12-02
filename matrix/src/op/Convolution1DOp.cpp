@@ -7,13 +7,13 @@
 
 namespace matrix {
 
-    template<class T, class Context>
-    Convolution1DOp<T, Context>::Convolution1DOp(Parameter &param) {
+    template<class T, class xpu>
+    Convolution1DOp<T, xpu>::Convolution1DOp(Parameter &param) {
         INIT_PARAMS
     }
 
-    template<class T, class Context>
-    bool Convolution1DOp<T, Context>::Run() {
+    template<class T, class xpu>
+    bool Convolution1DOp<T, xpu>::Run() {
         int num = inputShapes->at(DATA)->At(0);
         int filterNum = GetArgValue<int>("filter_num");
         const T *inputData = Input<T>(DATA);
@@ -57,9 +57,9 @@ namespace matrix {
     }
 
 
-    template<class T, class Context>
-    void Convolution1DOp<T, Context>::AsyncRun() {
-        if (Context::mode == RunMode::kCpu) {
+    template<class T, class xpu>
+    void Convolution1DOp<T, xpu>::AsyncRun() {
+        if (xpu::mode == RunMode::kCpu) {
             Run();
         } else {
             if (!RunOnDevice()) {
@@ -68,13 +68,13 @@ namespace matrix {
         }
     }
 
-    template<class T, class Context>
-    Convolution1DOp<T, Context>::~Convolution1DOp() {
+    template<class T, class xpu>
+    Convolution1DOp<T, xpu>::~Convolution1DOp() {
 
     }
 
-    template<class T, class Context>
-    bool Convolution1DOp<T, Context>::RunOnDevice() {
+    template<class T, class xpu>
+    bool Convolution1DOp<T, xpu>::RunOnDevice() {
         return false;
     }
 

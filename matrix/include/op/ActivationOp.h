@@ -11,7 +11,7 @@ namespace matrix {
 
 
 
-    template <class T, class Context>
+    template <class T, class xpu>
     class ActivationOp : public Operator {
     SAME_FUNCTION(Activation);
     DISABLE_COPY_AND_ASSIGN(Activation);

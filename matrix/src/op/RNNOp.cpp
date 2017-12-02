@@ -7,33 +7,33 @@
 namespace matrix {
 
 
-    template <class T, class Context>
-    RNNOp<T, Context>::RNNOp(Parameter &param) {
+    template <class T, class xpu>
+    RNNOp<T, xpu>::RNNOp(Parameter &param) {
         INIT_PARAMS
     }
 
-    template <class T, class Context>
-    bool RNNOp<T, Context>::Run() {
+    template <class T, class xpu>
+    bool RNNOp<T, xpu>::Run() {
         return Operator::Run();
     }
 
-    template <class T, class Context>
-    void RNNOp<T, Context>::AsyncRun() {
+    template <class T, class xpu>
+    void RNNOp<T, xpu>::AsyncRun() {
         Operator::AsyncRun();
     }
 
-    template <class T, class Context>
-    bool RNNOp<T, Context>::RunOnDevice() {
+    template <class T, class xpu>
+    bool RNNOp<T, xpu>::RunOnDevice() {
         return false;
     }
 
-    template <class T, class Context>
-    RNNOp<T, Context>::~RNNOp() {
+    template <class T, class xpu>
+    RNNOp<T, xpu>::~RNNOp() {
 
     }
 
-    template <class T, class Context>
-    bool RNNOp<T, Context>::VariableNode(std::function<void(std::initializer_list<Shape *> shapes)> func) {
+    template <class T, class xpu>
+    bool RNNOp<T, xpu>::VariableNode(std::function<void(std::initializer_list<Shape *> shapes)> func) {
         if (InputSize() == 1) {
             if (!HasArg("hide_num")) {
                 Logger::Global()->Fatal("RNNOp need hide num");

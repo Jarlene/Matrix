@@ -5,13 +5,13 @@
 #include "matrix/include/op/SubOp.h"
 
 namespace matrix {
-    template <class T, class Context>
-    SubOp<T, Context>::SubOp(Parameter &param) {
+    template <class T, class xpu>
+    SubOp<T, xpu>::SubOp(Parameter &param) {
         INIT_PARAMS
     }
 
-    template <class T, class Context>
-    bool SubOp<T, Context>::Run() {
+    template <class T, class xpu>
+    bool SubOp<T, xpu>::Run() {
         Tensor<T> in1(Input<T>(INPUT1), *inputShapes->at(INPUT1));
         Tensor<T> in2(Input<T>(INPUT2), *inputShapes->at(INPUT2));
         Tensor<T> out(Output<T>(), *outputShape);
@@ -19,9 +19,9 @@ namespace matrix {
         return true;
     }
 
-    template <class T, class Context>
-    void SubOp<T, Context>::AsyncRun() {
-        if (Context::mode == RunMode::kCpu) {
+    template <class T, class xpu>
+    void SubOp<T, xpu>::AsyncRun() {
+        if (xpu::mode == RunMode::kCpu) {
             Run();
         } else {
             if (!RunOnDevice()) {
@@ -30,13 +30,13 @@ namespace matrix {
         }
     }
 
-    template <class T, class Context>
-    bool SubOp<T, Context>::RunOnDevice() {
+    template <class T, class xpu>
+    bool SubOp<T, xpu>::RunOnDevice() {
         return false;
     }
 
-    template <class T, class Context>
-    SubOp<T, Context>::~SubOp() {
+    template <class T, class xpu>
+    SubOp<T, xpu>::~SubOp() {
 
     }
 

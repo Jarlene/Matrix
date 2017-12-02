@@ -8,13 +8,13 @@
 
 namespace matrix {
 
-    template <class T, class Context>
-    LossGradOp<T, Context>::LossGradOp(Parameter &param) {
+    template <class T, class xpu>
+    LossGradOp<T, xpu>::LossGradOp(Parameter &param) {
         INIT_PARAMS
     }
 
-    template <class T, class Context>
-    bool LossGradOp<T, Context>::Run() {
+    template <class T, class xpu>
+    bool LossGradOp<T, xpu>::Run() {
         auto lossModel = GetArgValue<LossMode>("type", LossMode::kCrossEntropy);
         Tensor<T> pre(Input<T>(PRE_GRAD), *inputShapes->at(PRE_GRAD));
         Tensor<T> selfOut(Input<T>(SELF_OUT), *inputShapes->at(SELF_OUT));
@@ -35,9 +35,9 @@ namespace matrix {
         return true;
     }
 
-    template <class T, class Context>
-    void LossGradOp<T, Context>::AsyncRun() {
-        if (Context::mode == RunMode::kCpu) {
+    template <class T, class xpu>
+    void LossGradOp<T, xpu>::AsyncRun() {
+        if (xpu::mode == RunMode::kCpu) {
             Run();
         } else {
             if (!RunOnDevice()) {
@@ -46,13 +46,13 @@ namespace matrix {
         }
     }
 
-    template <class T, class Context>
-    LossGradOp<T, Context>::~LossGradOp() {
+    template <class T, class xpu>
+    LossGradOp<T, xpu>::~LossGradOp() {
 
     }
 
-    template <class T, class Context>
-    bool LossGradOp<T, Context>::RunOnDevice() {
+    template <class T, class xpu>
+    bool LossGradOp<T, xpu>::RunOnDevice() {
         return false;
     }
 

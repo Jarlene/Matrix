@@ -7,13 +7,13 @@
 
 namespace matrix {
 
-    template <class T, class Context>
-    ConcatOp<T, Context>::ConcatOp(Parameter &param) {
+    template <class T, class xpu>
+    ConcatOp<T, xpu>::ConcatOp(Parameter &param) {
         INIT_PARAMS
     }
 
-    template <class T, class Context>
-    bool ConcatOp<T, Context>::Run() {
+    template <class T, class xpu>
+    bool ConcatOp<T, xpu>::Run() {
         T *out = Output<T>();
         for (int i = 0; i < InputSize(); ++i) {
             memcpy(out + i * inputShapes->at(i)->Size(), Input<T>(i), inputShapes->at(i)->Size());
@@ -21,9 +21,9 @@ namespace matrix {
         return true;
     }
 
-    template <class T, class Context>
-    void ConcatOp<T, Context>::AsyncRun() {
-        if (Context::mode == RunMode::kCpu) {
+    template <class T, class xpu>
+    void ConcatOp<T, xpu>::AsyncRun() {
+        if (xpu::mode == RunMode::kCpu) {
             Run();
         } else {
             if (!RunOnDevice()) {
@@ -32,13 +32,13 @@ namespace matrix {
         }
     }
 
-    template <class T, class Context>
-    bool ConcatOp<T, Context>::RunOnDevice() {
+    template <class T, class xpu>
+    bool ConcatOp<T, xpu>::RunOnDevice() {
         return false;
     }
 
-    template <class T, class Context>
-    ConcatOp<T, Context>::~ConcatOp() {
+    template <class T, class xpu>
+    ConcatOp<T, xpu>::~ConcatOp() {
 
     }
 

@@ -10,7 +10,7 @@
 
 namespace matrix {
 
-    template <class T, class Context>
+    template <class T, class xpu>
     class AccuracyOp : public Operator {
     SAME_FUNCTION(Accuracy);
     DISABLE_COPY_AND_ASSIGN(Accuracy);

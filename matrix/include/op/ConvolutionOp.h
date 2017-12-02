@@ -11,7 +11,7 @@ namespace matrix {
 
 
 
-    template <class T, class Context>
+    template <class T, class xpu>
     class ConvolutionOp : public Operator {
     SAME_FUNCTION(Convolution);
         virtual bool VariableNode(std::function<void(std::initializer_list<Shape *> shapes)> func) override;

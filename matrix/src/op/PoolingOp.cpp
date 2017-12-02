@@ -8,13 +8,13 @@
 
 namespace matrix {
 
-    template <class T, class Context>
-    PoolingOp<T, Context>::PoolingOp(Parameter &param) {
+    template <class T, class xpu>
+    PoolingOp<T, xpu>::PoolingOp(Parameter &param) {
         INIT_PARAMS
     }
 
-    template <class T, class Context>
-    bool PoolingOp<T, Context>::Run() {
+    template <class T, class xpu>
+    bool PoolingOp<T, xpu>::Run() {
         PoolType  type = GetArgValue<PoolType>("type", kMax);
 
 
@@ -44,9 +44,9 @@ namespace matrix {
         return true;
     }
 
-    template <class T, class Context>
-    void PoolingOp<T, Context>::AsyncRun() {
-        if (Context::mode == RunMode::kCpu) {
+    template <class T, class xpu>
+    void PoolingOp<T, xpu>::AsyncRun() {
+        if (xpu::mode == RunMode::kCpu) {
             Run();
         } else {
             if (!RunOnDevice()) {
@@ -55,18 +55,18 @@ namespace matrix {
         }
     }
 
-    template <class T, class Context>
-    bool PoolingOp<T, Context>::RunOnDevice() {
+    template <class T, class xpu>
+    bool PoolingOp<T, xpu>::RunOnDevice() {
         return false;
     }
 
-    template <class T, class Context>
-    PoolingOp<T, Context>::~PoolingOp() {
+    template <class T, class xpu>
+    PoolingOp<T, xpu>::~PoolingOp() {
 
     }
 
-    template <class T, class Context>
-    bool PoolingOp<T, Context>::ShareNodes(std::function<void(std::initializer_list<Shape *> shapes)> func) {
+    template <class T, class xpu>
+    bool PoolingOp<T, xpu>::ShareNodes(std::function<void(std::initializer_list<Shape *> shapes)> func) {
         if (GetArgValue<PoolType>("type", kMax) == kMax && InputSize() == 1) {
             int batch_size = inputShapes->at(0)->At(0);
             int channel = inputShapes->at(0)->At(1);

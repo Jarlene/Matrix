@@ -6,13 +6,13 @@
 
 namespace matrix {
 
-    template <class T, class Context>
-    DropoutOp<T, Context>::DropoutOp(Parameter &param) {
+    template <class T, class xpu>
+    DropoutOp<T, xpu>::DropoutOp(Parameter &param) {
         INIT_PARAMS
     }
 
-    template <class T, class Context>
-    bool DropoutOp<T, Context>::Run() {
+    template <class T, class xpu>
+    bool DropoutOp<T, xpu>::Run() {
         bool isTrain = GetArgValue<bool>("isTrain", false);
         const T * data = Input<T>(DATA);
         T *out = Output<T>();
@@ -35,9 +35,9 @@ namespace matrix {
         return true;
     }
 
-    template <class T, class Context>
-    void DropoutOp<T, Context>::AsyncRun() {
-        if (Context::mode == RunMode::kCpu) {
+    template <class T, class xpu>
+    void DropoutOp<T, xpu>::AsyncRun() {
+        if (xpu::mode == RunMode::kCpu) {
             Run();
         } else {
             if (!RunOnDevice()) {
@@ -46,18 +46,18 @@ namespace matrix {
         }
     }
 
-    template <class T, class Context>
-    bool DropoutOp<T, Context>::RunOnDevice() {
+    template <class T, class xpu>
+    bool DropoutOp<T, xpu>::RunOnDevice() {
         return false;
     }
 
-    template <class T, class Context>
-    DropoutOp<T, Context>::~DropoutOp() {
+    template <class T, class xpu>
+    DropoutOp<T, xpu>::~DropoutOp() {
 
     }
 
-    template <class T, class Context>
-    bool DropoutOp<T, Context>::ShareNodes(std::function<void(std::initializer_list<Shape *> shapes)> func) {
+    template <class T, class xpu>
+    bool DropoutOp<T, xpu>::ShareNodes(std::function<void(std::initializer_list<Shape *> shapes)> func) {
         bool isTrain = GetArgValue<bool>("isTrain", false);
         if (InputSize() == 1 && isTrain) {
             Shape mask;
