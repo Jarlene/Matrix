@@ -86,6 +86,14 @@ namespace matrix {
         MatrixType type = kInvalid;
         Phase phase;
         RunMode mode;
+
+        static Context Default() {
+            Context context;
+            context.mode = kCpu;
+            context.phase = TRAIN;
+            context.type = kFloat;
+            return context;
+        }
     };
 
 }
