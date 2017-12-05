@@ -129,6 +129,8 @@ namespace matrix {
 
         void addOutput(NodePtr &node);
 
+        void addParam(const std::string &name, const Any &any);
+
     };
 }
 

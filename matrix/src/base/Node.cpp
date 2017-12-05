@@ -161,4 +161,8 @@ namespace matrix {
         return nodeName + "_" + std::to_string(id_);
     }
 
+    void Node::addParam(const std::string &name, const Any &any) {
+        this->params[name] = any;
+    }
+
 }
