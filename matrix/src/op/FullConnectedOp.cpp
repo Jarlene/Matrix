@@ -58,7 +58,7 @@ namespace matrix {
                 Logger::Global()->Fatal("FullConnectedOp can not find hide_num params");
             }
             weight.Append(GetArgValue<int>("hide_num"));
-            if(HasArg("with_bias")) {
+            if(HasArg("with_bias") && GetArgValue<bool>("with_bias")) {
                 Shape bias;
                 bias.Append(GetArgValue<int>("hide_num"));
                 func({&weight, &bias});

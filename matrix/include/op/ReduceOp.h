@@ -265,6 +265,11 @@ namespace matrix {
         }
     }
 
+    template <typename T>
+    void Broadcast(const Tensor<T>& tensor, int dim, Tensor<T>& reduce) {
+
+    }
+
 }
 
 #endif //MATRIX_REDUCEOP_H

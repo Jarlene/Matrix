@@ -32,7 +32,7 @@ namespace matrix {
                 MatrixMul<T>(data, true, pre_grad, false, out);
                 break;
             case BIAS:
-                Sum(pre_grad, 1, out);
+                Sum(pre_grad, 0, out);
                 break;
             default:
                 Logger::Global()->Fatal("FullConnectedGradOp not support. \n");

@@ -106,12 +106,9 @@ namespace matrix {
             Scale(kernel, T(1.0f/num));
         } else if (index == 2) {
             Tensor<T> bias_grad(Output<T>(), *inputShapes->at(BIAS));
-            for (int i = 0; i < num; ++i) {
-                Shape flatten = ShapeN(filterNum, outSize);
-                Tensor<T> pre(Input<T>(PRE_GRAG) + i * flatten.Size(), flatten);
-                SumAdd(pre, 1, bias_grad);
-            }
-            Scale(bias_grad, T(1.0f/num));
+            Shape flatten = ShapeN(int(inputShapes->at(PRE_GRAG)->Size()/filterNum), filterNum);
+            Tensor<T> pre(Input<T>(PRE_GRAG), flatten);
+            SumAdd(pre, 0, bias_grad);
         } else {
             Logger::Global()->Fatal("ConvolutionGradOp do not support other inputs\n");
         }

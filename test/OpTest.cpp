@@ -156,8 +156,7 @@ namespace matrix {
                               5, 6, 7}; // 28, 34, 64, 79
             float bias[] = {3,
                             5,
-                            1,
-                            4};
+                            1};
             float outdata[12] = {0};
 
             Context context;
@@ -178,7 +177,7 @@ namespace matrix {
             Shape out_shape = ShapeN(4, 3);
             Shape data_shape = ShapeN(4, 2);
             Shape weight_shape = ShapeN(2, 3);
-            Shape bias_shape = ShapeN(4);
+            Shape bias_shape = ShapeN(3);
             inShape.push_back(&pre_grad_shape);
             inShape.push_back(&out_shape);
             inShape.push_back(&data_shape);
@@ -211,12 +210,12 @@ namespace matrix {
                 PrintMat(target, 2, 3, "weight_grad");
                 checkArrayEqual(res, target, out.Size());
             } else if (index == 2) {
-                float target[4] = {0};
-                float res[4] = {6, 5, 4, 5};
+                float target[3] = {0};
+                float res[3] = {9, 5, 6};
                 Operator *op = pro->CreateOperator(context,  &inShape, &out, params);
                 op->SetData(&inputs, &target);
                 op->AsyncRun();
-                PrintMat(target, 4, 1, "bias_grad");
+                PrintMat(target, 3, 1, "bias_grad");
                 checkArrayEqual(res, target, out.Size());
             }
 
@@ -334,15 +333,15 @@ namespace matrix {
 
             float col[81 * 3] = {0};
 
-            float target[] = {13, 13, 13,
-                              7, 13, 16,
-                              4, 13, 19,
-                              13, 13, 13,
-                              7, 13, 16,
-                              4, 13, 19,
-                              12, 12, 12,
-                              6, 12, 15,
-                              3, 12, 18};
+            float target[] = {13, 13, 12,
+                              7, 13, 15,
+                              4, 13, 18,
+                              13, 13, 12,
+                              7, 13, 15,
+                              4, 13, 18,
+                              13, 13, 12,
+                              7, 13, 15,
+                              4, 13, 18,};
 
             float res[9*3] = {0};
 
@@ -438,17 +437,18 @@ namespace matrix {
             Shape preg = ShapeN(1, 1, 3, 3);
             Shape self_out = ShapeN(1, 1, 3, 3);
             Shape k = ShapeN(1, 1, 3, 3);
+            Shape bias_shape = ShapeN(1);
             Shape cols = ShapeN(1, 9, 9);
             inShape.push_back(&preg);
             inShape.push_back(&self_out);
             inShape.push_back(&inshape);
             inShape.push_back(&k);
-            inShape.push_back(&self_out);
+            inShape.push_back(&bias_shape);
             inShape.push_back(&cols);
             Shape out;
 
             std::map<std::string, Any> params;
-            int inputIdx = 0;
+            int inputIdx = 2;
 
             params["input_idx"] = inputIdx;
             if (inputIdx == 0) {
@@ -478,8 +478,9 @@ namespace matrix {
                 op->SetData(&inputs, bias_grad);
                 op->AsyncRun();
                 int dim = out.Size();
-                checkArrayEqual<float>(bias_grad, pre_grad, dim);
-                PrintMat(bias_grad, preg[2], preg[3], "input_bias");
+                float target = 8;
+                checkArrayEqual<float>(bias_grad, &target, dim);
+                PrintMat(bias_grad, 1, 1, "input_bias");
             }
 
 
@@ -611,7 +612,7 @@ namespace matrix {
             Shape out;
 
             std::map<std::string, Any> params;
-            int inputIdx = 0;
+            int inputIdx = 2;
             params["filter_num"] = 3;
             params["input_idx"] = inputIdx;
             if (inputIdx == 0) {
@@ -676,7 +677,7 @@ namespace matrix {
                 op->SetData(&inputs, bias_grad);
                 op->AsyncRun();
                 int dim = out.Size();
-                float target[3] = {8,8,8};
+                float target[3] = {12,6,6};
                 PrintMat(bias_grad, biasShape[0], 1, "multi_channel_input_bias");
                 checkArrayEqual<float>(bias_grad, target, dim);
             }
