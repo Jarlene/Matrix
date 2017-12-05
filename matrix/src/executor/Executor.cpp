@@ -16,7 +16,7 @@ namespace matrix {
         Init();
 
         auto compute =[&](NodePtr &node) {
-            std::lock_guard<std::mutex> lock (mutex_);
+
             if (node->op != nullptr && !node->isPlaceHolder && !node->isShared) {
                 node->SetData();
                 try {
@@ -27,7 +27,7 @@ namespace matrix {
             }
 
             {
-
+                std::lock_guard<std::mutex> lock (mutex_);
                 for (auto &item : node->outputs) {
                     if(graph_->GetNode(item.lock()->id_)) {
                         item.lock()->depens_.remove(node);

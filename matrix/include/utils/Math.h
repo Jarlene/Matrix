@@ -901,7 +901,7 @@ namespace matrix {
                 }
             }
         }
-        out[0] /= N;
+        out[0] /= M;
     }
 
 

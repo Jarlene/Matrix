@@ -87,7 +87,23 @@ namespace matrix {
         Phase phase;
         RunMode mode;
 
-        static Context Default() {
+        static Context Default(MatrixType type = kFloat) {
+            Context context;
+            context.mode = kCpu;
+            context.phase = TRAIN;
+            context.type = type;
+            return context;
+        }
+
+        static Context GPU() {
+            Context context;
+            context.mode = kGpu;
+            context.phase = TRAIN;
+            context.type = kFloat;
+            return context;
+        }
+
+        static Context CPU() {
             Context context;
             context.mode = kCpu;
             context.phase = TRAIN;

@@ -139,4 +139,26 @@ namespace matrix {
         return this->id_ < node->id_;
     }
 
+    void Node::addInput(NodePtr &node) {
+        this->inputs.push_back(node);
+        node->outputs.push_back(std::weak_ptr<Node>(this->shared_from_this()));
+    }
+
+    void Node::addOutput(NodePtr &node) {
+        this->outputs.push_back(std::weak_ptr<Node>(node));
+        node->inputs.push_back(this->shared_from_this());
+    }
+
+    bool Node::less(const NodePtr &lhs, const NodePtr &rhs) {
+        return lhs->id_ < rhs->id_;
+    }
+
+    bool Node::large(const NodePtr &lhs, const NodePtr &rhs) {
+        return lhs->id_ > rhs->id_;
+    }
+
+    std::string Node::ToString() {
+        return nodeName + "_" + std::to_string(id_);
+    }
+
 }

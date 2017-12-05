@@ -4,6 +4,7 @@
 
 #ifndef MATRIX_NODE_H
 #define MATRIX_NODE_H
+
 #include <string>
 #include <map>
 #include <vector>
@@ -19,7 +20,7 @@ namespace matrix {
     typedef std::shared_ptr<Node> NodePtr;
 
 
-    struct Node : public std::enable_shared_from_this<Node>{
+    struct Node : public std::enable_shared_from_this<Node> {
         Node();
 
         size_t id_;
@@ -28,13 +29,13 @@ namespace matrix {
 
         std::string opName;
 
-        Operator* op{nullptr};
+        Operator *op{nullptr};
 
         Context context;
 
-        std::vector<Shape*> inputShapes;
+        std::vector<Shape *> inputShapes;
 
-        std::vector<void*> inputDates;
+        std::vector<void *> inputDates;
 
         Shape outputShapes;
 
@@ -42,7 +43,7 @@ namespace matrix {
 
         bool isShared = false;
 
-        void* data_ {nullptr};
+        void *data_{nullptr};
 
         long memorySize;
 
@@ -63,51 +64,23 @@ namespace matrix {
         long getMemorySize();
 
         void Build();
-        NodePtr  GetGradNode(int input_index, NodePtr &pre, NodePtr &preGrad);
+
+        NodePtr GetGradNode(int input_index, NodePtr &pre, NodePtr &preGrad);
+
         static NodePtr Create();
 
         bool operator==(const NodePtr &node);
 
         bool operator<(const NodePtr &node);
 
-        static bool less(const NodePtr &lhs, const NodePtr &rhs) {
-            return lhs->id_ < rhs->id_;
-        }
+        static bool less(const NodePtr &lhs, const NodePtr &rhs);
 
-        static bool large(const NodePtr &lhs, const NodePtr &rhs) {
-            return lhs->id_ > rhs->id_;
-        }
+        static bool large(const NodePtr &lhs, const NodePtr &rhs);
 
         void PrintMatrix() {
-//            if (outputShapes.Rank() == 2) {
-//                std::ostringstream stream;
-//                std::ofstream ofile;
-//                ofile.open("/Users/jarlene/Code/Cpp/AI/Matrix/" + this->ToString() + ".txt");
-//                for (int i = 0; i < outputShapes[0]; ++i) {
-//                    for (int j = 0; j < outputShapes[1]; ++j) {
-//                        stream << (static_cast<float*>(data_))[i * outputShapes[1] + j] << "     ";
-//                    }
-//                    stream << "\n";
-//                }
-//
-//                ofile << stream.str();
-//                ofile.close();
-//            } else if (outputShapes.Rank() == 1) {
-//                std::ostringstream stream;
-//                std::ofstream ofile;
-//                ofile.open("/Users/jarlene/Code/Cpp/AI/Matrix/" + this->ToString() + ".txt");
-//                for (int i = 0; i < outputShapes[0]; ++i) {
-//                    stream << (static_cast<float*>(data_))[i] << "     " << "\n";
-//                }
-//                ofile << stream.str();
-//                ofile.close();
-//            }
-
-
-            switch(context.type) {
-                case kFloat:
-                {
-                    auto data = static_cast<float*>(data_);
+            switch (context.type) {
+                case kFloat: {
+                    auto data = static_cast<float *>(data_);
                     if (outputShapes.Rank() == 2) {
                         Logger::PrintMat<float>(data, outputShapes[0], outputShapes[1], nodeName);
                     } else {
@@ -116,9 +89,8 @@ namespace matrix {
                 }
 
                     break;
-                case kInt:
-                {
-                    auto data = static_cast<int*>(data_);
+                case kInt: {
+                    auto data = static_cast<int *>(data_);
                     if (outputShapes.Rank() == 2) {
                         Logger::PrintMat<int>(data, outputShapes[0], outputShapes[1], nodeName);
                     } else {
@@ -127,9 +99,8 @@ namespace matrix {
                 }
 
                     break;
-                case kLong:
-                {
-                    auto data = static_cast<long*>(data_);
+                case kLong: {
+                    auto data = static_cast<long *>(data_);
                     if (outputShapes.Rank() == 2) {
                         Logger::PrintMat<long>(data, outputShapes[0], outputShapes[1], nodeName);
                     } else {
@@ -137,9 +108,8 @@ namespace matrix {
                     }
                 }
                     break;
-                case kDouble:
-                {
-                    auto data = static_cast<double*>(data_);
+                case kDouble: {
+                    auto data = static_cast<double *>(data_);
                     if (outputShapes.Rank() == 2) {
                         Logger::PrintMat<double>(data, outputShapes[0], outputShapes[1], nodeName);
                     } else {
@@ -153,14 +123,14 @@ namespace matrix {
             }
         }
 
+        std::string ToString();
 
-        std::string ToString() {
-            return nodeName + "_" + std::to_string(id_);
-        }
+        void addInput(NodePtr &node);
+
+        void addOutput(NodePtr &node);
 
     };
 }
-
 
 
 #endif //MATRIX_NODE_H
