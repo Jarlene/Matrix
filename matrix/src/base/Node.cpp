@@ -123,7 +123,7 @@ namespace matrix {
         memorySize = opPtr->GetMemorySize();
     }
 
-    long Node::getMemorySize() {
+    long Node::GetMemorySize() {
         return memorySize;
     }
 
@@ -204,7 +204,7 @@ namespace matrix {
         condvar.wait(lock, [this]{ return this->depens <= 0;});
     }
 
-    void Node::addOpName(const std::string &op) {
+    void Node::AddOpName(const std::string &op) {
         this->opName = op;
     }
 

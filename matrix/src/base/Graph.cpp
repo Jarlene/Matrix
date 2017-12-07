@@ -89,8 +89,8 @@ namespace matrix {
 //            long maxSize = 0;
 //            for (int id : vec) {
 //                auto node = GetNode(id);
-//                if (maxSize < node->getMemorySize()) {
-//                    maxSize = node->getMemorySize();
+//                if (maxSize < node->GetMemorySize()) {
+//                    maxSize = node->GetMemorySize();
 //                }
 //            }
 //            colorSize[it.first] = maxSize;
@@ -107,7 +107,7 @@ namespace matrix {
 //
 //
 //            if (item->data_ == nullptr && item->op != nullptr) {
-//                size_t m = item->getMemorySize();
+//                size_t m = item->GetMemorySize();
 //                if (m > 0) {
 //                    item->data_ = MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(m);
 //                } else {

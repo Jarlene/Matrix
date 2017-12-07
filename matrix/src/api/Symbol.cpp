@@ -14,7 +14,7 @@ namespace matrix {
 
     Symbol::Symbol(const std::string &name) {
         nodePtr = Node::Create();
-        nodePtr->addOpName(name);
+        nodePtr->AddOpName(name);
     }
 
     Symbol &Symbol::SetInput(const std::string &name, const Symbol &symbol) {

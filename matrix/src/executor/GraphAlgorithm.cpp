@@ -107,7 +107,7 @@ namespace matrix {
                                 continue;
                             }
                         } else {
-                            long currenteps = std::abs((long) pre->getMemorySize() - (long) current->getMemorySize());
+                            long currenteps = std::abs((long) pre->GetMemorySize() - (long) current->GetMemorySize());
                             if (preeps == -1) {
                                 colors[current->id_] = color;
                             } else if (currenteps < preeps) {
@@ -261,14 +261,14 @@ namespace matrix {
             path.clear();
             node_reward.clear();
             for (auto &item : last) {
-                node_reward.push_back(item->getMemorySize());
+                node_reward.push_back(item->GetMemorySize());
             }
 
             FindBestPath(last, node_reward, &path);
             std::vector<int> nodeIds;
             for (int id : path) {
                 nodeIds.push_back(last[id]->id_);
-//                LOG(INFO) << last[id]->name_ << "(id = " << last[id]->id_ << ", memorySize = " << last[id]->getMemorySize() << ")" << "---->";
+//                LOG(INFO) << last[id]->name_ << "(id = " << last[id]->id_ << ", memorySize = " << last[id]->GetMemorySize() << ")" << "---->";
             }
             paths.push_back(nodeIds);
             Remove(last, path);

@@ -59,9 +59,9 @@ namespace matrix {
 
         std::map<std::string, Any> params;
 
-        void addOpName(const std::string &op);
+        void AddOpName(const std::string &op);
 
-        long getMemorySize();
+        long GetMemorySize();
 
         void Build();
 
