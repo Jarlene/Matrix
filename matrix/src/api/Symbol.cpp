@@ -19,9 +19,7 @@ namespace matrix {
 
     Symbol &Symbol::SetInput(const std::string &name, const Symbol &symbol) {
         this->nodePtr->AddInput(symbol.nodePtr);
-        if (this->nodePtr->context.type == kInvalid) {
-            this->nodePtr->context.type = symbol.nodePtr->context.type;
-        }
+        this->nodePtr->SwitchType(symbol.nodePtr->context);
         return *this;
     }
 
@@ -31,7 +29,7 @@ namespace matrix {
     }
 
     Symbol &Symbol::Build(const std::string &symbol_name) {
-        this->nodePtr->nodeName = symbol_name;
+        this->nodePtr->AddNodeName(symbol_name);
         this->nodePtr->Build();
         return *this;
     }

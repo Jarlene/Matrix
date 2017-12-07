@@ -61,6 +61,8 @@ namespace matrix {
 
         void AddOpName(const std::string &op);
 
+        void AddNodeName(const std::string &nodeName);
+
         long GetMemorySize();
 
         void Build();
@@ -132,6 +134,8 @@ namespace matrix {
         void AddParam(const std::string &name, const Any &any);
 
         void Run();
+
+        void SwitchType(const Context &context);
 
     private:
         void SetData();

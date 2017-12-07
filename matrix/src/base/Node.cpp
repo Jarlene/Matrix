@@ -208,4 +208,14 @@ namespace matrix {
         this->opName = op;
     }
 
+    void Node::SwitchType(const Context &context) {
+        if (this->context.type == kInvalid) {
+            this->context.type = context.type;
+        }
+    }
+
+    void Node::AddNodeName(const std::string &nodeName) {
+        this->nodeName = nodeName;
+    }
+
 }
