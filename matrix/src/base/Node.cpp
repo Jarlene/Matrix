@@ -143,12 +143,12 @@ namespace matrix {
         return this->id_ < node->id_;
     }
 
-    void Node::addInput(const NodePtr &node) {
+    void Node::AddInput(const NodePtr &node) {
         this->inputs.push_back(node);
         node->outputs.push_back(std::weak_ptr<Node>(this->shared_from_this()));
     }
 
-    void Node::addOutput(const NodePtr &node) {
+    void Node::AddOutput(const NodePtr &node) {
         this->outputs.push_back(std::weak_ptr<Node>(node));
         node->inputs.push_back(this->shared_from_this());
     }
@@ -165,7 +165,7 @@ namespace matrix {
         return nodeName + "_" + std::to_string(id_);
     }
 
-    void Node::addParam(const std::string &name, const Any &any) {
+    void Node::AddParam(const std::string &name, const Any &any) {
         this->params[name] = any;
     }
 

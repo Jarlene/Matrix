@@ -125,11 +125,11 @@ namespace matrix {
 
         std::string ToString();
 
-        void addInput(const NodePtr &node);
+        void AddInput(const NodePtr &node);
 
-        void addOutput(const NodePtr &node);
+        void AddOutput(const NodePtr &node);
 
-        void addParam(const std::string &name, const Any &any);
+        void AddParam(const std::string &name, const Any &any);
 
         void Run();
 
