@@ -13,70 +13,20 @@ namespace matrix {
     }
 
     void Executor::train(const Symbol *symbol) {
-        Init();
-
         auto compute =[&](NodePtr &node) {
-
-            if (node->op != nullptr && !node->isPlaceHolder && !node->isShared) {
-                node->SetData();
-                try {
-                    node->op->AsyncRun();
-                } catch (std::exception &e){
-                    Logger::Global()->Fatal("exception on node %d==> %s", node->ToString().c_str(), e.what());
-                }
-            }
-
-            {
-                std::lock_guard<std::mutex> lock (mutex_);
-                for (auto &item : node->outputs) {
-                    if(graph_->GetNode(item.lock()->id_)) {
-                        item.lock()->depens_.remove(node);
-                        if (item.lock()->depens_.empty()) {
-                            if (!ready_.Has(item.lock())) {
-                                ready_.Put(item.lock());
-                            }
-                        }
-                    }
-                }
-            }
-
-
+            node->Run();
         };
-
         ThreadPool pool(CPU_CORES);
-        int size = graph_->GetGraphNodes().size();
-        while (true){
-            auto node = ready_.Take();
+        for (auto node : graph_->GetGraphNodes()) {
             pool.enqueue(compute, node);
-            size--;
-            if (size == 0) {
-                break;
-            }
         }
         if (symbol != nullptr) {
-            graph_->Accuracy(symbol)->SetData();
-            graph_->Accuracy(symbol)->op->AsyncRun();
-        }
-
-    }
-
-
-    void Executor::Init() {
-        for(auto &item : graph_->GetGraphNodes()) {
-            if (item->op == nullptr || item->isShared) {
-                ready_.Put(item);
-                continue;
-            }
-            item->depens_.clear();
-            item->depens_.insert(item->depens_.end(), item->inputs.begin(), item->inputs.end());
-            item->depens_.sort();
-            item->depens_.unique();
-            int size = item->depens_.size();
-            if (size == 0) {
-                ready_.Put(item);
-            }
+            graph_->Accuracy(symbol)->Run();
         }
     }
+
+
+
 
     Executor::~Executor() {
         delete graph_;
@@ -85,8 +35,7 @@ namespace matrix {
 
     void Executor::evaluating(const Symbol *symbol) {
         if (symbol != nullptr) {
-            graph_->Accuracy(symbol)->SetData();
-            graph_->Accuracy(symbol)->op->AsyncRun();
+            graph_->Accuracy(symbol)->Run();
         }
     }
 
@@ -94,13 +43,11 @@ namespace matrix {
 
         auto updateFunc = [&](NodePtr &node) {
             try {
-                node->SetData();
-                node->op->AsyncRun();
+                node->Run();
             } catch (std::exception &e){
                 Logger::Global()->Fatal("exception on node %s==> %s", node->ToString().c_str() , e.what());
             }
         };
-
         ThreadPool pool(CPU_CORES);
         for (auto it : graph_->GetUpdateNodes()) {
             pool.enqueue(updateFunc, it);

@@ -116,6 +116,7 @@ namespace matrix {
                 }
             }
         }
+        this->depens = static_cast<int>(inputs.size());
         memorySize = opPtr->GetMemorySize();
     }
 
@@ -139,12 +140,12 @@ namespace matrix {
         return this->id_ < node->id_;
     }
 
-    void Node::addInput(NodePtr &node) {
+    void Node::addInput(const NodePtr &node) {
         this->inputs.push_back(node);
         node->outputs.push_back(std::weak_ptr<Node>(this->shared_from_this()));
     }
 
-    void Node::addOutput(NodePtr &node) {
+    void Node::addOutput(const NodePtr &node) {
         this->outputs.push_back(std::weak_ptr<Node>(node));
         node->inputs.push_back(this->shared_from_this());
     }
@@ -163,6 +164,45 @@ namespace matrix {
 
     void Node::addParam(const std::string &name, const Any &any) {
         this->params[name] = any;
+    }
+
+    void Node::Complete() {
+        for (auto wrap_iter = outputs.begin(); wrap_iter != outputs.end(); ++wrap_iter) {
+            wrap_iter->lock()->CountDown();
+        }
+        this->depens = static_cast<int>(inputs.size());
+    }
+
+    void Node::Run() {
+        if (this->op != nullptr && !isPlaceHolder && !isShared) {
+            if (depens > 0) {
+                Await();
+            }
+            SetData();
+            op->AsyncRun();
+            Complete();
+        } else {
+            Complete();
+        }
+
+    }
+
+    void Node::CountDown() {
+        std::lock_guard<std::mutex> lock(mutex);
+        --depens;
+        if (depens <= 0) {
+            condvar.notify_all();
+        }
+
+    }
+
+    void Node::Await() {
+        std::unique_lock<std::mutex> lock(mutex);
+        condvar.wait(lock, [this]{ return this->depens > 0;});
+    }
+
+    void Node::addOpName(const std::string &op) {
+        this->opName = op;
     }
 
 }

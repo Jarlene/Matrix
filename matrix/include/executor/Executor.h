@@ -24,12 +24,7 @@ namespace matrix {
         void evaluating(const Symbol *symbol = nullptr);
 
     private:
-        void Init();
-
-    private:
-        BlockQueue<NodePtr> ready_;
         Graph* graph_{nullptr};
-        std::mutex mutex_;
     };
 }
 

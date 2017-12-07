@@ -14,12 +14,11 @@ namespace matrix {
 
     Symbol::Symbol(const std::string &name) {
         nodePtr = Node::Create();
-        nodePtr->opName = name;
+        nodePtr->addOpName(name);
     }
 
     Symbol &Symbol::SetInput(const std::string &name, const Symbol &symbol) {
-        this->nodePtr->inputs.push_back(symbol.nodePtr);
-        symbol.nodePtr->outputs.push_back(std::weak_ptr<Node>(this->nodePtr));
+        this->nodePtr->addInput(symbol.nodePtr);
         if (this->nodePtr->context.type == kInvalid) {
             this->nodePtr->context.type = symbol.nodePtr->context.type;
         }
@@ -27,7 +26,7 @@ namespace matrix {
     }
 
     Symbol &Symbol::SetParam(const std::string &name, const Any &value) {
-        this->nodePtr->params[name] = value;
+        this->nodePtr->addParam(name, value);
         return *this;
     }
 

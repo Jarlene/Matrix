@@ -55,9 +55,9 @@ namespace matrix {
 
         std::vector<NodeWeakPtr> outputs;
 
-        std::list<NodePtr> depens_;
-
         std::map<std::string, Any> params;
+
+        void addOpName(const std::string &op);
 
         void SetData();
 
@@ -125,12 +125,23 @@ namespace matrix {
 
         std::string ToString();
 
-        void addInput(NodePtr &node);
+        void addInput(const NodePtr &node);
 
-        void addOutput(NodePtr &node);
+        void addOutput(const NodePtr &node);
 
         void addParam(const std::string &name, const Any &any);
 
+        void Run();
+
+    private:
+        void CountDown();
+        void Complete();
+        void Await();
+
+    private:
+        std::mutex mutex;
+        std::condition_variable condvar;
+        int depens;
     };
 }
 
