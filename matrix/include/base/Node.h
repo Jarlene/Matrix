@@ -61,8 +61,6 @@ namespace matrix {
 
         void addOpName(const std::string &op);
 
-        void SetData();
-
         long getMemorySize();
 
         void Build();
@@ -136,6 +134,7 @@ namespace matrix {
         void Run();
 
     private:
+        void SetData();
         void CountDown();
         void Complete();
         void Await();

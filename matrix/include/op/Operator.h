@@ -176,7 +176,7 @@ namespace matrix {
                 return get<T>(args->at(name));
             }
 
-            Logger::Global()->Fatal("can not find arg name");
+            Logger::Global()->Fatal("can not find arg name: %s", name.c_str());
             T t;
             return t;
         }
