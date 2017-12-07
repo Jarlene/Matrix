@@ -49,7 +49,7 @@ namespace matrix {
     }
 
     void Node::Build() {
-
+        depenList.clear();
         GET_REGISTRY_OP_PROPERTY(this->opName, context.type);
         if (opPtr == nullptr) {
             return;

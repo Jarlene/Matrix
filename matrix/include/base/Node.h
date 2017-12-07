@@ -143,7 +143,7 @@ namespace matrix {
     private:
         std::mutex mutex;
         std::condition_variable condvar;
-        int depens;
+        std::atomic<int> depens;
     };
 }
 
