@@ -116,7 +116,10 @@ namespace matrix {
                 }
             }
         }
-        this->depens = static_cast<int>(inputs.size());
+        depenList.insert(depenList.end(), inputs.begin(), inputs.end());
+        depenList.sort();
+        depenList.unique();
+        this->depens = static_cast<int>(depenList.size());
         memorySize = opPtr->GetMemorySize();
     }
 
@@ -170,7 +173,7 @@ namespace matrix {
         for (auto wrap_iter = outputs.begin(); wrap_iter != outputs.end(); ++wrap_iter) {
             wrap_iter->lock()->CountDown();
         }
-        this->depens = static_cast<int>(inputs.size());
+        this->depens = static_cast<int>(depenList.size());
     }
 
     void Node::Run() {
@@ -198,7 +201,7 @@ namespace matrix {
 
     void Node::Await() {
         std::unique_lock<std::mutex> lock(mutex);
-        condvar.wait(lock, [this]{ return this->depens > 0;});
+        condvar.wait(lock, [this]{ return this->depens <= 0;});
     }
 
     void Node::addOpName(const std::string &op) {

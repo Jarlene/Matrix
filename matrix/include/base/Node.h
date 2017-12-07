@@ -53,6 +53,8 @@ namespace matrix {
 
         std::vector<NodePtr> inputs;
 
+        std::list<NodePtr> depenList;
+
         std::vector<NodeWeakPtr> outputs;
 
         std::map<std::string, Any> params;
