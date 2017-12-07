@@ -5,6 +5,8 @@
 #ifndef MATRIX_TIME_H
 #define MATRIX_TIME_H
 
+#include <sys/time.h>
+
 namespace matrix {
     long getCurrentTime() {
         struct timeval tv;
