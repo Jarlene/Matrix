@@ -35,6 +35,10 @@ namespace matrix {
             }
         } else if (in1->isMatrix() && in2->isMatrix()) {
             assert(in1->At(1) == in2->At(0));
+        } else if(in1->isConstant()) {
+            out->reShape(*in2);
+        } else if(in2->isConstant()) {
+            out->reShape(*in1);
         } else {
             Logger::Global()->Fatal("ProduceMulOpShape cant not support Mul Shape Size\n");
         }
