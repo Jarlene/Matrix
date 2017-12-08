@@ -71,6 +71,11 @@ namespace matrix {
         PREDICTION
     };
 
+    enum EmbeddingType {
+        ONE_HOT,
+        WORD_EMBEDDING
+    };
+
     struct CPU {
         const static RunMode mode = RunMode::kCpu;
         const static int kDevice = 0;
@@ -91,6 +96,14 @@ namespace matrix {
             Context context;
             context.mode = kCpu;
             context.phase = TRAIN;
+            context.type = type;
+            return context;
+        }
+
+        static Context Test(MatrixType type = kFloat) {
+            Context context;
+            context.mode = kCpu;
+            context.phase = TEST;
             context.type = type;
             return context;
         }

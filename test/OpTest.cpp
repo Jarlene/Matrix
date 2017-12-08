@@ -18,10 +18,7 @@ namespace matrix {
 
         TEST_F(OpTest, VariableOp) {
             OpPtr pro = Registry::Global()->GetOp("variable");
-            Context context;
-            context.mode = RunMode::kCpu;
-            context.phase = Phase::TEST;
-            context.type = kFloat;
+            Context context = Context::Test();
             Shape shape = ShapeN(5, 4);
             float *result = static_cast<float *>(malloc(sizeof(float) * shape.Size()));
             std::vector<void *> inputs;
@@ -31,7 +28,7 @@ namespace matrix {
             Operator *op = pro->CreateOperator(context,  &inShape, &shape, params);
             op->SetData(&inputs, result);
             op->AsyncRun();
-            PrintMat(result, shape[0], shape[1], "variable");
+            PrintMat(result, shape[0], shape[1], "VariableOp_test_result");
             delete result;
         }
 
@@ -43,10 +40,7 @@ namespace matrix {
             float res[] = {0, 0, 0, 0, 0, 0};
 
             OpPtr pro = Registry::Global()->GetOp("add");
-
-            Context context;
-            context.mode = RunMode::kCpu;
-            context.phase = Phase::TEST;
+            Context context = Context::Test();
             Shape shape = ShapeN(2, 3);
             std::vector<void *> inputs;
             inputs.push_back(a);
@@ -56,14 +50,16 @@ namespace matrix {
             inShape.push_back(&shape);
             inShape.push_back(&shape);
 
+            Shape out;
+
             std::map<std::string, Any> params;
 
-            Operator *op = pro->CreateOperator(context, &inShape, &shape, params);
+            Operator *op = pro->CreateOperator(context, &inShape, &out, params);
             op->SetData(&inputs, res);
             op->AsyncRun();
-            int dim = shape.Size();
+            int dim = out.Size();
             checkArrayEqual<float>(c, res, dim);
-
+            PrintMat(res, out[0], out[1], "AddOp_test_result");
         }
 
         TEST_F(OpTest, MulOp) {
@@ -74,9 +70,7 @@ namespace matrix {
             float res[4] = {28, 34, 64, 79};
             OpPtr pro = Registry::Global()->GetOp("mul");
 
-            Context context;
-            context.mode = RunMode::kCpu;
-            context.phase = Phase::TEST;
+            Context context = Context::Test();
 
             std::vector<void *> inputs;
 
@@ -95,7 +89,7 @@ namespace matrix {
             Operator *op = pro->CreateOperator(context, &inShape, &out, params);
             op->SetData(&inputs, c);
             op->AsyncRun();
-            PrintMat(c, out[0], out[1], "mul");
+            PrintMat(c, out[0], out[1], "MulOp_test_result");
             checkArrayEqual<float>(c, res, out.Size());
         }
 
@@ -110,9 +104,7 @@ namespace matrix {
 
             OpPtr pro = Registry::Global()->GetOp("fullConnected");
 
-            Context context;
-            context.mode = RunMode::kCpu;
-            context.phase = Phase::TEST;
+            Context context = Context::Test();
 
             std::vector<void *> inputs;
 
@@ -139,7 +131,7 @@ namespace matrix {
             op->AsyncRun();
             int dim = out.Size();
             checkArrayEqual<float>(d, res, dim);
-
+            PrintMat(res, out[0], out[1], "FullyConnectedOp_testa_result");
         }
 
         TEST_F(OpTest, FullyConnectedGradOp) {
@@ -159,9 +151,7 @@ namespace matrix {
                             1};
             float outdata[12] = {0};
 
-            Context context;
-            context.mode = RunMode::kCpu;
-            context.phase = Phase::TEST;
+            Context context = Context::Test();
             std::vector<void *> inputs;
 
             inputs.push_back(pre_grad);
@@ -189,33 +179,32 @@ namespace matrix {
             std::map<std::string, Any> params;
             int index = 2;
             params["input_idx"] = index;
+            Operator *op = pro->CreateOperator(context,  &inShape, &out, params);
             if (index == 0) {
                 float target[8] = {0};
                 float res[8] = {20, 38,
                                 11, 26,
                                 11, 23,
                                 15, 30};
-                Operator *op = pro->CreateOperator(context,  &inShape, &out, params);
+
                 op->SetData(&inputs, &target);
                 op->AsyncRun();
-                PrintMat(target, 4, 2, "data_grad");
+                PrintMat(target, 4, 2, "FullyConnectedGradOp_test_result_data");
                 checkArrayEqual(res, target, out.Size());
             } else if (index == 1) {
                 float target[6] = {0};
                 float res[6] = {37, 17, 22,
                                 46, 22, 28};
-                Operator *op = pro->CreateOperator(context, &inShape, &out, params);
                 op->SetData(&inputs, &target);
                 op->AsyncRun();
-                PrintMat(target, 2, 3, "weight_grad");
+                PrintMat(target, 2, 3, "FullyConnectedGradOp_test_result_weight");
                 checkArrayEqual(res, target, out.Size());
             } else if (index == 2) {
                 float target[3] = {0};
                 float res[3] = {9, 5, 6};
-                Operator *op = pro->CreateOperator(context,  &inShape, &out, params);
                 op->SetData(&inputs, &target);
                 op->AsyncRun();
-                PrintMat(target, 3, 1, "bias_grad");
+                PrintMat(target, 3, 1, "FullyConnectedGradOp_test_result_bias");
                 checkArrayEqual(res, target, out.Size());
             }
 
@@ -246,9 +235,7 @@ namespace matrix {
 
             OpPtr pro = Registry::Global()->GetOp("convolution");
 
-            Context context;
-            context.mode = RunMode::kCpu;
-            context.phase = Phase::TEST;
+            Context context = Context::Test();
 
             std::vector<void *> inputs;
 
@@ -277,7 +264,7 @@ namespace matrix {
             op->SetData(&inputs, res);
             op->AsyncRun();
             int dim = out.Size();
-            PrintMat(res, 3, 3, "convolution_out");
+            PrintMat(res, 3, 3, "ConovolutionOp_tesst_result");
             checkArrayEqual<float>(c, res, dim);
         }
 
@@ -347,9 +334,7 @@ namespace matrix {
 
             OpPtr pro = Registry::Global()->GetOp("convolution");
 
-            Context context;
-            context.mode = RunMode::kCpu;
-            context.phase = Phase::TEST;
+            Context context = Context::Test();
 
             std::vector<void *> inputs;
 
@@ -379,7 +364,7 @@ namespace matrix {
             op->SetData(&inputs, res);
             op->AsyncRun();
             int dim = out.Size();
-            PrintMat(res, 9, 3, "convolution_mulit_channel");
+            PrintMat(res, 9, 3, "MulitChannelConovolutionOp_test_result");
             checkArrayEqual<float>(target, res, dim);
         }
 
@@ -418,9 +403,7 @@ namespace matrix {
 
             OpPtr pro = Registry::Global()->GetOp("grad_convolution");
 
-            Context context;
-            context.mode = RunMode::kCpu;
-            context.phase = Phase::TEST;
+            Context context = Context::Test();
 
             std::vector<void *> inputs;
 
@@ -448,11 +431,12 @@ namespace matrix {
             Shape out;
 
             std::map<std::string, Any> params;
-            int inputIdx = 2;
+            int inputIdx = 0;
 
             params["input_idx"] = inputIdx;
+            Operator *op = pro->CreateOperator(context,  &inShape, &out, params);
             if (inputIdx == 0) {
-                Operator *op = pro->CreateOperator(context,  &inShape, &out, params);
+
                 op->SetData(&inputs, input_grad);
                 op->AsyncRun();
                 int dim = out.Size();
@@ -462,9 +446,8 @@ namespace matrix {
                                     3, 2, 1, 1, 0,
                                     1, 0, 1, 0, 0};
                 checkArrayEqual<float>(target, input_grad, dim);
-                PrintMat(input_grad, inshape[2], inshape[3], "input_grad");
+                PrintMat(input_grad, inshape[2], inshape[3], "ConvolutionGradOp_test_result_data");
             } else if (inputIdx == 1) {
-                Operator *op = pro->CreateOperator(context,  &inShape, &out, params);
                 op->SetData(&inputs, filter_grad);
                 op->AsyncRun();
                 int dim = out.Size();
@@ -472,15 +455,14 @@ namespace matrix {
                                    3, 5, 6,
                                    2, 4, 7};
                 checkArrayEqual<float>(filter_grad, target, dim);
-                PrintMat(filter_grad, k[0], k[1], "input_filter");
+                PrintMat(filter_grad, out[2], out[3], "ConvolutionGradOp_test_result_kernel");
             } else if (inputIdx == 2) {
-                Operator *op = pro->CreateOperator(context,  &inShape, &out, params);
                 op->SetData(&inputs, bias_grad);
                 op->AsyncRun();
                 int dim = out.Size();
                 float target = 8;
                 checkArrayEqual<float>(bias_grad, &target, dim);
-                PrintMat(bias_grad, 1, 1, "input_bias");
+                PrintMat(bias_grad, 1, 1, "ConvolutionGradOp_test_result_data_bias");
             }
 
 
@@ -582,9 +564,7 @@ namespace matrix {
 
             OpPtr pro = Registry::Global()->GetOp("grad_convolution");
 
-            Context context;
-            context.mode = RunMode::kCpu;
-            context.phase = Phase::TEST;
+            Context context = Context::Test();
 
             std::vector<void *> inputs;
 
@@ -612,11 +592,12 @@ namespace matrix {
             Shape out;
 
             std::map<std::string, Any> params;
-            int inputIdx = 2;
+            int inputIdx = 0;
             params["filter_num"] = 3;
             params["input_idx"] = inputIdx;
+            Operator *op = pro->CreateOperator(context,  &inShape, &out, params);
             if (inputIdx == 0) {
-                Operator *op = pro->CreateOperator(context,  &inShape, &out, params);
+
                 op->SetData(&inputs, input_grad);
                 op->AsyncRun();
                 int dim = out.Size();
@@ -636,10 +617,9 @@ namespace matrix {
                                         9, 6, 3, 3, 0,
                                         3, 0, 3, 0, 0};
 
-                PrintMat(input_grad, inshape[0] * inshape[1] * inshape[2], inshape[3], "multi_channel_input_grad");
+                PrintMat(input_grad, inshape[0] * inshape[1] * inshape[2], inshape[3], "MultiChannelConvolutionGradOp_test_result_data");
                 checkArrayEqual<float>(target, input_grad, dim);
             } else if (inputIdx == 1) {
-                Operator *op = pro->CreateOperator(context,  &inShape, &out, params);
                 op->SetData(&inputs, filter_grad);
                 op->AsyncRun();
                 int dim = out.Size();
@@ -670,15 +650,14 @@ namespace matrix {
                                         5, 6, 6,
                                         3, 5, 6,
                                         2, 4, 7,};
-                PrintMat(filter_grad, k[0]*k[1]*k[2], k[3], "multi_channel_input_filter");
+                PrintMat(filter_grad, k[0]*k[1]*k[2], k[3], "MultiChannelConvolutionGradOp_test_result_kernel");
                 checkArrayEqual<float>(filter_grad, target, dim);
             } else if (inputIdx == 2) {
-                Operator *op = pro->CreateOperator(context,  &inShape, &out, params);
                 op->SetData(&inputs, bias_grad);
                 op->AsyncRun();
                 int dim = out.Size();
                 float target[3] = {12,6,6};
-                PrintMat(bias_grad, biasShape[0], 1, "multi_channel_input_bias");
+                PrintMat(bias_grad, biasShape[0], 1, "MultiChannelConvolutionGradOp_test_result_bias");
                 checkArrayEqual<float>(bias_grad, target, dim);
             }
 
@@ -699,9 +678,7 @@ namespace matrix {
                           7, 10, 10};
             float maxIndex[9] = {0};
 
-            Context context;
-            context.mode = RunMode::kCpu;
-            context.phase = Phase::TEST;
+            Context context = Context::Test();
 
             auto pro = Registry::Global()->GetOp("pooling");
             std::vector<Shape *> inShape;
@@ -722,10 +699,10 @@ namespace matrix {
             op->AsyncRun();
             int dim = out.Size();
 
-            PrintMat(b, 3, 3, "pool_out");
+            PrintMat(b, 3, 3, "PoolingOp_test_result");
             if (get<PoolType>(params["type"]) == kMax) {
                 checkArrayEqual<float>(b, c, dim);
-                PrintMat(maxIndex, 1, 9, "max_index");
+                PrintMat(maxIndex, 1, 9, "PoolingOp_max_index");
             } else {
                 float target[] = {2.5, 2, 1.75,
                                   2.333333, 1.333333, 1.333333,
@@ -757,9 +734,7 @@ namespace matrix {
             params["filter"] = ShapeN(2, 2);
             params["type"] = PoolType::kMax;
 
-            Context context;
-            context.mode = RunMode::kCpu;
-            context.phase = Phase::TEST;
+            Context context = Context::Test();
 
             auto pro = Registry::Global()->GetOp("grad_pooling");
 
@@ -797,7 +772,7 @@ namespace matrix {
                                     3, 4.25, 2.75, 6.5};
                 checkArrayEqual<float>(b, target, dim);
             }
-            PrintMat(b, 4, 4, "grad_pool_out");
+            PrintMat(b, 4, 4, "PoolingGradOp_test_result");
 
 
         }
@@ -807,9 +782,7 @@ namespace matrix {
             float b[6] = {0};
             Shape in_shape = ShapeN(3,2);
 
-            Context context;
-            context.mode = RunMode::kCpu;
-            context.phase = Phase::TEST;
+            Context context = Context::Test();
 
             std::vector<void *> inputs;
             inputs.push_back(a);
@@ -851,7 +824,7 @@ namespace matrix {
                     break;
 
             }
-            PrintMat(b, out[0], out[1], "activation");
+            PrintMat(b, out[0], out[1], "ActivationOp_test_result");
         }
 
         TEST_F(OpTest, ActivationGradOp) {
@@ -864,9 +837,7 @@ namespace matrix {
             float c[6] = {0};
 
 
-            Context context;
-            context.mode = RunMode::kCpu;
-            context.phase = Phase::TEST;
+            Context context = Context::Test();
 
             std::vector<void *> inputs;
             inputs.push_back(a);
@@ -920,7 +891,7 @@ namespace matrix {
                     break;
 
             }
-            PrintMat(c, out[0], out[1], "grad_activation");
+            PrintMat(c, out[0], out[1], "ActivationGradOp_test_result");
         }
 
         TEST_F(OpTest, LossOp) {
@@ -934,9 +905,7 @@ namespace matrix {
             float a[] = {0};
 
 
-            Context context;
-            context.mode = RunMode::kCpu;
-            context.phase = Phase::TEST;
+            Context context = Context::Test();
 
             std::vector<void *> inputs;
             inputs.push_back(input);
@@ -958,7 +927,7 @@ namespace matrix {
             op->SetData(&inputs, a);
             op->AsyncRun();
 
-            PrintMat(a, 1, 1, "loss_out");
+            PrintMat(a, 1, 1, "LossOp_test_result");
             float target = (-log(0.3f) - log(0.1f) -log(0.5f)) / 3;
             EXPECT_FLOAT_EQ(a[0], target);
         }
