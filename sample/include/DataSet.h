@@ -83,7 +83,7 @@ private:
                     for(int c = 0; c < n_cols; ++c) {
                         unsigned char temp = 0;
                         file.read((char*) &temp, sizeof(temp));
-                        tp.push_back(temp * 1.0f / 255 - 0.5f);
+                        tp.push_back(temp * 1.0f / 255);
                     }
                 }
                 vec.push_back(tp);

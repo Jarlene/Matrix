@@ -16,7 +16,7 @@ namespace matrix {
         auto compute =[&](NodePtr &node) {
             node->Run();
         };
-        ThreadPool pool(CPU_CORES);
+        ThreadPool pool(CPU_CORES + 1);
         for (auto node : graph_->GetGraphNodes()) {
             pool.enqueue(compute, node);
         }
@@ -48,7 +48,7 @@ namespace matrix {
                 Logger::Global()->Fatal("exception on node %s==> %s", node->ToString().c_str() , e.what());
             }
         };
-        ThreadPool pool(CPU_CORES);
+        ThreadPool pool(CPU_CORES + 1);
         for (auto it : graph_->GetUpdateNodes()) {
             pool.enqueue(updateFunc, it);
         }
