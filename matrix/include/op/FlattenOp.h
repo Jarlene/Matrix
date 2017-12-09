@@ -16,6 +16,7 @@ namespace matrix {
     class FlattenOp : public Operator {
     SAME_FUNCTION(Flatten);
     DISABLE_COPY_AND_ASSIGN(Flatten);
+        INPUT_TAG(INPUT);
     };
 
 

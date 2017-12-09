@@ -16,6 +16,7 @@ namespace matrix {
     class FlattenGradOp : public Operator {
     SAME_FUNCTION(FlattenGrad);
     DISABLE_COPY_AND_ASSIGN(FlattenGrad);
+        INPUT_TAG(PRE_GRAD, SELF_OUT, INPUT);
     };
 
 

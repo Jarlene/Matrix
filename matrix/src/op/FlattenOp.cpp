@@ -14,7 +14,7 @@ namespace matrix {
 
     template <class T, class xpu>
     bool FlattenOp<T, xpu>::Run() {
-        FallThrow();
+        CPUCopy(inputShapes->at(INPUT)->Size(), Input<T>(INPUT), 1, Output<T>(), 1);
         return true;
     }
 
@@ -38,9 +38,6 @@ namespace matrix {
     FlattenOp<T, xpu>::~FlattenOp() {
 
     }
-
-
-
 
 
     void FlattenOpProp::InferShape(std::vector<Shape *> &inShape, Shape *outShape) {

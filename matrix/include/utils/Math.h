@@ -706,12 +706,12 @@ namespace matrix {
     /// \param y
     /// \param z
     template <class T>
-    inline void TanhGrad(const int N,  const T *x,   T *z) {
+    inline void TanhGrad(const int N,  const T *x,  const T *y, T *z) {
 #ifdef USE_MP
 #pragma omp parallel for
 #endif
         for (int i=0; i < N; ++i) {
-            z[i] =  (T(1) - x[i]*x[i]);
+            z[i] =  y[i] * (T(1) - x[i]*x[i]);
         }
     }
 
@@ -739,12 +739,12 @@ namespace matrix {
     /// \param y
     /// \param z
     template <class T>
-    inline void SigmoidGrad(const int N, const T *x,  T *z) {
+    inline void SigmoidGrad(const int N, const T *x,  const T *y, T *z) {
 #ifdef USE_MP
 #pragma omp parallel for
 #endif
         for (int i=0; i < N; ++i) {
-            z[i] =  x[i]*((T)1-x[i]);
+            z[i] =  y[i]*x[i]*((T)1-x[i]);
         }
     }
 
@@ -772,12 +772,12 @@ namespace matrix {
     /// \param x
     /// \param dy
     template <class T>
-    inline void ReluGrad(const int N, const T *dx, const T *x, T* dy) {
+    inline void ReluGrad(const int N, const T *x, const T *dx,  T* dy) {
 #ifdef USE_MP
 #pragma omp parallel for
 #endif
         for (int i=0; i < N; ++i) {
-            dy[i] = (x[i] > (T)0 ? 1 : 0);
+            dy[i] = (x[i] > (T)0 ? dx[i] : 0);
         }
     }
 

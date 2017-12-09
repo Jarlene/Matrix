@@ -12,7 +12,7 @@ namespace matrix {
 
     template <class T, class xpu>
     bool FlattenGradOp<T, xpu>::Run() {
-        FallThrow();
+        CPUCopy(inputShapes->at(PRE_GRAD)->Size(), Input<T>(PRE_GRAD), 1, Output<T>(), 1);
         return true;
     }
 

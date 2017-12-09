@@ -26,10 +26,10 @@ namespace matrix {
 
         switch (type) {
             case kSigmoid:
-                SigmoidGrad<T>(out, gradOut);
+                SigmoidGrad<T>(out, pre, gradOut);
                 break;
             case kTanh:
-                TanhGrad<T>(out, gradOut);
+                TanhGrad<T>(out, pre, gradOut);
                 break;
             case kRelu:
                 ReluGrad<T>(input, pre, gradOut);

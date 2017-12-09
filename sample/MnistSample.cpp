@@ -14,25 +14,25 @@ using namespace matrix;
 
 const string trainImagePath = "../../data/train-images-idx3-ubyte";
 const string trainLabelPath = "../../data/train-labels-idx1-ubyte";
-const string testImagePath = "../../t10k-images-idx3-ubyte";
-const string testLabelPath = "../../t10k-labels-idx1-ubyte";
+const string testImagePath = "../../data/t10k-images-idx3-ubyte";
+const string testLabelPath = "../../data/t10k-labels-idx1-ubyte";
 
 
 Symbol LogisticRegression(const Symbol &input, int hideNum, int classNum) {
 
-//    auto y1 = Symbol("fullConnected")
-//            .SetInput("data", input)
-//            .SetParam("hide_num", hideNum)
-//            .SetParam("with_bias", true)
-//            .Build("y1");
-//
-//    auto act1 = Symbol("activation")
-//            .SetInput("y1", y1)
-//            .SetParam("type", kSigmoid)
-//            .Build("act1");
+    auto y1 = Symbol("fullConnected")
+            .SetInput("data", input)
+            .SetParam("hide_num", hideNum)
+            .SetParam("with_bias", true)
+            .Build("y1");
+
+    auto act1 = Symbol("activation")
+            .SetInput("y1", y1)
+            .SetParam("type", kRelu)
+            .Build("act1");
 
     auto y2 = Symbol("fullConnected")
-            .SetInput("act1", input)
+            .SetInput("act1", act1)
             .SetParam("hide_num", classNum)
             .SetParam("with_bias", true)
             .Build("y2");
@@ -105,8 +105,13 @@ Symbol Connvolution(const Symbol &input, int hideNum, int classNum) {
             .SetParam("with_bias", true)
             .Build("fc1");
 
+    auto act3 = Symbol("activation")
+            .SetInput("fc", fc)
+            .SetParam("type", ActType::kRelu)
+            .Build("act3");
+
     auto fc2 = Symbol("fullConnected")
-            .SetInput("flatten", fc)
+            .SetInput("act3", act3)
             .SetParam("hide_num", classNum)
             .SetParam("with_bias", true)
             .Build("fc2");
@@ -127,7 +132,7 @@ int main() {
     const int classNum = 10;
     const int hideNum = 128;
 
-    Shape imageShape = ShapeN(batchSize,  784);
+    Shape imageShape = ShapeN(batchSize,  1, 28, 28);
     Shape labelShape = ShapeN(batchSize);
     auto image = PlaceHolderSymbol::Create("image", imageShape);
     auto label = PlaceHolderSymbol::Create("label", labelShape);
@@ -136,9 +141,9 @@ int main() {
     float* labelData = static_cast<float *>(malloc(sizeof(float) * labelShape.Size()));
 
 
-//    auto logistic = Connvolution(image, hideNum, classNum);
+    auto logistic = Connvolution(image, hideNum, classNum);
 
-    auto logistic = LogisticRegression(image, hideNum, classNum);
+//    auto logistic = LogisticRegression(image, hideNum, classNum);
 
     auto loss = Symbol("loss")
             .SetInput("logistic", logistic)
@@ -153,7 +158,7 @@ int main() {
 
 
     Context context = Context::Default();
-    auto opt = new SGDOptimizer(0.01f);
+    auto opt = new SGDOptimizer(0.5f/batchSize);
     MnistDataSet trainSet(trainImagePath, trainLabelPath);
     MnistDataSet testSet(testImagePath, testLabelPath);
     auto executor = std::make_shared<Executor>(loss, context, opt);
@@ -161,7 +166,7 @@ int main() {
         trainSet.getMiniBatch(batchSize, imageData, labelData);
         image.Fill(imageData);
         label.Fill(labelData);
-        executor->syncTrain(&acc);
+        executor->train(&acc);
         executor->update();
         if ((i + 1) % 100 == 0) {
             loss.PrintMatrix();

@@ -41,7 +41,7 @@ namespace matrix {
             node->Run();
         };
         ThreadPool pool(CPU_CORES + 1);
-        for (auto node : graph_->GetGraphNodes()) {
+        for (auto node : graph_->GetForwardNodes()) {
             pool.enqueue(compute, node);
         }
         return graph_->Evaluating(symbol);

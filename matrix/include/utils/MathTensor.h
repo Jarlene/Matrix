@@ -105,8 +105,8 @@ namespace matrix {
     }
 
     template <class T>
-    void SigmoidGrad(const Tensor<T> &input,  Tensor<T> &out) {
-        SigmoidGrad<T>(input.Size(), input.Data(), out.MutableData());
+    void SigmoidGrad(const Tensor<T> &input, const Tensor<T> &pre, Tensor<T> &out) {
+        SigmoidGrad<T>(input.Size(), input.Data(), pre.Data(), out.MutableData());
     }
 
     template <class T>
@@ -117,8 +117,8 @@ namespace matrix {
     }
 
     template <class T>
-    void TanhGrad(const Tensor<T> &input,   Tensor<T> &out) {
-        TanhGrad<T>(input.Size(), input.Data(), out.MutableData());
+    void TanhGrad(const Tensor<T> &input, const Tensor<T> &pre,  Tensor<T> &out) {
+        TanhGrad<T>(input.Size(), input.Data(), pre.Data(), out.MutableData());
     }
 
     template <class T>
@@ -129,7 +129,7 @@ namespace matrix {
 
     template <class T>
     void ReluGrad(const Tensor<T> &input, const Tensor<T> &pre,  Tensor<T> &out) {
-        ReluGrad<T>(input.Size(), pre.Data(), input.Data(), out.MutableData());
+        ReluGrad<T>(input.Size(), input.Data(), pre.Data(), out.MutableData());
     }
 
     template <class T>

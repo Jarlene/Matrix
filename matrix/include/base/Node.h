@@ -80,6 +80,9 @@ namespace matrix {
         static bool large(const NodePtr &lhs, const NodePtr &rhs);
 
         void PrintMatrix() {
+            if (data_ == nullptr) {
+                return;
+            }
             switch (context.type) {
                 case kFloat: {
                     auto data = static_cast<float *>(data_);
