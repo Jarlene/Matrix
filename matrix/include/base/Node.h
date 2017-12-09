@@ -89,7 +89,9 @@ namespace matrix {
                     if (outputShapes.Rank() == 2) {
                         Logger::PrintMat<float>(data, outputShapes[0], outputShapes[1], nodeName);
                     } else {
-                        Logger::PrintMat<float>(data, outputShapes[0], 1, nodeName);
+                        int size = outputShapes.Size();
+                        int rank = outputShapes.Rank();
+                        Logger::PrintMat<float>(data, size/outputShapes[rank -1], outputShapes[rank -1], nodeName);
                     }
                 }
 
@@ -99,7 +101,9 @@ namespace matrix {
                     if (outputShapes.Rank() == 2) {
                         Logger::PrintMat<int>(data, outputShapes[0], outputShapes[1], nodeName);
                     } else {
-                        Logger::PrintMat<int>(data, outputShapes[0], 1, nodeName);
+                        int size = outputShapes.Size();
+                        int rank = outputShapes.Rank();
+                        Logger::PrintMat<int>(data,size/outputShapes[rank -1], outputShapes[rank -1], nodeName);
                     }
                 }
 
@@ -109,7 +113,9 @@ namespace matrix {
                     if (outputShapes.Rank() == 2) {
                         Logger::PrintMat<long>(data, outputShapes[0], outputShapes[1], nodeName);
                     } else {
-                        Logger::PrintMat<long>(data, outputShapes[0], 1, nodeName);
+                        int size = outputShapes.Size();
+                        int rank = outputShapes.Rank();
+                        Logger::PrintMat<long>(data, size/outputShapes[rank -1], outputShapes[rank -1], nodeName);
                     }
                 }
                     break;
@@ -118,7 +124,9 @@ namespace matrix {
                     if (outputShapes.Rank() == 2) {
                         Logger::PrintMat<double>(data, outputShapes[0], outputShapes[1], nodeName);
                     } else {
-                        Logger::PrintMat<double>(data, outputShapes[0], 1, nodeName);
+                        int size = outputShapes.Size();
+                        int rank = outputShapes.Rank();
+                        Logger::PrintMat<double>(data, size/outputShapes[rank -1], outputShapes[rank -1], nodeName);
                     }
                 }
                     break;
