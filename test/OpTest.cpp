@@ -998,8 +998,10 @@ namespace matrix {
         }
 
         TEST_F(OpTest, ActivationGradOp) {
-            float pre_grad[] = {1, 0.2, 0.4, 2, 3, 1};
-            float a[] = {1, 2, 3, 4, 5, 6};
+            float pre_grad[] = {1, 0.2, 0.4,
+                                2, 3, 1};
+            float a[] = {1, 2, 3,
+                         4, 5, 6};
             float b[6] = {0.731059, 0.880797,
                           0.952574, 0.982014,
                           0.993307, 0.997527};
@@ -1010,9 +1012,9 @@ namespace matrix {
             Context context = Context::Test();
 
             std::vector<void *> inputs;
-            inputs.push_back(a);
             inputs.push_back(pre_grad);
             inputs.push_back(b);
+            inputs.push_back(a);
 
             Shape pre_grad_shape = ShapeN(3, 2);
             Shape out_shape = ShapeN(3, 2);
@@ -1026,7 +1028,7 @@ namespace matrix {
             OpPtr pro = Registry::Global()->GetOp("grad_activation");
 
             std::map<std::string, Any> params;
-            ActType type = kRelu;
+            ActType type = kSigmoid;
             params["type"] = type;
             Shape out;
             Operator *op = pro->CreateOperator(context, &inShape, &out, params);
@@ -1036,26 +1038,25 @@ namespace matrix {
             switch (type) {
                 case kRelu:
                 {
-                    float target[] = {1, 1,
-                                      1, 1,
-                                      1, 1};
+                    float target[] = {1, 0.2, 0.4,
+                                      2, 3, 1};
                     checkArrayEqual(c, target, out.Size());
                 }
                     break;
 
                 case kSigmoid:
                 {
-                    float target[] = {0.196612, 0.104994,
-                                      0.0451768, 0.0176625,
-                                      0.00664821, 0.00246688};
+                    float target[] = {0.196612, 0.104994 * 0.2,
+                                      0.0451768 * 0.4, 0.0176625 * 2,
+                                      0.00664821 * 3, 0.00246688};
                     checkArrayEqual(c, target, out.Size());
                 }
                     break;
                 case kTanh:
                 {
-                    float target[] = {0.465553, 0.224197,
-                                      0.0926027, 0.0356485,
-                                      0.0133412, 0.00493985};
+                    float target[] = {0.465553, 0.224197 * 0.2,
+                                      0.0926027 * 0.4, 0.0356485 * 2,
+                                      0.0133412 * 3, 0.00493985};
                     checkArrayEqual(c, target, out.Size());
                 }
                     break;
