@@ -6,6 +6,7 @@
 #include <matrix/include/api/VariableSymbol.h>
 #include <matrix/include/executor/Executor.h>
 #include <matrix/include/optimizer/SGDOptimizer.h>
+#include <matrix/include/utils/Time.h>
 
 using namespace matrix;
 
@@ -17,20 +18,18 @@ int main() {
     auto s1 = ShapeN(1,1);
     auto as = ConstantSymbol::Create<float>("as", a, s1);
     auto bs = VariableSymbol::Create("bs", ShapeN(1,1));
-    auto cs = as + bs;
-
-    auto ds = cs * cs + bs;
-
-    Context context;
-    context.type = kFloat;
-    context.phase = TRAIN;
-    context.mode = kCpu;
-
-    auto opt = new SGDOptimizer(0.1f);
-    auto executor = std::make_shared<Executor>(ds, context, opt);
-    for (int i = 0; i < 10; ++i) {
+    auto ds = as + bs;
+    auto es = ds * ds - bs;
+    Context context = Context::Default();
+    auto opt = new SGDOptimizer(0.01f);
+    auto executor = std::make_shared<Executor>(es, context, opt);
+    long start = getCurrentTime();
+    for (int i = 0; i < 500; ++i) {
         executor->train();
+        executor->update();
         bs.PrintMatrix();
     }
+    long end = getCurrentTime();
+    std::cout << "spend time is "<< (end-start) << "ms" << std::endl;
     return 0;
 }

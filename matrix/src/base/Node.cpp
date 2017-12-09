@@ -219,8 +219,10 @@ namespace matrix {
     }
 
     void Node::DirectRun() {
-        SetData();
-        op->AsyncRun();
+        if (this->op != nullptr && !isPlaceHolder && !isShared) {
+            SetData();
+            op->AsyncRun();
+        }
     }
 
 }

@@ -6,7 +6,9 @@
 #include <matrix/include/optimizer/SGDOptimizer.h>
 #include <matrix/include/api/PlaceHolderSymbol.h>
 #include <matrix/include/executor/Executor.h>
-#include "include/DataSet.h"
+#include <matrix/include/utils/Time.h>
+#include "include/MnistDataSet.h"
+
 
 using namespace matrix;
 
@@ -16,21 +18,21 @@ const string testImagePath = "../../t10k-images-idx3-ubyte";
 const string testLabelPath = "../../t10k-labels-idx1-ubyte";
 
 
-Symbol LogisticRegression(Symbol input, int hideNum, int classNum) {
+Symbol LogisticRegression(const Symbol &input, int hideNum, int classNum) {
 
-    auto y1 = Symbol("fullConnected")
-            .SetInput("data", input)
-            .SetParam("hide_num", hideNum)
-            .SetParam("with_bias", true)
-            .Build("y1");
-
-    auto act1 = Symbol("activation")
-            .SetInput("y1", y1)
-            .SetParam("type", kSigmoid)
-            .Build("act1");
+//    auto y1 = Symbol("fullConnected")
+//            .SetInput("data", input)
+//            .SetParam("hide_num", hideNum)
+//            .SetParam("with_bias", true)
+//            .Build("y1");
+//
+//    auto act1 = Symbol("activation")
+//            .SetInput("y1", y1)
+//            .SetParam("type", kSigmoid)
+//            .Build("act1");
 
     auto y2 = Symbol("fullConnected")
-            .SetInput("act1", act1)
+            .SetInput("act1", input)
             .SetParam("hide_num", classNum)
             .SetParam("with_bias", true)
             .Build("y2");
@@ -44,16 +46,16 @@ Symbol LogisticRegression(Symbol input, int hideNum, int classNum) {
 }
 
 
-Symbol Connvolution(Symbol &input, int batchSize, int classNum) {
+Symbol Connvolution(const Symbol &input, int hideNum, int classNum) {
 
     auto conv1 = Symbol("convolution")
             .SetInput("data", input)
-            .SetParam("filter", ShapeN(3, 3))
+            .SetParam("filter", ShapeN(5, 5))
             .SetParam("with_bias", true)
             .SetParam("padding", ShapeN(0,0))
             .SetParam("stride", ShapeN(1,1))
             .SetParam("dilate", ShapeN(1,1))
-            .SetParam("filter_num", 16)
+            .SetParam("filter_num", 20)
             .SetParam("group", 1)
             .Build("conv1");
 
@@ -65,18 +67,19 @@ Symbol Connvolution(Symbol &input, int batchSize, int classNum) {
     auto pool1 = Symbol("pooling")
             .SetInput("act", act)
             .SetParam("filter", ShapeN(2,2))
+            .SetParam("stride", ShapeN(2,2))
             .SetParam("type", PoolType::kMax)
             .Build("pool1");
 
 
     auto conv2 = Symbol("convolution")
             .SetInput("pool1", pool1)
-            .SetParam("filter",  ShapeN(2, 2))
+            .SetParam("filter",  ShapeN(5, 5))
             .SetParam("with_bias", true)
             .SetParam("padding", ShapeN(0,0))
             .SetParam("stride", ShapeN(1,1))
             .SetParam("dilate", ShapeN(1,1))
-            .SetParam("filter_num", 32)
+            .SetParam("filter_num", 40)
             .SetParam("group", 1)
             .Build("conv2");
 
@@ -88,6 +91,7 @@ Symbol Connvolution(Symbol &input, int batchSize, int classNum) {
     auto pool2 = Symbol("pooling")
             .SetInput("act2", act2)
             .SetParam("filter", ShapeN(2,2))
+            .SetParam("stride", ShapeN(2,2))
             .SetParam("type", PoolType::kMax)
             .Build("pool2");
 
@@ -97,7 +101,7 @@ Symbol Connvolution(Symbol &input, int batchSize, int classNum) {
 
     auto fc = Symbol("fullConnected")
             .SetInput("flatten", flatten)
-            .SetParam("hide_num", 64)
+            .SetParam("hide_num", hideNum)
             .SetParam("with_bias", true)
             .Build("fc1");
 
@@ -119,11 +123,11 @@ Symbol Connvolution(Symbol &input, int batchSize, int classNum) {
 
 int main() {
     const int batchSize = 100;
-    const int epochSize = 200;
+    const int epochSize = 5000;
     const int classNum = 10;
     const int hideNum = 128;
 
-    Shape imageShape = ShapeN(batchSize,  1, 28, 28);
+    Shape imageShape = ShapeN(batchSize,  784);
     Shape labelShape = ShapeN(batchSize);
     auto image = PlaceHolderSymbol::Create("image", imageShape);
     auto label = PlaceHolderSymbol::Create("label", labelShape);
@@ -132,9 +136,9 @@ int main() {
     float* labelData = static_cast<float *>(malloc(sizeof(float) * labelShape.Size()));
 
 
-    auto logistic = Connvolution(image, batchSize, classNum);
+//    auto logistic = Connvolution(image, hideNum, classNum);
 
-//    auto logistic = LogisticRegression(image, hideNum, classNum);
+    auto logistic = LogisticRegression(image, hideNum, classNum);
 
     auto loss = Symbol("loss")
             .SetInput("logistic", logistic)
@@ -148,25 +152,35 @@ int main() {
             .Build("acc");
 
 
-    Context context;
-    context.type = kFloat;
-    context.phase = TRAIN;
-    context.mode = kCpu;
+    Context context = Context::Default();
     auto opt = new SGDOptimizer(0.01f);
-    DataSet trainSet(trainImagePath, trainLabelPath);
-//    DataSet testSet(testImagePath, testLabelPath);
+    MnistDataSet trainSet(trainImagePath, trainLabelPath);
+    MnistDataSet testSet(testImagePath, testLabelPath);
     auto executor = std::make_shared<Executor>(loss, context, opt);
-
     for (int i = 0; i < epochSize; ++i) {
-        while (trainSet.GetBatchData(batchSize, imageData, labelData)) {
-            image.Fill(imageData);
-            label.Fill(labelData);
-            executor->train(&acc);
-            executor->update();
+        trainSet.getMiniBatch(batchSize, imageData, labelData);
+        image.Fill(imageData);
+        label.Fill(labelData);
+        executor->syncTrain(&acc);
+        executor->update();
+        if ((i + 1) % 100 == 0) {
+            loss.PrintMatrix();
+            acc.PrintMatrix();
         }
-        loss.PrintMatrix();
-        acc.PrintMatrix();
-        trainSet.Reset();
+        if ((i + 1) % 1000 == 0) {
+            int total_run_data = 0;
+            int test_correct = 0;
+            int total = testSet.getNumberOfImages();
+            for (int j = 0; j < total; j += batchSize) {
+                testSet.getMiniBatch(batchSize, imageData, labelData);
+                image.Fill(imageData);
+                label.Fill(labelData);
+                total_run_data += batchSize;
+                float *cnt = static_cast<float *>(executor->evaluating(&acc));
+                test_correct += *cnt * batchSize;
+            }
+            std::cout << "correct rate: " << test_correct * 1.0f / total << std::endl;
+        }
     }
 
     free(imageData);

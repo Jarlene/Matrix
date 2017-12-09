@@ -2,52 +2,45 @@
 // Created by Jarlene on 2017/11/15.
 //
 
-#include <matrix/include/api/ConstantSymbol.h>
-#include <matrix/include/optimizer/SGDOptimizer.h>
-#include <matrix/include/executor/Executor.h>
-#include <matrix/include/api/VariableSymbol.h>
-
+#include <matrix/include/base/Node.h>
+#include <matrix/include/executor/DAGGraph.h>
 using namespace matrix;
 
 
 int main(int argc, char *argv[]) {
 
-    float a = 3;
-    auto as = ConstantSymbol::Create("a", &a, ShapeN(1, 1));
-    auto bs = VariableSymbol::Create("b", ShapeN(1, 1));
+    auto n0 = Node::Create();
+    auto n1 = Node::Create();
+    auto n2 = Node::Create();
+    auto n3 = Node::Create();
+    auto n4 = Node::Create();
+    auto n5 = Node::Create();
+    auto n6 = Node::Create();
 
-    float b = 1;
-    auto ts = ConstantSymbol::Create("ts", &b, ShapeN(1, 1));
+    n0->AddOutput(n1);
+    n1->AddOutput(n2);
+    n1->AddOutput(n3);
+    n3->AddOutput(n4);
+    n3->AddOutput(n6);
+    n4->AddOutput(n5);
+    n5->AddOutput(n6);
 
-    auto cs = as + bs;
+    BFSRecurseVisitor<NodePtr> bfs;
 
-//    auto ds = Symbol("activation")
-//            .SetInput("cs", cs)
-//            .SetParam("type", kSigmoid)
-//            .Build("act1");
-//
-//    auto es = Symbol("activation")
-//            .SetInput("cs", cs)
-//            .SetParam("type", kSigmoid)
-//            .Build("act2");
+    std::cout << std::endl << "TRAVERSE CHILDREN (start Node 0)  1 level" << std::endl;
+    for (auto n : bfs.traverseChildren(n0, 1)) {
+        std::cout << n->get()->id_  << std::endl;
+    }
 
-    auto fs = cs * cs + bs;
+    std::cout << std::endl << "TRAVERSE UNDIRECTED (start Node 5) 2 levels " << std::endl;
+    for (auto n : bfs.traverseUndirected(n5, 2)) {
+        std::cout << n->get()->id_ << std::endl;
+    }
 
+    std::cout << std::endl << "TRAVERSE CHILDREN (start Node 0)  all levels" << std::endl;
 
-    Context context;
-    context.type = kFloat;
-    context.phase = TRAIN;
-    context.mode = kCpu;
-
-    auto opt = new SGDOptimizer(0.001f);
-    auto executor = std::make_shared<Executor>(fs, context, opt);
-    for (int i = 0; i < 500; ++i) {
-        executor->train();
-        executor->update();
-        fs.PrintMatrix();
-        if ((1 + i) % 100 == 0) {
-            bs.PrintMatrix();
-        }
+    for (auto n : bfs.traverseChildren(n0)) {
+        std::cout << n->get()->id_ << std::endl;
     }
     return 0;
 }
