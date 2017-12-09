@@ -131,7 +131,7 @@ int main() {
     const int epochSize = 5000;
     const int classNum = 10;
     const int hideNum = 128;
-
+//    Shape imageShape = ShapeN(batchSize,  784);
     Shape imageShape = ShapeN(batchSize,  1, 28, 28);
     Shape labelShape = ShapeN(batchSize);
     auto image = PlaceHolderSymbol::Create("image", imageShape);
@@ -166,26 +166,28 @@ int main() {
         trainSet.getMiniBatch(batchSize, imageData, labelData);
         image.Fill(imageData);
         label.Fill(labelData);
-        executor->train(&acc);
+        executor->syncTrain(&acc);
         executor->update();
-        if ((i + 1) % 100 == 0) {
-            loss.PrintMatrix();
-            acc.PrintMatrix();
-        }
-        if ((i + 1) % 1000 == 0) {
-            int total_run_data = 0;
-            int test_correct = 0;
-            int total = testSet.getNumberOfImages();
-            for (int j = 0; j < total; j += batchSize) {
-                testSet.getMiniBatch(batchSize, imageData, labelData);
-                image.Fill(imageData);
-                label.Fill(labelData);
-                total_run_data += batchSize;
-                float *cnt = static_cast<float *>(executor->evaluating(&acc));
-                test_correct += *cnt * batchSize;
-            }
-            std::cout << "correct rate: " << test_correct * 1.0f / total << std::endl;
-        }
+        loss.PrintMatrix();
+        acc.PrintMatrix();
+//        if ((i + 1) % 100 == 0) {
+//            loss.PrintMatrix();
+//            acc.PrintMatrix();
+//        }
+//        if ((i + 1) % 1000 == 0) {
+//            int total_run_data = 0;
+//            int test_correct = 0;
+//            int total = testSet.getNumberOfImages();
+//            for (int j = 0; j < total; j += batchSize) {
+//                testSet.getMiniBatch(batchSize, imageData, labelData);
+//                image.Fill(imageData);
+//                label.Fill(labelData);
+//                total_run_data += batchSize;
+//                float *cnt = static_cast<float *>(executor->evaluating(&acc));
+//                test_correct += int((*cnt * batchSize) + 0.5);
+//            }
+//            std::cout << "correct rate: " << test_correct * 1.0f / total << std::endl;
+//        }
     }
 
     free(imageData);

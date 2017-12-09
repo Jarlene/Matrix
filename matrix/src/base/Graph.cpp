@@ -161,6 +161,7 @@ namespace matrix {
         forward.erase(unique(forward.begin(), forward.end()), forward.end());
         nodes_.insert(nodes_.end(), forward.begin(), forward.end());
         this->forward.insert(this->forward.end(), forward.begin(), forward.end());
+        this->forward.pop_back();
         while (!forward.empty()) {
             auto pre = forward.back();
             forward.pop_back();

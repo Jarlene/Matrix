@@ -17,10 +17,9 @@ namespace matrix {
         if(idx == -1) {
             Logger::Global()->Fatal("ConcatGradOp need input idx");
         }
-        T *out = Output<T>();
-        const T *pre_grad = Input<T>(0);
-        int size = inputShapes->at(idx)->Size();
-        memcpy(out, pre_grad + idx * size, size);
+        Tensor<T> out(Output<T>(), *outputShape);
+        Tensor<T> pre_grad(Input<T>(idx+2), *inputShapes->at(idx+2));
+        CPUCopy(pre_grad.Size(), pre_grad.Data(), 1, out.MutableData(), 1);
         return true;
     }
 

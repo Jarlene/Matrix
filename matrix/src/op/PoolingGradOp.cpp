@@ -26,10 +26,11 @@ namespace matrix {
         int channel = inputShapes->at(INPUT)->At(1);
         int input_width = inputShapes->at(INPUT)->At(2);
         int input_height = inputShapes->at(INPUT)->At(3);
-        int imageSize = input_height * input_width;
+        const int input_stride = input_height * input_width;
 
         int output_width = inputShapes->at(SELF_OUT)->At(2);
         int output_height = inputShapes->at(SELF_OUT)->At(3);
+        const int output_stride = output_width * output_height;
 
         const T * pre_grad = Input<T>(PRE_GRAG);
         T * out = Output<T>();
@@ -47,11 +48,11 @@ namespace matrix {
                                 out[input_idx] += pre_grad[output_idx];
                             }
                         }
-
+                        out += input_stride;
+                        pre_grad += output_stride;
+                        maxIndex += output_stride;
                     }
-                    out += imageSize;
-                    pre_grad += output_width * output_height;
-                    maxIndex += output_width * output_height;
+
                 }
             }
                 break;
@@ -74,9 +75,10 @@ namespace matrix {
                                 }
                             }
                         }
+                        pre_grad += output_stride;
+                        out +=  input_stride;
                     }
-                    pre_grad += output_width * output_height;
-                    out +=  imageSize;
+
                 }
             }
                 break;

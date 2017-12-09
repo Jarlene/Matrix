@@ -183,11 +183,8 @@ namespace matrix {
             }
             SetData();
             op->AsyncRun();
-            Complete();
-        } else {
-            Complete();
         }
-
+        Complete();
     }
 
     void Node::CountDown() {

@@ -15,8 +15,11 @@ namespace matrix {
     template <class T, class xpu>
     bool ConcatOp<T, xpu>::Run() {
         T *out = Output<T>();
+        int total = 0;
         for (int i = 0; i < InputSize(); ++i) {
-            memcpy(out + i * inputShapes->at(i)->Size(), Input<T>(i), inputShapes->at(i)->Size());
+            int size = inputShapes->at(i)->Size();
+            CPUCopy(size, Input<T>(i), 1, out + total, 1);
+            total += size;
         }
         return true;
     }
