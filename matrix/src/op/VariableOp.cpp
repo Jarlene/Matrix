@@ -15,7 +15,7 @@ namespace matrix {
     template <class T, class xpu>
     bool VariableOp<T, xpu>::Run() {
         if (!init) {
-            if (HasArg("isTrain")) {
+            if (HasArg("isTrain") && GetArgValue<bool>("isTrain")) {
                 Tensor<T> out(Output<T>(), *outputShape);
                 if (HasArg("constant")) {
                     T val = GetArgValue<T>("constant", T(0.1));

@@ -210,4 +210,13 @@ namespace matrix {
         return node;
     }
 
+    void* Graph::Evaluating(const Symbol *symbol) {
+        auto node = symbol->GetNode();
+        if (node->data_ == nullptr) {
+            node->data_ = MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(node->memorySize);
+        }
+        node->Run();
+        return node->data_;
+    }
+
 }

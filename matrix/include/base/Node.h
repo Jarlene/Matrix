@@ -135,6 +135,8 @@ namespace matrix {
 
         void Run();
 
+        void DirectRun();
+
         void SwitchType(const Context &context);
 
     private:

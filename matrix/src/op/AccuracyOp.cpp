@@ -31,6 +31,7 @@ namespace matrix {
                 T pred = Input<T>(PREDICTION)[i * D + j];
                 if (pred > max) {
                     index = j;
+                    max = pred;
                 }
             }
             if (label == index) {

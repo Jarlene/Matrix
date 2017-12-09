@@ -33,10 +33,18 @@ namespace matrix {
     }
 
 
-    void Executor::evaluating(const Symbol *symbol) {
-        if (symbol != nullptr) {
-            graph_->Accuracy(symbol)->Run();
+    void* Executor::evaluating(const Symbol *symbol) {
+        if (symbol == nullptr) {
+            return nullptr;
         }
+        auto compute =[&](NodePtr &node) {
+            node->Run();
+        };
+        ThreadPool pool(CPU_CORES + 1);
+        for (auto node : graph_->GetGraphNodes()) {
+            pool.enqueue(compute, node);
+        }
+        return graph_->Evaluating(symbol);
     }
 
     void Executor::update() {

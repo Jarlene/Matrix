@@ -218,4 +218,9 @@ namespace matrix {
         this->nodeName = nodeName;
     }
 
+    void Node::DirectRun() {
+        SetData();
+        op->AsyncRun();
+    }
+
 }
