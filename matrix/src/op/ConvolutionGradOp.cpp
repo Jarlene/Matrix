@@ -75,8 +75,8 @@ namespace matrix {
                             dilate[0],dilate[1], colData);
 
                 }
-                out += channel * inputShapes->at(DATA)->At(2) * inputShapes->at(DATA)->At(3);
-                preGrad += filterNum * inputShapes->at(SELF_OUT)->At(2) * inputShapes->at(SELF_OUT)->At(3);
+                out += inputOffSize * group;
+                preGrad += outputOffset * group;
             }
 
         } else if (index == 1) {
@@ -98,12 +98,10 @@ namespace matrix {
                                T(0.0),
                                out + j * filterOffset);
 
-                    inputData += channel * input_height * input_width;
-                    preGrad += filterNum * inputShapes->at(SELF_OUT)->At(2) * inputShapes->at(SELF_OUT)->At(3);
+                    inputData += inputOffSize * group;
+                    preGrad += outputOffset * group;
                 }
             }
-            Tensor<T> kernel(out, *outputShape);
-            Scale(kernel, T(1.0f/num));
         } else if (index == 2) {
             Tensor<T> bias_grad(Output<T>(), *inputShapes->at(BIAS));
             Shape flatten = ShapeN(int(inputShapes->at(PRE_GRAG)->Size()/filterNum), filterNum);
