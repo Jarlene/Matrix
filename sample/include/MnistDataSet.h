@@ -5,6 +5,7 @@
 #ifndef MATRIX_MNISTDATASET_H
 #define MATRIX_MNISTDATASET_H
 
+using namespace std;
 
 class MnistDataSet {
 public:
