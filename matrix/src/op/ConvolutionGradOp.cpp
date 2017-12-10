@@ -81,9 +81,9 @@ namespace matrix {
 
         } else if (index == 1) {
             const T *inputData = Input<T>(DATA);
-            int M = channel / group;
-            int K = outputShape->At(2) * outputShape->At(3);
-            int N = filterNum / group *  kernel[2] * kernel[3];
+            int M = filterNum / group;
+            int K = outSize;
+            int N = channel / group *  kernel[2] * kernel[3];
             for (int i = 0; i < num; ++i) {
                 for (int j = 0; j < group; ++j) {
                     img2col<T>(inputData + j * inputOffSize, channel,
@@ -95,13 +95,15 @@ namespace matrix {
                     CPUGemm<T>(NoTrans,Trans, M, N, K, T(1.0),
                                preGrad + j * outputOffset,
                                colData,
-                               T(0.0),
+                               i == 0 ? T(0.0) : T(1.0),
                                out + j * filterOffset);
 
-                    inputData += inputOffSize * group;
-                    preGrad += outputOffset * group;
                 }
+                inputData += inputOffSize * group;
+                preGrad += outputOffset * group;
             }
+//            Tensor<T> outTensor(out, *outputShape);
+//            Scale<T>(outTensor, T(1.0)/num);
         } else if (index == 2) {
             Tensor<T> bias_grad(Output<T>(), *inputShapes->at(BIAS));
             Shape flatten = ShapeN(int(inputShapes->at(PRE_GRAG)->Size()/filterNum), filterNum);

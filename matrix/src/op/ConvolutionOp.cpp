@@ -155,8 +155,8 @@ namespace matrix {
                     channel = inputShapes->at(DATA)->At(3);
                 }
                 filter.reShape(ShapeN(filter_num, channel, filter[0], filter[1]));
-                auto colShape = ShapeN(channel/group, inputShapes->at(KERNEL)->At(2) * inputShapes->at(KERNEL)->At(3),
-                                       outputShape->At(2) * outputShape->At(3));
+                auto colShape = ShapeN(channel/group, inputShapes->at(KERNEL)->At(2) , inputShapes->at(KERNEL)->At(3),
+                                       outputShape->At(2) , outputShape->At(3));
                 func({&colShape});
             } else {
                 ImageOrder order = GetArgValue<ImageOrder>("order", NCHW);
@@ -166,8 +166,8 @@ namespace matrix {
                 } else {
                     channel = inputShapes->at(DATA)->At(3);
                 }
-                auto colShape = ShapeN(channel/group, inputShapes->at(KERNEL)->At(2) * inputShapes->at(KERNEL)->At(3),
-                                       outputShape->At(2) * outputShape->At(3));
+                auto colShape = ShapeN(channel/group, inputShapes->at(KERNEL)->At(2) , inputShapes->at(KERNEL)->At(3),
+                                       outputShape->At(2) , outputShape->At(3));
                 func({&colShape});
             }
             return true;
