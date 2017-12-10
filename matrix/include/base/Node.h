@@ -151,6 +151,10 @@ namespace matrix {
         void SwitchType(const Context &context);
 
     private:
+        friend class Graph;
+        void Reset();
+
+    private:
         void SetData();
         void CountDown();
         void Complete();

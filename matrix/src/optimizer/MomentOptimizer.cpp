@@ -6,7 +6,7 @@
 
 namespace matrix {
 
-    MomentOptimizer::MomentOptimizer(float learning_rate) : learning_rate(learning_rate){
+    MomentOptimizer::MomentOptimizer(float learning_rate, float mont) : learning_rate(learning_rate), momentum(mont) {
 
     }
 
@@ -16,7 +16,7 @@ namespace matrix {
             auto node = Node::Create();
             node->opName = "applyGrad";
             node->params["learning_rate"] = learning_rate;
-            node->params["momentum"] = 0.9f;
+            node->params["momentum"] = momentum;
             node->params["type"] = kMomentum;
             node->inputs.push_back(it.first);
             node->inputs.push_back(it.second);

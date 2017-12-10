@@ -49,7 +49,7 @@ namespace matrix {
 
     void Executor::update() {
 
-        auto updateFunc = [&](NodePtr &node) {
+        auto updateFunc = [this](NodePtr &node) {
             try {
                 node->DirectRun();
             } catch (std::exception &e){
@@ -83,7 +83,7 @@ namespace matrix {
         Init();
 
         auto compute =[&](NodePtr &node) {
-            std::lock_guard<std::mutex> lock (mutex_);
+
             try {
                 node->DirectRun();
             } catch (std::exception &e){
@@ -91,6 +91,7 @@ namespace matrix {
             }
 
             {
+                std::lock_guard<std::mutex> lock (mutex_);
                 for (auto &item : node->outputs) {
                     if(graph_->GetNode(item.lock()->id_)) {
                         item.lock()->depenList.remove(node);

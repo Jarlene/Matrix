@@ -33,8 +33,9 @@ namespace matrix {
             {
                 float mon = GetArgValue<float>("momentum", 0.9f);
                 T learn = T(-1*learning_rate);
-                Scale(variable, T(1 + mon));
-                ApplyNode<T>(variable, grad_variable, learn);
+                Tensor<T> mom(Input<T>(MOMENTUM), *inputShapes->at(MOMENTUM));
+                applyMomentum<T>(mom, grad_variable, T(1), T(mon));
+                ApplyNode<T>(variable, mom, learn);
             }
                 break;
             case kNesterov:
@@ -99,6 +100,46 @@ namespace matrix {
     template <class T, class xpu>
     bool UpdateOp<T, xpu>::RunOnDevice() {
         return false;
+    }
+
+    template<class T, class xpu>
+    bool UpdateOp<T, xpu>::ShareNodes(std::function<void(std::initializer_list<Shape *> shapes)> func) {
+        auto type = GetArgValue<ApplyGradMode>("type", kSGD);
+        bool result = false;
+        switch (type) {
+            case kSGD:
+                break;
+            case kMomentum:
+                if (InputSize() == 2) {
+                    Shape momentum;
+                    momentum.reShape(*inputShapes->at(GRAD_VARIABLE));
+                    func({&momentum});
+                    result = true;
+                }
+                break;
+            case kNesterov:
+                result = true;
+                break;
+            case kAdagrad:
+                result = true;
+                break;
+            case kAdadelta:
+                result = true;
+                break;
+            case kRMSprop:
+                result = true;
+                break;
+            case kAdam:
+                result = true;
+                break;
+            case kAdamax:
+                result = true;
+                break;
+            case kNadam:
+                result = true;
+                break;
+        }
+        return result;
     }
 
 

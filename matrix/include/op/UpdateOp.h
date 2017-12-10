@@ -15,8 +15,9 @@ namespace matrix {
     template <class T, class xpu>
     class UpdateOp : public Operator {
     SAME_FUNCTION(Update);
+        virtual bool ShareNodes(std::function<void(std::initializer_list<Shape *> shapes)> func) override ;
     DISABLE_COPY_AND_ASSIGN(Update);
-        INPUT_TAG(VARIABLE, GRAD_VARIABLE);
+        INPUT_TAG(VARIABLE, GRAD_VARIABLE, MOMENTUM);
     public:
         T * pre{nullptr};
     };

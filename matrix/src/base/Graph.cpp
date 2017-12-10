@@ -72,6 +72,15 @@ namespace matrix {
                 node->data_ = MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(node->memorySize);
             }
         }
+        for (auto &node : variables) {
+            if (node->inputs.size() == 3) {
+                auto last = node->inputs.at(2);
+                if (last->data_ == nullptr) {
+                    last->data_ = MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(last->memorySize);
+                }
+            }
+        }
+
 //        GraphAlgorithm colorGraph;
 //        colorGraph.Coloring(*this, graphColor_, fetch);
 //
@@ -217,6 +226,17 @@ namespace matrix {
             node->data_ = MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(node->memorySize);
         }
         node->Run();
+        for (auto &n : nodes_) {
+            n->Reset();
+        }
+        for (auto &n : variables) {
+            n->Reset();
+        }
+
+        for (auto &n : variableNodes_) {
+            n.first->Reset();
+            n.second->Reset();
+        }
         return node->data_;
     }
 

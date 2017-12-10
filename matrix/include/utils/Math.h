@@ -387,7 +387,46 @@ namespace matrix {
             posy += incy;
         }
     }
+    /**
+     * Y = alpha * X + beta * Y
+     * @param T
+     * @param N
+     * @param alpha
+     * @param X
+     * @param beta
+     * @param Y
+     */
+    template <class T>
+    inline void CPUAxpby(const int N, const T alpha, const T *X, int incx,
+                         const T beta, T *Y, int incy);
 
+    template <>
+    inline void CPUAxpby<float>(const int N, const float alpha, const float *X, int incx,
+                         const float beta, float *Y, int incy) {
+#ifdef BLAS
+        cblas_saxpby(N, alpha, X, incx, beta, Y, incy);
+#endif
+    }
+
+    template <>
+    inline void CPUAxpby<double>(const int N, const double alpha, const double *X, int incx,
+                                const double beta, double *Y, int incy) {
+#ifdef BLAS
+        cblas_daxpby(N, alpha, X, incx, beta, Y, incy);
+#endif
+    }
+
+
+    template <>
+    inline void CPUAxpby<int>(const int N, const int alpha, const int *X, int incx,
+                                 const int beta, int *Y, int incy) {
+
+    }
+    template <>
+    inline void CPUAxpby<long>(const int N, const long alpha, const long *X, int incx,
+                              const long beta, long *Y, int incy) {
+
+    }
 
     /// Y=X
     /// \tparam T

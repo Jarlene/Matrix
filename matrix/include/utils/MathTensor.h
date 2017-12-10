@@ -34,6 +34,10 @@ namespace matrix {
         CPUAxpy(out.Size(), learning_rate, grad.Data(), 1, out.MutableData(), 1);
     }
 
+    template <class T>
+    void applyMomentum(Tensor<T> &base, Tensor<T> &grad, T alpha, T beta) {
+        CPUAxpby(base.Size(), alpha, grad.Data(), 1, beta, base.MutableData(), 1);
+    }
 
     template <class T>
     void MatrixMul(const Tensor<T> &a, const bool ATran,  const Tensor<T> &b, const bool BTran, Tensor<T> &c, T beta = T(0)) {

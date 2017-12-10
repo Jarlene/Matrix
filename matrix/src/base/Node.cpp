@@ -170,8 +170,8 @@ namespace matrix {
     }
 
     void Node::Complete() {
-        for (auto wrap_iter = outputs.begin(); wrap_iter != outputs.end(); ++wrap_iter) {
-            wrap_iter->lock()->CountDown();
+        for (auto &node : outputs) {
+            node.lock()->CountDown();
         }
         this->depens = static_cast<int>(depenList.size());
     }
@@ -220,6 +220,10 @@ namespace matrix {
             SetData();
             op->AsyncRun();
         }
+    }
+
+    void Node::Reset() {
+        depens = depenList.size();
     }
 
 }

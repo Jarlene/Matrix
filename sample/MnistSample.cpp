@@ -3,10 +3,11 @@
 //
 #include <matrix/include/utils/Logger.h>
 #include <matrix/include/api/Symbol.h>
-#include <matrix/include/optimizer/SGDOptimizer.h>
+#include <matrix/include/optimizer/MomentOptimizer.h>
 #include <matrix/include/api/PlaceHolderSymbol.h>
 #include <matrix/include/executor/Executor.h>
 #include <matrix/include/utils/Time.h>
+#include <matrix/include/optimizer/SGDOptimizer.h>
 #include "include/MnistDataSet.h"
 
 
@@ -46,7 +47,7 @@ Symbol LogisticRegression(const Symbol &input, int hideNum, int classNum) {
 }
 
 
-Symbol Connvolution(const Symbol &input, int hideNum, int classNum) {
+Symbol Convolution(const Symbol &input, int hideNum, int classNum) {
 
     auto conv1 = Symbol("convolution")
             .SetInput("data", input)
@@ -128,11 +129,11 @@ Symbol Connvolution(const Symbol &input, int hideNum, int classNum) {
 
 int main() {
     const int batchSize = 100;
-    const int epochSize = 5000;
+    const int epochSize = 2000;
     const int classNum = 10;
     const int hideNum = 128;
-//    Shape imageShape = ShapeN(batchSize,  784);
-    Shape imageShape = ShapeN(batchSize,  1, 28, 28);
+    Shape imageShape = ShapeN(batchSize,  784);
+//    Shape imageShape = ShapeN(batchSize,  1, 28, 28);
     Shape labelShape = ShapeN(batchSize);
     auto image = PlaceHolderSymbol::Create("image", imageShape);
     auto label = PlaceHolderSymbol::Create("label", labelShape);
@@ -141,9 +142,9 @@ int main() {
     float* labelData = static_cast<float *>(malloc(sizeof(float) * labelShape.Size()));
 
 
-    auto logistic = Connvolution(image, hideNum, classNum);
+//    auto logistic = Convolution(image, hideNum, classNum);
 
-//    auto logistic = LogisticRegression(image, hideNum, classNum);
+    auto logistic = LogisticRegression(image, hideNum, classNum);
 
     auto loss = Symbol("loss")
             .SetInput("logistic", logistic)
@@ -158,7 +159,7 @@ int main() {
 
 
     Context context = Context::Default();
-    auto opt = new SGDOptimizer(0.5f/batchSize);
+    auto opt = new SGDOptimizer(0.01f);
     MnistDataSet trainSet(trainImagePath, trainLabelPath);
     MnistDataSet testSet(testImagePath, testLabelPath);
     auto executor = std::make_shared<Executor>(loss, context, opt);
@@ -166,28 +167,29 @@ int main() {
         trainSet.getMiniBatch(batchSize, imageData, labelData);
         image.Fill(imageData);
         label.Fill(labelData);
-        executor->syncTrain(&acc);
+        long start = getCurrentTime();
+        executor->train(&acc);
         executor->update();
-        loss.PrintMatrix();
-        acc.PrintMatrix();
-//        if ((i + 1) % 100 == 0) {
-//            loss.PrintMatrix();
-//            acc.PrintMatrix();
-//        }
-//        if ((i + 1) % 1000 == 0) {
-//            int total_run_data = 0;
-//            int test_correct = 0;
-//            int total = testSet.getNumberOfImages();
-//            for (int j = 0; j < total; j += batchSize) {
-//                testSet.getMiniBatch(batchSize, imageData, labelData);
-//                image.Fill(imageData);
-//                label.Fill(labelData);
-//                total_run_data += batchSize;
-//                float *cnt = static_cast<float *>(executor->evaluating(&acc));
-//                test_correct += int((*cnt * batchSize) + 0.5);
-//            }
-//            std::cout << "correct rate: " << test_correct * 1.0f / total << std::endl;
-//        }
+        long end = getCurrentTime();
+        if ((i + 1) % 100 == 0) {
+            std::cout << "the epoch[" << (i + 1) << "] take time: " << end - start << " ms" << std::endl;
+            loss.PrintMatrix();
+            acc.PrintMatrix();
+        }
+        if ((i + 1) % 1000 == 0) {
+            int total_run_data = 0;
+            int test_correct = 0;
+            int total = testSet.getNumberOfImages();
+            for (int j = 0; j < total; j += batchSize) {
+                testSet.getMiniBatch(batchSize, imageData, labelData);
+                image.Fill(imageData);
+                label.Fill(labelData);
+                total_run_data += batchSize;
+                float *cnt = static_cast<float *>(executor->evaluating(&acc));
+                test_correct += int((*cnt * batchSize) + 0.5);
+            }
+            std::cout << "correct rate: " << test_correct * 1.0f / total << std::endl;
+        }
     }
 
     free(imageData);
