@@ -12,24 +12,11 @@ namespace matrix {
 
     template <class T, class xpu>
     bool DropoutGradOp<T, xpu>::Run() {
-        bool isTrain = this->context->phase == TRAIN;
-        const T * data = Input<T>(DATA);
+        const T * grad = Input<T>(PRE_GRAD);
         T *out = Output<T>();
-        if (isTrain) {
-            T * mask = InputNonConst<T>(MASK);
-            Random<T>(outputShape->Size(), mask, T(0), T(1.0));
-            float rate = GetArgValue<float>("rate", 0.5f);
-            for (int i = 0; i < outputShape->Size(); ++i) {
-                if (mask[i] < rate) {
-                    mask[i] = T(0);
-                    out[i] = 0;
-                } else {
-                    mask[i] = T(1);
-                    out[i] = data[i];
-                }
-            }
-        } else {
-            FallThrow();
+        const T * mask = Input<T>(MASK);
+        for (int i = 0; i < outputShape->Size(); ++i) {
+            out[i] = grad[i] * mask[i];
         }
         return true;
     }

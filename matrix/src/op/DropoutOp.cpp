@@ -30,7 +30,7 @@ namespace matrix {
                 }
             }
         } else {
-            FallThrow();
+            CPUCopy(inputShapes->at(DATA)->Size(), Input<T>(DATA), 1, Output<T>(), 1);
         }
         return true;
     }
