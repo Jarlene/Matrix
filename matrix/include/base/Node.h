@@ -31,7 +31,7 @@ namespace matrix {
 
         Operator *op{nullptr};
 
-        Context context;
+        Context context = Context::Default();
 
         std::vector<Shape *> inputShapes;
 

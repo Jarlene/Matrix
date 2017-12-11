@@ -27,7 +27,7 @@ public: \
    classname(const MatrixType &type); \
    ~classname();  \
    virtual void InferShape(std::vector<Shape*> &inShape, Shape *outShape); \
-   virtual Operator* CreateOperator(Context context,  \
+   virtual Operator* CreateOperator(Context *context,  \
                                  std::vector<Shape*> *inShape, Shape *outShape, \
                                  std::map<std::string, Any> &args) ; \
 
@@ -94,9 +94,9 @@ private:                                                            \
 #define CREATE_OPERATOR(context, param, name, ...) \
    Operator *op = nullptr;  \
    TYPE_SWITCH(param->type, DType, {  \
-      if (context.mode == kCpu) { \
+      if (context->mode == kCpu) { \
          op = new name<DType, CPU>(*param); \
-      } else if (context.mode == kGpu) { \
+      } else if (context->mode == kGpu) { \
          op = new name<DType, GPU>(*param); \
       }\
       {__VA_ARGS__} \
@@ -113,10 +113,10 @@ private:                                                            \
     classname::~classname() { \
         delete param; \
     }  \
-    Operator *classname::CreateOperator(Context context, \
+    Operator *classname::CreateOperator(Context *context, \
                                     std::vector<Shape *> *inShape, Shape *outShape, \
                                     std::map<std::string, Any> &args) { \
-        param->context = &context;\
+        param->context = context;\
         param->args = &args; \
         InferShape(*inShape, outShape); \
         param->inputShapes = inShape; \
@@ -267,7 +267,7 @@ namespace matrix {
     public:
         OperatorProperty() = default;
         virtual void InferShape(std::vector<Shape*> &inShape, Shape *outShape)  = 0;
-        virtual Operator* CreateOperator(Context context,
+        virtual Operator* CreateOperator(Context *context,
                                          std::vector<Shape *> *inShape, Shape *outShape,
                                          std::map<std::string, Any> &args) {
             return nullptr;

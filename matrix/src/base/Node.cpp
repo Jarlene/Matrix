@@ -57,7 +57,7 @@ namespace matrix {
         for(NodePtr node : this->inputs) {
             inputShapes.push_back(&node->outputShapes);
         }
-        op = opPtr->CreateOperator(this->context, &inputShapes, &outputShapes, params);
+        op = opPtr->CreateOperator(&context, &inputShapes, &outputShapes, params);
         if (op == nullptr) {
             Logger::Global()->Fatal("can not find the op %s", this->opName.c_str());
         }
