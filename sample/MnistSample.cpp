@@ -109,8 +109,8 @@ int main() {
     const int epochSize = 2000;
     const int classNum = 10;
     const int hideNum = 128;
-//    Shape imageShape = ShapeN(batchSize,  784);
-    Shape imageShape = ShapeN(batchSize,  1, 28, 28);
+    Shape imageShape = ShapeN(batchSize,  784);
+//    Shape imageShape = ShapeN(batchSize,  1, 28, 28);
     Shape labelShape = ShapeN(batchSize);
     auto image = PlaceHolderSymbol::Create("image", imageShape);
     auto label = PlaceHolderSymbol::Create("label", labelShape);
@@ -119,9 +119,8 @@ int main() {
     float* labelData = static_cast<float *>(malloc(sizeof(float) * labelShape.Size()));
 
 
-    auto logistic = Convolution(image, hideNum, classNum);
-
-//    auto logistic = LogisticRegression(image, hideNum, classNum);
+//    auto logistic = Convolution(image, hideNum, classNum);
+    auto logistic = LogisticRegression(image, hideNum, classNum);
 
     auto loss = Symbol("loss")
             .SetInput("logistic", logistic)
