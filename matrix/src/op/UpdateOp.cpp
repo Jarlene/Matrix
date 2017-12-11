@@ -18,10 +18,12 @@ namespace matrix {
         if (InputSize() < 2) {
             Logger::Global()->Fatal("input size less then 2");
         }
+        ++num_of_pass;
         Tensor<T> variable(Input<T>(VARIABLE), *inputShapes->at(VARIABLE));
         Tensor<T> grad_variable(Input<T>(GRAD_VARIABLE), *inputShapes->at(GRAD_VARIABLE));
         auto type = GetArgValue<ApplyGradMode>("type", kSGD);
         float learning_rate = GetArgValue<float>("learning_rate", 0.001f);
+        learning_rate *= 1.0f/sqrt(1.0f + num_of_pass) ;
         switch (type) {
             case kSGD:
             {
@@ -31,11 +33,12 @@ namespace matrix {
                 break;
             case kMomentum:
             {
-                float mon = GetArgValue<float>("momentum", 0.9f);
-                T learn = T(-1*learning_rate);
-                Tensor<T> mom(Input<T>(MOMENTUM), *inputShapes->at(MOMENTUM));
-                applyMomentum<T>(mom, grad_variable, T(1), T(mon));
-                ApplyNode<T>(variable, mom, learn);
+                Tensor<T> momentum(Input<T>(MOMENTUM), *inputShapes->at(MOMENTUM));
+                float mon = GetArgValue<float>("momentum", 0.5f);
+                T learn = T(-1.0 * learning_rate);
+                Scale(grad_variable, learn);
+                applyMomentum<T>(momentum, grad_variable, T(1), T(mon));
+                ApplyNode<T>(variable, momentum, T(1));
             }
                 break;
             case kNesterov:

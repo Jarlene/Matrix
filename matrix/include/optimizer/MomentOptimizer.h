@@ -12,7 +12,7 @@ namespace matrix {
 
     class MomentOptimizer : public BaseOptimizer {
     public:
-        MomentOptimizer(float learning_rate = 0.01f, float mont = 0.9f);
+        MomentOptimizer(float learning_rate = 0.0001f, float mont = 0.005f);
         virtual std::vector<NodePtr> GeneratorUpdate(const std::map<NodePtr, NodePtr> &variableNodes) override ;
     private:
         float learning_rate;

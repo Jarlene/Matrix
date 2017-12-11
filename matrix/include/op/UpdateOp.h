@@ -18,8 +18,9 @@ namespace matrix {
         virtual bool ShareNodes(std::function<void(std::initializer_list<Shape *> shapes)> func) override ;
     DISABLE_COPY_AND_ASSIGN(Update);
         INPUT_TAG(VARIABLE, GRAD_VARIABLE, MOMENTUM);
-    public:
-        T * pre{nullptr};
+    private:
+        long num_of_pass = 0;
+
     };
 
 

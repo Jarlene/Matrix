@@ -30,7 +30,7 @@ namespace matrix {
     }
 
     template <class T>
-    void ApplyNode(Tensor<T> &out,  Tensor<T> &grad, T &learning_rate) {
+    void ApplyNode(Tensor<T> &out,  Tensor<T> &grad, T learning_rate) {
         CPUAxpy(out.Size(), learning_rate, grad.Data(), 1, out.MutableData(), 1);
     }
 
