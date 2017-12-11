@@ -320,15 +320,15 @@ namespace matrix {
 
             float col[81 * 3] = {0};
 
-            float target[] = {13, 13, 12,
-                              7, 13, 15,
-                              4, 13, 18,
-                              13, 13, 12,
-                              7, 13, 15,
-                              4, 13, 18,
-                              13, 13, 12,
-                              7, 13, 15,
-                              4, 13, 18,};
+            float target[] = {13, 13, 13,
+                              7, 13, 16,
+                              4, 13, 19,
+                              13, 13, 13,
+                              7, 13, 16,
+                              4, 13, 19,
+                              12, 12, 12,
+                              6, 12, 15,
+                              3, 12, 18,};
 
             float res[9*3] = {0};
 
@@ -431,7 +431,7 @@ namespace matrix {
             Shape out;
 
             std::map<std::string, Any> params;
-            int inputIdx = 0;
+            int inputIdx = 2;
 
             params["input_idx"] = inputIdx;
             Operator *op = pro->CreateOperator(context,  &inShape, &out, params);
@@ -592,7 +592,7 @@ namespace matrix {
             Shape out;
 
             std::map<std::string, Any> params;
-            int inputIdx = 0;
+            int inputIdx = 2;
             params["filter_num"] = 3;
             params["input_idx"] = inputIdx;
             Operator *op = pro->CreateOperator(context,  &inShape, &out, params);
@@ -656,7 +656,7 @@ namespace matrix {
                 op->SetData(&inputs, bias_grad);
                 op->AsyncRun();
                 int dim = out.Size();
-                float target[3] = {12,6,6};
+                float target[3] = {8,8,8};
                 PrintMat(bias_grad, biasShape[0], 1, "MultiChannelConvolutionGradOp_test_result_bias");
                 checkArrayEqual<float>(bias_grad, target, dim);
             }
@@ -1028,7 +1028,7 @@ namespace matrix {
             OpPtr pro = Registry::Global()->GetOp("grad_activation");
 
             std::map<std::string, Any> params;
-            ActType type = kSigmoid;
+            ActType type = kRelu;
             params["type"] = type;
             Shape out;
             Operator *op = pro->CreateOperator(context, &inShape, &out, params);
