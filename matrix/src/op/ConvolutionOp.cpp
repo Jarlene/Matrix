@@ -73,11 +73,7 @@ namespace matrix {
         }
         if (InputSize()  == 4) {
             Shape flatten;
-            if (order == NCHW) {
-                flatten.reShape(ShapeN(int(outputShape->Size()/outputShape->At(1)), outputShape->At(1)));
-            } else {
-                flatten.reShape(ShapeN(int(outputShape->Size()/outputShape->At(3)), outputShape->At(3)));
-            }
+            flatten.reShape(ShapeN(int(outputShape->Size()/filterNum), filterNum));
             Tensor<T> out(Output<T>(), flatten);
             Tensor<T> bias(Input<T>(BIAS), *inputShapes->at(BIAS));
             Add<T>(out, bias, out);

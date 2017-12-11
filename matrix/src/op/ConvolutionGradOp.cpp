@@ -108,7 +108,7 @@ namespace matrix {
             Tensor<T> bias_grad(Output<T>(), *inputShapes->at(BIAS));
             Shape flatten = ShapeN(int(inputShapes->at(PRE_GRAG)->Size()/filterNum), filterNum);
             Tensor<T> pre(Input<T>(PRE_GRAG), flatten);
-            SumAdd(pre, 0, bias_grad);
+            Sum(pre, 0, bias_grad);
         } else {
             Logger::Global()->Fatal("ConvolutionGradOp do not support other inputs\n");
         }
