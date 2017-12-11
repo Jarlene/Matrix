@@ -51,12 +51,12 @@ Symbol Convolution(const Symbol &input, int hideNum, int classNum) {
 
     auto conv1 = Symbol("convolution")
             .SetInput("data", input)
-            .SetParam("filter", ShapeN(5, 5))
+            .SetParam("filter", ShapeN(3, 3))
             .SetParam("with_bias", true)
             .SetParam("padding", ShapeN(0,0))
             .SetParam("stride", ShapeN(1,1))
             .SetParam("dilate", ShapeN(1,1))
-            .SetParam("filter_num", 20)
+            .SetParam("filter_num", 32)
             .SetParam("group", 1)
             .Build("conv1");
 
@@ -65,34 +65,11 @@ Symbol Convolution(const Symbol &input, int hideNum, int classNum) {
             .SetParam("type", ActType::kRelu)
             .Build("act");
 
-    auto pool1 = Symbol("pooling")
-            .SetInput("act", act)
-            .SetParam("filter", ShapeN(2,2))
-            .SetParam("stride", ShapeN(2,2))
-            .SetParam("type", PoolType::kMax)
-            .Build("pool1");
-
-
-    auto conv2 = Symbol("convolution")
-            .SetInput("pool1", pool1)
-            .SetParam("filter",  ShapeN(5, 5))
-            .SetParam("with_bias", true)
-            .SetParam("padding", ShapeN(0,0))
-            .SetParam("stride", ShapeN(1,1))
-            .SetParam("dilate", ShapeN(1,1))
-            .SetParam("filter_num", 40)
-            .SetParam("group", 1)
-            .Build("conv2");
-
-    auto act2 = Symbol("activation")
-            .SetInput("conv2", conv2)
-            .SetParam("type", ActType::kRelu)
-            .Build("act2");
 
     auto pool2 = Symbol("pooling")
-            .SetInput("act2", act2)
+            .SetInput("act3", act)
             .SetParam("filter", ShapeN(2,2))
-            .SetParam("stride", ShapeN(2,2))
+            .SetParam("stride", ShapeN(1,1))
             .SetParam("type", PoolType::kMax)
             .Build("pool2");
 
@@ -106,13 +83,13 @@ Symbol Convolution(const Symbol &input, int hideNum, int classNum) {
             .SetParam("with_bias", true)
             .Build("fc1");
 
-    auto act3 = Symbol("activation")
+    auto act4 = Symbol("activation")
             .SetInput("fc", fc)
             .SetParam("type", ActType::kRelu)
-            .Build("act3");
+            .Build("act4");
 
     auto fc2 = Symbol("fullConnected")
-            .SetInput("act3", act3)
+            .SetInput("act3", act4)
             .SetParam("hide_num", classNum)
             .SetParam("with_bias", true)
             .Build("fc2");
@@ -132,8 +109,8 @@ int main() {
     const int epochSize = 2000;
     const int classNum = 10;
     const int hideNum = 128;
-    Shape imageShape = ShapeN(batchSize,  784);
-//    Shape imageShape = ShapeN(batchSize,  1, 28, 28);
+//    Shape imageShape = ShapeN(batchSize,  784);
+    Shape imageShape = ShapeN(batchSize,  1, 28, 28);
     Shape labelShape = ShapeN(batchSize);
     auto image = PlaceHolderSymbol::Create("image", imageShape);
     auto label = PlaceHolderSymbol::Create("label", labelShape);
@@ -142,9 +119,9 @@ int main() {
     float* labelData = static_cast<float *>(malloc(sizeof(float) * labelShape.Size()));
 
 
-//    auto logistic = Convolution(image, hideNum, classNum);
+    auto logistic = Convolution(image, hideNum, classNum);
 
-    auto logistic = LogisticRegression(image, hideNum, classNum);
+//    auto logistic = LogisticRegression(image, hideNum, classNum);
 
     auto loss = Symbol("loss")
             .SetInput("logistic", logistic)
@@ -159,7 +136,7 @@ int main() {
 
 
     Context context = Context::Default();
-    auto opt = new SGDOptimizer(0.01f);
+    auto opt = new SGDOptimizer(0.001f);
     MnistDataSet trainSet(trainImagePath, trainLabelPath);
     MnistDataSet testSet(testImagePath, testLabelPath);
     auto executor = std::make_shared<Executor>(loss, context, opt);
@@ -171,11 +148,9 @@ int main() {
         executor->train(&acc);
         executor->update();
         long end = getCurrentTime();
-        if ((i + 1) % 100 == 0) {
-            std::cout << "the epoch[" << (i + 1) << "] take time: " << end - start << " ms" << std::endl;
-            loss.PrintMatrix();
-            acc.PrintMatrix();
-        }
+        std::cout << "the epoch[" << (i + 1) << "] take time: " << end - start << " ms" << std::endl;
+        loss.PrintMatrix();
+        acc.PrintMatrix();
         if ((i + 1) % 1000 == 0) {
             int total_run_data = 0;
             int test_correct = 0;

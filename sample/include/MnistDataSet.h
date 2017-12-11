@@ -44,7 +44,7 @@ public:
                 this->data[i] = new float[imageSize];
                 data_file.read((char*)&image[0], imageSize);
                 for (int j=0; j<imageSize; ++j) {
-                    this->data[i][j] = image[j]*1.0/256.0f;
+                    this->data[i][j] = image[j]*1.0/255.0f;
                 }
             }
 
