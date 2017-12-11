@@ -38,7 +38,7 @@ namespace matrix {
         switch (type) {
             case kMax:
             {
-                T *maxIndex = InputNonConst<T>(MAX_INDEX);
+                const T *maxIndex = Input<T>(MAX_INDEX);
                 for (int i = 0; i < batch_size; ++i) {
                     for (int j = 0; j < channel; ++j) {
                         for (int ph = 0; ph < output_height; ++ph) {

@@ -936,7 +936,12 @@ namespace matrix {
 #endif
             for (int i = 0; i < M; ++i) {
                 for (int j = 0; j < N / M; ++j) {
-                    out[0] += T(0.5) * (in1[i] - in2[i]) * (in1[i] - in2[i]);
+                    int idx = static_cast<int>(in2[i]);
+                    if (j == idx) {
+                        out[0] += T(0.5) * (in1[i] - 1) * (in1[i] - 1);
+                    } else {
+                        out[0] += T(0.5) * in1[i] * in1[i];
+                    }
                 }
             }
         }
@@ -966,7 +971,12 @@ namespace matrix {
 #endif
             for (int i = 0; i < M; ++i) {
                 for (int j = 0; j < N / M; ++j) {
-                    out[i * M + j] = (in1[i * M + j] - in2[i]);
+                    int idx = static_cast<int>(in2[i]);
+                    if (j == idx) {
+                        out[i * M + j] = (in1[i * M + j] - 1);
+                    } else {
+                        out[i * M + j] = in1[i * M + j];
+                    }
                 }
             }
         }
@@ -1507,7 +1517,9 @@ namespace matrix {
 
         const int input_stride = input_height * input_width;
         const int output_stride = output_height * output_width;
-
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
         for (int i = 0; i < batch_size; ++i) {
             for (int c = 0; c < channel; ++c) {
                 for (int ph = 0; ph < output_height; ++ph) {
@@ -1561,7 +1573,48 @@ namespace matrix {
         }
     }
 
+    template <class T>
+    inline void NHWC2NCHW(const T * input,
+                          const int num,
+                          const int inH,
+                          const int inW,
+                          const int inC,
+                          T *output) {
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+        for (int n = 0; n < num; ++n) {
+            for (int h = 0; h < inH; ++h) {
+                for (int w = 0; w < inW; ++w) {
+                    for (int c = 0; c < inC; ++c) {
+                        output[((n * inC + c) * inH + h) * inW + w] = *(input++);
+                    }
+                }
+            }
+        }
+    }
 
+
+    template <class T>
+    inline void NCHW2NHWC(const T * input,
+                          const int num,
+                          const int inC,
+                          const int inH,
+                          const int inW,
+                          T *output) {
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+        for (int n = 0; n < num; ++n) {
+            for (int c = 0; c < inC; ++c) {
+                for (int h = 0; h < inH; ++h) {
+                    for (int w = 0; w < inW; ++w) {
+                        output[((n * inH + h) * inW + w) * inC + c] = *(input++);
+                    }
+                }
+            }
+        }
+    }
 }
 
 #endif //MATRIX_MATH_H
