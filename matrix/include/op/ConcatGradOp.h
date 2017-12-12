@@ -13,6 +13,7 @@ namespace matrix {
     class ConcatGradOp : public Operator {
     SAME_FUNCTION(ConcatGrad);
     DISABLE_COPY_AND_ASSIGN(ConcatGrad);
+        INPUT_TAG(PRE_GRAD, SELF_OUT);
     };
 
 

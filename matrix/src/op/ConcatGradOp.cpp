@@ -18,7 +18,13 @@ namespace matrix {
             Logger::Global()->Fatal("ConcatGradOp need input idx");
         }
         Tensor<T> out(Output<T>(), *outputShape);
-        Tensor<T> pre_grad(Input<T>(idx+2), *inputShapes->at(idx+2));
+
+        int size =  0;
+        for (int i = 1; i <= idx; ++i) {
+            size += inputShapes->at(i+1)->Size();
+        }
+
+        Tensor<T> pre_grad(Input<T>(PRE_GRAD) + size, *inputShapes->at(idx+2));
         CPUCopy(pre_grad.Size(), pre_grad.Data(), 1, out.MutableData(), 1);
         return true;
     }
@@ -52,7 +58,7 @@ namespace matrix {
             Logger::Global()->Fatal("ConcatGradOpProp need input idx");
         }
         int idx = get<int>(param->args->at("input_idx"));
-        outShape->reShape(*inShape.at(idx));
+        outShape->reShape(*inShape.at(idx + 2));
 
     }
 

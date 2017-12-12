@@ -49,9 +49,14 @@ namespace matrix {
 
     void ConcatOpProp::InferShape(std::vector<Shape*> &inShape, Shape* outShape) {
         assert(outShape != nullptr);
+        int batch = inShape.at(0)->At(0);
+        outShape->Append(batch);
+        int total = 0;
         for (int i = 0; i < inShape.size(); ++i) {
-            outShape->Append(inShape.at(i)->Size());
+            assert(batch == inShape.at(i)->At(0));
+            total += inShape.at(i)->Size()/batch;
         }
+        outShape->Append(total);
 
     }
 

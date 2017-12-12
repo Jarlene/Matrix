@@ -25,7 +25,7 @@ namespace matrix {
             std::vector<Shape *> inShape;
             std::map<std::string, Any> params;
             params["isTrain"] = true;
-            Operator *op = pro->CreateOperator(context,  &inShape, &shape, params);
+            Operator *op = pro->CreateOperator(&context,  &inShape, &shape, params);
             op->SetData(&inputs, result);
             op->AsyncRun();
             PrintMat(result, shape[0], shape[1], "VariableOp_test_result");
@@ -54,7 +54,7 @@ namespace matrix {
 
             std::map<std::string, Any> params;
 
-            Operator *op = pro->CreateOperator(context, &inShape, &out, params);
+            Operator *op = pro->CreateOperator(&context, &inShape, &out, params);
             op->SetData(&inputs, res);
             op->AsyncRun();
             int dim = out.Size();
@@ -86,7 +86,7 @@ namespace matrix {
 
             std::map<std::string, Any> params;
             Shape out;
-            Operator *op = pro->CreateOperator(context, &inShape, &out, params);
+            Operator *op = pro->CreateOperator(&context, &inShape, &out, params);
             op->SetData(&inputs, c);
             op->AsyncRun();
             PrintMat(c, out[0], out[1], "MulOp_test_result");
@@ -126,7 +126,7 @@ namespace matrix {
 
             std::map<std::string, Any> params;
 
-            Operator *op = pro->CreateOperator(context,  &inShape, &out, params);
+            Operator *op = pro->CreateOperator(&context,  &inShape, &out, params);
             op->SetData(&inputs, res);
             op->AsyncRun();
             int dim = out.Size();
@@ -179,7 +179,7 @@ namespace matrix {
             std::map<std::string, Any> params;
             int index = 2;
             params["input_idx"] = index;
-            Operator *op = pro->CreateOperator(context,  &inShape, &out, params);
+            Operator *op = pro->CreateOperator(&context,  &inShape, &out, params);
             if (index == 0) {
                 float target[8] = {0};
                 float res[8] = {20, 38,
@@ -260,7 +260,7 @@ namespace matrix {
             inShape.push_back(&cols);
 
             std::map<std::string, Any> params;
-            Operator *op = pro->CreateOperator(context, &inShape, &out, params);
+            Operator *op = pro->CreateOperator(&context, &inShape, &out, params);
             op->SetData(&inputs, res);
             op->AsyncRun();
             int dim = out.Size();
@@ -360,7 +360,7 @@ namespace matrix {
 
             std::map<std::string, Any> params;
             params["filter_num"] = 3;
-            Operator *op = pro->CreateOperator(context, &inShape, &out, params);
+            Operator *op = pro->CreateOperator(&context, &inShape, &out, params);
             op->SetData(&inputs, res);
             op->AsyncRun();
             int dim = out.Size();
@@ -434,7 +434,7 @@ namespace matrix {
             int inputIdx = 2;
 
             params["input_idx"] = inputIdx;
-            Operator *op = pro->CreateOperator(context,  &inShape, &out, params);
+            Operator *op = pro->CreateOperator(&context,  &inShape, &out, params);
             if (inputIdx == 0) {
 
                 op->SetData(&inputs, input_grad);
@@ -595,7 +595,7 @@ namespace matrix {
             int inputIdx = 2;
             params["filter_num"] = 3;
             params["input_idx"] = inputIdx;
-            Operator *op = pro->CreateOperator(context,  &inShape, &out, params);
+            Operator *op = pro->CreateOperator(&context,  &inShape, &out, params);
             if (inputIdx == 0) {
 
                 op->SetData(&inputs, input_grad);
@@ -694,7 +694,7 @@ namespace matrix {
             std::vector<void *> inputs;
             inputs.push_back(a);
             inputs.push_back(maxIndex);
-            Operator *op = pro->CreateOperator(context,  &inShape, &out, params);
+            Operator *op = pro->CreateOperator(&context,  &inShape, &out, params);
             op->SetData(&inputs, b);
             op->AsyncRun();
             int dim = out.Size();
@@ -749,7 +749,7 @@ namespace matrix {
             std::vector<void *> inputs;
             inputs.push_back(a);
             inputs.push_back(maxIndex);
-            Operator *op = pro->CreateOperator(context,  &inShape, &out, params);
+            Operator *op = pro->CreateOperator(&context,  &inShape, &out, params);
             op->SetData(&inputs, b);
             op->AsyncRun();
             int dim = out.Size();
@@ -820,7 +820,7 @@ namespace matrix {
 
             Shape out_Shape;
 
-            Operator *op = pro->CreateOperator(context,  &inShape, &out_Shape, params);
+            Operator *op = pro->CreateOperator(&context,  &inShape, &out_Shape, params);
             op->SetData(&inputs, b);
             op->AsyncRun();
             int dim = out_Shape.Size();
@@ -914,7 +914,7 @@ namespace matrix {
 
             Shape out_Shape;
 
-            Operator *op = pro->CreateOperator(context,  &inShape, &out_Shape, params);
+            Operator *op = pro->CreateOperator(&context,  &inShape, &out_Shape, params);
             op->SetData(&inputs, b);
             op->AsyncRun();
             int dim = out_Shape.Size();
@@ -963,7 +963,7 @@ namespace matrix {
             ActType type = kRelu;
             params["type"] = type;
             Shape out;
-            Operator *op = pro->CreateOperator(context,  &inShape, &out, params);
+            Operator *op = pro->CreateOperator(&context,  &inShape, &out, params);
             op->SetData(&inputs, b);
             op->AsyncRun();
 
@@ -1030,7 +1030,7 @@ namespace matrix {
             ActType type = kRelu;
             params["type"] = type;
             Shape out;
-            Operator *op = pro->CreateOperator(context, &inShape, &out, params);
+            Operator *op = pro->CreateOperator(&context, &inShape, &out, params);
             op->SetData(&inputs, c);
             op->AsyncRun();
 
@@ -1093,7 +1093,7 @@ namespace matrix {
             auto type = kCrossEntropy;
             params["type"] = type;
             Shape out;
-            Operator *op = pro->CreateOperator(context,  &inShape, &out, params);
+            Operator *op = pro->CreateOperator(&context,  &inShape, &out, params);
             op->SetData(&inputs, a);
             op->AsyncRun();
 
@@ -1524,7 +1524,7 @@ namespace matrix {
             std::map<std::string, Any> params;
 
             Shape out;
-            Operator *op = pro->CreateOperator(context,  &inShape, &out, params);
+            Operator *op = pro->CreateOperator(&context,  &inShape, &out, params);
             op->SetData(&inputs, &res);
             op->AsyncRun();
             PrintMat(&res, 1, 1, "acc");
@@ -1560,7 +1560,7 @@ namespace matrix {
             inShape.push_back(&dataShape);
             Shape out;
             std::map<std::string, Any> params;
-            Operator *op = pro->CreateOperator(context, &inShape, &out, params);
+            Operator *op = pro->CreateOperator(&context, &inShape, &out, params);
             op->SetData(&inputs, res);
             op->AsyncRun();
             int dim = out.Size();
@@ -1604,13 +1604,105 @@ namespace matrix {
             inShape.push_back(&dataShape);
             Shape out;
             std::map<std::string, Any> params;
-            Operator *op = pro->CreateOperator(context, &inShape, &out, params);
+            Operator *op = pro->CreateOperator(&context, &inShape, &out, params);
             op->SetData(&inputs, res);
             op->AsyncRun();
             int dim = out.Size();
 
             PrintMat(res, 15, 5, "FlattenOp_test_result");
             checkArrayEqual<float>(data, res, dim);
+        }
+
+
+        TEST_F(OpTest, ConcateOp) {
+            float a[] = {1, 2, 3, 4, 5, 6};
+            float b[] = {2, 3, 4, 5, 6, 7};
+            float c[] = {3, 5, 7, 9, 11, 13};
+
+            float res[18] = {0};
+            float target[18] = {1, 2, 3, 4, 5, 6,
+                                2, 3, 4, 5, 6, 7,
+                                3, 5, 7, 9, 11, 13};
+
+            OpPtr pro = Registry::Global()->GetOp("concat");
+            Context context = Context::Test();
+            Shape shape = ShapeN(2, 3);
+            std::vector<void *> inputs;
+            inputs.push_back(a);
+            inputs.push_back(b);
+            inputs.push_back(c);
+
+            std::vector<Shape *> inShape;
+            inShape.push_back(&shape);
+            inShape.push_back(&shape);
+            inShape.push_back(&shape);
+            Shape out;
+
+            std::map<std::string, Any> params;
+
+            Operator *op = pro->CreateOperator(&context, &inShape, &out, params);
+            op->SetData(&inputs, res);
+            op->AsyncRun();
+            int dim = out.Size();
+            checkArrayEqual<float>(target, res, dim);
+            PrintMat(res, out[0], out.StrideExclude(0), "ConcateOp_test_result");
+        }
+
+
+        TEST_F(OpTest, ConcateGradOp) {
+            float pre[] = {1, 2, 3, 4, 5, 7,
+                           2, 2, 1, 3, 1, 4,
+                           3, 5, 1, 3, 9, 2};
+
+            float a[] = {1, 2, 3, 4, 5, 6};
+            float b[] = {2, 3, 4, 5, 6, 7};
+            float c[] = {3, 5, 7, 9, 11, 13};
+
+            float res[6] = {0};
+            float slefout[18] = {1, 2, 3, 4, 5, 6,
+                                2, 3, 4, 5, 6, 7,
+                                3, 5, 7, 9, 11, 13};
+
+            OpPtr pro = Registry::Global()->GetOp("grad_concat");
+            Context context = Context::Test();
+            Shape shape = ShapeN(2, 3);
+            std::vector<void *> inputs;
+            inputs.push_back(pre);
+            inputs.push_back(slefout);
+            inputs.push_back(a);
+            inputs.push_back(b);
+            inputs.push_back(c);
+            Shape preShape = ShapeN(2, 9);
+            std::vector<Shape *> inShape;
+            inShape.push_back(&preShape);
+            inShape.push_back(&preShape);
+            inShape.push_back(&shape);
+            inShape.push_back(&shape);
+            inShape.push_back(&shape);
+            Shape out;
+
+            std::map<std::string, Any> params;
+            int index = 2;
+            params["input_idx"] = index;
+
+            Operator *op = pro->CreateOperator(&context, &inShape, &out, params);
+            op->SetData(&inputs, res);
+            op->AsyncRun();
+            int dim = out.Size();
+
+            if (index == 0) {
+                float target[] ={1, 2, 3, 4, 5, 7 };
+                checkArrayEqual<float>(target, res, dim);
+            } else if (index == 1) {
+                float target[] ={2, 2, 1, 3, 1, 4};
+                checkArrayEqual<float>(target, res, dim);
+            } else if (index == 2) {
+                float target[] ={3, 5, 1, 3, 9, 2};
+                checkArrayEqual<float>(target, res, dim);
+            }
+
+
+            PrintMat(res, out[0], out[1], "ConcateGradOp_test_result");
         }
     }
 }
