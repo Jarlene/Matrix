@@ -31,7 +31,7 @@ namespace matrix {
         } else {
             Logger::Global()->Fatal("LossOp not support other loss.\n");
         }
-        Scale<T>(out, pre.Data()[0]);
+        Scale<T>(out, pre.Data()[0]/data.GetShape()[0]);
         return true;
     }
 

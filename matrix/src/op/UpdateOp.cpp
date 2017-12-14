@@ -22,8 +22,9 @@ namespace matrix {
         Tensor<T> variable(Input<T>(VARIABLE), *inputShapes->at(VARIABLE));
         Tensor<T> grad_variable(Input<T>(GRAD_VARIABLE), *inputShapes->at(GRAD_VARIABLE));
         auto type = GetArgValue<ApplyGradMode>("type", kSGD);
-        float learning_rate = GetArgValue<float>("learning_rate", 0.001f);
-        learning_rate *= 1.0f/sqrt(1.0f + num_of_pass) ;
+        float decay = GetArgValue<float>("decay", 0.01f);
+        float learning_rate = GetArgValue<float>("learning_rate", 0.01f);
+        learning_rate *= 1.0f/(1.0f + decay * num_of_pass) ;
         switch (type) {
             case kSGD:
             {
@@ -34,7 +35,7 @@ namespace matrix {
             case kMomentum:
             {
                 Tensor<T> momentum(Input<T>(MOMENTUM), *inputShapes->at(MOMENTUM));
-                float mon = GetArgValue<float>("momentum", 0.5f);
+                float mon = GetArgValue<float>("momentum", 0.9f);
                 T learn = T(-1.0 * learning_rate);
                 Scale(grad_variable, learn);
                 applyMomentum<T>(momentum, grad_variable, T(1), T(mon));

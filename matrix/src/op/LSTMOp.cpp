@@ -14,15 +14,21 @@ namespace matrix {
     template <class T, class xpu>
     bool LSTMOp<T, xpu>::Run() {
         int hide_num = GetArgValue<int>("hide_num");
+        auto f_act = GetArgValue<ActType>("f_act", kSigmoid);
+        auto i_act = GetArgValue<ActType>("i_act", kSigmoid);
+        auto o_act = GetArgValue<ActType>("o_act", kTanh);
+        auto c_act = GetArgValue<ActType>("c_act", kTanh);
+
+
         const T *wi = Input<T>(WEIGHT);
         const T *wf = Input<T>(WEIGHT) + hide_num;
         const T *wc = Input<T>(WEIGHT) + 2 * hide_num;
         const T *wo = Input<T>(WEIGHT) + 3 * hide_num;
 
         const T *cwi = Input<T>(CELL);
-        const T *cwf = Input<T>(CELL) + hide_num;
-        const T *cwc = Input<T>(CELL) + 2 * hide_num;
-        const T *cwo = Input<T>(CELL) + 3 * hide_num;
+        const T *cwf = Input<T>(CELL) + hide_num * hide_num;
+        const T *cwc = Input<T>(CELL) + 2 * hide_num * hide_num;
+        const T *cwo = Input<T>(CELL) + 3 * hide_num * hide_num;
 
         const T * data = Input<T>(INPUT);
         int batch = inputShapes->at(INPUT)->At(0);
@@ -81,7 +87,7 @@ namespace matrix {
             if (InputSize() < 4) {
                 // for 8 params (wf, bf, wi, bi, wc, bc, wo, bo)
                 Shape weight = ShapeN(hide_num, 4 * hide_num);
-                Shape bias = ShapeN(4 * hide_num);
+                Shape bias = ShapeN(7 * hide_num);
                 func({&weight, &bias});
                 return true;
             }
@@ -111,10 +117,11 @@ namespace matrix {
     void LSTMOpProp::InferShape(std::vector<Shape*> &inShape, Shape *outShape) {
         assert(outShape != nullptr);
         if(!param->args->count("hide_num")) {
-            Logger::Global()->Fatal("LSTMOpProp InferShape==> need hide_num for out put");
+            Logger::Global()->Fatal("LSTMOpProp InferShape==> need hide_num for output");
         }
         int hide_num = get<int>(param->args->at("hide_num"));
-        outShape->reShape(ShapeN(inShape.at(0)->At(0), hide_num));
+        int batch = inShape.at(0)->At(0);
+        outShape->reShape(ShapeN(batch, hide_num));
     }
 
     INIT_OPERATOR_PROPERTY_CREATE(LSTMOpProp, LSTMOp, true);
