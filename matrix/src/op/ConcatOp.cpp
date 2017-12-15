@@ -49,15 +49,40 @@ namespace matrix {
 
     void ConcatOpProp::InferShape(std::vector<Shape*> &inShape, Shape* outShape) {
         assert(outShape != nullptr);
-        int batch = inShape.at(0)->At(0);
-        outShape->Append(batch);
-        int total = 0;
-        for (int i = 0; i < inShape.size(); ++i) {
-            assert(batch == inShape.at(i)->At(0));
-            total += inShape.at(i)->Size()/batch;
+        int rank = inShape.at(0)->Rank();
+        for (int i = 1; i < inShape.size(); ++i) {
+            assert(inShape[i]->Rank() == rank);
         }
-        outShape->Append(total);
-
+        int axis = -1;
+        int size = inShape.size();
+        for (int j = 0; j < rank; ++j) {
+            for (int i = 0; i < size  ; ++i) {
+                for (int k = i + 1; k < size; ++k) {
+                    if (inShape[i]->At(j) != inShape[k]->At(j)) {
+                        if (axis != -1 && j != axis) {
+                            Logger::Global()->Fatal("ConcatOpProp InferShape concat axis not match!");
+                        }
+                        axis = j;
+                    }
+                }
+            }
+        }
+        if (axis == -1 && param->args->count("axis")) {
+            axis = get<int>(param->args->at("axis"));
+        } else if (axis == -1){
+            Logger::Global()->Fatal("ConcatOpProp InferShape can not find which axis to concat!");
+        }
+        for (int i = 0; i < rank; ++i) {
+            if (i == axis) {
+                int total = 0;
+                for (int j = 0; j < inShape.size(); ++j) {
+                    total += inShape[j]->At(i);
+                }
+                outShape->Append(total);
+            } else {
+                outShape->Append(inShape[0]->At(i));
+            }
+        }
     }
 
     INIT_OPERATOR_PROPERTY_CREATE(ConcatOpProp, ConcatOp, true);
