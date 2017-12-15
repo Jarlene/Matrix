@@ -27,6 +27,9 @@ namespace matrix {
         res->inputs.push_back(second);
         first->outputs.push_back(std::weak_ptr<Node>(res));
         second->outputs.push_back(std::weak_ptr<Node>(res));
+        if (first->isPlaceHolder && second->isPlaceHolder) {
+            res->isPlaceHolder = true;
+        }
         res->Build();
         return res;
     }
