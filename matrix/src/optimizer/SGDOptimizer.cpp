@@ -18,6 +18,7 @@ namespace matrix {
             node->opName = "applyGrad";
             node->params["learning_rate"] = learning_rate;
             node->params["type"] = kSGD;
+            node->params["decay"] = decay;
             node->inputs.push_back(it.first);
             node->inputs.push_back(it.second);
             it.first->outputs.push_back(std::weak_ptr<Node>(node));

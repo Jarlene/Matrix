@@ -22,7 +22,7 @@ namespace matrix {
         Tensor<T> variable(Input<T>(VARIABLE), *inputShapes->at(VARIABLE));
         Tensor<T> grad_variable(Input<T>(GRAD_VARIABLE), *inputShapes->at(GRAD_VARIABLE));
         auto type = GetArgValue<ApplyGradMode>("type", kSGD);
-        float decay = GetArgValue<float>("decay", 0.01f);
+        float decay = GetArgValue<float>("decay", 0.0f);
         float learning_rate = GetArgValue<float>("learning_rate", 0.01f);
         learning_rate *= 1.0f/(1.0f + decay * num_of_pass) ;
         switch (type) {
