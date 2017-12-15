@@ -6,6 +6,16 @@
 
 namespace matrix {
 
+    template <typename T>
+    inline T sigmoid(T x) {
+        return 1. / (1. + exp(-x));
+    }
+
+    template <typename T>
+    inline T tanh(T x) {
+        return 2. * sigmoid(2. * x) - 1.;
+    }
+
     template <class T, class xpu>
     LSTMOp<T, xpu>::LSTMOp(Parameter &param) {
         INIT_PARAMS
@@ -14,21 +24,16 @@ namespace matrix {
     template <class T, class xpu>
     bool LSTMOp<T, xpu>::Run() {
         int hide_num = GetArgValue<int>("hide_num");
-        auto f_act = GetArgValue<ActType>("f_act", kSigmoid);
-        auto i_act = GetArgValue<ActType>("i_act", kSigmoid);
-        auto o_act = GetArgValue<ActType>("o_act", kTanh);
-        auto c_act = GetArgValue<ActType>("c_act", kTanh);
 
+        const int frame_size = hide_num * hide_num;
 
         const T *wi = Input<T>(WEIGHT);
-        const T *wf = Input<T>(WEIGHT) + hide_num;
-        const T *wc = Input<T>(WEIGHT) + 2 * hide_num;
-        const T *wo = Input<T>(WEIGHT) + 3 * hide_num;
+        const T *wf = Input<T>(WEIGHT) + frame_size;
+        const T *wc = Input<T>(WEIGHT) + 2 * frame_size;
+        const T *wo = Input<T>(WEIGHT) + 3 * frame_size;
 
-        const T *cwi = Input<T>(CELL);
-        const T *cwf = Input<T>(CELL) + hide_num * hide_num;
-        const T *cwc = Input<T>(CELL) + 2 * hide_num * hide_num;
-        const T *cwo = Input<T>(CELL) + 3 * hide_num * hide_num;
+        T *c = InputNonConst<T>(C);
+        T *h = InputNonConst<T>(H);
 
         const T * data = Input<T>(INPUT);
         int batch = inputShapes->at(INPUT)->At(0);
@@ -39,14 +44,26 @@ namespace matrix {
 
         bool bias = GetArgValue<bool>("with_bias", true);
 
+        int M = 1;
+        int N = 1;
+        int K = 1;
+
+
+
 
         T * out = Output<T>();
 
         if (bias) {
+            const T* biasData = Input<T>(BIAS);
             for (int i = 0; i < batch; ++i) {
+                // state->f = data * wf + biasData
+                CPUGemm(NoTrans, NoTrans, M, N, K, T(1), data, wi, T(0), c);
+                Add(N, c, biasData, c);
+                Sigmoid(N, c, c);
 
+
+                data += i * inputShapes->at(INPUT)->Size()/batch;
             }
-
         } else {
 
 
@@ -107,7 +124,7 @@ namespace matrix {
         int hide_num = GetArgValue<int>("hide_num");
         if ((bias && InputSize() < 4) || (!bias && InputSize() < 3)) {
             Shape weight = ShapeN(hide_num, 4 * hide_num);
-            func({&weight});
+            func({&weight, &weight});
             return true;
         }
         return false;

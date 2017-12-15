@@ -41,6 +41,11 @@ namespace matrix {
 
 
     void FlattenOpProp::InferShape(std::vector<Shape *> &inShape, Shape *outShape) {
+        if (param->args->count("shape")) {
+            Shape target = get<Shape>(param->args->at("shape"));
+            outShape->reShape(target);
+            return;
+        }
         outShape->reShape(ShapeN(inShape[0]->At(0), inShape[0]->StrideExclude(0)));
     }
 
