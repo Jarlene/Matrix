@@ -26,6 +26,13 @@ namespace matrix {
         virtual ~BaseOptimizer() = default;
 
         virtual std::vector<NodePtr> GeneratorUpdate(const std::map<NodePtr, NodePtr> &variableNodes) = 0;
+
+        void SetDecay(float decay) {
+            this->decay = decay;
+        }
+
+    protected:
+        float decay = 0.0f;
     };
 
 }
