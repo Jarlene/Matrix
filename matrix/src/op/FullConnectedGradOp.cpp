@@ -25,26 +25,26 @@ namespace matrix {
         Tensor<T> weight(Input<T>(WEIGHT), *inputShapes->at(WEIGHT));
 
         Tensor<T> out(Output<T>(), *outputShape);
+        if (HasArg("activation_type")) {
+            auto actType = GetArgValue<ActType>("activation_type");
+            switch (actType) {
+                case kSigmoid:
+                    SigmoidGrad<T>(self_out, pre_grad, pre_grad);
+                    break;
+                case kTanh:
+                    TanhGrad<T>(self_out, pre_grad, pre_grad);
+                    break;
+                case kRelu:
+                    ReluGrad<T>(self_out, pre_grad, pre_grad);
+                    break;
+                default:
+                    Logger::Global()->Fatal("FullConnectedGradOp activation_type not support \n");
+                    break;
+            }
+        }
         switch (idx + 2) {
             case DATA:
                 MatrixMul<T>(pre_grad, false, weight, true, out);
-                if (HasArg("activation_type")) {
-                    auto actType = GetArgValue<ActType>("activation_type");
-                    switch (actType) {
-                        case kSigmoid:
-                            SigmoidGrad<T>(self_out, out, out);
-                            break;
-                        case kTanh:
-                            TanhGrad<T>(self_out, out, out);
-                            break;
-                        case kRelu:
-                            ReluGrad<T>(self_out, out, out);
-                            break;
-                        default:
-                            Logger::Global()->Fatal("FullConnectedGradOp activation_type not support \n");
-                            break;
-                    }
-                }
                 break;
             case WEIGHT:
                 MatrixMul<T>(data, true, pre_grad, false, out);
