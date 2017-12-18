@@ -6,6 +6,7 @@
 #include <matrix/include/api/VariableSymbol.h>
 #include <matrix/include/executor/Executor.h>
 #include <matrix/include/optimizer/SGDOptimizer.h>
+#include <matrix/include/optimizer/MomentOptimizer.h>
 #include <matrix/include/utils/Time.h>
 
 using namespace matrix;
@@ -21,15 +22,16 @@ int main() {
     auto ds = as + bs;
     auto es = ds * ds - bs;
     Context context = Context::Default();
-    auto opt = new SGDOptimizer(0.01f);
+    auto opt = new MomentOptimizer(0.01f, 0.9f);
     auto executor = std::make_shared<Executor>(es, context, opt);
-    long start = getCurrentTime();
-    for (int i = 0; i < 500; ++i) {
+
+    for (int i = 0; i < 5000; ++i) {
+        long start = getCurrentTime();
         executor->train();
         executor->update();
+        long end = getCurrentTime();
+        std::cout << "the epoch[" << (i + 1) << "] take time: " << end - start << " ms" << std::endl;
         bs.PrintMatrix();
     }
-    long end = getCurrentTime();
-    std::cout << "spend time is "<< (end-start) << "ms" << std::endl;
     return 0;
 }
