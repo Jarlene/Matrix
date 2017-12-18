@@ -30,9 +30,7 @@ namespace matrix {
     }
 
     const Shape DeformityShape::At(int level) const {
-        if (Rank() <= level) {
-            return Shape();
-        }
+        assert(Rank() > level);
         return Shape(shape_[level].data(), shape_[level].size());
     }
 
@@ -113,9 +111,7 @@ namespace matrix {
     }
 
     const Shape DeformityShape::operator[](int level) const {
-        if (level >= Rank()) {
-            return Shape();
-        }
+        assert(Rank() > level);
         return Shape(shape_[level].data(), shape_[level].size());
     }
 

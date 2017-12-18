@@ -47,6 +47,9 @@ namespace matrix {
     }
 
     Shape &Shape::operator=(const Shape &other) {
+        if (*this == other) {
+            return *this;
+        }
         this->shape_.clear();
 #pragma unroll
         for (int i: other.shape_) {
@@ -78,8 +81,8 @@ namespace matrix {
         return true;
     }
 
-    const int * Shape::Array() const {
-        return shape_.data();
+    const std::vector<int> &Shape::Array() const {
+        return shape_;
     }
 
     bool Shape::isConstant() {
