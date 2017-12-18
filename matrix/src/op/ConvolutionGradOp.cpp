@@ -49,6 +49,7 @@ namespace matrix {
         int filterOffset = kernel.Size() / group;
 
         const T *preGrad = Input<T>(PRE_GRAG);
+        const T *self_out = Input<T>(SELF_OUT);
         T *out = Output<T>();
         int index = GetArgValue<int>("input_idx", -1);
 
@@ -77,6 +78,23 @@ namespace matrix {
                 }
                 out += inputOffSize * group;
                 preGrad += outputOffset * group;
+            }
+            if (HasArg("activation_type")) {
+                auto actType = GetArgValue<ActType>("activation_type");
+                switch (actType) {
+                    case kSigmoid:
+                        SigmoidGrad<T>(outputShape->Size(), self_out, out, out);
+                        break;
+                    case kTanh:
+                        TanhGrad<T>(outputShape->Size(), self_out, out, out);
+                        break;
+                    case kRelu:
+                        ReluGrad<T>(outputShape->Size(), self_out, out, out);
+                        break;
+                    default:
+                        Logger::Global()->Fatal("ConvolutionGradOp activation_type not support \n");
+                        break;
+                }
             }
 
         } else if (index == 1) {

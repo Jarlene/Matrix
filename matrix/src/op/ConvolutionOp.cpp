@@ -79,6 +79,24 @@ namespace matrix {
                 Add(ou, bias, ou);
             }
         }
+        if (HasArg("activation_type")) {
+            auto actType = GetArgValue<ActType>("activation_type");
+            switch (actType) {
+                case kSigmoid:
+
+                    Sigmoid<T>(outputShape->Size(), outputData, outputData);
+                    break;
+                case kTanh:
+                    Tanh<T>(outputShape->Size(), outputData, outputData);
+                    break;
+                case kRelu:
+                    Relu<T>(outputShape->Size(), outputData, outputData);
+                    break;
+                default:
+                    Logger::Global()->Fatal("ConvolutionOp activation_type not support \n");
+                    break;
+            }
+        }
         return true;
     }
 

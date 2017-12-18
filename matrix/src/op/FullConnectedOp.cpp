@@ -21,6 +21,23 @@ namespace matrix {
             Tensor<T> bias(Input<T>(BIAS), *inputShapes->at(BIAS));
             Add<T>(out, bias, out);
         }
+        if (HasArg("activation_type")) {
+            auto actType = GetArgValue<ActType>("activation_type");
+            switch (actType) {
+                case kSigmoid:
+                    Sigmoid<T>(out, out);
+                    break;
+                case kTanh:
+                    Tanh<T>(out, out);
+                    break;
+                case kRelu:
+                    Relu<T>(out, out);
+                    break;
+                default:
+                    Logger::Global()->Fatal("FullConnectedOp activation_type not support \n");
+                    break;
+            }
+        }
         return true;
     }
 
