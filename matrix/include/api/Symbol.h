@@ -30,7 +30,7 @@ namespace matrix {
             return SetParam(name, Any(value));
         }
 
-        Symbol &On(const RunMode &mode = kCpu);
+        Symbol &On(const Context &c = Context::Default());
 
         Symbol &Build(const std::string &symbol_name = "unknow");
 

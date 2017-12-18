@@ -34,8 +34,8 @@ namespace matrix {
         return *this;
     }
 
-    Symbol &Symbol::On(const RunMode &mode) {
-        this->nodePtr->context.mode = mode;
+    Symbol &Symbol::On(const Context &c) {
+        this->nodePtr->context = c;
         return *this;
     }
 
