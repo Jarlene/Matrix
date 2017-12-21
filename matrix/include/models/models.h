@@ -172,7 +172,7 @@ namespace matrix {
                 .SetInput("data", input)
                 .SetParam("filter", ShapeN(5, 5))
                 .SetParam("with_bias", true)
-                .SetParam("padding", ShapeN(2, 2))
+                .SetParam("padding", ShapeN(0, 0))
                 .SetParam("stride", ShapeN(1, 1))
                 .SetParam("dilate", ShapeN(1, 1))
                 .SetParam("filter_num", 32)
@@ -187,8 +187,27 @@ namespace matrix {
                 .SetParam("type", PoolType::kMax)
                 .Build("pool1");
 
-        auto flatten = Symbol("flatten")
+        auto conv2 = Symbol("convolution")
                 .SetInput("pool1", pool1)
+                .SetParam("filter", ShapeN(3, 3))
+                .SetParam("with_bias", true)
+                .SetParam("padding", ShapeN(0, 0))
+                .SetParam("stride", ShapeN(1, 1))
+                .SetParam("dilate", ShapeN(1, 1))
+                .SetParam("filter_num", 64)
+                .SetParam("group", 1)
+                .SetParam("activation_type", kRelu)
+                .Build("conv2");
+
+        auto pool2 = Symbol("pooling")
+                .SetInput("conv2", conv2)
+                .SetParam("filter", ShapeN(2, 2))
+                .SetParam("stride", ShapeN(1, 1))
+                .SetParam("type", PoolType::kMax)
+                .Build("pool2");
+
+        auto flatten = Symbol("flatten")
+                .SetInput("pool2", pool2)
                 .Build("flatten");
 
         auto fc = Symbol("fullConnected")
