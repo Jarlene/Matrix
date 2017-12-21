@@ -845,7 +845,7 @@ namespace matrix {
 #pragma omp parallel for
 #endif
         for (int i=0; i < N; ++i) {
-            y[i] = (x[i]>(T)0 ? x[i] : 0);
+            y[i] = (x[i] > T(0) ? x[i] : T(0));
         }
     }
 
