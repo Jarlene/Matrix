@@ -15,6 +15,7 @@ namespace matrix {
         auto outModel = GetArgValue<OutputMode>("type", kSoftmax);
         Tensor<T> data(Input<T>(DATA), *inputShapes->at(DATA));
         Tensor<T> out(Output<T>(), *outputShape);
+        Value(out, T(0));
         if (outModel == kSoftmax) {
             Softmax<T>(data, out);
         } else {

@@ -25,6 +25,7 @@ namespace matrix {
         Tensor<T> weight(Input<T>(WEIGHT), *inputShapes->at(WEIGHT));
 
         Tensor<T> out(Output<T>(), *outputShape);
+        Value(out, T(0));
         if (HasArg("activation_type")) {
             auto actType = GetArgValue<ActType>("activation_type");
             switch (actType) {

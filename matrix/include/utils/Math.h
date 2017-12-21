@@ -634,6 +634,10 @@ namespace matrix {
 
     template <class T>
     inline void Value(const int N, T* out, T val) {
+        if (val == T(0)) {
+            memset(out, 0, sizeof(T) * N);
+            return;
+        }
 #ifdef USE_MP
 #pragma omp parallel for
 #endif
@@ -643,7 +647,48 @@ namespace matrix {
     }
 
     template <class T>
-    inline void Scale(const int N, T* out, T val) {
+    inline void Scale(const int N, T* out, T val);
+
+    template <>
+    inline void Scale<float>(const int N, float* out, float val) {
+#ifdef BLAS
+        cblas_sscal(N, val, out, 1);
+#else
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+        for (int i = 0; i < N; ++i) {
+            out[i] *= val;
+        }
+#endif
+    }
+
+    template <>
+    inline void Scale<double>(const int N, double* out, double val) {
+#ifdef BLAS
+        cblas_dscal(N, val, out, 1);
+#else
+        #ifdef USE_MP
+#pragma omp parallel for
+#endif
+        for (int i = 0; i < N; ++i) {
+            out[i] *= val;
+        }
+#endif
+    }
+
+    template <>
+    inline void Scale<int>(const int N, int* out, int val) {
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+        for (int i = 0; i < N; ++i) {
+            out[i] *= val;
+        }
+    }
+
+    template <>
+    inline void Scale<long>(const int N, long* out, long val) {
 #ifdef USE_MP
 #pragma omp parallel for
 #endif

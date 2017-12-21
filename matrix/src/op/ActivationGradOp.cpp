@@ -23,7 +23,7 @@ namespace matrix {
         Tensor<T> out (Input<T>(OUT), *inputShapes->at(OUT));
         Tensor<T> input(Input<T>(INPUT), *inputShapes->at(INPUT));
         Tensor<T> gradOut(Output<T>() ,*outputShape);
-
+        Value(gradOut, T(0));
         switch (type) {
             case kSigmoid:
                 SigmoidGrad<T>(out, pre, gradOut);

@@ -17,6 +17,7 @@ namespace matrix {
         auto type = GetArgValue<ActType>("type", kSigmoid);
         Tensor<T> data(Input<T>(DATA) , *inputShapes->at(DATA));
         Tensor<T> out(Output<T>(), *outputShape);
+        Value(out, T(0));
         switch (type) {
             case kSigmoid:
                 Sigmoid<T>(data, out);

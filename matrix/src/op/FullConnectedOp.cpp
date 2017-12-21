@@ -16,6 +16,7 @@ namespace matrix {
         Tensor<T> data(Input<T>(DATA), *inputShapes->at(DATA));
         Tensor<T> weight(Input<T>(WEIGHT), *inputShapes->at(WEIGHT));
         Tensor<T> out(Output<T>(), *outputShape);
+        Value(out, T(0));
         MatrixMul<T>(data, false, weight, false, out);
          if (InputSize()  == 3) {
             Tensor<T> bias(Input<T>(BIAS), *inputShapes->at(BIAS));

@@ -19,6 +19,7 @@ namespace matrix {
         Tensor<T> selfOut(Input<T>(OUT), *inputShapes->at(OUT));
         Tensor<T> input(Input<T>(INPUT), *inputShapes->at(INPUT));
         Tensor<T> out(Output<T>(), *outputShape);
+        Value(out, T(0));
         if (mode == kSoftmax) {
             SoftmaxGrad<T>(selfOut, pre_grad,  out);
         }  else {

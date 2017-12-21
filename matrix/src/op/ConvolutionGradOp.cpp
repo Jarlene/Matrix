@@ -52,7 +52,7 @@ namespace matrix {
         const T *self_out = Input<T>(SELF_OUT);
         T *out = Output<T>();
         int index = GetArgValue<int>("input_idx", -1);
-
+        Value(outputShape->Size(), out, T(0));
         T *colData = InputNonConst<T>(InputSize() - 1);
         if (HasArg("activation_type")) {
             auto actType = GetArgValue<ActType>("activation_type");
@@ -112,17 +112,14 @@ namespace matrix {
                     CPUGemm<T>(NoTrans,Trans, M, N, K, T(1.0),
                                preGrad + j * outputOffset,
                                colData,
-                               i == 0 ? T(0.0) : T(1.0),
+                               T(1.0),
                                out + j * filterOffset);
 
                 }
                 inputData += inputOffSize * group;
                 preGrad += outputOffset * group;
             }
-//            Tensor<T> outTensor(out, *outputShape);
-//            Scale<T>(outTensor, T(1.0)/num);
         } else if (index == 2) {
-            Value(outputShape->Size(), out, T(0));
             for (int i = 0; i < num; ++i) {
                 for (int j = 0; j < filterNum; ++j) {
                     for (int k = 0; k < outSize; ++k) {
