@@ -23,6 +23,7 @@ namespace matrix {
     }
 
     int Logger::ResetLogFile(std::string filename) {
+        std::lock_guard<std::mutex> guard(mutex);
         CloseLogFile();
         if (filename.size() > 0) {
 #ifdef _MSC_VER
@@ -40,15 +41,18 @@ namespace matrix {
     }
 
     int Logger::ResetLogLevel(LogLevel level) {
+        std::lock_guard<std::mutex> guard(mutex);
         this->level = level;
         return 0;
     }
 
     void Logger::ResetKillFatal(bool isKill) {
+        std::lock_guard<std::mutex> guard(mutex);
         this->isKill = isKill;
     }
 
     void Logger::Write(LogLevel level, const char *format, ...) {
+        std::lock_guard<std::mutex> guard(mutex);
         va_list val;
         va_start(val, format);
         WriteImpl(level, format, &val);
@@ -56,6 +60,7 @@ namespace matrix {
     }
 
     void Logger::Info( const char *format, ...) {
+        std::lock_guard<std::mutex> guard(mutex);
         va_list val;
         va_start(val, format);
         WriteImpl(LogLevel::Info, format, &val);
@@ -63,6 +68,7 @@ namespace matrix {
     }
 
     void Logger::Debug(const char *format, ...) {
+        std::lock_guard<std::mutex> guard(mutex);
         va_list val;
         va_start(val, format);
         WriteImpl(LogLevel::Debug, format, &val);
@@ -70,6 +76,7 @@ namespace matrix {
     }
 
     void Logger::Error( const char *format, ...) {
+        std::lock_guard<std::mutex> guard(mutex);
         va_list val;
         va_start(val, format);
         WriteImpl(LogLevel::Error, format, &val);
@@ -77,6 +84,7 @@ namespace matrix {
     }
 
     void Logger::Fatal(const char *format, ...) {
+        std::lock_guard<std::mutex> guard(mutex);
         va_list val;
         va_start(val, format);
         WriteImpl(LogLevel::Fatal, format, &val);
@@ -127,6 +135,7 @@ namespace matrix {
     }
 
     void Logger::CloseLogFile() {
+        std::lock_guard<std::mutex> guard(mutex);
         if (file != nullptr) {
             fclose(file);
             file = nullptr;

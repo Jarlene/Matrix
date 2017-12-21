@@ -63,7 +63,7 @@ namespace matrix {
         void CloseLogFile();
         std::string GetSysTime();
         std::string GetLevelStr(LogLevel level);
-
+        std::mutex mutex;
         std::FILE* file;
         LogLevel  level;
         bool isKill;
