@@ -2,6 +2,8 @@
 // Created by Jarlene on 2017/8/6.
 //
 
+#include <sstream>
+#include <matrix/include/store/MemoryManager.h>
 #include "matrix/include/base/Node.h"
 
 namespace matrix {
@@ -162,7 +164,10 @@ namespace matrix {
     }
 
     std::string Node::ToString() {
-        return nodeName + "_" + std::to_string(id_);
+        std::stringstream stream;
+        stream << "name[" << nodeName << "]:id[" << id_ << "]:backward[" << isBackward << "]:placeHolder["
+               << isPlaceHolder << "]:shared[" << isShared << "]:variable[" << isVariable << "]";
+        return stream.str();
     }
 
     void Node::AddParam(const std::string &name, const Any &any) {
