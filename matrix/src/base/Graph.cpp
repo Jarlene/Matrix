@@ -73,6 +73,7 @@ namespace matrix {
             if (node->op != nullptr && node->memorySize > 0
                 && node->data_ == nullptr && !node->isPlaceHolder) {
                 node->data_ = MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(node->memorySize);
+                memset(node->data_, 0, node->memorySize);
             }
         }
         for (auto &node : variables) {
@@ -80,6 +81,7 @@ namespace matrix {
                 auto last = node->inputs.at(2);
                 if (last->data_ == nullptr) {
                     last->data_ = MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(last->memorySize);
+                    memset(last->data_, 0, last->memorySize);
                 }
             }
         }
