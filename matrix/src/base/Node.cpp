@@ -193,7 +193,6 @@ namespace matrix {
     }
 
     void Node::CountDown() {
-        std::lock_guard<std::mutex> lock(mutex);
         --depens;
         if (depens <= 0) {
             condvar.notify_all();
