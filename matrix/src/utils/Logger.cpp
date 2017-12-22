@@ -2,6 +2,9 @@
 // Created by Jarlene on 2017/7/24.
 //
 
+#ifdef USE_GLOG
+#include <glog/logging.h>
+#endif
 #include "matrix/include/utils/Logger.h"
 
 namespace matrix {
