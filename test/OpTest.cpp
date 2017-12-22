@@ -1163,7 +1163,127 @@ namespace matrix {
             } else {
                 float target[] = {2.5, 2, 1.75,
                                   2.333333, 1.333333, 1.333333,
-                                  1.5, 1.4166666, 1.25};
+                                  1.5, 1.4166666, 1.25,
+                                  2.5, 2, 2.375,
+                                  2.33333, 1.33333, 1.75,
+                                  2.625, 2.16667, 1.25,
+                                  10, 5.33333, 1.75,
+                                  5.66667, 4.66667, 2.16667,
+                                  1.5, 2.25, 2.5};
+                checkArrayEqual<float>(b, target, dim);
+            }
+        }
+
+
+        TEST_F(OpTest, NumMultiChannelPoolingOp) {
+            float a[] = {1, 3, 1, 5,
+                         4, 2, 6, 2,
+                         7, 1, 3, 5,
+                         1, 3, 10, 2,
+
+                         1, 3, 1, 5,
+                         4, 2, 6, 7,
+                         7, 1, 3, 5,
+                         1, 12, 10, 2,
+
+                         11, 3, 1, 5,
+                         4, 22, 6, 2,
+                         7, 1, 13, 5,
+                         1, 3, 10, 12,
+
+
+                         1, 3, 1, 5,
+                         4, 2, 6, 2,
+                         7, 1, 3, 5,
+                         1, 3, 10, 2,
+
+                         1, 3, 1, 5,
+                         4, 2, 6, 7,
+                         7, 1, 3, 5,
+                         1, 12, 10, 2,
+
+                         11, 3, 1, 5,
+                         4, 22, 6, 2,
+                         7, 1, 13, 5,
+                         1, 3, 10, 12};
+
+            float b[9 * 3 * 2] = {0};
+
+
+            float maxIndex[9 * 3 * 2] = {0};
+
+            Context context = Context::Test();
+
+            auto pro = Registry::Global()->GetOp("pooling");
+            std::vector<Shape *> inShape;
+            auto in = ShapeN(2, 3, 4, 4);
+            auto cols = ShapeN(2, 3, 3, 3);
+            inShape.push_back(&in);
+            inShape.push_back(&cols);
+            Shape out;
+            std::map<std::string, Any> params;
+            params["filter"] = ShapeN(2, 2);
+            params["type"] = PoolType::kMax;
+
+            std::vector<void *> inputs;
+            inputs.push_back(a);
+            inputs.push_back(maxIndex);
+            Operator *op = pro->CreateOperator(&context,  &inShape, &out, params);
+            op->SetData(&inputs, b);
+            op->AsyncRun();
+            int dim = out.Size();
+
+            PrintMat(b, 9*2, 3, "multi_PoolingOp_test_result");
+            if (get<PoolType>(params["type"]) == kMax) {
+                float c[9*2 * 3] = {4, 6, 6,
+                                  7, 6, 6,
+                                  7, 10, 10,
+
+                                  4, 6, 7,
+                                  7, 6, 7,
+                                  12, 12, 10,
+
+                                  22, 22, 6,
+                                  22, 22, 13,
+                                  7, 13, 13,
+
+                                    4, 6, 6,
+                                    7, 6, 6,
+                                    7, 10, 10,
+
+                                    4, 6, 7,
+                                    7, 6, 7,
+                                    12, 12, 10,
+
+                                    22, 22, 6,
+                                    22, 22, 13,
+                                    7, 13, 13};
+                checkArrayEqual<float>(b, c, dim);
+                PrintMat(maxIndex, 9*2, 3, "PoolingOp_max_index");
+            } else {
+                float target[] = {2.5, 2, 1.75,
+                                  2.333333, 1.333333, 1.333333,
+                                  1.5, 1.4166666, 1.25,
+
+                                  2.5, 2, 2.375,
+                                  2.33333, 1.33333, 1.75,
+                                  2.625, 2.16667, 1.25,
+
+                                  10, 5.33333, 1.75,
+                                  5.66667, 4.66667, 2.16667,
+                                  1.5, 2.25, 2.5,
+
+
+
+                                  2.5, 2, 1.75,
+                                  2.333333, 1.333333, 1.333333,
+                                  1.5, 1.4166666, 1.25,
+                                  2.5, 2, 2.375,
+                                  2.33333, 1.33333, 1.75,
+                                  2.625, 2.16667, 1.25,
+                                  10, 5.33333, 1.75,
+                                  5.66667, 4.66667, 2.16667,
+                                  1.5, 2.25, 2.5};
                 checkArrayEqual<float>(b, target, dim);
             }
         }
@@ -1283,7 +1403,7 @@ namespace matrix {
 
             std::map<std::string, Any> params;
             params["filter"] = ShapeN(2, 2);
-            params["type"] = PoolType::kMax;
+            params["type"] = PoolType::kAvg;
 
             Context context = Context::Test();
 
@@ -1327,13 +1447,206 @@ namespace matrix {
                                     0, 0, 20, 0};
                 checkArrayEqual<float>(b, target, dim);
             } else if (get<PoolType>(params["type"]) == kAvg) {
-                float target[16] = {1, 2.5, 3, 5,
-                                    2.5, 5.5, 6.25, 11.75,
-                                    4, 5.5, 3.25, 6.75,
-                                    3, 4.25, 2.75, 6.5};
+                float target[] = {1, 2.5, 3, 1.5,
+                                    2.75, 5.75, 6, 3,
+                                    3.5, 7.5, 8, 4,
+                                    1.75, 4.25, 5, 2.5,
+                                    1.0, 2.5, 3, 1.5,
+                                    2.75, 5.75, 6, 3,
+                                    3.5, 7.5, 8, 4,
+                                    1.75, 4.25, 5, 2.5,
+                                    1, 2.5, 3, 1.5,
+                                    2.75, 5.75, 6, 3,
+                                    3.5, 7.5, 8, 4,
+                                    1.75, 4.25, 5, 2.5};
                 checkArrayEqual<float>(b, target, dim);
             }
             PrintMat(b, 4 * 3, 4, "PoolingGradOp_test_result");
+
+
+        }
+
+
+        TEST_F(OpTest, NumMutliPoolingGradOp) {
+
+            float b[16*3*2] = {0};
+
+            float pre_grad[] = {4, 6, 6,
+                                7, 6, 6,
+                                7, 10, 10,
+
+                                4, 6, 6,
+                                7, 6, 6,
+                                7, 10, 10,
+
+                                4, 6, 6,
+                                7, 6, 6,
+                                7, 10, 10,
+
+                                4, 6, 6,
+                                7, 6, 6,
+                                7, 10, 10,
+
+                                4, 6, 6,
+                                7, 6, 6,
+                                7, 10, 10,
+
+                                4, 6, 6,
+                                7, 6, 6,
+                                7, 10, 10};
+
+            float out[] = {4, 6, 6,
+                           7, 6, 6,
+                           7, 10, 10,
+
+                           4, 6, 6,
+                           7, 6, 6,
+                           7, 10, 10,
+
+                           4, 6, 6,
+                           7, 6, 6,
+                           7, 10, 10,
+
+                           4, 6, 6,
+                           7, 6, 6,
+                           7, 10, 10,
+
+                           4, 6, 6,
+                           7, 6, 6,
+                           7, 10, 10,
+
+                           4, 6, 6,
+                           7, 6, 6,
+                           7, 10, 10};
+
+            float input[] = {1, 3, 1, 5,
+                             4, 2, 6, 2,
+                             7, 1, 3, 5,
+                             1, 3, 10, 2,
+
+                             1, 3, 1, 5,
+                             4, 2, 6, 2,
+                             7, 1, 3, 5,
+                             1, 3, 10, 2,
+
+                             1, 3, 1, 5,
+                             4, 2, 6, 2,
+                             7, 1, 3, 5,
+                             1, 3, 10, 2,
+
+                             1, 3, 1, 5,
+                             4, 2, 6, 2,
+                             7, 1, 3, 5,
+                             1, 3, 10, 2,
+
+                             1, 3, 1, 5,
+                             4, 2, 6, 2,
+                             7, 1, 3, 5,
+                             1, 3, 10, 2,
+
+                             1, 3, 1, 5,
+                             4, 2, 6, 2,
+                             7, 1, 3, 5,
+                             1, 3, 10, 2};
+
+            float index[] = {4, 6, 6, 8, 6, 6, 8, 14, 14,
+                             4, 6, 6, 8, 6, 6, 8, 14, 14,
+                             4, 6, 6, 8, 6, 6, 8, 14, 14,
+
+                             4, 6, 6, 8, 6, 6, 8, 14, 14,
+                             4, 6, 6, 8, 6, 6, 8, 14, 14,
+                             4, 6, 6, 8, 6, 6, 8, 14, 14};
+
+            std::map<std::string, Any> params;
+            params["filter"] = ShapeN(2, 2);
+            params["type"] = PoolType::kAvg;
+
+            Context context = Context::Test();
+
+            auto pro = Registry::Global()->GetOp("grad_pooling");
+
+            std::vector<void *> inputs;
+            inputs.push_back(pre_grad);
+            inputs.push_back(out);
+            inputs.push_back(input);
+            inputs.push_back(index);
+
+            std::vector<Shape *> inShape;
+            auto preShape = ShapeN(2, 3, 3, 3);
+            auto outShape = ShapeN(2, 3, 3, 3);
+            auto inputShape = ShapeN(2, 3, 4, 4);
+            inShape.push_back(&preShape);
+            inShape.push_back(&outShape);
+            inShape.push_back(&inputShape);
+            inShape.push_back(&outShape);
+
+            Shape out_Shape;
+
+            Operator *op = pro->CreateOperator(&context,  &inShape, &out_Shape, params);
+            op->SetData(&inputs, b);
+            op->AsyncRun();
+            int dim = out_Shape.Size();
+            if (get<PoolType>(params["type"]) == kMax) {
+                float target[] = {0, 0, 0, 0,
+                                  4, 0, 24, 0,
+                                  14, 0, 0, 0,
+                                  0, 0, 20, 0,
+
+                                  0, 0, 0, 0,
+                                  4, 0, 24, 0,
+                                  14, 0, 0, 0,
+                                  0, 0, 20, 0,
+
+                                  0, 0, 0, 0,
+                                  4, 0, 24, 0,
+                                  14, 0, 0, 0,
+                                  0, 0, 20, 0,
+
+
+                                  0, 0, 0, 0,
+                                  4, 0, 24, 0,
+                                  14, 0, 0, 0,
+                                  0, 0, 20, 0,
+
+                                  0, 0, 0, 0,
+                                  4, 0, 24, 0,
+                                  14, 0, 0, 0,
+                                  0, 0, 20, 0,
+
+                                  0, 0, 0, 0,
+                                  4, 0, 24, 0,
+                                  14, 0, 0, 0,
+                                  0, 0, 20, 0};
+                checkArrayEqual<float>(b, target, dim);
+            } else if (get<PoolType>(params["type"]) == kAvg) {
+                float target[] = {1, 2.5, 3, 1.5,
+                                  2.75, 5.75, 6, 3,
+                                  3.5, 7.5, 8, 4,
+                                  1.75, 4.25, 5, 2.5,
+                                  1, 2.5, 3, 1.5,
+                                  2.75, 5.75, 6, 3,
+                                  3.5, 7.5, 8, 4,
+                                  1.75, 4.25, 5, 2.5,
+                                  1, 2.5, 3, 1.5,
+                                  2.75, 5.75, 6, 3,
+                                  3.5, 7.5, 8, 4,
+                                  1.75, 4.25, 5, 2.5,
+
+                                  1, 2.5, 3, 1.5,
+                                  2.75, 5.75, 6, 3,
+                                  3.5, 7.5, 8, 4,
+                                  1.75, 4.25, 5, 2.5,
+                                  1, 2.5, 3, 1.5,
+                                  2.75, 5.75, 6, 3,
+                                  3.5, 7.5, 8, 4,
+                                  1.75, 4.25, 5, 2.5,
+                                  1, 2.5, 3, 1.5,
+                                  2.75, 5.75, 6, 3,
+                                  3.5, 7.5, 8, 4,
+                                  1.75, 4.25, 5, 2.5};
+                checkArrayEqual<float>(b, target, dim);
+            }
+            PrintMat(b, 4 * 3 * 2, 4, "PoolingGradOp_test_result");
 
 
         }
