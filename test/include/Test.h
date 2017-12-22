@@ -11,41 +11,41 @@ namespace matrix {
     }
 
     template <typename Dtype>
-    inline int checkArrayEqual(const Dtype* arr1, const Dtype* arr2, const int dim) {
+    inline int checkArrayEqual(const Dtype* arr1, const Dtype* arr2, const int dim, Dtype scalar = Dtype(1)) {
         for(int i=0; i<dim; ++i) {
-            EXPECT_EQ(arr1[i], arr2[i]);
+            EXPECT_EQ(arr1[i], arr2[i] * scalar);
         }
         return 0;
     }
 
     template <>
-    inline int checkArrayEqual<float>(const float* arr1, const float* arr2, const int dim) {
+    inline int checkArrayEqual<float>(const float* arr1, const float* arr2, const int dim, float scalar ) {
         for(int i=0; i<dim; ++i) {
-            EXPECT_FLOAT_EQ(arr1[i], arr2[i]);
+            EXPECT_FLOAT_EQ(arr1[i], arr2[i]*scalar);
         }
         return 0;
     }
 
     template <>
-    inline int checkArrayEqual<double>(const double* arr1,const  double* arr2, const int dim) {
+    inline int checkArrayEqual<double>(const double* arr1,const  double* arr2, const int dim, double scalar) {
         for(int i=0; i<dim; ++i) {
-            EXPECT_DOUBLE_EQ(arr1[i], arr2[i]);
+            EXPECT_DOUBLE_EQ(arr1[i], arr2[i]*scalar);
         }
         return 0;
     }
 
     template <>
-    inline int checkArrayEqual<int>(const int * arr1, const int * arr2, const int dim) {
+    inline int checkArrayEqual<int>(const int * arr1, const int * arr2, const int dim, int scalar) {
         for (int i = 0; i < dim; ++i) {
-            EXPECT_EQ(arr1[i], arr2[i]);
+            EXPECT_EQ(arr1[i], arr2[i]*scalar);
         }
         return 0;
     }
 
     template <>
-    inline int checkArrayEqual<long>(const long * arr1, const long * arr2, const int dim) {
+    inline int checkArrayEqual<long>(const long * arr1, const long * arr2, const int dim, long scalar) {
         for (int i = 0; i < dim; ++i) {
-            EXPECT_EQ(arr1[i], arr2[i]);
+            EXPECT_EQ(arr1[i], arr2[i]*scalar);
         }
         return 0;
     }

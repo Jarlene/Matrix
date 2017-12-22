@@ -328,7 +328,7 @@ namespace matrix {
                               4, 13, 19,
                               12, 12, 12,
                               6, 12, 15,
-                              3, 12, 18,};
+                              3, 12, 18};
 
             float res[9*3] = {0};
 
@@ -365,6 +365,146 @@ namespace matrix {
             op->AsyncRun();
             int dim = out.Size();
             PrintMat(res, 9, 3, "MulitChannelConovolutionOp_test_result");
+            checkArrayEqual<float>(target, res, dim);
+        }
+
+
+        TEST_F(OpTest, NumMulitChannelConovolutionOp) {
+            float data[] = {1, 1, 1, 0, 0,
+                            0, 1, 1, 1, 0,
+                            0, 0, 1, 1, 1,
+                            0, 0, 1, 1, 0,
+                            0, 1, 1, 0, 0,
+
+                            1, 1, 1, 0, 0,
+                            0, 1, 1, 1, 0,
+                            0, 0, 1, 1, 1,
+                            0, 0, 1, 1, 0,
+                            0, 1, 1, 0, 0,
+
+                            1, 1, 1, 0, 0,
+                            0, 1, 1, 1, 0,
+                            0, 0, 1, 1, 1,
+                            0, 0, 1, 1, 0,
+                            0, 1, 1, 0, 0,
+
+                            1, 1, 1, 0, 0,
+                            0, 1, 1, 1, 0,
+                            0, 0, 1, 1, 1,
+                            0, 0, 1, 1, 0,
+                            0, 1, 1, 0, 0,
+
+                            1, 1, 1, 0, 0,
+                            0, 1, 1, 1, 0,
+                            0, 0, 1, 1, 1,
+                            0, 0, 1, 1, 0,
+                            0, 1, 1, 0, 0,
+
+                            1, 1, 1, 0, 0,
+                            0, 1, 1, 1, 0,
+                            0, 0, 1, 1, 1,
+                            0, 0, 1, 1, 0,
+                            0, 1, 1, 0, 0};
+
+            float kernel[] = {1, 1, 1,
+                              1, 1, 0,
+                              1, 0, 0,
+
+                              1, 1, 1,
+                              1, 1, 0,
+                              1, 0, 0,
+
+                              1, 1, 1,
+                              1, 1, 0,
+                              1, 0, 0,
+
+                              1, 1, 1,
+                              1, 1, 0,
+                              1, 0, 0,
+
+                              1, 1, 1,
+                              1, 1, 0,
+                              1, 0, 0,
+
+                              1, 1, 1,
+                              1, 1, 0,
+                              1, 0, 0,
+
+                              1, 1, 1,
+                              1, 1, 0,
+                              1, 0, 0,
+
+                              1, 1, 1,
+                              1, 1, 0,
+                              1, 0, 0,
+
+                              1, 1, 1,
+                              1, 1, 0,
+                              1, 0, 0};
+
+
+            float b[3] = {1, 1, 0};
+
+
+
+            float col[81 * 3] = {0};
+
+            float target[] = {13, 13, 13,
+                              7, 13, 16,
+                              4, 13, 19,
+                              13, 13, 13,
+                              7, 13, 16,
+                              4, 13, 19,
+                              12, 12, 12,
+                              6, 12, 15,
+                              3, 12, 18,
+
+
+                              13, 13, 13,
+                              7, 13, 16,
+                              4, 13, 19,
+                              13, 13, 13,
+                              7, 13, 16,
+                              4, 13, 19,
+                              12, 12, 12,
+                              6, 12, 15,
+                              3, 12, 18};
+
+            float res[9*2*3] = {0};
+
+            OpPtr pro = Registry::Global()->GetOp("convolution");
+
+            Context context = Context::Test();
+
+            std::vector<void *> inputs;
+
+
+
+            inputs.push_back(data);
+            inputs.push_back(kernel);
+            inputs.push_back(b);
+            inputs.push_back(col);
+
+
+            std::vector<Shape *> inShape;
+            Shape out;
+
+            Shape dataShape = ShapeN(2, 3, 5, 5);
+            Shape filterShape = ShapeN(3, 3, 3, 3);
+            Shape biasShape = ShapeN(3);
+            Shape cols = ShapeN(3, 9, 9);
+            inShape.push_back(&dataShape);
+            inShape.push_back(&filterShape);
+            inShape.push_back(&biasShape);
+            inShape.push_back(&cols);
+
+            std::map<std::string, Any> params;
+            params["filter_num"] = 3;
+            Operator *op = pro->CreateOperator(&context, &inShape, &out, params);
+            op->SetData(&inputs, res);
+            op->AsyncRun();
+            int dim = out.Size();
+            PrintMat(res, 9*2, 3, "MulitChannelConovolutionOp_test_result");
             checkArrayEqual<float>(target, res, dim);
         }
 
@@ -664,6 +804,258 @@ namespace matrix {
 
         }
 
+
+        TEST_F(OpTest, NumMultiChannelConvolutionGradOp) {
+
+            float pre_grad[] = {1, 1, 1,
+                                2, 1, 0,
+                                1, 0, 1,
+
+                                1, 1, 1,
+                                2, 1, 0,
+                                1, 0, 1,
+
+                                1, 1, 1,
+                                2, 1, 0,
+                                1, 0, 1,
+
+                                1, 1, 1,
+                                2, 1, 0,
+                                1, 0, 1,
+
+                                1, 1, 1,
+                                2, 1, 0,
+                                1, 0, 1,
+
+                                1, 1, 1,
+                                2, 1, 0,
+                                1, 0, 1};
+
+            float data[] = {
+                    4, 4, 4,
+                    2, 4, 5,
+                    1, 4, 6,
+
+                    4, 4, 4,
+                    2, 4, 5,
+                    1, 4, 6,
+
+                    4, 4, 4,
+                    2, 4, 5,
+                    1, 4, 6,
+
+                    4, 4, 4,
+                    2, 4, 5,
+                    1, 4, 6,
+
+                    4, 4, 4,
+                    2, 4, 5,
+                    1, 4, 6,
+
+                    4, 4, 4,
+                    2, 4, 5,
+                    1, 4, 6
+            };
+
+            float inputdata[] = {1, 1, 1, 0, 0,
+                                 0, 1, 1, 1, 0,
+                                 0, 0, 1, 1, 1,
+                                 0, 0, 1, 1, 0,
+                                 0, 1, 1, 0, 0,
+
+                                 1, 1, 1, 0, 0,
+                                 0, 1, 1, 1, 0,
+                                 0, 0, 1, 1, 1,
+                                 0, 0, 1, 1, 0,
+                                 0, 1, 1, 0, 0,
+
+                                 1, 1, 1, 0, 0,
+                                 0, 1, 1, 1, 0,
+                                 0, 0, 1, 1, 1,
+                                 0, 0, 1, 1, 0,
+                                 0, 1, 1, 0, 0,
+
+
+                                 1, 1, 1, 0, 0,
+                                 0, 1, 1, 1, 0,
+                                 0, 0, 1, 1, 1,
+                                 0, 0, 1, 1, 0,
+                                 0, 1, 1, 0, 0,
+
+                                 1, 1, 1, 0, 0,
+                                 0, 1, 1, 1, 0,
+                                 0, 0, 1, 1, 1,
+                                 0, 0, 1, 1, 0,
+                                 0, 1, 1, 0, 0,
+
+                                 1, 1, 1, 0, 0,
+                                 0, 1, 1, 1, 0,
+                                 0, 0, 1, 1, 1,
+                                 0, 0, 1, 1, 0,
+                                 0, 1, 1, 0, 0};
+
+            float kernel[] = {1, 1, 1,
+                              1, 1, 0,
+                              1, 0, 0,
+
+                              1, 1, 1,
+                              1, 1, 0,
+                              1, 0, 0,
+
+                              1, 1, 1,
+                              1, 1, 0,
+                              1, 0, 0,
+
+                              1, 1, 1,
+                              1, 1, 0,
+                              1, 0, 0,
+
+                              1, 1, 1,
+                              1, 1, 0,
+                              1, 0, 0,
+
+                              1, 1, 1,
+                              1, 1, 0,
+                              1, 0, 0,
+
+                              1, 1, 1,
+                              1, 1, 0,
+                              1, 0, 0,
+
+                              1, 1, 1,
+                              1, 1, 0,
+                              1, 0, 0,
+
+                              1, 1, 1,
+                              1, 1, 0,
+                              1, 0, 0};
+
+            float b[] = {1, 1, 0};
+
+            float input_grad[25*3*2] = {0};
+
+            float filter_grad[27*3] = {0};
+            float bias_grad[3] = {0};
+            float col[9*9*3] = {0};
+
+
+            OpPtr pro = Registry::Global()->GetOp("grad_convolution");
+
+            Context context = Context::Test();
+
+            std::vector<void *> inputs;
+
+            inputs.push_back(pre_grad);
+            inputs.push_back(data);
+            inputs.push_back(inputdata);
+            inputs.push_back(kernel);
+            inputs.push_back(b);
+            inputs.push_back(col);
+
+            std::vector<Shape *> inShape;
+
+            Shape inshape = ShapeN(2, 3, 5, 5);
+            Shape preg = ShapeN(2, 3, 3, 3);
+            Shape self_out = ShapeN(2, 3, 3, 3);
+            Shape k = ShapeN(3, 3, 3, 3);
+            Shape biasShape = ShapeN(3);
+            Shape cols = ShapeN(3, 9, 9);
+            inShape.push_back(&preg);
+            inShape.push_back(&self_out);
+            inShape.push_back(&inshape);
+            inShape.push_back(&k);
+            inShape.push_back(&biasShape);
+            inShape.push_back(&cols);
+            Shape out;
+
+            std::map<std::string, Any> params;
+            int inputIdx = 0;
+            params["filter_num"] = 3;
+            params["input_idx"] = inputIdx;
+            Operator *op = pro->CreateOperator(&context,  &inShape, &out, params);
+            if (inputIdx == 0) {
+
+                op->SetData(&inputs, input_grad);
+                op->AsyncRun();
+                int dim = out.Size();
+                float target[25 * 5 *2] = {3, 6, 9, 6, 3,
+                                        9, 15, 15, 6, 0,
+                                        12, 15, 12, 3, 3,
+                                        9, 6, 3, 3, 0,
+                                        3, 0, 3, 0, 0,
+                                        3, 6, 9, 6, 3,
+                                        9, 15, 15, 6, 0,
+                                        12, 15, 12, 3, 3,
+                                        9, 6, 3, 3, 0,
+                                        3, 0, 3, 0, 0,
+                                        3, 6, 9, 6, 3,
+                                        9, 15, 15, 6, 0,
+                                        12, 15, 12, 3, 3,
+                                        9, 6, 3, 3, 0,
+                                        3, 0, 3, 0, 0,
+
+                                        3, 6, 9, 6, 3,
+                                        9, 15, 15, 6, 0,
+                                        12, 15, 12, 3, 3,
+                                        9, 6, 3, 3, 0,
+                                        3, 0, 3, 0, 0,
+                                        3, 6, 9, 6, 3,
+                                        9, 15, 15, 6, 0,
+                                        12, 15, 12, 3, 3,
+                                        9, 6, 3, 3, 0,
+                                        3, 0, 3, 0, 0,
+                                        3, 6, 9, 6, 3,
+                                        9, 15, 15, 6, 0,
+                                        12, 15, 12, 3, 3,
+                                        9, 6, 3, 3, 0,
+                                        3, 0, 3, 0, 0};
+
+                PrintMat(input_grad, inshape[0] * inshape[1] * inshape[2], inshape[3], "MultiChannelConvolutionGradOp_test_result_data");
+                checkArrayEqual<float>(target, input_grad, dim, 1.0f);
+            } else if (inputIdx == 1) {
+                op->SetData(&inputs, filter_grad);
+                op->AsyncRun();
+                int dim = out.Size();
+                float target[27 * 3] = {5, 6, 6,
+                                        3, 5, 6,
+                                        2, 4, 7,
+                                        5, 6, 6,
+                                        3, 5, 6,
+                                        2, 4, 7,
+                                        5, 6, 6,
+                                        3, 5, 6,
+                                        2, 4, 7,
+                                        5, 6, 6,
+                                        3, 5, 6,
+                                        2, 4, 7,
+                                        5, 6, 6,
+                                        3, 5, 6,
+                                        2, 4, 7,
+                                        5, 6, 6,
+                                        3, 5, 6,
+                                        2, 4, 7,
+                                        5, 6, 6,
+                                        3, 5, 6,
+                                        2, 4, 7,
+                                        5, 6, 6,
+                                        3, 5, 6,
+                                        2, 4, 7,
+                                        5, 6, 6,
+                                        3, 5, 6,
+                                        2, 4, 7,};
+                PrintMat(filter_grad, k[0]*k[1]*k[2], k[3], "MultiChannelConvolutionGradOp_test_result_kernel");
+                checkArrayEqual<float>(filter_grad, target, dim, 2);
+            } else if (inputIdx == 2) {
+                op->SetData(&inputs, bias_grad);
+                op->AsyncRun();
+                int dim = out.Size();
+                float target[3] = {16, 16, 16};
+                PrintMat(bias_grad, biasShape[0], 1, "MultiChannelConvolutionGradOp_test_result_bias");
+                checkArrayEqual<float>(bias_grad, target, dim);
+            }
+
+
+        }
 
         TEST_F(OpTest, PoolingOp) {
             float a[] = {1, 3, 1, 5,
@@ -1639,6 +2031,7 @@ namespace matrix {
             Shape out;
 
             std::map<std::string, Any> params;
+            params["axis"] = 0;
 
             Operator *op = pro->CreateOperator(&context, &inShape, &out, params);
             op->SetData(&inputs, res);
