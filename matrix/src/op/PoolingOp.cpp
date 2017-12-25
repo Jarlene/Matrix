@@ -35,6 +35,7 @@ namespace matrix {
 
         if (type == kMax) {
             T * maxIndex = InputNonConst<T>(MAX_INDEX);
+            Value(inputShapes->at(MAX_INDEX)->Size() ,maxIndex, T(0));
             pooling2D(input, batch_size, channel/group, input_width, input_height, stride[0], stride[1],
                       padding[0], padding[1],filter[0], filter[1], dilate[0], dilate[1],out, type, maxIndex);
         } else {
@@ -68,9 +69,8 @@ namespace matrix {
     template <class T, class xpu>
     bool PoolingOp<T, xpu>::ShareNodes(std::function<void(std::initializer_list<Shape *> shapes)> func) {
         if (GetArgValue<PoolType>("type", kMax) == kMax && InputSize() == 1) {
-            int batch_size = inputShapes->at(0)->At(0);
-            int channel = inputShapes->at(0)->At(1);
-            auto colShape = ShapeN(batch_size, channel, outputShape->At(2) * outputShape->At(3));
+            Shape colShape;
+            colShape.reShape(*outputShape);
             func({&colShape});
             return true;
         }

@@ -26,15 +26,19 @@ namespace matrix {
         int imageSize = 1;
         int outsize = 1;
         int channel = 1;
+        int input_width = 0, input_height = 0;
         if (order == NCHW) {
             channel = inputShapes->at(DATA)->At(1);
-            imageSize = inputShapes->at(DATA)->At(2) * inputShapes->at(DATA)->At(3);
+            input_width = inputShapes->at(DATA)->At(2);
+            input_height = inputShapes->at(DATA)->At(3);
             outsize = outputShape->At(2) * outputShape->At(3);
         } else {
-            imageSize = inputShapes->at(DATA)->At(1) * inputShapes->at(DATA)->At(2);
+            input_width = inputShapes->at(DATA)->At(1);
+            input_height = inputShapes->at(DATA)->At(2);
             channel = inputShapes->at(DATA)->At(3);
             outsize = outputShape->At(1) * outputShape->At(2);
         }
+        imageSize = input_width * input_height;
 
         int group = GetArgValue<int>("group", 1);
         int filterNum = GetArgValue<int>("filter_num", channel);
@@ -55,13 +59,15 @@ namespace matrix {
         const T *kernelData = Input<T>(KERNEL);
         T *outputData = Output<T>();
         T *colData = InputNonConst<T>(InputSize() - 1);
-
+        Value(inputShapes->at(InputSize() - 1)->Size(), colData, T(0));
         for (int i = 0; i < num; ++i) {
             for (int j = 0; j < group; ++j) {
-                Img2Col<T>(inputData + j * input_offset, *inputShapes->at(DATA),
-                           kernel, stride,
-                           padding, dilate,
-                           colData, order);
+                img2col<T>(inputData + j * input_offset, channel,
+                           input_width, input_height,
+                           stride[0], stride[1],
+                           padding[0],padding[1],
+                           kernel[2],kernel[3],
+                           dilate[0],dilate[1], colData);
                 int M = filterNum / group;
                 int N = outsize;
                 int K = channel / group * kernel.At(2) * kernel.At(3);
@@ -156,35 +162,10 @@ namespace matrix {
         bool with_bias = GetArgValue<bool>("with_bias", true);
         if ((InputSize() < 4 && with_bias) || (InputSize() < 3 && !with_bias)) {
             int group = GetArgValue<int>("group", 1);
-            if (InputSize() == 1) {
-                if (!HasArg("filter")) {
-                    Logger::Global()->Fatal("ConvolutionOp no filter for input");
-                }
-                Shape filter = GetArgValue<Shape>("filter");
-                int filter_num = GetArgValue<int>("filter_num");
-                ImageOrder order = GetArgValue<ImageOrder>("order", NCHW);
-                int channel = 0;
-                if (order == NCHW) {
-                    channel = inputShapes->at(DATA)->At(1);
-                } else {
-                    channel = inputShapes->at(DATA)->At(3);
-                }
-                filter.reShape(ShapeN(filter_num, channel, filter[0], filter[1]));
-                auto colShape = ShapeN(channel/group, inputShapes->at(KERNEL)->At(2) , inputShapes->at(KERNEL)->At(3),
-                                       outputShape->At(2) , outputShape->At(3));
-                func({&colShape});
-            } else {
-                ImageOrder order = GetArgValue<ImageOrder>("order", NCHW);
-                int channel = 0;
-                if (order == NCHW) {
-                    channel = inputShapes->at(DATA)->At(1);
-                } else {
-                    channel = inputShapes->at(DATA)->At(3);
-                }
-                auto colShape = ShapeN(channel/group, inputShapes->at(KERNEL)->At(2) , inputShapes->at(KERNEL)->At(3),
-                                       outputShape->At(2) , outputShape->At(3));
-                func({&colShape});
-            }
+            int channel = inputShapes->at(KERNEL)->At(1);
+            auto colShape = ShapeN(channel/group, inputShapes->at(KERNEL)->At(2) , inputShapes->at(KERNEL)->At(3),
+                                   outputShape->At(2) , outputShape->At(3));
+            func({&colShape});
             return true;
         }
         return false;
