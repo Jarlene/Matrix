@@ -240,7 +240,7 @@ namespace matrix {
         graphColors.clear();
         colorIndex = 0;
         auto graphNodes = graph.GetGraphNodes();
-        sort(graphNodes.begin(), graphNodes.end(), compare);
+        sort(graphNodes.begin(), graphNodes.end(), Node::less);
         std::vector<NodePtr> allUsefulNodeList; // 去除了正向传播所有输入， 还有不激活点
 
         for (auto &item : graphNodes) {

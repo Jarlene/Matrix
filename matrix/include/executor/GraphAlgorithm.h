@@ -19,11 +19,6 @@ namespace matrix {
 
         void Coloring(Graph &graph, std::map<int, int> &colors, const std::vector<NodePtr> &fetch);
 
-    private:
-
-        static bool compare(const NodePtr &lhs, const NodePtr &rhs) {
-            return lhs->id_ < rhs->id_;
-        }
 
     private:
         std::vector<NodePtr> fetchNodes;
