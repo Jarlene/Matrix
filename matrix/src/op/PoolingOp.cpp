@@ -63,7 +63,7 @@ namespace matrix {
 
     template <class T, class xpu>
     PoolingOp<T, xpu>::~PoolingOp() {
-
+        Operator::~Operator();
     }
 
     template <class T, class xpu>

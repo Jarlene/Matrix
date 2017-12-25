@@ -120,7 +120,7 @@ namespace matrix {
 
     template<class T, class xpu>
     ConvolutionOp<T, xpu>::~ConvolutionOp() {
-
+        Operator::~Operator();
     }
 
     template<class T, class xpu>

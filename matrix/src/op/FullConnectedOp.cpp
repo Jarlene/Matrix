@@ -55,7 +55,7 @@ namespace matrix {
 
     template <class T, class xpu>
     FullConnectedOp<T, xpu>::~FullConnectedOp() {
-
+        Operator::~Operator();
     }
 
     template <class T, class xpu>
