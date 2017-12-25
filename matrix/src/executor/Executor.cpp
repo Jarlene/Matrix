@@ -13,7 +13,7 @@ namespace matrix {
     }
 
     void Executor::train(const Symbol *symbol) {
-        auto compute =[&](NodePtr &node) {
+        auto compute =[this](NodePtr &node) {
             node->Run();
         };
         ThreadPool pool(CPU_CORES + 1);
