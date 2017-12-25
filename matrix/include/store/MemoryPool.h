@@ -62,6 +62,8 @@ namespace matrix {
 
         std::map<int, void *> memroy_;
 
+        std::vector<void*> pools;
+
         size_t sizeLimit_;
         size_t poolMemorySize_;
         std::string name_;

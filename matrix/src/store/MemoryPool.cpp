@@ -36,7 +36,9 @@ namespace matrix {
             }
         } else {
             poolMemorySize_ += size;
-            return allocator_->alloc(size);
+            auto d = allocator_->alloc(size);
+            pools.push_back(d);
+            return d;
         }
     }
 
@@ -88,6 +90,10 @@ namespace matrix {
             allocator_->free(it.second);
         }
         memroy_.clear();
+        for(auto &s : pools) {
+            allocator_->free(s);
+        }
+        pools.clear();
     }
 
     void MemoryPool::PrintMemory() {

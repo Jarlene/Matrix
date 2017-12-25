@@ -23,6 +23,7 @@ namespace matrix {
     void CpuAllocator::free(void *ptr) {
         if (ptr) {
             ::free(ptr);
+            ptr = nullptr;
         }
     }
 
