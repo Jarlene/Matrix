@@ -22,6 +22,7 @@ namespace matrix {
         
         int channel = 1;
         int outSize = 1;
+        int imageSize = 1;
         int input_width = 0, input_height = 0;
         if (order == NCHW) {
             channel = inputShapes->at(DATA)->At(1);
@@ -34,7 +35,7 @@ namespace matrix {
             channel = inputShapes->at(DATA)->At(3);
             outSize = inputShapes->at(SELF_OUT)->At(1) * inputShapes->at(SELF_OUT)->At(2);
         }
-
+        imageSize = input_width * input_height;
         int filterNum = GetArgValue<int>("filter_num", channel);
         int group = GetArgValue<int>("group", 1);
 
@@ -44,7 +45,7 @@ namespace matrix {
         Shape dilate = GetArgValue<Shape>("dilate", ShapeN(1, 1));
 
 
-        int inputOffSize = channel / group * input_width * input_height;;
+        int inputOffSize = channel / group * imageSize;
         int outputOffset = filterNum / group * outSize;
         int filterOffset = kernel.Size() / group;
 

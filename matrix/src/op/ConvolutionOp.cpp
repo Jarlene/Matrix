@@ -51,7 +51,7 @@ namespace matrix {
 
         const int input_offset = channel / group * imageSize;
 
-        const int output_offset = outputShape->At(1) * outputShape->At(2) * outputShape->At(3) / group;
+        const int output_offset = filterNum / group * outsize;
 
         const int filter_offset = kernel.Size() / group;
 
