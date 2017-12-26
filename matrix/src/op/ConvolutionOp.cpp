@@ -89,14 +89,13 @@ namespace matrix {
             auto actType = GetArgValue<ActType>("activation_type");
             switch (actType) {
                 case kSigmoid:
-
-                    Sigmoid<T>(outputShape->Size(), outputData, outputData);
+                    Sigmoid<T>(outputShape->Size(), Output<T>(), Output<T>());
                     break;
                 case kTanh:
-                    Tanh<T>(outputShape->Size(), outputData, outputData);
+                    Tanh<T>(outputShape->Size(), Output<T>(), Output<T>());
                     break;
                 case kRelu:
-                    Relu<T>(outputShape->Size(), outputData, outputData);
+                    Relu<T>(outputShape->Size(), Output<T>(), Output<T>());
                     break;
                 default:
                     Logger::Global()->Fatal("ConvolutionOp activation_type not support \n");
