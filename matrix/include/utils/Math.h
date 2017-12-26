@@ -1547,18 +1547,14 @@ namespace matrix {
 
 
     template <class T>
-    inline void pooling2D(const T * input, const int batch_size, const int channel,
-                        const int input_width, const int input_height,
-                        const int stride_width, const int stride_height,
-                        const int padding_width, const int padding_height,
-                        const int filter_width, const int filter_height,
-                        const int dilation_width, const int dilation_height,
-                          T *output,  int type = 0, T *mask = nullptr) {
-
-        const int output_width =
-                (input_width + 2 * padding_width - (dilation_width * (filter_width - 1) + 1)) / stride_width + 1;
-        const int output_height =
-                (input_height + 2 * padding_height - (dilation_height * (filter_height - 1) + 1)) / stride_height + 1;
+    inline void pooling2D(const T *input, const int batch_size, const int channel,
+                          const int input_width, const int input_height,
+                          const int output_width, const int output_height,
+                          const int stride_width, const int stride_height,
+                          const int padding_width, const int padding_height,
+                          const int filter_width, const int filter_height,
+                          const int dilation_width, const int dilation_height,
+                          T *output, int type = 0, T *mask = nullptr) {
 
         const int input_stride = input_height * input_width;
         const int output_stride = output_height * output_width;

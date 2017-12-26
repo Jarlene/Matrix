@@ -27,8 +27,8 @@ namespace matrix {
         int channel = inputShapes->at(0)->At(1);
         int input_width = inputShapes->at(0)->At(2);
         int input_height = inputShapes->at(0)->At(3);
-
-        int group = GetArgValue<int>("group" , 1);
+        int out_width = outputShape->At(2);
+        int out_height = outputShape->At(3);
 
         const T* input = Input<T>(DATA);
         T* out = Output<T>();
@@ -36,11 +36,23 @@ namespace matrix {
         if (type == kMax) {
             T * maxIndex = InputNonConst<T>(MAX_INDEX);
             Value(inputShapes->at(MAX_INDEX)->Size() ,maxIndex, T(0));
-            pooling2D(input, batch_size, channel/group, input_width, input_height, stride[0], stride[1],
-                      padding[0], padding[1],filter[0], filter[1], dilate[0], dilate[1],out, type, maxIndex);
+            pooling2D(input, batch_size, channel,
+                      input_width, input_height,
+                      out_width, out_height,
+                      stride[0], stride[1],
+                      padding[0], padding[1],
+                      filter[0], filter[1],
+                      dilate[0], dilate[1],
+                      out, type, maxIndex);
         } else {
-            pooling2D(input, batch_size, channel/group, input_width, input_height, stride[0], stride[1],
-                      padding[0], padding[1],filter[0], filter[1], dilate[0], dilate[1], out, type);
+            pooling2D(input, batch_size, channel,
+                      input_width, input_height,
+                      out_width, out_height,
+                      stride[0], stride[1],
+                      padding[0], padding[1],
+                      filter[0], filter[1],
+                      dilate[0], dilate[1],
+                      out, type);
         }
         return true;
     }

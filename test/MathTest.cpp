@@ -138,7 +138,7 @@ namespace matrix {
             float b[9] = {0};
             float c[9] = {0};
             PrintMat(a, 4, 4, "orig_data");
-            pooling2D(a, 1, 1, 4, 4, 1, 1, 0, 0, 2, 2, 1, 1, b, kMax, c);
+            pooling2D(a, 1, 1, 4, 4, 3, 3, 1, 1, 0, 0, 2, 2, 1, 1, b, kMax, c);
             PrintMat(b, 1, 9, "out");
             PrintMat(c, 1, 9, "index");
 
