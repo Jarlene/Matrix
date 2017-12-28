@@ -114,7 +114,7 @@ namespace matrix {
 
         auto drop = Symbol("dropout")
                 .SetInput("fc1", fc1)
-                .SetParam("ratio", 0.5f)
+                .SetParam("rate", 0.5f)
                 .Build("drop");
 
         auto fc2 = Symbol("fullyconnected")
@@ -126,7 +126,7 @@ namespace matrix {
 
         auto drop2 = Symbol("dropout")
                 .SetInput("fc2", fc2)
-                .SetParam("ratio", 0.5f)
+                .SetParam("rate", 0.5f)
                 .Build("drop2");
 
         auto fc3 = Symbol("fullyconnected")
