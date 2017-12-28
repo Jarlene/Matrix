@@ -40,11 +40,11 @@ namespace matrix {
         auto compute =[&](NodePtr &node) {
             node->Run();
         };
-        void *data = graph_->Evaluating(symbol);
         ThreadPool pool(CPU_CORES + 1);
         for (auto node : graph_->GetForwardNodes()) {
             pool.enqueue(compute, node);
         }
+        void *data = graph_->Evaluating(symbol);
         return data;
     }
 
