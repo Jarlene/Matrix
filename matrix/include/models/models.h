@@ -152,15 +152,25 @@ namespace matrix {
                 .SetParam("activation_type", kRelu)
                 .Build("y1");
 
-
         auto y2 = Symbol("fullConnected")
                 .SetInput("y1", y1)
-                .SetParam("hide_num", classNum)
+                .SetParam("hide_num", hideNum/2)
                 .SetParam("with_bias", true)
                 .Build("y2");
 
-        auto out = Symbol("output")
+        auto drop = Symbol("dropout")
                 .SetInput("y2", y2)
+                .SetParam("rate", 0.2f)
+                .Build("drop");
+
+        auto y3 = Symbol("fullConnected")
+                .SetInput("drop", drop)
+                .SetParam("hide_num", classNum)
+                .SetParam("with_bias", true)
+                .Build("y3");
+
+        auto out = Symbol("output")
+                .SetInput("y3", y3)
                 .SetParam("type", kSoftmax)
                 .Build("out");
 
@@ -206,8 +216,27 @@ namespace matrix {
                 .SetParam("type", PoolType::kMax)
                 .Build("pool2");
 
-        auto flatten = Symbol("flatten")
+        auto conv3 = Symbol("convolution")
                 .SetInput("pool2", pool2)
+                .SetParam("filter", ShapeN(3, 3))
+                .SetParam("with_bias", true)
+                .SetParam("padding", ShapeN(0, 0))
+                .SetParam("stride", ShapeN(1, 1))
+                .SetParam("dilate", ShapeN(1, 1))
+                .SetParam("filter_num", 64)
+                .SetParam("group", 1)
+                .SetParam("activation_type", kRelu)
+                .Build("conv3");
+
+        auto pool3 = Symbol("pooling")
+                .SetInput("conv3", conv3)
+                .SetParam("filter", ShapeN(2, 2))
+                .SetParam("stride", ShapeN(1, 1))
+                .SetParam("type", PoolType::kMax)
+                .Build("pool3");
+
+        auto flatten = Symbol("flatten")
+                .SetInput("pool3", pool3)
                 .Build("flatten");
 
         auto fc = Symbol("fullConnected")
