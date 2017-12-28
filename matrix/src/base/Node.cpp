@@ -1,8 +1,9 @@
 //
 // Created by Jarlene on 2017/8/6.
 //
-
+#include <set>
 #include <sstream>
+#include <thread>
 #include <matrix/include/store/MemoryManager.h>
 #include "matrix/include/base/Node.h"
 
@@ -177,10 +178,16 @@ namespace matrix {
     }
 
     void Node::Complete() {
+        std::set<NodePtr> set;
         for (auto &node : outputs) {
-            node.lock()->CountDown();
+            set.insert(node.lock());
         }
+        for (auto node : set) {
+            node->CountDown();
+        }
+        set.clear();
         this->depenCount = depenList.size();
+//        Logger::Global()->Info("%s[%d] complete at thread[%d]", this->nodeName.c_str(), this->id_, std::this_thread::get_id());
     }
 
     void Node::Run() {
