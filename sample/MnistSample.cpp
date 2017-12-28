@@ -96,7 +96,7 @@ void Mnist(int batchSize, int hideNum, int class_num, int epochSize, bool isConv
             .Build("acc");
 
     Context context = Context::Default();
-    auto opt = new SGDOptimizer(0.01f);
+    auto opt = new MomentOptimizer;
     MnistDataSet trainSet(trainImagePath, trainLabelPath);
     MnistDataSet testSet(testImagePath, testLabelPath);
     auto executor = std::make_shared<Executor>(loss, context, opt);
@@ -111,7 +111,7 @@ void Mnist(int batchSize, int hideNum, int class_num, int epochSize, bool isConv
         std::cout << "the epoch[" << (i + 1) << "] take time: " << end - start << " ms" << std::endl;
         loss.PrintMatrix();
         acc.PrintMatrix();
-        if ((i + 1) % 1000 == 0) {
+        if ((i + 1) % 600 == 0) {
             int total_run_data = 0;
             int test_correct = 0;
             int total = testSet.getNumberOfImages();
@@ -123,7 +123,7 @@ void Mnist(int batchSize, int hideNum, int class_num, int epochSize, bool isConv
                 float *cnt = static_cast<float *>(executor->evaluating(&acc));
                 test_correct += int((*cnt * batchSize) + 0.5);
             }
-            std::cout << "correct rate: " << test_correct * 1.0f / total << std::endl;
+            std::cout << "test correct rate: " << test_correct * 1.0f / total << std::endl;
         }
     }
 
@@ -133,9 +133,9 @@ void Mnist(int batchSize, int hideNum, int class_num, int epochSize, bool isConv
 
 int main() {
     const int batchSize = 300;
-    const int epochSize = 2000;
+    const int epochSize = 6000;
     const int classNum = 10;
-    const int hideNum = 256;
+    const int hideNum = 128;
     Mnist(batchSize, hideNum, classNum, epochSize, false);
     return 0;
 }
