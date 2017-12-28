@@ -174,6 +174,39 @@ namespace matrix {
     }
 
     template <typename T>
+    void Normal1(const Tensor<T>& tensor, int dim, Tensor<T>& reduce) {
+        const T* tensorData = tensor.Data();
+        T* reduceData = reduce.MutableData();
+        assert(tensorData);
+        assert(reduceData);
+        if (tensor.Rank() == 1) {
+            T temp = T(0);
+            auto func = [&tensorData, &temp](int i) {
+                temp += tensorData[i] * tensorData[i];
+            };
+            Reduce<T>(tensor.Size(), func);
+            reduceData[0] = sqrt(temp);
+        } else if (tensor.Rank() > 1) {
+            auto s = tensor.GetShape();
+            int strideOut = s.StrideExclude(dim);
+            int strideIn = s.StrideInclude(dim);
+            int shapeDim = s.At(dim);
+            auto func = [&tensorData, &reduceData, &strideOut, &strideIn, &shapeDim](int i) {
+                T temp = T(0);
+                int fi = (i/strideOut)*strideIn + i % strideOut;
+                int fj = 0;
+                for (int j = 0; j < shapeDim; ++j) {
+                    temp += abs(tensorData[fi + fj]) ;
+                    fj += strideOut;
+                }
+                reduceData[i] = temp;
+            };
+            Reduce<T>(reduce.Size(), func);
+        }
+
+    }
+
+    template <typename T>
     void Max(const Tensor<T>& tensor, int dim, Tensor<T>& reduce, Tensor<int> *indexTensor = nullptr) {
         const T* tensorData = tensor.Data();
         T* reduceData = reduce.MutableData();
@@ -267,7 +300,15 @@ namespace matrix {
 
     template <typename T>
     void Broadcast(const Tensor<T>& tensor, int dim, Tensor<T>& reduce) {
-
+        assert(tensor.GetShape()[dim] == reduce.GetShape()[dim]);
+        Shape shape(reduce.GetShape());
+        int index = shape[dim];
+        int size = shape.Size() / shape[dim];
+        for (int i = 0; i < index; ++i) {
+            for (int j = 0; j < size; ++j) {
+                reduce.MutableData()[i * size + j] = tensor.Data()[i];
+            }
+        }
     }
 
 }

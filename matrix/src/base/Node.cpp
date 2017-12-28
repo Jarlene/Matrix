@@ -121,7 +121,7 @@ namespace matrix {
         depenList.insert(depenList.end(), inputs.begin(), inputs.end());
         depenList.sort();
         depenList.unique();
-        this->depens = static_cast<int>(depenList.size());
+        this->depenCount = static_cast<int>(depenList.size());
         memorySize = opPtr->GetMemorySize();
     }
 
@@ -130,11 +130,13 @@ namespace matrix {
     }
 
     void Node::SetData() {
-        inputDates.clear();
-        for (auto it = inputs.begin(); it != inputs.end(); it++) {
-            inputDates.push_back((*it)->data_);
+        if (inputDates.empty()) {
+            inputDates.clear();
+            for (auto it = inputs.begin(); it != inputs.end(); it++) {
+                inputDates.push_back((*it)->data_);
+            }
+            op->SetData(&inputDates, data_);
         }
-        op->SetData(&inputDates, data_);
     }
 
     bool Node::operator==(const NodePtr &node) {
@@ -178,12 +180,12 @@ namespace matrix {
         for (auto &node : outputs) {
             node.lock()->CountDown();
         }
-        this->depens = static_cast<int>(depenList.size());
+        this->depenCount = depenList.size();
     }
 
     void Node::Run() {
         if (this->op != nullptr && !isPlaceHolder && !isShared) {
-            if (depens > 0) {
+            if (depenCount > 0) {
                 Await();
             }
             SetData();
@@ -194,8 +196,8 @@ namespace matrix {
 
     void Node::CountDown() {
         std::unique_lock<std::mutex> lock(mutex);
-        depens--;
-        if (depens <= 0) {
+        depenCount--;
+        if (depenCount <= 0) {
             condvar.notify_all();
         }
 
@@ -203,7 +205,7 @@ namespace matrix {
 
     void Node::Await() {
         std::unique_lock<std::mutex> lock(mutex);
-        condvar.wait(lock, [this]{ return this->depens <= 0;});
+        condvar.wait(lock, [this]{ return this->depenCount <= 0;});
     }
 
     void Node::AddOpName(const std::string &op) {
@@ -228,7 +230,7 @@ namespace matrix {
     }
 
     void Node::Reset() {
-        depens = depenList.size();
+        depenCount = depenList.size();
     }
 
 }

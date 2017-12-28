@@ -157,7 +157,7 @@ namespace matrix {
     private:
         std::mutex mutex;
         std::condition_variable condvar;
-        volatile int depens;
+        volatile int depenCount;
     };
 }
 
