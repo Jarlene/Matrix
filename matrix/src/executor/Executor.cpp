@@ -40,21 +40,18 @@ namespace matrix {
         auto compute =[&](NodePtr &node) {
             node->Run();
         };
+        void *data = graph_->Evaluating(symbol);
         ThreadPool pool(CPU_CORES + 1);
         for (auto node : graph_->GetForwardNodes()) {
             pool.enqueue(compute, node);
         }
-        return graph_->Evaluating(symbol);
+        return data;
     }
 
     void Executor::update() {
 
         auto updateFunc = [this](NodePtr &node) {
-            try {
-                node->DirectRun();
-            } catch (std::exception &e){
-                Logger::Global()->Fatal("exception on node %s==> %s", node->ToString().c_str() , e.what());
-            }
+            node->DirectRun();
         };
         ThreadPool pool(CPU_CORES + 1);
         for (auto it : graph_->GetUpdateNodes()) {
@@ -83,13 +80,7 @@ namespace matrix {
         Init();
 
         auto compute =[&](NodePtr &node) {
-
-            try {
-                node->DirectRun();
-            } catch (std::exception &e){
-                Logger::Global()->Fatal("exception on node %d==> %s", node->ToString().c_str(), e.what());
-            }
-
+            node->DirectRun();
             {
                 std::lock_guard<std::mutex> lock (mutex_);
                 for (auto &item : node->outputs) {
