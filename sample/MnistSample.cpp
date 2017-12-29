@@ -111,7 +111,7 @@ void Mnist(int batchSize, int hideNum, int class_num, int epochSize, bool isConv
         std::cout << "the epoch[" << (i + 1) << "] take time: " << end - start << " ms" << std::endl;
         loss.PrintMatrix();
         acc.PrintMatrix();
-        if ((i + 1) % 600 == 0) {
+        if ((i + 1) % (trainSet.getNumberOfImages()/batchSize) == 0) {
             int total_run_data = 0;
             int test_correct = 0;
             int total = testSet.getNumberOfImages();
@@ -133,7 +133,7 @@ void Mnist(int batchSize, int hideNum, int class_num, int epochSize, bool isConv
 
 int main() {
     const int batchSize = 300;
-    const int epochSize = 6000;
+    const int epochSize = 60000/batchSize * 10;
     const int classNum = 10;
     const int hideNum = 128;
     Mnist(batchSize, hideNum, classNum, epochSize, false);
