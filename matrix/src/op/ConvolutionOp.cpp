@@ -41,9 +41,12 @@ namespace matrix {
         imageSize = input_width * input_height;
 
         int group = GetArgValue<int>("group", 1);
-        int filterNum = GetArgValue<int>("filter_num", channel);
+        int filterNum = GetArgValue<int>("filter_num", -1);
 
         Shape kernel = *inputShapes->at(KERNEL);
+        if (filterNum == -1) {
+            filterNum = kernel.At(0);
+        }
         Shape stride = GetArgValue<Shape>("stride", ShapeN(1, 1));
         Shape padding = GetArgValue<Shape>("padding", ShapeN(0, 0));
         Shape dilate = GetArgValue<Shape>("dilate", ShapeN(1, 1));
@@ -158,7 +161,12 @@ namespace matrix {
 
     template<class T, class xpu>
     bool ConvolutionOp<T, xpu>::ShareNodes(std::function<void(std::initializer_list<Shape *> shapes)> func) {
-        bool with_bias = GetArgValue<bool>("with_bias", true);
+        bool with_bias = GetArgValue<bool>("with_bias", false);
+        if (InputSize() == 3) {
+            with_bias = true;
+        } else if (InputSize() == 2) {
+            with_bias = false;
+        }
         if ((InputSize() < 4 && with_bias) || (InputSize() < 3 && !with_bias)) {
             int group = GetArgValue<int>("group", 1);
             int channel = inputShapes->at(KERNEL)->At(1);
