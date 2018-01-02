@@ -182,8 +182,6 @@ namespace matrix {
         auto b1 = VariableSymbol::Create("b1", ShapeN(32));
         auto w2 = VariableSymbol::Create("w2", ShapeN(64, 32, 3, 3));
         auto b2 = VariableSymbol::Create("b2", ShapeN(64));
-        auto w3 = VariableSymbol::Create("w3", ShapeN(64, 64, 3, 3));
-        auto b3 = VariableSymbol::Create("b3", ShapeN(64));
 
 
         auto conv1 = Symbol("convolution")
@@ -225,29 +223,8 @@ namespace matrix {
                 .Build("pool2");
 
 
-
-        auto conv3 = Symbol("convolution")
-                .SetInput("pool2", pool2)
-                .SetInput("w3", w3)
-                .SetInput("b3", b3)
-                .SetParam("padding", ShapeN(0, 0))
-                .SetParam("stride", ShapeN(1, 1))
-                .SetParam("dilate", ShapeN(1, 1))
-                .SetParam("activation_type", kRelu)
-                .SetParam("group", 1)
-                .Build("conv3");
-
-
-        auto pool3 = Symbol("pooling")
-                .SetInput("conv3", conv3)
-                .SetParam("filter", ShapeN(2, 2))
-                .SetParam("stride", ShapeN(1, 1))
-                .SetParam("type", PoolType::kMax)
-                .Build("pool3");
-
-
         auto flatten = Symbol("flatten")
-                .SetInput("pool3", pool3)
+                .SetInput("pool2", pool2)
                 .Build("flatten");
 
 
