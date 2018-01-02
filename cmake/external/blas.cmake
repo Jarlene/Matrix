@@ -1,6 +1,6 @@
 if (USE_BLAS)
-    SET(BLAS_SOURCES_DIR ${THIRD_PARTY_PATH}/OpenBLAS)
-    SET(BLAS_INSTALL_DIR ${THIRD_PARTY_PATH}/install/OpenBLAS)
+    SET(BLAS_SOURCES_DIR ${THIRD_PARTY_PATH}/openblas)
+    SET(BLAS_INSTALL_DIR ${THIRD_PARTY_PATH}/install/openblas)
     SET(BLAS_INCLUDE_DIR "${BLAS_INSTALL_DIR}/include" CACHE PATH "openblas include directory." FORCE)
 
 #    ExternalProject_Add(
@@ -8,16 +8,14 @@ if (USE_BLAS)
 #            ${EXTERNAL_PROJECT_LOG_ARGS}
 #            GIT_REPOSITORY "https://github.com/xianyi/OpenBLAS.git"
 #            GIT_TAG         "master"
+#            UPDATE_COMMAND  "git" "pull"
 #            PREFIX          "${BLAS_SOURCES_DIR}"
-#            BUILD_COMMAND   "make"
-#            BUILD_IN_SOURCE 1
-#            INSTALL_DIR     "${BLAS_INSTALL_DIR}"
-#            INSTALL_COMMAND "make install"
+#            CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX:PATH=${BLAS_INSTALL_DIR}
 #    )
 
     SET(error_code 1)
     if (NOT EXISTS ${BLAS_SOURCES_DIR})
-        message(STATUS "git clone opeb blas library")
+        message(STATUS "git clone open blas library")
         execute_process(
                 COMMAND  git clone https://github.com/xianyi/OpenBLAS.git ${BLAS_SOURCES_DIR}
                 RESULT_VARIABLE error_code

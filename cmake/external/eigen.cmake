@@ -13,9 +13,8 @@ if (USE_EIGEN)
             eigen
             ${EXTERNAL_PROJECT_LOG_ARGS}
             HG_REPOSITORY "https://bitbucket.org/eigen/eigen/"
-            #            HG_TAG  ""
+            UPDATE_COMMAND  "hg" "pull"
             PREFIX          ${EIGEN_SOURCES_DIR}
-            UPDATE_COMMAND  ""
             CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX:PATH=${EIGEN_INSTALL_DIR}
     )
     LIST(APPEND external_project_dependencies eigen)

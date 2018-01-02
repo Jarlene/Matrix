@@ -17,7 +17,7 @@ if(USE_GFLAGS)
             ${EXTERNAL_PROJECT_LOG_ARGS}
             GIT_REPOSITORY  "https://github.com/gflags/gflags.git"
             PREFIX          ${GFLAGS_SOURCES_DIR}
-            UPDATE_COMMAND  ""
+            UPDATE_COMMAND  "git" "pull"
             CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${GFLAGS_INSTALL_DIR}
             CMAKE_ARGS      -DCMAKE_POSITION_INDEPENDENT_CODE=ON
             CMAKE_ARGS      -DBUILD_TESTING=OFF
