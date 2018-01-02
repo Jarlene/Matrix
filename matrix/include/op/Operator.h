@@ -140,20 +140,15 @@ namespace matrix {
         }
 
         virtual ~Operator() {
-            if (input != nullptr) {
-                input->clear();
-                free(input);
-                input = nullptr;
-            }
-
-            if (output != nullptr) {
-                free(output);
-                output = nullptr;
-            }
-
-            if (inputShapes != nullptr) {
-                inputShapes->clear();
-            }
+//            if (input != nullptr) {
+//                input->clear();
+//            }
+//
+//
+//
+//            if (inputShapes != nullptr) {
+//                inputShapes->clear();
+//            }
 
 
         }
