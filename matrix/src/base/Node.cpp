@@ -66,35 +66,33 @@ namespace matrix {
         }
         auto generatorVariableFunc = [this](std::initializer_list<Shape *> shapes) {
             int idx = 0;
-            for(auto shape = shapes.begin(); shape != shapes.end(); shape++) {
-                if (*shape != nullptr) {
+            for (auto shape : shapes) {
+                if (shape != nullptr) {
                     NodePtr var = Node::Create();
                     var->opName = "variable";
                     var->nodeName = this->nodeName + "_variable_" + std::to_string(idx);
-                    var->outputShapes.reShape(**shape);
-                    var->isVariable = context.phase == TRAIN;
-                    var->context.type = context.type;
-                    var->params["isTrain"] = context.phase == TRAIN;
+                    var->outputShapes.reShape(*shape);
+                    var->isVariable = this->context.phase == TRAIN;
+                    var->context.type = this->context.type;
+                    var->params["isTrain"] = this->context.phase == TRAIN;
                     var->outputs.push_back(std::weak_ptr<Node>(this->shared_from_this()));
                     var->Build();
                     this->inputs.push_back(var);
                     idx++;
                 }
             }
-
         };
         auto generatorSharedFunc = [this](std::initializer_list<Shape *> shapes) {
             int idx = 0;
-            for(auto shape = shapes.begin(); shape != shapes.end(); shape++) {
-                if (*shape != nullptr) {
+            for (auto shape : shapes) {
+                if (shape != nullptr) {
                     NodePtr var = Node::Create();
                     var->opName = "variable";
                     var->nodeName = this->nodeName + "_shared_" + std::to_string(idx);
-                    var->outputShapes.reShape(**shape);
+                    var->outputShapes.reShape(*shape);
                     var->isVariable = false;
                     var->isShared = true;
-                    var->context.type = context.type;
-
+                    var->context.type = this->context.type;
                     var->outputs.push_back(std::weak_ptr<Node>(this->shared_from_this()));
                     var->Build();
                     this->inputs.push_back(var);
@@ -238,6 +236,19 @@ namespace matrix {
 
     void Node::Reset() {
         depenCount = depenList.size();
+    }
+
+    Node::~Node() {
+        if (op != nullptr) {
+            delete op;
+            op = nullptr;
+        }
+        inputs.clear();
+        depenList.clear();
+        outputs.clear();
+        inputDates.clear();
+        inputShapes.clear();
+        params.clear();
     }
 
 }

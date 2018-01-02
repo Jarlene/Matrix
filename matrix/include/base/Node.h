@@ -23,6 +23,8 @@ namespace matrix {
     struct Node : public std::enable_shared_from_this<Node> {
         Node();
 
+        ~Node();
+
         size_t id_;
 
         std::string nodeName = "";
