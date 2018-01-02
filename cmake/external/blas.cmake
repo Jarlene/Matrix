@@ -9,6 +9,7 @@ if (USE_BLAS)
         MESSAGE(STATUS ${OpenBLAS_INCLUDE_DIRS})
         INCLUDE_DIRECTORIES(${OpenBLAS_INCLUDE_DIRS})
         LIST(APPEND external_libs ${OpenBLAS_LIBRARIES})
+        ADD_DEFINITIONS(-DUSE_BLAS)
         return()
     endif ()
 
