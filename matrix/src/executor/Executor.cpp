@@ -80,16 +80,15 @@ namespace matrix {
         Init();
 
         auto compute =[&](NodePtr &node) {
+
+            std::lock_guard<std::mutex> lock (mutex_);
             node->DirectRun();
-            {
-                std::lock_guard<std::mutex> lock (mutex_);
-                for (auto &item : node->outputs) {
-                    if(graph_->GetNode(item.lock()->id_)) {
-                        item.lock()->depenList.remove(node);
-                        if (item.lock()->depenList.empty()) {
-                            if (!ready_.Has(item.lock())) {
-                                ready_.Put(item.lock());
-                            }
+            for (auto &item : node->outputs) {
+                if(graph_->GetNode(item.lock()->id_)) {
+                    item.lock()->depenList.remove(node);
+                    if (item.lock()->depenList.empty()) {
+                        if (!ready_.Has(item.lock())) {
+                            ready_.Put(item.lock());
                         }
                     }
                 }
