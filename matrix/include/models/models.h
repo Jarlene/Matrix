@@ -143,7 +143,7 @@ namespace matrix {
         return softmax;
     }
 
-    Symbol MnistFc(const Symbol &input, int hideNum, int classNum) {
+    Symbol MnistFullyConnected(const Symbol &input, int hideNum, int classNum) {
 
         auto y1 = Symbol("fullConnected")
                 .SetInput("data", input)
@@ -177,18 +177,26 @@ namespace matrix {
         return out;
     }
 
-    Symbol MnistConv(const Symbol &input, int hideNum, int classNum) {
+    Symbol MnistConvolution(const Symbol &input, int hideNum, int classNum) {
+        auto w1 = VariableSymbol::Create("w1", ShapeN(32, 1, 5, 5));
+        auto b1 = VariableSymbol::Create("b1", ShapeN(32));
+        auto w2 = VariableSymbol::Create("w2", ShapeN(64, 32, 3, 3));
+        auto b2 = VariableSymbol::Create("b2", ShapeN(64));
+        auto w3 = VariableSymbol::Create("w3", ShapeN(64, 64, 3, 3));
+        auto b3 = VariableSymbol::Create("b3", ShapeN(64));
+
+
         auto conv1 = Symbol("convolution")
                 .SetInput("data", input)
-                .SetParam("filter", ShapeN(5, 5))
-                .SetParam("with_bias", true)
+                .SetInput("w1", w1)
+                .SetInput("b1", b1)
                 .SetParam("padding", ShapeN(0, 0))
                 .SetParam("stride", ShapeN(1, 1))
                 .SetParam("dilate", ShapeN(1, 1))
-                .SetParam("filter_num", 32)
                 .SetParam("group", 1)
                 .SetParam("activation_type", kRelu)
                 .Build("conv1");
+
 
         auto pool1 = Symbol("pooling")
                 .SetInput("conv1", conv1)
@@ -197,14 +205,14 @@ namespace matrix {
                 .SetParam("type", PoolType::kMax)
                 .Build("pool1");
 
+
         auto conv2 = Symbol("convolution")
                 .SetInput("pool1", pool1)
-                .SetParam("filter", ShapeN(3, 3))
-                .SetParam("with_bias", true)
+                .SetInput("w2", w2)
+                .SetInput("b2", b2)
                 .SetParam("padding", ShapeN(0, 0))
                 .SetParam("stride", ShapeN(1, 1))
                 .SetParam("dilate", ShapeN(1, 1))
-                .SetParam("filter_num", 64)
                 .SetParam("group", 1)
                 .SetParam("activation_type", kRelu)
                 .Build("conv2");
@@ -216,17 +224,19 @@ namespace matrix {
                 .SetParam("type", PoolType::kMax)
                 .Build("pool2");
 
+
+
         auto conv3 = Symbol("convolution")
                 .SetInput("pool2", pool2)
-                .SetParam("filter", ShapeN(3, 3))
-                .SetParam("with_bias", true)
+                .SetInput("w3", w3)
+                .SetInput("b3", b3)
                 .SetParam("padding", ShapeN(0, 0))
                 .SetParam("stride", ShapeN(1, 1))
                 .SetParam("dilate", ShapeN(1, 1))
-                .SetParam("filter_num", 64)
-                .SetParam("group", 1)
                 .SetParam("activation_type", kRelu)
+                .SetParam("group", 1)
                 .Build("conv3");
+
 
         auto pool3 = Symbol("pooling")
                 .SetInput("conv3", conv3)
@@ -235,11 +245,13 @@ namespace matrix {
                 .SetParam("type", PoolType::kMax)
                 .Build("pool3");
 
+
         auto flatten = Symbol("flatten")
                 .SetInput("pool3", pool3)
                 .Build("flatten");
 
-        auto fc = Symbol("fullConnected")
+
+        auto fc1 = Symbol("fullConnected")
                 .SetInput("flatten", flatten)
                 .SetParam("hide_num", hideNum)
                 .SetParam("with_bias", true)
@@ -247,7 +259,7 @@ namespace matrix {
                 .Build("fc1");
 
         auto fc2 = Symbol("fullConnected")
-                .SetInput("fc", fc)
+                .SetInput("fc1", fc1)
                 .SetParam("hide_num", classNum)
                 .SetParam("with_bias", true)
                 .Build("fc2");
@@ -259,7 +271,6 @@ namespace matrix {
 
         return out;
     }
-
 }
 
 
