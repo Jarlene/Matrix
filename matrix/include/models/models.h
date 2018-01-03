@@ -178,16 +178,12 @@ namespace matrix {
     }
 
     Symbol MnistConvolution(const Symbol &input, int hideNum, int classNum) {
-        auto w1 = VariableSymbol::Create("w1", ShapeN(32, 1, 5, 5));
-        auto b1 = VariableSymbol::Create("b1", ShapeN(32));
-        auto w2 = VariableSymbol::Create("w2", ShapeN(64, 32, 3, 3));
-        auto b2 = VariableSymbol::Create("b2", ShapeN(64));
-
 
         auto conv1 = Symbol("convolution")
                 .SetInput("data", input)
-                .SetInput("w1", w1)
-                .SetInput("b1", b1)
+                .SetParam("filter", ShapeN(5, 5))
+                .SetParam("with_bias", true)
+                .SetParam("filter_num", 32)
                 .SetParam("padding", ShapeN(0, 0))
                 .SetParam("stride", ShapeN(1, 1))
                 .SetParam("dilate", ShapeN(1, 1))
@@ -206,8 +202,9 @@ namespace matrix {
 
         auto conv2 = Symbol("convolution")
                 .SetInput("pool1", pool1)
-                .SetInput("w2", w2)
-                .SetInput("b2", b2)
+                .SetParam("filter", ShapeN(3, 3))
+                .SetParam("with_bias", true)
+                .SetParam("filter_num", 64)
                 .SetParam("padding", ShapeN(0, 0))
                 .SetParam("stride", ShapeN(1, 1))
                 .SetParam("dilate", ShapeN(1, 1))
@@ -222,9 +219,28 @@ namespace matrix {
                 .SetParam("type", PoolType::kMax)
                 .Build("pool2");
 
+        auto conv3 = Symbol("convolution")
+                .SetInput("pool2", pool2)
+                .SetParam("filter", ShapeN(3, 3))
+                .SetParam("with_bias", true)
+                .SetParam("filter_num", 64)
+                .SetParam("padding", ShapeN(0, 0))
+                .SetParam("stride", ShapeN(1, 1))
+                .SetParam("dilate", ShapeN(1, 1))
+                .SetParam("group", 1)
+                .SetParam("activation_type", kRelu)
+                .Build("conv3");
+
+        auto pool3 = Symbol("pooling")
+                .SetInput("conv3", conv3)
+                .SetParam("filter", ShapeN(2, 2))
+                .SetParam("stride", ShapeN(1, 1))
+                .SetParam("type", PoolType::kMax)
+                .Build("pool3");
+
 
         auto flatten = Symbol("flatten")
-                .SetInput("pool2", pool2)
+                .SetInput("pool3", pool3)
                 .Build("flatten");
 
 
