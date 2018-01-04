@@ -15,6 +15,7 @@ namespace matrix {
     template <class T, class xpu>
     class ConvolutionGradOp : public Operator {
     SAME_FUNCTION(ConvolutionGrad);
+        virtual bool ShareNodes(std::function<void(std::initializer_list<Shape *> shapes)> func) override;
     DISABLE_COPY_AND_ASSIGN(ConvolutionGrad);
         INPUT_TAG(PRE_GRAG, SELF_OUT, DATA, KERNEL, BIAS, COLBUFFER);
     };

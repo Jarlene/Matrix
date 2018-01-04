@@ -156,6 +156,28 @@ namespace matrix {
         return false;
     }
 
+    template<class T, class xpu>
+    bool ConvolutionGradOp<T, xpu>::ShareNodes(std::function<void(std::initializer_list<Shape *> shapes)> func) {
+        int index = GetArgValue<int>("input_idx", -1);
+        if (index == 0 || index == 2) {
+            return false;
+        }
+        bool with_bias = GetArgValue<bool>("with_bias", false);
+        if (InputSize() == 6) {
+            with_bias = true;
+        } else if (InputSize() == 5) {
+            with_bias = false;
+        }
+        if ((InputSize() < 7 && with_bias) || (InputSize() < 6 && !with_bias)) {
+            int group = GetArgValue<int>("group", 1);
+            int channel = inputShapes->at(KERNEL)->At(1);
+            auto colShape = ShapeN(channel/group, inputShapes->at(KERNEL)->At(2) , inputShapes->at(KERNEL)->At(3),
+                                   inputShapes->at(SELF_OUT)->At(2) , inputShapes->at(SELF_OUT)->At(3));
+            func({&colShape});
+            return true;
+        }
+        return false;
+    }
 
 
     void ConvolutionOpGradProp::InferShape(std::vector<Shape *> &inShape, Shape *outShape) {
