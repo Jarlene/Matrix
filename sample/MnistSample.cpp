@@ -111,16 +111,14 @@ void Mnist(int batchSize, int hideNum, int class_num, int epochSize, bool isConv
         loss.PrintMatrix();
         acc.PrintMatrix();
         if ((i + 1) % (trainSet.getNumberOfImages()/batchSize) == 0) {
-            int total_run_data = 0;
             int test_correct = 0;
             int total = testSet.getNumberOfImages();
             for (int j = 0; j < total; j += batchSize) {
                 testSet.getMiniBatch(batchSize, imageData, labelData);
                 image.Fill(imageData);
                 label.Fill(labelData);
-                total_run_data += batchSize;
                 float *cnt = static_cast<float *>(executor->evaluating(&acc));
-                test_correct += int((*cnt * batchSize) + 0.5);
+                test_correct += round(*cnt * batchSize);
             }
             std::cout << "test correct rate: " << test_correct * 1.0f / total << std::endl;
         }
