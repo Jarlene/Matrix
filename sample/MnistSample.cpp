@@ -118,7 +118,7 @@ void Mnist(int batchSize, int hideNum, int class_num, int epochSize, bool isConv
                 image.Fill(imageData);
                 label.Fill(labelData);
                 float *cnt = static_cast<float *>(executor->evaluating(&acc));
-                test_correct += round(*cnt * batchSize);
+                test_correct += int(*cnt * batchSize);
             }
             std::cout << "test correct rate: " << test_correct * 1.0f / total << std::endl;
         }
