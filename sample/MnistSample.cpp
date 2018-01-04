@@ -44,8 +44,7 @@ void AlexNet(int batchSize, int class_num, int epochSize) {
             .Build("acc");
 
     Context context = Context::Default();
-    auto opt = new SGDOptimizer(0.01f);
-
+    auto opt = new MomentOptimizer;
     auto executor = std::make_shared<Executor>(loss, context, opt);
     for (int i = 0; i < epochSize; ++i) {
         image.Fill(imageData);
@@ -79,9 +78,9 @@ void Mnist(int batchSize, int hideNum, int class_num, int epochSize, bool isConv
     float* labelData = static_cast<float *>(malloc(sizeof(float) * labelShape.Size()));
     Symbol logistic;
     if (isConv) {
-        logistic = MnistConv(image, hideNum, class_num);
+        logistic = MnistConvolution(image, hideNum, class_num);
     } else {
-        logistic = MnistFc(image, hideNum, class_num);
+        logistic = MnistFullyConnected(image, hideNum, class_num);
     }
 
     auto loss = Symbol("loss")
@@ -136,6 +135,6 @@ int main() {
     const int epochSize = 60000/batchSize * 10;
     const int classNum = 10;
     const int hideNum = 128;
-    Mnist(batchSize, hideNum, classNum, epochSize, false);
+    Mnist(batchSize, hideNum, classNum, epochSize, true);
     return 0;
 }
