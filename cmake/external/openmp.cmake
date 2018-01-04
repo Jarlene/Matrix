@@ -18,7 +18,7 @@ if (USE_OPENMP)
             ${EXTERNAL_PROJECT_LOG_ARGS}
             GIT_REPOSITORY  "https://github.com/llvm-mirror/openmp.git"
             PREFIX          ${OPENMP_SOURCES_DIR}
-            UPDATE_COMMAND  "git" "pull"
+#            UPDATE_COMMAND  "git" "pull"
             CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${OPENMP_INSTALL_DIR}
     )
     LIST(APPEND external_project_dependencies openmp)

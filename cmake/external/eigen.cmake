@@ -13,7 +13,7 @@ if (USE_EIGEN)
             eigen
             ${EXTERNAL_PROJECT_LOG_ARGS}
             GIT_REPOSITORY "https://github.com/RLovelett/eigen.git"
-            UPDATE_COMMAND  git pull
+#            UPDATE_COMMAND  git pull
             PREFIX          ${EIGEN_SOURCES_DIR}
             CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX:PATH=${EIGEN_INSTALL_DIR}
     )

@@ -21,7 +21,7 @@ if(USE_OPENCV)
             GIT_REPOSITORY  "https://github.com/opencv/opencv.git"
             GIT_TAG         "master"
             PREFIX          ${OPENCV_SOURCES_DIR}
-            UPDATE_COMMAND  "git" "pull"
+#            UPDATE_COMMAND  "git" "pull"
             CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${OPENCV_INSTALL_DIR} -DWITH_CUDA=OFF -DWITH_CUFFT=OFF -DWITH_CUBLAS=OFF -DWITH_NVCUVID=OFF
     )
     LIST(APPEND external_project_dependencies opencv)

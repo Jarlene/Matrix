@@ -25,7 +25,7 @@ IF(USE_TEST)
         ${EXTERNAL_PROJECT_LOG_ARGS}
         GIT_REPOSITORY  "https://github.com/google/googletest.git"
         PREFIX          ${GTEST_SOURCES_DIR}
-        UPDATE_COMMAND  "git" "pull"
+#        UPDATE_COMMAND  "git" "pull"
         CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX:PATH=${GTEST_INSTALL_DIR}
         CMAKE_ARGS      -DCMAKE_POSITION_INDEPENDENT_CODE=ON
         CMAKE_ARGS      -DBUILD_GMOCK=ON

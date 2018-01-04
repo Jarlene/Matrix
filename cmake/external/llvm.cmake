@@ -21,7 +21,7 @@ if(USE_LLVM)
             GIT_REPOSITORY  "https://github.com/llvm-mirror/llvm.git"
             GIT_TAG         "master"
             PREFIX          ${LLVM_SOURCES_DIR}
-            UPDATE_COMMAND  "git" "pull"
+#            UPDATE_COMMAND  "git" "pull"
             CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${LLVM_INSTALL_DIR}
     )
     LIST(APPEND external_project_dependencies llvm)

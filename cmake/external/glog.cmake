@@ -19,7 +19,7 @@ if (USE_GLOG)
             DEPENDS gflags
             GIT_REPOSITORY  "https://github.com/google/glog.git"
             PREFIX          ${GLOG_SOURCES_DIR}
-            UPDATE_COMMAND  "git" "pull"
+#            UPDATE_COMMAND  "git" "pull"
             CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${GLOG_INSTALL_DIR}
             CMAKE_ARGS      -DCMAKE_POSITION_INDEPENDENT_CODE=ON
             CMAKE_ARGS      -DWITH_GFLAGS=ON
