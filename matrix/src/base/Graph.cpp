@@ -185,6 +185,11 @@ namespace matrix {
                 if (grad_node == nullptr) {
                     continue;
                 }
+                for (auto & n : grad_node->inputs) {
+                    if (n->isShared) {
+                        nodes_.push_back(n);
+                    }
+                }
                 if (gradMap.count(item)) {
                     nodes_.push_back(gradMap[item]);
                     nodes_.push_back(grad_node);
