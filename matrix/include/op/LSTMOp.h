@@ -18,7 +18,7 @@ namespace matrix {
         virtual bool VariableNode(std::function<void(std::initializer_list<Shape *> shapes)> func) override ;
         virtual bool ShareNodes(std::function<void(std::initializer_list<Shape *> shapes)> func) override ;
     DISABLE_COPY_AND_ASSIGN(LSTM);
-        INPUT_TAG(INPUT, WEIGHT, BIAS, C, H);
+        INPUT_TAG(INPUT, WIX, WIH, WFX, WFH, WOX, WOH, WCX, WCH, BI, BF, BO, BC, C, H);
 
     };
 
