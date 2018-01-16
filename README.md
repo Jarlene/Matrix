@@ -8,7 +8,7 @@ you can run mnistsample in sample directory
 ### todo list
  lstm、 gru and so on op
 ### How to edit
-I recommend to build it with cmake(you can install clion to eidit it)
+I recommend to build it with cmake(you can install clion ide to eidit it)
 <pre>
 <code> 
 mkdir build && cd build
