@@ -22,7 +22,4 @@ you can run mnist sample with runing the data/mnist.sh to download mnist data
 <code> 
 ./MnistSample
 </code>
-<code>
-./MathSample
-</code>
 </pre>
