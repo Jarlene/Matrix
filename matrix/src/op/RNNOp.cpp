@@ -54,6 +54,11 @@ namespace matrix {
         return false;
     }
 
+    template<class T, class xpu>
+    bool RNNOp<T, xpu>::ShareNodes(std::function<void(std::initializer_list<Shape *> shapes)> func) {
+        return false;
+    }
+
 
     void RNNOpProp::InferShape(std::vector<Shape*> &inShape, Shape *outShape) {
         if (inShape.size() == 1) {

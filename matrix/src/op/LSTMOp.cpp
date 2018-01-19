@@ -21,6 +21,17 @@ namespace matrix {
         INIT_PARAMS
     }
 
+    /**
+     * i_t & =\sigma(W_{ix}x_t+W_{ih}h_{t-1}+b_i)\\
+     * f_t & = \sigma(W_{fx}x_t+W_{fh}h_{t-1}+b_f+1)\\
+     * o_t & = \sigma(W_{ox}x_t+W_{oh}h_{t-1}+b_o)\\
+     * \tilde{c_t} & = \tanh(W_{cx}x_t+W_{ch}h_{t-1}+b_c)\\
+     * c_t & = c_{t-1}\circ f_t + \tilde{c_t}\circ i_t\\
+     * h_t & = \tanh(c_t)\circ o_t\\
+     * @tparam T
+     * @tparam xpu
+     * @return
+     */
     template <class T, class xpu>
     bool LSTMOp<T, xpu>::Run() {
         int hide_num = GetArgValue<int>("hide_num");
@@ -119,7 +130,7 @@ namespace matrix {
 
     template <class T, class xpu>
     bool LSTMOp<T, xpu>::ShareNodes(std::function<void(std::initializer_list<Shape *> shapes)> func) {
-        bool bias = GetArgValue<bool>("with_bias", true);
+        bool bias = GetArgValue<bool>("with_bias", false);
         int hide_num = GetArgValue<int>("hide_num");
         if ((bias && InputSize() < 5) || (!bias && InputSize() < 4)) {
             Shape weight = ShapeN(hide_num, 4 * hide_num);

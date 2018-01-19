@@ -16,6 +16,7 @@ namespace matrix {
     template <class T, class xpu>
     class BatchNormalizationOp : public Operator {
     SAME_FUNCTION(BatchNormalization);
+        virtual bool ShareNodes(std::function<void(std::initializer_list<Shape *> shapes)> func) override;
     DISABLE_COPY_AND_ASSIGN(BatchNormalization);
     };
 

@@ -39,6 +39,16 @@ namespace matrix {
 
     }
 
+    template<class T, class xpu>
+    bool BatchNormalizationOp<T, xpu>::ShareNodes(std::function<void(std::initializer_list<Shape *> shapes)> func) {
+        if (InputSize() == 1) {
+            Shape shape;
+            func({&shape, &shape});
+            return true;
+        }
+        return false;
+    }
+
     void BatchNormalizationOpProp::InferShape(std::vector<Shape*> &inShape, Shape *outShape) {
         assert(outShape != nullptr);
         if(!param->args->count("hide_num")) {
