@@ -20,12 +20,9 @@ namespace matrix {
         Executor(const Symbol &symbol,  Context &context, BaseOptimizer *optimizer);
         ~Executor();
         void train(const Symbol *symbol = nullptr);
-        void syncTrain(const Symbol *symbol = nullptr);
         void update();
         void* evaluating(const Symbol *symbol = nullptr);
 
-    private:
-        void Init();
     private:
         BlockQueue<NodePtr> ready_;
         Graph* graph_{nullptr};
