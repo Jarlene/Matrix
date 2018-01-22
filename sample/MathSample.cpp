@@ -22,10 +22,10 @@ int main() {
     auto ds = as + bs;
     auto es = ds * ds - bs;
     Context context = Context::Default();
-    auto opt = new MomentOptimizer(0.01f, 0.9f);
+    auto opt = new MomentOptimizer;
     auto executor = std::make_shared<Executor>(es, context, opt);
 
-    for (int i = 0; i < 5000; ++i) {
+    for (int i = 0; i < 200; ++i) {
         long start = getCurrentTime();
         executor->train();
         executor->update();

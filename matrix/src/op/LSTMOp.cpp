@@ -143,13 +143,11 @@ namespace matrix {
 
     void LSTMOpProp::InferShape(std::vector<Shape*> &inShape, Shape *outShape) {
         assert(outShape != nullptr);
-        if (inShape.size() < 4) {
+        bool bias = param->GetArgValue<bool>("with_bias", false);
+        if ((inShape.size() < 4 && bias) || (inShape.size() < 3 && !bias)) {
             return;
         }
-        if(!param->args->count("hide_num")) {
-            Logger::Global()->Fatal("LSTMOpProp InferShape==> need hide_num for output");
-        }
-        int hide_num = get<int>(param->args->at("hide_num"));
+        int hide_num = param->GetArgValue<int>("hide_num");
         int batch = inShape.at(0)->At(0);
         outShape->reShape(ShapeN(batch, hide_num));
     }

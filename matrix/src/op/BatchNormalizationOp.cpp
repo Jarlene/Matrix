@@ -51,10 +51,7 @@ namespace matrix {
 
     void BatchNormalizationOpProp::InferShape(std::vector<Shape*> &inShape, Shape *outShape) {
         assert(outShape != nullptr);
-        if(!param->args->count("hide_num")) {
-            Logger::Global()->Fatal("LSTMOpProp InferShape==> need hide_num for out put");
-        }
-        int hide_num = get<int>(param->args->at("hide_num"));
+        int hide_num = param->GetArgValue<int>("hide_num");
         outShape->reShape(ShapeN(inShape.at(0)->At(0), hide_num));
     }
 

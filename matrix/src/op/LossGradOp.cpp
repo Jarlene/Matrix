@@ -60,7 +60,7 @@ namespace matrix {
 
     void LossGradOpProp::InferShape(std::vector<Shape*> &inShape, Shape *outShape) {
         assert(outShape != nullptr);
-        int idx = get<int>(param->args->at("input_idx"));
+        int idx = param->GetArgValue<int>("input_idx");
         if (idx == 0) {
             outShape->reShape(*inShape[2]);
         } else if (idx == 1){

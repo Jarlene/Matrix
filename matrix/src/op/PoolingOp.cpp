@@ -95,25 +95,23 @@ namespace matrix {
         Shape stride = ShapeN(1, 1);
         Shape dilate = ShapeN(1, 1);
         Shape filter = ShapeN(1, 1);
-        if (param->args->count("filter")) {
-            auto s = get<Shape>(param->args->at("filter"));
-            filter.reShape(s);
-//            get<Shape>(param->args->at("filter")).reShape(ShapeN(inShape[0]->At(0), inShape[0]->At(1), filter[0], filter[1]));
+        if (param->HasArg("filter")) {
+            filter.reShape(param->GetArgValue<Shape>("filter"));
         } else {
             Logger::Global()->Fatal("PoolingOp cant not support no filter \n");
         }
-        if (param->args->count("stride")) {
-            stride.reShape(get<Shape>(param->args->at("stride")));
+        if (param->HasArg("stride")) {
+            stride.reShape(param->GetArgValue<Shape>("stride"));
         } else {
             param->args->insert(std::pair<std::string, Any>("stride", stride));
         }
-        if (param->args->count("padding")) {
-            padding.reShape(get<Shape>(param->args->at("padding")));
+        if (param->HasArg("padding")) {
+            padding.reShape(param->GetArgValue<Shape>("padding"));
         } else {
             param->args->insert(std::pair<std::string, Any>("padding", padding));
         }
-        if (param->args->count("dilate")) {
-            dilate.reShape(get<Shape>(param->args->at("dilate")));
+        if (param->HasArg("dilate")) {
+            dilate.reShape(param->GetArgValue<Shape>("dilate"));
         } else {
             param->args->insert(std::pair<std::string, Any>("dilate", dilate));
         }

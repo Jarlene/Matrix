@@ -254,6 +254,28 @@ namespace matrix {
         Shape* outShape{nullptr};
         std::map<std::string, Any> *args{nullptr};
         Context *context;
+
+        inline bool HasArg(const std::string &name) {
+            return args->count(name) > 0;
+        }
+
+        template <class T>
+        inline T GetArgValue(const std::string & name, const T &default_value) {
+            if (args->count(name)) {
+                return get<T>(args->at(name));
+            }
+            return default_value;
+        }
+
+        template <class T>
+        inline T GetArgValue(const std::string & name) {
+            if (args->count(name)) {
+                return get<T>(args->at(name));
+            }
+            Logger::Global()->Fatal("can not find arg name: %s", name.c_str());
+            T t;
+            return t;
+        }
     };
 
 
