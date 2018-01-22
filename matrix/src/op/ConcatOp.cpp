@@ -70,7 +70,7 @@ namespace matrix {
             }
         }
         if (axis == -1) {
-            axis = 0;
+            Logger::Global()->Fatal("ConcatOpProp InferShape can not find which axis to concat!");
         }
         for (int i = 0; i < rank; ++i) {
             if (i == axis) {

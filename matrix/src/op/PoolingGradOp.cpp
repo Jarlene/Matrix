@@ -113,30 +113,6 @@ namespace matrix {
 
 
     void PoolingGradOpProp::InferShape(std::vector<Shape*> &inShape, Shape* outShape) {
-        Shape padding = ShapeN(0, 0);
-        Shape stride = ShapeN(1, 1);
-        Shape dilate = ShapeN(1, 1);
-        Shape filter = ShapeN(1, 1);
-        if (param->HasArg("filter")) {
-            filter.reShape(param->GetArgValue<Shape>("filter"));
-        } else {
-            Logger::Global()->Fatal("PoolingOp cant not support no filter \n");
-        }
-        if (param->HasArg("stride")) {
-            stride.reShape(param->GetArgValue<Shape>("stride"));
-        } else {
-            param->args->insert(std::pair<std::string, Any>("stride", stride));
-        }
-        if (param->HasArg("padding")) {
-            padding.reShape(param->GetArgValue<Shape>("padding"));
-        } else {
-            param->args->insert(std::pair<std::string, Any>("padding", padding));
-        }
-        if (param->HasArg("dilate")) {
-            dilate.reShape(param->GetArgValue<Shape>("padding"));
-        } else {
-            param->args->insert(std::pair<std::string, Any>("dilate", dilate));
-        }
         outShape->reShape(*inShape[2]);
     }
 
