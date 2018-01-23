@@ -264,6 +264,230 @@ namespace matrix {
 
         return out;
     }
+
+
+    /**
+     * Convolution Op
+     * @param input 输入数据
+     * @param filter Kernel
+     * @param filter_num Kernel channel
+     * @param padding
+     * @param stride
+     * @param dilate
+     * @param with_bias
+     * @param group
+     * @param actType 激活方式
+     * @param name
+     * @return
+     */
+    Symbol Convolution(const Symbol &input, Shape &filter, int filter_num,
+                       const Shape &padding = ShapeN(0, 0),
+                       const Shape &stride = ShapeN(1, 1),
+                       const Shape &dilate = ShapeN(1, 1),
+                       const bool with_bias = true,
+                       const int group = 1,
+                       const ActType &actType = kRelu,
+                       const std::string &name = "conv") {
+        auto conv = Symbol("convolution")
+                .SetInput("data", input)
+                .SetParam("filter", filter)
+                .SetParam("with_bias", with_bias)
+                .SetParam("filter_num", filter_num)
+                .SetParam("padding", padding)
+                .SetParam("stride", stride)
+                .SetParam("dilate", dilate)
+                .SetParam("group", 1)
+                .SetParam("activation_type", actType)
+                .Build(name);
+        return conv;
+    }
+
+
+    /**
+     * FullyConnected Op
+     * @param input 输入数据
+     * @param hideNum
+     * @param with_bias
+     * @param actType 激活方式
+     * @param name
+     * @return
+     */
+    Symbol FullyConnected(const Symbol &input, int hideNum,
+                          const bool with_bias = true,
+                          const ActType &actType = kRelu,
+                          const std::string &name = "fullConnected") {
+        auto fullConnected = Symbol("fullConnected")
+                .SetInput("data", input)
+                .SetParam("hide_num", hideNum)
+                .SetParam("with_bias", with_bias)
+                .SetParam("activation_type", actType)
+                .Build(name);
+        return fullConnected;
+    }
+
+
+    /**
+     * Output Op
+     * @param input
+     * @param mode
+     * @param name
+     * @return
+     */
+    Symbol Output(const Symbol &input,
+                  const OutputMode &mode = kSoftmax,
+                  const std::string &name = "output") {
+        auto out = Symbol("output")
+                .SetInput("data", input)
+                .SetParam("type", mode)
+                .Build(name);
+        return out;
+    }
+
+
+    /**
+     * dropout Op
+     * @param input
+     * @param rate
+     * @param name
+     * @return
+     */
+    Symbol Dropout(const Symbol &input,
+                   const float rate = 0.5f,
+                   const std::string &name = "drop") {
+        auto drop = Symbol("dropout")
+                .SetInput("data", input)
+                .SetParam("rate", rate)
+                .Build(name);
+        return drop;
+    }
+
+
+
+    /**
+     * Pooling Op
+     * @param input
+     * @param filter
+     * @param stride
+     * @param padding
+     * @param dilate
+     * @param type
+     * @param name
+     * @return
+     */
+    Symbol Pooling(const Symbol &input,
+                   const Shape &filter,
+                   const Shape &stride=ShapeN(1, 1),
+                   const Shape &padding=ShapeN(0, 0),
+                   const Shape &dilate = ShapeN(1, 1),
+                   const PoolType &type=kMax,
+                   const std::string &name = "pooling") {
+        auto pool = Symbol("pooling")
+                .SetInput("data", input)
+                .SetParam("filter", filter)
+                .SetParam("padding", padding)
+                .SetParam("stride", stride)
+                .SetParam("dilate", dilate)
+                .SetParam("type", type)
+                .Build(name);
+        return pool;
+    }
+
+
+    /**
+     * Flatten Op
+     * @param input
+     * @param shape
+     * @param name
+     * @return
+     */
+    Symbol Flatten(const Symbol &input,
+                   const Shape *shape = nullptr,
+                   const std::string &name = "flatten") {
+        auto flatten = Symbol("flatten")
+                .SetInput("data", input);
+        if (shape != nullptr) {
+            flatten.SetParam("shape", *shape);
+        }
+        flatten.Build("name");
+        return flatten;
+    }
+
+
+    /**
+     * Loss Op
+     * @param input
+     * @param label
+     * @param mode
+     * @param name
+     * @return
+     */
+    Symbol Loss(const Symbol &input, const Symbol &label,
+                const LossMode &mode = kCrossEntropy,
+                const std::string &name = "loss") {
+        auto loss = Symbol("loss")
+                .SetInput("data", input)
+                .SetInput("label", label)
+                .SetParam("type", mode)
+                .Build(name);
+        return loss;
+    }
+
+    /**
+     * Concat Op
+     * @param inputs 输入数据
+     * @param axis 维度
+     * @param name
+     * @return
+     */
+    Symbol Concat(const std::vector<Symbol> &inputs,
+                  const int axis =-1,
+                  const std::string &name = "concat") {
+        auto concat = Symbol("concat")
+                .SetParam("axis", axis);
+        for (auto &input : inputs) {
+            concat.SetInput("data", input);
+        }
+        concat.Build(name);
+        return concat;
+    }
+
+
+    /**
+     * Accuracy Op
+     * @param input
+     * @param label
+     * @param name
+     * @return
+     */
+    Symbol Accuracy(const Symbol &input, const Symbol &label,
+                    const std::string &name = "accuracy") {
+        auto acc = Symbol("accuracy")
+                .SetInput("data", input)
+                .SetInput("label", label)
+                .Build(name);
+        return acc;
+    }
+
+
+
+    /**
+     * Activation Op
+     * @param input
+     * @param type
+     * @param name
+     * @return
+     */
+    Symbol Activation(const Symbol &input,
+                      const ActType &type=kRelu,
+                      const std::string &name = "activation") {
+        auto activation = Symbol("activation")
+                .SetInput("data", input)
+                .SetParam("type", type)
+                .Build(name);
+        return activation;
+    }
+
+
 }
 
 
