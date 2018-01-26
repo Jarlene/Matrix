@@ -766,6 +766,28 @@ namespace matrix {
         }
     }
 
+    template <class T>
+    inline void Reciprocal(const int N,  T *x) {
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+        for (int i=0; i < N; ++i) {
+            x[i] = T(1.0) / x[i];
+        }
+    }
+
+    template <class T>
+    inline void Negative(const int N,  T *x) {
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+        for (int i=0; i < N; ++i) {
+            x[i] = -x[i];
+        }
+    }
+
+
+
 
     /// tanh
     /// \tparam T

@@ -2410,5 +2410,37 @@ namespace matrix {
 
             PrintMat(res, out[0], out[1], "ConcateGradOp_test_result");
         }
+
+
+        TEST_F(OpTest, DivOp) {
+            float b[] = {1, 2, 3, 4, 5, 6};
+            float a[] = {2, 4, 6, 8, 10, 12}; // 28, 34, 64, 79
+            float c[4] = {0};
+
+            float res[4] = {2+4.0/3+6.0/5, 3, 8+10.0/3+12.0/5, 6+10.0/4};
+            OpPtr pro = Registry::Global()->GetOp("div");
+
+            Context context = Context::Test();
+
+            std::vector<void *> inputs;
+
+
+            inputs.push_back(a);
+            inputs.push_back(b);
+
+            std::vector<Shape *> inShape;
+            Shape in1 = ShapeN(2, 3);
+            Shape in2 = ShapeN(3, 2);
+            inShape.push_back(&in1);
+            inShape.push_back(&in2);
+
+            std::map<std::string, Any> params;
+            Shape out;
+            Operator *op = pro->CreateOperator(&context, &inShape, &out, params);
+            op->SetData(&inputs, c);
+            op->AsyncRun();
+            PrintMat(c, out[0], out[1], "DivOp_test_result");
+            checkArrayEqual<float>(c, res, out.Size());
+        }
     }
 }

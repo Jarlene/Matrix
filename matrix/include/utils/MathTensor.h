@@ -98,7 +98,19 @@ namespace matrix {
 
     template <class T>
     void Div(const Tensor<T> &a, const Tensor<T> &b,  Tensor<T> &c) {
+        auto bData = const_cast<T*>(b.Data());
+        Reciprocal(b.Size(), bData);
+        MatrixMul(a, false, b, false,  c);
+    }
 
+    template <class T>
+    void Reciprocal(Tensor<T> &x) {
+        Reciprocal<T>(x.Size(), x.MutableData());
+    }
+
+    template <class T>
+    void Negative(Tensor<T> &x) {
+        Negative<T>(x.Size(), x.MutableData());
     }
 
 
