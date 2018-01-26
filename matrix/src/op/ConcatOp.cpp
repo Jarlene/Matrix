@@ -53,23 +53,23 @@ namespace matrix {
         for (int i = 1; i < inShape.size(); ++i) {
             assert(inShape[i]->Rank() == rank);
         }
-        int axis = -1;
-        int size = inShape.size();
-        for (int j = 0; j < rank; ++j) {
-            for (int i = 0; i < size  ; ++i) {
-                for (int k = i + 1; k < size; ++k) {
-                    if (inShape[i]->At(j) != inShape[k]->At(j)) {
-                        if (axis != -1 && j != axis) {
-                            Logger::Global()->Fatal("ConcatOpProp InferShape concat axis not match!");
+        int axis = param->GetArgValue<int>("axis", -1);
+        if (axis == -1) {
+            int size = inShape.size();
+            for (int j = 0; j < rank; ++j) {
+                for (int i = 0; i < size - 1; ++i) {
+                    for (int k = i + 1; k < size; ++k) {
+                        if (inShape[i]->At(j) != inShape[k]->At(j)) {
+                            if (axis != -1 && j != axis) {
+                                Logger::Global()->Fatal("ConcatOpProp InferShape concat axis not match!");
+                            }
+                            axis = j;
                         }
-                        axis = j;
                     }
                 }
             }
         }
-        if (axis == -1 && param->args->count("axis")) {
-            axis = get<int>(param->args->at("axis"));
-        } else if (axis == -1){
+        if (axis == -1) {
             Logger::Global()->Fatal("ConcatOpProp InferShape can not find which axis to concat!");
         }
         for (int i = 0; i < rank; ++i) {

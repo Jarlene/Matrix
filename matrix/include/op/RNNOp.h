@@ -16,6 +16,7 @@ namespace matrix {
     class RNNOp : public Operator {
     SAME_FUNCTION(RNN);
         virtual bool VariableNode(std::function<void(std::initializer_list<Shape *> shapes)> func) override ;
+        virtual bool ShareNodes(std::function<void(std::initializer_list<Shape *> shapes)> func) override ;
     DISABLE_COPY_AND_ASSIGN(RNN);
     };
 

@@ -21,16 +21,20 @@ namespace matrix {
         INIT_PARAMS
     }
 
+    /**
+     * i_t & =\sigma(W_{ix}x_t+W_{ih}h_{t-1}+b_i)\\
+     * f_t & = \sigma(W_{fx}x_t+W_{fh}h_{t-1}+b_f+1)\\
+     * o_t & = \sigma(W_{ox}x_t+W_{oh}h_{t-1}+b_o)\\
+     * \tilde{c_t} & = \tanh(W_{cx}x_t+W_{ch}h_{t-1}+b_c)\\
+     * c_t & = c_{t-1}\circ f_t + \tilde{c_t}\circ i_t\\
+     * h_t & = \tanh(c_t)\circ o_t\\
+     * @tparam T
+     * @tparam xpu
+     * @return
+     */
     template <class T, class xpu>
     bool LSTMOp<T, xpu>::Run() {
         int hide_num = GetArgValue<int>("hide_num");
-
-        const int frame_size = hide_num * hide_num;
-
-        const T *wi = Input<T>(WEIGHT);
-        const T *wf = Input<T>(WEIGHT) + frame_size;
-        const T *wc = Input<T>(WEIGHT) + 2 * frame_size;
-        const T *wo = Input<T>(WEIGHT) + 3 * frame_size;
 
         T *c = InputNonConst<T>(C);
         T *h = InputNonConst<T>(H);
@@ -41,28 +45,34 @@ namespace matrix {
         int dims = inputShapes->at(INPUT)->At(2);
 
         auto s = ShapeN(hide_num, hide_num);
+        auto sqs = ShapeN(len, dims);
 
-        bool bias = GetArgValue<bool>("with_bias", true);
-
-        int M = 1;
-        int N = 1;
-        int K = 1;
+        bool bias = GetArgValue<bool>("with_bias", false);
 
 
-
-
-        T * out = Output<T>();
-
+        const T *wix = Input<T>(WIX);
+        const T *wih = Input<T>(WIH);
+        const T *wfx = Input<T>(WFX);
+        const T *wfh = Input<T>(WFH);
+        const T *wox = Input<T>(WOX);
+        const T *woh = Input<T>(WOH);
+        const T *wcx = Input<T>(WCX);
+        const T *wch = Input<T>(WCH);
+        T *out = Output<T>();
         if (bias) {
-            const T* biasData = Input<T>(BIAS);
+            const T *bi = Input<T>(BI);
+            const T *bf = Input<T>(BF);
+            const T *bo = Input<T>(BO);
+            const T *bc = Input<T>(BC);
             for (int i = 0; i < batch; ++i) {
-                // state->f = data * wf + biasData
-                CPUGemm(NoTrans, NoTrans, M, N, K, T(1), data, wi, T(0), c);
-                Add(N, c, biasData, c);
-                Sigmoid(N, c, c);
+                Tensor<T> seq(data + i * sqs.Size(), sqs);
+                Tensor<T> wx(wix, s);
+                Tensor<T> it(out, *outputShape);
+                if (i == 0) {
+                    MatrixMul(seq, false, wx, false, it);
+                } else {
 
-
-                data += i * inputShapes->at(INPUT)->Size()/batch;
+                }
             }
         } else {
 
@@ -98,20 +108,20 @@ namespace matrix {
 
     template <class T, class xpu>
     bool LSTMOp<T, xpu>::VariableNode(std::function<void(std::initializer_list<Shape *> shapes)> func) {
-        bool bias = GetArgValue<bool>("with_bias", true);
+        bool bias = GetArgValue<bool>("with_bias", false);
         int hide_num = GetArgValue<int>("hide_num");
         if (bias) {
-            if (InputSize() < 4) {
+            if (InputSize() < 3) {
                 // for 8 params (wf, bf, wi, bi, wc, bc, wo, bo)
-                Shape weight = ShapeN(hide_num, 4 * hide_num);
-                Shape bias = ShapeN(7 * hide_num);
-                func({&weight, &bias});
+                Shape weight = ShapeN(hide_num,  hide_num);
+                Shape bias = ShapeN(hide_num);
+                func({&weight, &weight, &weight, &weight, &weight, &weight, &weight, &weight, &bias, &bias, &bias , &bias});
                 return true;
             }
         } else {
-            if (InputSize() < 3) {
-                Shape weight = ShapeN(hide_num, 4 * hide_num);
-                func({&weight});
+            if (InputSize() < 2) {
+                Shape weight = ShapeN(hide_num, hide_num);
+                func({&weight, &weight, &weight, &weight, &weight, &weight, &weight, &weight});
                 return true;
             }
         }
@@ -120,9 +130,9 @@ namespace matrix {
 
     template <class T, class xpu>
     bool LSTMOp<T, xpu>::ShareNodes(std::function<void(std::initializer_list<Shape *> shapes)> func) {
-        bool bias = GetArgValue<bool>("with_bias", true);
+        bool bias = GetArgValue<bool>("with_bias", false);
         int hide_num = GetArgValue<int>("hide_num");
-        if ((bias && InputSize() < 4) || (!bias && InputSize() < 3)) {
+        if ((bias && InputSize() < 5) || (!bias && InputSize() < 4)) {
             Shape weight = ShapeN(hide_num, 4 * hide_num);
             func({&weight, &weight});
             return true;
@@ -133,10 +143,11 @@ namespace matrix {
 
     void LSTMOpProp::InferShape(std::vector<Shape*> &inShape, Shape *outShape) {
         assert(outShape != nullptr);
-        if(!param->args->count("hide_num")) {
-            Logger::Global()->Fatal("LSTMOpProp InferShape==> need hide_num for output");
+        bool bias = param->GetArgValue<bool>("with_bias", false);
+        if ((inShape.size() < 4 && bias) || (inShape.size() < 3 && !bias)) {
+            return;
         }
-        int hide_num = get<int>(param->args->at("hide_num"));
+        int hide_num = param->GetArgValue<int>("hide_num");
         int batch = inShape.at(0)->At(0);
         outShape->reShape(ShapeN(batch, hide_num));
     }

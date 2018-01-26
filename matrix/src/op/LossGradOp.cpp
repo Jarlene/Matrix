@@ -60,12 +60,8 @@ namespace matrix {
 
     void LossGradOpProp::InferShape(std::vector<Shape*> &inShape, Shape *outShape) {
         assert(outShape != nullptr);
-        int idx = get<int>(param->args->at("input_idx"));
-        if (idx == 0) {
-            outShape->reShape(*inShape[2]);
-        } else if (idx == 1){
-            outShape->reShape(*inShape[3]);
-        }
+        int idx = param->GetArgValue<int>("input_idx");
+        outShape->reShape(*inShape[2 + idx]);
     }
 
     INIT_OPERATOR_PROPERTY_CREATE(LossGradOpProp, LossGradOp, true);

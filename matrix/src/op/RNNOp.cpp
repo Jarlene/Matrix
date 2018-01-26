@@ -42,7 +42,8 @@ namespace matrix {
             int rank = inputShapes->at(0)->Rank();
             Shape w;
             w.reShape(ShapeN(inputShapes->at(0)->At(rank - 1), hideNum));
-            if(HasArg("with_bias")) {
+            bool has_bias = GetArgValue<bool>("with_bias", false);
+            if(has_bias) {
                 Shape b;
                 b.Append(hideNum);
                 func({&w, &b});
@@ -54,15 +55,28 @@ namespace matrix {
         return false;
     }
 
+    template<class T, class xpu>
+    bool RNNOp<T, xpu>::ShareNodes(std::function<void(std::initializer_list<Shape *> shapes)> func) {
+        bool has_bias = GetArgValue<bool>("with_bias", false);
+        int hideNum = GetArgValue<int>("hide_num");
+        if ((InputSize() == 2 && !has_bias) || (InputSize() == 3 && has_bias)) {
+            Shape b = ShapeN(hideNum, hideNum);
+            func({&b});
+            return true;
+        }
+        return false;
+    }
+
 
     void RNNOpProp::InferShape(std::vector<Shape*> &inShape, Shape *outShape) {
-        if (inShape.size() == 1) {
+        bool bias = param->GetArgValue<bool>("with_bias", false);
+        if ((inShape.size() < 4 && bias) || (inShape.size() < 3 && !bias)) {
             return;
         }
 
-
-
-
+        int hide_num = param->GetArgValue<int>("hide_num");
+        int batch = inShape.at(0)->At(0);
+        outShape->reShape(ShapeN(batch, hide_num));
 
 
     }

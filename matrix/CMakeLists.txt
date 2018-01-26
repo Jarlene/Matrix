@@ -1,4 +1,9 @@
 
+configure_file(
+        "${PROJECT_SOURCE_DIR}/matrix/Version.h.in"
+        "${PROJECT_BINARY_DIR}/Version.h"
+)
+
 set(headList "")
 file(GLOB_RECURSE header_files include/*.h include/*.hpp)
 foreach(source_file ${header_files})

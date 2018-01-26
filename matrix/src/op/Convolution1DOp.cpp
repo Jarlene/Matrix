@@ -85,69 +85,43 @@ namespace matrix {
         Shape padding = ShapeN(0, 0);
         Shape stride = ShapeN(1, 1);
         Shape dilate = ShapeN(1, 1);
-        if (param->args->count("padding")) {
-            padding.reShape(get<Shape>(param->args->at("padding")));
+        if (param->HasArg("padding")) {
+            padding.reShape(param->GetArgValue<Shape>("padding"));
         } else {
             param->args->insert(std::pair<std::string, Any>("padding", padding));
         }
-        if (param->args->count("stride")) {
-            stride.reShape(get<Shape>(param->args->at("stride")));
+        if (param->HasArg("stride")) {
+            stride.reShape(param->GetArgValue<Shape>("stride"));
         } else {
             param->args->insert(std::pair<std::string, Any>("stride", stride));
         }
-        if (param->args->count("dilate")) {
-            dilate.reShape(get<Shape>(param->args->at("dilate")));
+        if (param->HasArg("dilate")) {
+            dilate.reShape(param->GetArgValue<Shape>("dilate"));
         } else {
             param->args->insert(std::pair<std::string, Any>("dilate", dilate));
         }
-        ImageOrder order = NCHW;
-        if (param->args->count("order")) {
-            order = get<ImageOrder>(param->args->at("order"));
-        }
-
-
-        int group = 1;
-        if (param->args->count("group")) {
-            group = get<int>(param->args->at("group"));
-        }
+        auto order = param->GetArgValue<ImageOrder>("order", NCHW);
         int filter_num = 1;
-
 
         Shape in = *inShape[0];
         Shape kernel = *inShape[1];
         Shape out = *outShape;
         Shape colBuffer;
         int n = in[0];
-        int kernel_h = kernel[0];
-        int kernel_w = kernel[1];
         if (order == NCHW) {
             int channel = in[1];
             int height = (in[2] + 2 * padding[0] - (dilate[0] * (kernel[0] - 1) + 1)) / stride[0] + 1;
             int width = (in[3] + 2 * padding[1] - (dilate[1] * (kernel[1] - 1) + 1)) / stride[1] + 1;
-            filter_num = channel;
-            if (param->args->count("filter_num")) {
-                filter_num = get<int>(param->args->at("filter_num"));
-            }
-            outShape->reShape(ShapeN(n, filter_num, height, width));
-            int c = channel / group * kernel.Size();
+            filter_num = param->GetArgValue<int>("filter_num", channel);
 
-            colBuffer.reShape(ShapeN(c, height, width));
-            inShape[1]->reShape(ShapeN(filter_num, channel, kernel_h, kernel_w));
+            outShape->reShape(ShapeN(n, filter_num, height, width));
         } else {
             int height = (in[1] + 2 * padding[0] - (dilate[0] * (kernel[0] - 1) + 1)) / stride[0] + 1;
             int width = (in[2] + 2 * padding[1] - (dilate[1] * (kernel[1] - 1) + 1)) / stride[1] + 1;
             int channel = in[3];
-            filter_num = channel;
-            if (param->args->count("filter_num")) {
-                filter_num = get<int>(param->args->at("filter_num"));
-            }
+            filter_num = param->GetArgValue<int>("filter_num", channel);
             outShape->reShape(ShapeN(n, height, width, filter_num));
-            int c = channel / group * kernel.Size();
-            colBuffer.reShape(ShapeN(c, height, width));
-            inShape[1]->reShape(ShapeN(filter_num, channel, kernel_h, kernel_w));
         }
-        inShape.push_back(&colBuffer);
-
     }
     INIT_OPERATOR_PROPERTY_CREATE(Convolution1DOpProp, Convolution1DOp, true);
 

@@ -181,22 +181,8 @@ namespace matrix {
 
 
     void ConvolutionOpGradProp::InferShape(std::vector<Shape *> &inShape, Shape *outShape) {
-        int index = get<int>(param->args->at("input_idx"));
-        switch (index) {
-            case 0:
-                outShape->reShape(*inShape[2]);
-                break;
-            case 1:
-                outShape->reShape(*inShape[3]);
-                break;
-            case 2:
-                outShape->reShape(*inShape[4]);
-                break;
-            default:
-                Logger::Global()->Fatal("ConvolutionOpGradProp do not support other inputs\n");
-                break;
-        }
-
+        int index = param->GetArgValue<int>("input_idx");
+        outShape->reShape(*inShape[index + 2]);
     }
     INIT_OPERATOR_PROPERTY_CREATE(ConvolutionOpGradProp, ConvolutionGradOp, true);
 

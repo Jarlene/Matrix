@@ -54,10 +54,7 @@ namespace matrix {
 
     void ConcatGradOpProp::InferShape(std::vector<Shape*> &inShape, Shape* outShape) {
         assert(outShape != nullptr);
-        if (!param->args->count("input_idx")) {
-            Logger::Global()->Fatal("ConcatGradOpProp need input idx");
-        }
-        int idx = get<int>(param->args->at("input_idx"));
+        int idx = param->GetArgValue<int>("input_idx");
         outShape->reShape(*inShape.at(idx + 2));
 
     }

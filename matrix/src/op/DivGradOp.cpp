@@ -24,9 +24,9 @@ namespace matrix {
         }
         int idx = GetArgValue<int>("input_idx");
         if (idx == 0) {
-
+            MatrixMul(pre, false, in2, true, out);
         } else if (idx == 1) {
-
+            MatrixMul(in2, true, pre, false, out);
         }
         return true;
     }

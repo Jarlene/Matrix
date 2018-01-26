@@ -49,63 +49,27 @@ namespace matrix {
 
     void NaiveConvolutionOpProp::InferShape(std::vector<Shape *> &inShape, Shape *outShape) {
 
-        Shape padding = ShapeN(0, 0);
-        Shape stride = ShapeN(1, 1);
-        Shape dilate = ShapeN(1, 1);
-        if (param->args->count("padding")) {
-            padding.reShape(get<Shape>(param->args->at("padding")));
-        }
-        if (param->args->count("stride")) {
-            stride.reShape(get<Shape>(param->args->at("stride")));
-        }
-        if (param->args->count("dilate")) {
-            dilate.reShape(get<Shape>(param->args->at("dilate")));
-        }
-        ImageOrder order = NCHW;
-        if (param->args->count("order")) {
-            order = get<ImageOrder>(param->args->at("order"));
-        }
-
-
-        int group = 1;
-        if (param->args->count("group")) {
-            group = get<int>(param->args->at("group"));
-        }
+        Shape padding = param->GetArgValue<Shape>("padding", ShapeN(0, 0));
+        Shape stride = param->GetArgValue<Shape>("stride",ShapeN(1, 1));
+        Shape dilate = param->GetArgValue<Shape>("dilate",ShapeN(1, 1));
+        auto order = param->GetArgValue<ImageOrder>("order",NCHW) ;
         int filter_num = 1;
-
-
         Shape in = *inShape[0];
         Shape kernel = *inShape[1];
         Shape out = *outShape;
-        Shape colBuffer = *inShape[inShape.size() - 1];
         int n = in[0];
-        int kernel_h = kernel[0];
-        int kernel_w = kernel[1];
         if (order == NCHW) {
             int channel = in[1];
             int height = (in[2] + padding[0] - (dilate[0] * (kernel[0] - 1) + 1)) / stride[0] + 1;
             int width = (in[3] + padding[1] - (dilate[1] * (kernel[1] - 1) + 1)) / stride[1] + 1;
-            filter_num = channel;
-            if (param->args->count("filter_num")) {
-                filter_num = get<int>(param->args->at("filter_num"));
-            }
+            filter_num = param->GetArgValue("filter_num", channel);
             out.reShape(ShapeN(n, filter_num, height, width));
-            int c = channel / group * kernel.Size();
-
-            colBuffer.reShape(ShapeN(c, height, width));
-            kernel.reShape(ShapeN(filter_num, channel, kernel_h, kernel_w));
         } else {
             int height = (in[1] + padding[0] - (dilate[0] * (kernel[0] - 1) + 1)) / stride[0] + 1;
             int width = (in[2] + padding[1] - (dilate[1] * (kernel[1] - 1) + 1)) / stride[1] + 1;
             int channel = in[3];
-            filter_num = channel;
-            if (param->args->count("filter_num")) {
-                filter_num = get<int>(param->args->at("filter_num"));
-            }
+            filter_num = param->GetArgValue("filter_num", channel);
             out.reShape(ShapeN(n, height, width, filter_num));
-            int c = channel / group * kernel.Size();
-            colBuffer.reShape(ShapeN(c, height, width));
-            kernel.reShape(ShapeN(filter_num, channel, kernel_h, kernel_w));
         }
 
     }

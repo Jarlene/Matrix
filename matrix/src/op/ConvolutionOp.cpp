@@ -188,25 +188,22 @@ namespace matrix {
         Shape padding = ShapeN(0, 0);
         Shape stride = ShapeN(1, 1);
         Shape dilate = ShapeN(1, 1);
-        if (param->args->count("padding")) {
-            padding.reShape(get<Shape>(param->args->at("padding")));
+        if (param->HasArg("padding")) {
+            padding.reShape(param->GetArgValue<Shape>("padding"));
         } else {
             param->args->insert(std::pair<std::string, Any>("padding", padding));
         }
-        if (param->args->count("stride")) {
-            stride.reShape(get<Shape>(param->args->at("stride")));
+        if (param->HasArg("stride")) {
+            stride.reShape(param->GetArgValue<Shape>("stride"));
         } else {
             param->args->insert(std::pair<std::string, Any>("stride", stride));
         }
-        if (param->args->count("dilate")) {
-            dilate.reShape(get<Shape>(param->args->at("dilate")));
+        if (param->HasArg("dilate")) {
+            dilate.reShape(param->GetArgValue<Shape>("dilate"));
         } else {
             param->args->insert(std::pair<std::string, Any>("dilate", dilate));
         }
-        ImageOrder order = NCHW;
-        if (param->args->count("order")) {
-            order = get<ImageOrder>(param->args->at("order"));
-        }
+        ImageOrder order = param->GetArgValue<ImageOrder>("order", NCHW);
 
 
         Shape in = *inShape[0];

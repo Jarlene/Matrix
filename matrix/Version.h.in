@@ -1,0 +1,6 @@
+#ifndef MATRIX_VERSION_H
+#define MATRIX_VERSION_H
+#define Matrix_VERSION_MAJOR @Matrix_VERSION_MAJOR@
+#define Matrix_VERSION_MINOR @Matrix_VERSION_MINOR@
+#define Matrix_VERSION_PATCH @Matrix_VERSION_PATCH@
+#endif

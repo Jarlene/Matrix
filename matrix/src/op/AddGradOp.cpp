@@ -52,10 +52,8 @@ namespace matrix {
 
 
     void AddGradOpProp::InferShape(std::vector<Shape*> &inShape, Shape *outShape) {
-        if (param->args->count("input_idx")) {
-            int idx = get<int>(param->args->at("input_idx"));
-            outShape->reShape(*inShape.at(idx + 2));
-        }
+        int idx = param->GetArgValue<int>("input_idx");
+        outShape->reShape(*inShape.at(idx + 2));
     }
 
 
