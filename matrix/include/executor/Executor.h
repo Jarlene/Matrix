@@ -22,6 +22,7 @@ namespace matrix {
         void train(const Symbol *symbol = nullptr);
         void update();
         void* evaluating(const Symbol *symbol = nullptr);
+        void save(std::string &name);
 
     private:
         BlockQueue<NodePtr> ready_;

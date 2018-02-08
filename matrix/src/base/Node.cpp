@@ -251,4 +251,7 @@ namespace matrix {
         params.clear();
     }
 
+    void Node::Save(std::ofstream &ofs) {
+
+    }
 }

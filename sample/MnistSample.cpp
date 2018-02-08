@@ -14,10 +14,10 @@
 
 using namespace matrix;
 
-const string trainImagePath = "../../data/train-images-idx3-ubyte";
-const string trainLabelPath = "../../data/train-labels-idx1-ubyte";
-const string testImagePath = "../../data/t10k-images-idx3-ubyte";
-const string testLabelPath = "../../data/t10k-labels-idx1-ubyte";
+const string trainImagePath = "../../data/mnist/train-images-idx3-ubyte";
+const string trainLabelPath = "../../data/mnist/train-labels-idx1-ubyte";
+const string testImagePath = "../../data/mnist/t10k-images-idx3-ubyte";
+const string testLabelPath = "../../data/mnist/t10k-labels-idx1-ubyte";
 
 
 void AlexNet(int batchSize, int class_num, int epochSize) {
@@ -32,16 +32,9 @@ void AlexNet(int batchSize, int class_num, int epochSize) {
 
     auto train = AlexSymbol(image, class_num);
 
-    auto loss = Symbol("loss")
-            .SetInput("logistic", train)
-            .SetInput("y", label)
-            .SetParam("type", kCrossEntropy)
-            .Build("loss");
+    auto loss = Loss(train, label);
 
-    auto acc = Symbol("accuracy")
-            .SetInput("logistic", train)
-            .SetInput("y", label)
-            .Build("acc");
+    auto acc = Accuracy(train, label);
 
     Context context = Context::Default();
     auto opt = new MomentOptimizer;
@@ -78,9 +71,9 @@ void Mnist(int batchSize, int hideNum, int class_num, int epochSize, bool isConv
     float* labelData = static_cast<float *>(malloc(sizeof(float) * labelShape.Size()));
     Symbol logistic;
     if (isConv) {
-        logistic = MnistConvolution(image, hideNum, class_num);
+        logistic = MnistTestConv(image, hideNum, class_num);
     } else {
-        logistic = MnistFullyConnected(image, hideNum, class_num);
+        logistic = MnistTestFullyConnected(image, hideNum, class_num);
     }
 
     auto loss = Symbol("loss")
@@ -129,10 +122,10 @@ void Mnist(int batchSize, int hideNum, int class_num, int epochSize, bool isConv
 }
 
 int main() {
-    const int batchSize = 300;
+    const int batchSize = 100;
     const int epochSize = 60000/batchSize * 10;
     const int classNum = 10;
     const int hideNum = 128;
-    Mnist(batchSize, hideNum, classNum, epochSize, true);
+    Mnist(batchSize, hideNum, classNum, epochSize, false);
     return 0;
 }

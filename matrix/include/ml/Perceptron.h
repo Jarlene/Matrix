@@ -24,7 +24,7 @@ namespace matrix {
     };
 
 
-    template <class policy = LearnPolicy, class WeightInitializationPolicy,class T>
+    template <class policy = LearnPolicy, class WeightInitializationPolicy, class T = float>
     class Perceptron {
     public:
 

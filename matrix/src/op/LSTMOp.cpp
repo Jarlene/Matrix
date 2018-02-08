@@ -110,17 +110,17 @@ namespace matrix {
     bool LSTMOp<T, xpu>::VariableNode(std::function<void(std::initializer_list<Shape *> shapes)> func) {
         bool bias = GetArgValue<bool>("with_bias", false);
         int hide_num = GetArgValue<int>("hide_num");
+        int size = InputShape(0)->At(1);
+        Shape weight = ShapeN(size, hide_num);
         if (bias) {
             if (InputSize() < 3) {
                 // for 8 params (wf, bf, wi, bi, wc, bc, wo, bo)
-                Shape weight = ShapeN(hide_num,  hide_num);
                 Shape bias = ShapeN(hide_num);
                 func({&weight, &weight, &weight, &weight, &weight, &weight, &weight, &weight, &bias, &bias, &bias , &bias});
                 return true;
             }
         } else {
             if (InputSize() < 2) {
-                Shape weight = ShapeN(hide_num, hide_num);
                 func({&weight, &weight, &weight, &weight, &weight, &weight, &weight, &weight});
                 return true;
             }
@@ -134,7 +134,7 @@ namespace matrix {
         int hide_num = GetArgValue<int>("hide_num");
         if ((bias && InputSize() < 5) || (!bias && InputSize() < 4)) {
             Shape weight = ShapeN(hide_num, 4 * hide_num);
-            func({&weight, &weight});
+            func({&weight, &weight, &weight, &weight});
             return true;
         }
         return false;

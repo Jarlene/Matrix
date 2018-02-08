@@ -5,11 +5,21 @@
 #ifndef MATRIX_GBDT_H
 #define MATRIX_GBDT_H
 
+#include "BaseMl.h"
+
 namespace matrix {
 
 
-    class GBDT {
+    template <class T = float>
+    class GBDT : public BaseMl{
+    public:
+        void Train() override {
 
+        }
+
+        void Classify() override {
+
+        }
     };
 }
 

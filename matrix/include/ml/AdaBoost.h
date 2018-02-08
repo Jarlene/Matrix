@@ -7,14 +7,17 @@
 
 #include <iostream>
 #include <vector>
-#include <matrix/include/store/MemoryManager.h>
+
+#include "BaseMl.h"
+#include "matrix/include/store/MemoryManager.h"
 #include "matrix/include/base/Tensor.h"
+#include "matrix/include/utils/MathTensor.h"
 
 namespace matrix {
 
 
-    template<class WeakLearnerType, class T>
-    class AdaBoost {
+    template<class WeakLearnerType, class T = float>
+    class AdaBoost : public BaseMl{
     public:
         AdaBoost(const Tensor<T> &data,
                  const Tensor<T> &labels,
@@ -43,8 +46,29 @@ namespace matrix {
 
             Tensor<T> predictedLabels(this->predictedLabels, labels.GetShape());
 
+            Tensor<T> tempData(data);
+            T * temp = MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(
+                    sizeof(T) * numClasses * data.GetShape()[0]);
+            Tensor<T> sumFinalH(temp, ShapeN(numClasses, data.GetShape()[0]));
+            Value(sumFinalH, T(0));
             const double initWeight = 1.0 / (data.GetShape()[0] * numClasses);
 
+            T * d = MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(
+                    sizeof(T) * numClasses * data.GetShape()[0]);
+
+            Tensor<T> D(d, ShapeN(numClasses, data.GetShape()[0]));
+            Value(D, T(initWeight));
+
+
+
+        }
+
+
+        void Train() override {
+
+        }
+
+        void Classify() override {
 
         }
 
