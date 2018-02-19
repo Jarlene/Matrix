@@ -1745,7 +1745,7 @@ namespace matrix {
 #ifdef USE_MP
 #pragma omp parallel for
 #endif
-        R res = fun(R(), vec.at(0), true);
+        R res = func(R(), vec.at(0), true);
         for (int i = 1; i < vec.size(); ++i) {
             res = func(res, vec.at(i), false);
         }
