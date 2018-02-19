@@ -1751,6 +1751,19 @@ namespace matrix {
         }
         return res;
     }
+
+    template< class T>
+    inline std::vector<T> Filter(std::function<bool(const T)> func, const std::vector<T> &input) {
+        std::vector<T> res;
+        res.reserve(input.size());
+        for (const auto &i : input) {
+            if (func(i)) {
+                res.push_back(i);
+            }
+        }
+        res.shrink_to_fit();
+        return res;
+    }
 }
 
 #endif //MATRIX_MATH_H
