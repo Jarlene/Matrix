@@ -1677,6 +1677,80 @@ namespace matrix {
             }
         }
     }
+
+    template <class I, class R>
+    inline std::vector<R> Map(std::function<R(I)> fun, const std::vector<I>& vec) {
+        std::vector<R> res;
+        res.reserve(vec.size());
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+        for (auto& i : vec) {
+            res.push_back(fun(i));
+        }
+        return res;
+    };
+
+
+    template <typename R, typename I>
+    inline std::vector<R> Map(std::function<R(I)> fun, std::vector<I>&& vec) {
+        return Map<R, I>(fun, vec);
+    }
+
+    template <typename I>
+    inline I Reduce(std::function<I(const I&, const I&)> func, I initVal, const std::vector<I>& vec) {
+        I res = initVal;
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+        for (int i = 0; i < vec.size(); ++i) {
+            res = func(res, vec.at(i));
+        }
+        return res;
+    }
+
+    template <typename I>
+    inline I Reduce(std::function<I(const I&, const I&)> func, const std::vector<I>& vec) {
+        const std::vector<I> v(vec.begin() + 1, vec.end());
+        return Reduce(func, vec.at(0), v);
+    }
+
+    template <typename I>
+    inline I Reduce(std::function<I(I&&, I&&)> func, I&& initVal, std::vector<I>&& vec) {
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+        I res = std::move(initVal);
+        for (int i = 0; i < vec.size(); ++i) {
+            res = func(std::move(res), std::move(vec.at(i)));
+        }
+        return res;
+    }
+
+    template <typename I>
+    I Reduce(std::function<I(I&&, I&&)> func, std::vector<I>&& vec) {
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+        I res = std::move(vec.at(0));
+        for (int i = 1; i < vec.size(); ++i) {
+            res = func(std::move(res), std::move(vec.at(i)));
+        }
+        return res;
+    }
+
+
+    template <typename R, typename I>
+    inline R MapReduce(std::function<R(R, I, bool)> func, const std::vector<I>& vec) {
+#ifdef USE_MP
+#pragma omp parallel for
+#endif
+        R res = fun(R(), vec.at(0), true);
+        for (int i = 1; i < vec.size(); ++i) {
+            res = func(res, vec.at(i), false);
+        }
+        return res;
+    }
 }
 
 #endif //MATRIX_MATH_H
