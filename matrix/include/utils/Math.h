@@ -1058,13 +1058,12 @@ namespace matrix {
 #endif
         for (int i = 0; i < M; ++i) {
 
-            T max = *std::max_element(data + i * class_num, data + (i + 1) * class_num);
             T sum = T(0.0);
             for (int j = 0; j < class_num; ++j) {
-                sum += exp(data[i * class_num +j] - max);
+                sum += exp(data[i * class_num +j]);
             }
 
-            out[0] += log(sum) - data[static_cast<int>(label[i])] + max;
+            out[0] += log(sum) - data[static_cast<int>(label[i])];
         }
 
         out[0] /= M;

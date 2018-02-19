@@ -5,15 +5,27 @@
 
 #include <opencv2/opencv.hpp>
 #include <matrix/include/utils/Logger.h>
+#include <matrix/include/utils/FileUtil.h>
 using namespace cv;
 using namespace matrix;
+using namespace std;
 #endif
+
 int main() {
 #ifdef USE_OPENCV
-    const std::string name = "/Users/jarlene/Desktop/image.png";
+    const std::string name = "/Users/jarlene/Desktop/ev.png";
 
     Mat mat = cv::imread(name);
+    Mat mv[3];
+    split(mat, mv);
 
+    Mat result = mv[0] + mv[1] + mv[2];
+
+    cout << getFileParentDir(name) << endl;
+
+    imwrite("/Users/jarlene/Desktop/ev1.png", InputArray(result));
+
+    std::cout << result << endl;
     Logger::Global()->Info("the image size is %d X %d channel is %d \n", mat.cols, mat.rows, mat.channels());
 #endif
     return 0;

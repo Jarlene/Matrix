@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
-wget  http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz
-wget http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz
-wget http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz
-wget http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz
+mkdir -p mnist
+wget -P mnist  http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz
+wget -P mnist http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz
+wget -P mnist http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz
+wget -P mnist http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz
+cd mnist
 gunzip train-images-idx3-ubyte.gz
 gunzip train-labels-idx1-ubyte.gz
 gunzip t10k-images-idx3-ubyte.gz

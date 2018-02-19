@@ -224,6 +224,13 @@ namespace matrix {
 
         virtual bool RunOnDevice() = 0;
 
+        Shape * InputShape(int idx) {
+            if (inputShapes != nullptr && idx >=0 && idx < InputSize()) {
+                return inputShapes->at(idx);
+            }
+            return nullptr;
+        }
+
 
     protected:
         std::map<std::string, Any> *args{nullptr};

@@ -59,4 +59,8 @@ namespace matrix {
         }
     }
 
+    void Executor::save(std::string &name) {
+
+    }
+
 }

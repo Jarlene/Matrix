@@ -146,6 +146,8 @@ namespace matrix {
 
         void SwitchType(const Context &context);
 
+        void Save(std::ofstream &ofs);
+
     private:
         friend class Graph;
         void Reset();

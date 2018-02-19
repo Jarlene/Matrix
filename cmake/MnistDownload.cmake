@@ -1,0 +1,13 @@
+set(MNIST_DIR "${PROJECT_SOURCE_DIR}/data/mnist")
+if (NOT EXISTS ${MNIST_DIR})
+    SET(DOWNLOAD_URLS "")
+    list(APPEND DOWNLOAD_URLS http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz)
+    list(APPEND DOWNLOAD_URLS http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz)
+    list(APPEND DOWNLOAD_URLS http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz)
+    list(APPEND DOWNLOAD_URLS http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz)
+        foreach(FILE_URL ${DOWNLOAD_URLS})
+            get_filename_component(FILE_NAME ${FILE_URL} NAME)
+
+            matrix_download(URL ${FILE_URL} OUTPATH ${MNIST_DIR}/${FILE_NAME})
+        endforeach()
+endif ()

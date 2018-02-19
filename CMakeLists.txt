@@ -12,6 +12,7 @@ include(System)
 include(Dependencies)
 include(Download)
 include(External)
+include(MnistDownload)
 
 
 include_directories("${CMAKE_SOURCE_DIR}")
