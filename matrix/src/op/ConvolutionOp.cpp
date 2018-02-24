@@ -65,12 +65,20 @@ namespace matrix {
         Value(inputShapes->at(InputSize() - 1)->Size(), colData, T(0));
         for (int i = 0; i < num; ++i) {
             for (int j = 0; j < group; ++j) {
-                img2col<T>(inputData + j * input_offset, channel,
+                Img2Col<T, 0>(inputData + j * input_offset, channel,
                            input_width, input_height,
-                           stride[0], stride[1],
-                           padding[0],padding[1],
                            kernel[2],kernel[3],
-                           dilate[0],dilate[1], colData);
+                           dilate[0],dilate[1],
+                           padding[0], padding[1], padding[0], padding[1],
+                           stride[0], stride[1], colData);
+
+
+//                img2col<T>(inputData + j * input_offset, channel,
+//                           input_width, input_height,
+//                           stride[0], stride[1],
+//                           padding[0],padding[1],
+//                           kernel[2],kernel[3],
+//                           dilate[0],dilate[1], colData);
                 int M = filterNum / group;
                 int N = outsize;
                 int K = channel / group * kernel.At(2) * kernel.At(3);

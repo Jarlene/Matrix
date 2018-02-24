@@ -85,12 +85,12 @@ namespace matrix {
                                preGrad + j * outputOffset,
                                T(0.0), colData);
 
-                    col2img(out + j * inputOffSize, channel,
-                            input_width, input_height,
-                            stride[0], stride[1],
-                            padding[0],padding[1],
-                            kernel[2],kernel[3],
-                            dilate[0],dilate[1], colData);
+                    Col2Img<T, 0>(colData, channel,
+                                  input_width, input_height,
+                                  kernel[2],kernel[3],
+                                  dilate[0],dilate[1],
+                                  padding[0], padding[1], padding[0], padding[1],
+                                  stride[0], stride[1], out + j * inputOffSize);
 
                 }
                 out += inputOffSize * group;
@@ -104,12 +104,12 @@ namespace matrix {
             int N = channel / group *  kernel[2] * kernel[3];
             for (int i = 0; i < num; ++i) {
                 for (int j = 0; j < group; ++j) {
-                    img2col<T>(inputData + j * inputOffSize, channel,
-                            input_width, input_height,
-                            stride[0], stride[1],
-                            padding[0],padding[1],
-                            kernel[2],kernel[3],
-                            dilate[0],dilate[1], colData);
+                    Img2Col<T, 0>(inputData + j * inputOffSize, channel,
+                                  input_width, input_height,
+                                  kernel[2],kernel[3],
+                                  dilate[0],dilate[1],
+                                  padding[0], padding[1], padding[0], padding[1],
+                                  stride[0], stride[1], colData);
                     CPUGemm<T>(NoTrans,Trans, M, N, K, T(1.0),
                                preGrad + j * outputOffset,
                                colData,
