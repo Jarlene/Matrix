@@ -1456,8 +1456,8 @@ namespace matrix {
             int c_im = c / filter_width / filter_height;
             for (int h = 0; h < output_height; ++h) {
                 for (int w = 0; w < output_width; ++w) {
-                    int imRowIdx = h * stride_height + h_offset;
-                    int imColIdx = w * stride_width + w_offset;
+                    int imRowIdx = h * stride_height + h_offset * dilation_height;
+                    int imColIdx = w * stride_width + w_offset * dilation_width;
                     if ((imRowIdx - padding_height) < 0 ||
                         (imRowIdx - padding_height) >= input_height ||
                         (imColIdx - padding_width) < 0 ||
@@ -1494,8 +1494,8 @@ namespace matrix {
             int c_im = c / filter_width / filter_height;
             for (int h = 0; h < output_height; ++h) {
                 for (int w = 0; w < output_width; ++w) {
-                    int imRowIdx = h * stride_height + h_offset;
-                    int imColIdx = w * stride_width + w_offset;
+                    int imRowIdx = h * stride_height + h_offset * dilation_height;
+                    int imColIdx = w * stride_width + w_offset * dilation_width;
                     imRowIdx -= padding_height;
                     imColIdx -= padding_width;
                     if (imRowIdx >= 0 && imRowIdx < input_height &&
