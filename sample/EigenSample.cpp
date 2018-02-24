@@ -4,14 +4,16 @@
 
 #include <iostream>
 #include <matrix/include/base/Tensor.h>
-#include <matrix/include/utils/Optional.h>
+#include <matrix/include/utils/Math.h>
 #ifdef USE_EIGEN
-#include <eigen3/Eigen/Dense>
 using Eigen::MatrixXd;
 using namespace Eigen;
 #endif
 using namespace matrix;
 using namespace std;
+
+template <class T>
+using Mat = Matrix<T, Dynamic, Dynamic, RowMajor>;
 
 int main() {
 #ifdef USE_EIGEN
@@ -34,8 +36,9 @@ int main() {
     float *c = new float[4];
 
 
-
-
+    Mat<float> bma(4, 5);
+    bma << 1, 2, 3, 4, 5, 6, 7, 7, 5, 4, 2, 1, 5, 6, 5, 3, 6, 3, 1, 1;
+    cout << bma << endl;
 
     Map<Matrix<float, 2, 3, RowMajor>> am(a);
     Map<Matrix<float, 3, 2, RowMajor>> bm(b);

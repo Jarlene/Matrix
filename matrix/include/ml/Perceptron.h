@@ -24,20 +24,33 @@ namespace matrix {
     };
 
 
-    template <class policy = LearnPolicy, class WeightInitializationPolicy, class T = float>
-    class Perceptron {
+    template <class policy = LearnPolicy,  class T = float>
+    class Perceptron : BaseMl<T> {
     public:
-
-        void Train(const Tensor<T>& data,
-                   const Tensor<T>& labels,
+        Perceptron(const Tensor<T> &data,
+                   const Tensor<T> &labels,
                    const size_t numClasses,
-                   const Tensor<T>& instanceWeights = Tensor<T>()) {
+                   const Tensor<T> &instanceWeights = Tensor<T>()) : data(data), labels(labels),
+                                                                     numClasses(numClasses),
+                                                                     instanceWeights(instanceWeights) {
+
+        }
+
+
+        void Train() {
 
         }
 
         void Classify(const Tensor<T>& test, Tensor<T>& predictedLabels) {
 
         }
+
+
+    private:
+        const Tensor<T>& data;
+        const Tensor<T>& labels;
+        const size_t numClasses;
+        const Tensor<T>& instanceWeights;
     };
 
 

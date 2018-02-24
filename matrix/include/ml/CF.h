@@ -1,17 +1,17 @@
 //
-// Created by Jarlene on 2018/2/6.
+// Created by Jarlene on 2018/2/11.
 //
 
-#ifndef MATRIX_GBDT_H
-#define MATRIX_GBDT_H
+#ifndef MATRIX_CF_H
+#define MATRIX_CF_H
+
 
 #include "BaseMl.h"
 
 namespace matrix {
 
-
-    template <class T = float>
-    class GBDT : public BaseMl<T>{
+    template<class T>
+    class CF : BaseMl<T> {
     public:
         void Train() override {
 
@@ -21,6 +21,7 @@ namespace matrix {
 
         }
     };
+
 }
 
-#endif //MATRIX_GBDT_H
+#endif //MATRIX_CF_H

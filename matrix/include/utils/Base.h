@@ -15,4 +15,8 @@ INSTANCE_CLASS_TYPE(classname, float) \
 INSTANCE_CLASS_TYPE(classname, double)\
 INSTANCE_CLASS_TYPE(classname, long)\
 
+#ifndef MATRIX_EXPORT
+#define MATRIX_EXPORT __attribute__((visibility("default")))
+#endif
+
 #endif //MATRIX_BASE_H

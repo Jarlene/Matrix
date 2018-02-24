@@ -6,13 +6,12 @@
 #define MATRIX_SVD_H
 
 #include "BaseMl.h"
-#include "matrix/include/base/Tensor.h"
 
 namespace matrix {
 
 
     template <class T = float>
-    class SVD  : public BaseMl{
+    class SVD  : public BaseMl<T>{
     public:
 
         SVD(const Tensor<T> & dataset,
@@ -20,7 +19,7 @@ namespace matrix {
             Tensor<T>& v,
             Tensor<T>& sigma,
             const double epsilon = 0.03,
-            const double delta = 0.1) : dataset(dataset) {
+            const double delta = 0.1) : dataset(&dataset) {
 
         }
 
@@ -32,13 +31,12 @@ namespace matrix {
 
         }
 
-        void Classify() override {
+        void Classify(const Tensor<T> &test, Tensor<T> &predictedLabels) override {
 
         }
 
-
     private:
-        const Tensor<T> &dataset;
+        const Tensor<T> *dataset;
         Tensor<T> basis;
     };
 

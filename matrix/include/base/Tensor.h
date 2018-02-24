@@ -18,6 +18,10 @@ namespace matrix {
 
         }
 
+        Tensor(const Shape &shape) : data_(nullptr), shape_(shape) {
+
+        }
+
         Tensor(const Tensor<T> &tensor) : shape_(tensor.shape_), data_(tensor.data_) {
 
         }

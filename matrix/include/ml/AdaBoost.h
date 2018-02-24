@@ -9,29 +9,37 @@
 #include <vector>
 
 #include "BaseMl.h"
-#include "matrix/include/store/MemoryManager.h"
-#include "matrix/include/base/Tensor.h"
+#include "Perceptron.h"
 #include "matrix/include/utils/MathTensor.h"
+#include "matrix/include/utils/Init.h"
 
 namespace matrix {
 
 
-    template<class WeakLearnerType, class T = float>
-    class AdaBoost : public BaseMl{
+    template<class WeakLearnerType = Perceptron<>, class T = float>
+    class AdaBoost : public BaseMl<T>{
     public:
         AdaBoost(const Tensor<T> &data,
                  const Tensor<T> &labels,
                  const size_t numClasses,
                  const WeakLearnerType &wl,
                  const size_t iterations = 100,
-                 const double tolerance = 1e-6) {
+                 const double tolerance = 1e-6) : data(data), labels(labels), numClasses(numClasses), wl(wl),
+                                                  tolerance(tolerance), iterations(iterations) {
 
-            this->predictedLabels = MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(
-                    sizeof(T) * labels.Size());
+        }
 
+
+
+        void Train() override {
             Train(data, labels, numClasses, wl, iterations, tolerance);
         }
 
+        void Classify(const Tensor<T>& test, Tensor<T>& predictedLabels) override {
+
+        }
+
+    private:
         void Train(const Tensor<T> &data,
                    const Tensor<T> &labels,
                    const size_t numClasses,
@@ -44,41 +52,55 @@ namespace matrix {
             this->tolerance = tolerance;
             this->numClasses = numClasses;
 
-            Tensor<T> predictedLabels(this->predictedLabels, labels.GetShape());
+            Tensor<T> predictedLabels(labels.GetShape());
+            InitTensor(predictedLabels);
 
             Tensor<T> tempData(data);
-            T * temp = MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(
-                    sizeof(T) * numClasses * data.GetShape()[0]);
-            Tensor<T> sumFinalH(temp, ShapeN(numClasses, data.GetShape()[0]));
+
+            Tensor<T> sumFinalH(ShapeN(numClasses, data.GetShape()[0]));
+            InitTensor(sumFinalH);
             Value(sumFinalH, T(0));
             const double initWeight = 1.0 / (data.GetShape()[0] * numClasses);
 
-            T * d = MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(
-                    sizeof(T) * numClasses * data.GetShape()[0]);
 
-            Tensor<T> D(d, ShapeN(numClasses, data.GetShape()[0]));
+            Tensor<T> D(ShapeN(numClasses, data.GetShape()[0]));
+            InitTensor(D);
             Value(D, T(initWeight));
 
 
+            Tensor<T> weights(labels.GetShape());
+            InitTensor(weights);
 
+            Tensor<T> finalH(labels.GetShape());
+            InitTensor(finalH);
+
+            double rt, crt = 0.0, alphat = 0.0, zt;
+            for (int i = 0; i < iterations; ++i) {
+                rt = 0.0;
+                zt = 0.0;
+            }
+
+
+            DestoryTensor(predictedLabels);
+            DestoryTensor(sumFinalH);
+            DestoryTensor(D);
+            DestoryTensor(weights);
+            DestoryTensor(finalH);
         }
 
-
-        void Train() override {
-
-        }
-
-        void Classify() override {
-
-        }
 
     private:
+        const Tensor<T> &data;
+        const Tensor<T> &labels;
+        const WeakLearnerType &wl;
+
         size_t numClasses;
         double tolerance;
+        size_t iterations;
+
         std::vector<WeakLearnerType> learns;
         std::vector<double> weight;
 
-        T *predictedLabels;
 
     };
 
