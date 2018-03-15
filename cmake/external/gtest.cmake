@@ -31,6 +31,8 @@ IF(USE_TEST)
         CMAKE_ARGS      -DBUILD_GMOCK=ON
         CMAKE_ARGS      -Dgtest_disable_pthreads=ON
         CMAKE_ARGS      -Dgtest_force_shared_crt=ON
+        CMAKE_ARGS      -DCMAKE_BUILD_TYPE=Release
+        CMAKE_ARGS      -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -O2"
     )
     LIST(APPEND external_project_dependencies gtest)
     LIST(APPEND external_libs ${GTEST_LIBRARIES})

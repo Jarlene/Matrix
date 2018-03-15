@@ -21,6 +21,8 @@ if(USE_GFLAGS)
             CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${GFLAGS_INSTALL_DIR}
             CMAKE_ARGS      -DCMAKE_POSITION_INDEPENDENT_CODE=ON
             CMAKE_ARGS      -DBUILD_TESTING=OFF
+            CMAKE_ARGS      -DCMAKE_BUILD_TYPE=Release
+            CMAKE_ARGS      -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -O2"
     )
     LIST(APPEND external_project_dependencies gflags)
     LIST(APPEND external_libs ${GFLAGS_LIBRARIES})

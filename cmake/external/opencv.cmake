@@ -22,7 +22,13 @@ if(USE_OPENCV)
             GIT_TAG         "master"
             PREFIX          ${OPENCV_SOURCES_DIR}
 #            UPDATE_COMMAND  "git" "pull"
-            CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${OPENCV_INSTALL_DIR} -DWITH_CUDA=OFF -DWITH_CUFFT=OFF -DWITH_CUBLAS=OFF -DWITH_NVCUVID=OFF
+            CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${OPENCV_INSTALL_DIR}
+            CMAKE_ARGS      -DWITH_CUDA=OFF
+            CMAKE_ARGS      -DWITH_CUFFT=OFF
+            CMAKE_ARGS      -DWITH_CUBLAS=OFF
+            CMAKE_ARGS      -DWITH_NVCUVID=OFF
+            CMAKE_ARGS      -DCMAKE_BUILD_TYPE=Release
+            CMAKE_ARGS      -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -O2"
     )
     LIST(APPEND external_project_dependencies opencv)
     LIST(APPEND external_libs ${OPENCV_LIBRARIES})

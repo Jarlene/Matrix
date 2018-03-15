@@ -16,6 +16,8 @@ if (USE_EIGEN)
 #            UPDATE_COMMAND  git pull
             PREFIX          ${EIGEN_SOURCES_DIR}
             CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX:PATH=${EIGEN_INSTALL_DIR}
+            CMAKE_ARGS      -DCMAKE_BUILD_TYPE=Release
+            CMAKE_ARGS      -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -O2"
     )
     LIST(APPEND external_project_dependencies eigen)
 #    LIST(APPEND external_libs ${EIGEN_LIBRARIES})
