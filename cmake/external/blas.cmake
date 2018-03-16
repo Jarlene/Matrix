@@ -24,7 +24,7 @@ if (USE_BLAS)
             CMAKE_ARGS      -DCMAKE_INSTALL_LIBDIR=${BLAS_INSTALL_DIR}/lib
             CMAKE_ARGS      -DCMAKE_INSTALL_BINDIR=${BLAS_INSTALL_DIR}/bin
             CMAKE_ARGS      -DCMAKE_BUILD_TYPE=Release
-            CMAKE_ARGS      -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -O2"
+            CMAKE_ARGS      -DCMAKE_CXX_FLAGS="-O2"
     )
 
 #    SET(error_code 1)

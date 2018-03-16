@@ -35,7 +35,7 @@ if(USE_LLVM)
 #            UPDATE_COMMAND  "git" "pull"
             CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${LLVM_INSTALL_DIR}
             CMAKE_ARGS      -DCMAKE_BUILD_TYPE=Release
-            CMAKE_ARGS      -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -O2"
+            CMAKE_ARGS      -DCMAKE_CXX_FLAGS="-O2"
     )
     LIST(APPEND external_project_dependencies llvm)
     LIST(APPEND external_libs ${LLVM_LIBRARIES})

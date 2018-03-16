@@ -28,7 +28,7 @@ if(USE_OPENCV)
             CMAKE_ARGS      -DWITH_CUBLAS=OFF
             CMAKE_ARGS      -DWITH_NVCUVID=OFF
             CMAKE_ARGS      -DCMAKE_BUILD_TYPE=Release
-            CMAKE_ARGS      -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -O2"
+            CMAKE_ARGS      -DCMAKE_CXX_FLAGS="-O2"
     )
     LIST(APPEND external_project_dependencies opencv)
     LIST(APPEND external_libs ${OPENCV_LIBRARIES})

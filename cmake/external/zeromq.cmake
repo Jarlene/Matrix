@@ -16,7 +16,7 @@ if (USE_ZMQ)
             PREFIX ${ZMQ_SOURCES_DIR}
             CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX:PATH=${ZMQ_INSTALL_DIR}
             CMAKE_ARGS      -DCMAKE_BUILD_TYPE=Release
-            CMAKE_ARGS      -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -O2"
+            CMAKE_ARGS      -DCMAKE_CXX_FLAGS="-O2"
     )
     LIST(APPEND external_project_dependencies zmq)
     LIST(APPEND external_libs ${ZMQ_LIBRARIES})
