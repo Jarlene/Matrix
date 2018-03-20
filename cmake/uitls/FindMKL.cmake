@@ -190,7 +190,7 @@ foreach (MODEVAR ${MKL_MODE_VARIANTS})
 endforeach ()
 
 set(MKL_LIBRARIES ${MKL_LP_SEQUENTIAL_LIBRARIES})
-LINK_DIRECTORIES(${MKL_ROOT_DIR}/lib/${MKL_ARCH_DIR}) # hack
+#LINK_DIRECTORIES(${MKL_ROOT_DIR}/lib/${MKL_ARCH_DIR}) # hack
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(MKL DEFAULT_MSG MKL_INCLUDE_DIRS MKL_LIBRARIES)
