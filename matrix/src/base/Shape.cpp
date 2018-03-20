@@ -7,6 +7,9 @@
 namespace matrix {
 
     void Shape::reShape(const Shape &s) {
+        if (s == *this) {
+            return;
+        }
         this->shape_.clear();
         this->shape_.insert(shape_.begin(), s.shape_.begin(), s.shape_.end());
     }
