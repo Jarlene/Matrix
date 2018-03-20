@@ -1,4 +1,5 @@
 #CUDA
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/uitls")
 if (USE_CUDA)
     find_package(CUDA)
     if (CUDA_FOUND)
@@ -13,32 +14,13 @@ endif ()
 
 # MKL
 if (USE_MKL)
-    message(STATUS "use mkl")
-    set(MKL_INCLUDE_DIR
-            /opt/intel/mkl/include)
-
-    set(MKL_LIBS "")
-    # runtime libs
-    file(GLOB_RECURSE lib_files  /opt/intel/mkl/lib/*.a /opt/intel/mkl/lib/*.dylib)
-    foreach(source_file ${lib_files})
-        list(APPEND MKL_LIBS ${source_file})
-    endforeach()
-
-    # runtime dependence libs
-    file(GLOB_RECURSE lib_files  /opt/intel/lib/*.a /opt/intel/lib/*.dylib)
-    foreach(source_file ${lib_files})
-        list(APPEND MKL_LIBS ${source_file})
-    endforeach()
-
-    # runtime dependence libs
-    file(GLOB_RECURSE lib_files  /opt/intel/tbb/*.a /opt/intel/tbb/*.dylib)
-    foreach(source_file ${lib_files})
-        list(APPEND MKL_LIBS ${source_file})
-    endforeach()
-
-    include_directories(${MKL_INCLUDE_DIR})
-    link_libraries(${MKL_LIBS})
-    ADD_DEFINITIONS(-DUSE_MKL)
+    find_package(MKL)
+    if (MKL_FOUND)
+#        message(STATUS ${MKL_INCLUDE_DIRS})
+        include_directories(${MKL_INCLUDE_DIRS})
+        link_libraries(${MKL_LIBRARIES})
+        ADD_DEFINITIONS(-DUSE_MKL)
+    endif ()
 endif ()
 
 
