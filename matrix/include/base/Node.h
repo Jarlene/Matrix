@@ -41,7 +41,7 @@ namespace matrix {
 
         Shape outputShapes;
 
-        bool isVariable;
+        bool isVariable = false;
 
         bool isShared = false;
 
