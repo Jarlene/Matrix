@@ -10,22 +10,22 @@
 
 namespace matrix {
 
-    class DeformityShape : public Shape {
+    class LoShape : public Shape {
     public:
 
-        DeformityShape() = default;
+        LoShape() = default;
 
         void ReShape(const std::vector<Shape*> &shapes);
 
         void ReShape(const std::vector<Shape> &shapes);
 
-        DeformityShape& operator=(const DeformityShape& other);
+        LoShape& operator=(const LoShape& other);
 
-        DeformityShape& operator=(const Shape& other);
+        LoShape& operator=(const Shape& other);
 
         const bool operator==(const Shape& shape) const;
 
-        const bool operator==(const DeformityShape& shape) const;
+        const bool operator==(const LoShape& shape) const;
 
         const Shape operator[](int level) const ;
 

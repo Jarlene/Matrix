@@ -2,24 +2,24 @@
 // Created by Jarlene on 2017/12/14.
 //
 
-#include "matrix/include/base/DeformityShape.h"
+#include "matrix/include/base/LoShape.h"
 
 
 namespace matrix {
 
-    void DeformityShape::Append(int idx, int val) {
+    void LoShape::Append(int idx, int val) {
         shape_.at(idx).push_back(val);
     }
 
-    void DeformityShape::Append(int val) {
+    void LoShape::Append(int val) {
         Append(0, val);
     }
 
-    const size_t DeformityShape::Rank() const {
+    const size_t LoShape::Rank() const {
         return shape_.size();
     }
 
-    const size_t DeformityShape::Size() const {
+    const size_t LoShape::Size() const {
         size_t  t = 1;
         for(auto it : shape_) {
            for (auto subit : it) {
@@ -29,24 +29,24 @@ namespace matrix {
         return t;
     }
 
-    const Shape DeformityShape::At(int level) const {
+    const Shape LoShape::At(int level) const {
         assert(Rank() > level);
         return Shape(shape_[level].data(), shape_[level].size());
     }
 
-    void DeformityShape::ReShape(const std::vector<Shape *> &shapes) {
+    void LoShape::ReShape(const std::vector<Shape *> &shapes) {
         for (auto s : shapes) {
             shape_.push_back(s->Array());
         }
     }
 
-    void DeformityShape::ReShape(const std::vector<Shape> &shapes) {
+    void LoShape::ReShape(const std::vector<Shape> &shapes) {
         for (auto s : shapes) {
             shape_.push_back(s.Array());
         }
     }
 
-    const int DeformityShape::At(int idx, int val) const {
+    const int LoShape::At(int idx, int val) const {
         if(idx > shape_.size() || idx < 0) {
             return -1;
         }
@@ -57,7 +57,7 @@ namespace matrix {
         return shape_.at(idx).at(val);
     }
 
-    DeformityShape &DeformityShape::operator=(const DeformityShape &other) {
+    LoShape &LoShape::operator=(const LoShape &other) {
         if (other == *this) {
             return *this;
         }
@@ -69,7 +69,7 @@ namespace matrix {
         return *this;
     }
 
-    DeformityShape &DeformityShape::operator=(const Shape &other) {
+    LoShape &LoShape::operator=(const Shape &other) {
         if (other == *this) {
             return *this;
         }
@@ -78,7 +78,7 @@ namespace matrix {
         return *this;
     }
 
-    const bool DeformityShape::operator==(const Shape &shape) const {
+    const bool LoShape::operator==(const Shape &shape) const {
         if (this->Rank() != 1) {
             return false;
         }
@@ -94,7 +94,7 @@ namespace matrix {
         return true;
     }
 
-    const bool DeformityShape::operator==(const DeformityShape &shape) const {
+    const bool LoShape::operator==(const LoShape &shape) const {
         if (this->Rank() != shape.Rank()) {
             return false;
         }
@@ -110,7 +110,7 @@ namespace matrix {
         return true;
     }
 
-    const Shape DeformityShape::operator[](int level) const {
+    const Shape LoShape::operator[](int level) const {
         assert(Rank() > level);
         return Shape(shape_[level].data(), shape_[level].size());
     }

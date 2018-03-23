@@ -34,6 +34,7 @@ namespace matrix {
      */
     template <class T, class xpu>
     bool LSTMOp<T, xpu>::Run() {
+        bool forward = GetArgValue<bool>("is_forward", true);
         int hide_num = GetArgValue<int>("hide_num");
 
         T *c = InputNonConst<T>(C);

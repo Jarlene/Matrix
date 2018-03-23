@@ -10,7 +10,7 @@
 
 namespace matrix {
 
-    template<class T>
+    template<class T = float>
     class CF : BaseMl<T> {
     public:
         void Train() override {

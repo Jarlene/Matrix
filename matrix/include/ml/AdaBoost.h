@@ -11,6 +11,7 @@
 #include "BaseMl.h"
 #include "Perceptron.h"
 #include "matrix/include/utils/MathTensor.h"
+#include "matrix/include/op/ReduceOp.h"
 #include "matrix/include/utils/Init.h"
 
 namespace matrix {
@@ -78,6 +79,18 @@ namespace matrix {
             for (int i = 0; i < iterations; ++i) {
                 rt = 0.0;
                 zt = 0.0;
+                Sum(D, 0, weights);
+                WeakLearnerType w(tempData, labels, numClasses, weights);
+                w.Classify(tempData, predictedLabels);
+
+                for (int j = 0; j < D.GetShape()[0]; ++j) {
+                    if (predictedLabels.Data()[j] == labels.Data()[j]) {
+
+                    } else {
+
+                    }
+                }
+                
             }
 
 

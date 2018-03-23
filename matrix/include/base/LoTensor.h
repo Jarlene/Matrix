@@ -5,7 +5,7 @@
 #ifndef MATRIX_LOTENSOR_H
 #define MATRIX_LOTENSOR_H
 
-#include "DeformityShape.h"
+#include "LoShape.h"
 #include "Tensor.h"
 #include "matrix/include/utils/Base.h"
 
@@ -15,6 +15,12 @@ namespace matrix {
     class LoTensor : public Tensor<T> {
     public:
         LoTensor() = default;
+
+
+
+
+    private:
+        LoShape shape;
     };
 
 }

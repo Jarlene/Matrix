@@ -107,6 +107,15 @@ namespace matrix {
 
             // write to STDOUT
 
+            switch (level) {
+                case LogLevel::Error:
+                    fprintf(stdout, RED);
+                    break;
+                case LogLevel::Fatal:
+                    fprintf(stdout, RED);
+                    break;
+
+            }
             printf("[%s] [%s] ", level_str.c_str(), time_str.c_str());
 
             vprintf(result.c_str(), *val);
