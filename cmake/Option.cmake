@@ -9,7 +9,8 @@ option(USE_OPENCV "use opencv" OFF)
 option(USE_CUDA "use cuda" OFF)
 option(USE_LLVM "use llvm" OFF)
 option(USE_ZMQ "use zeromq" ON)
-
+# speed up for different hardware
+option(USE_XBUILD "use xbuild" OFF)
 # platform
 option(LINUX   "linux platform" OFF)
 option(ANDROID "android platform" OFF)
