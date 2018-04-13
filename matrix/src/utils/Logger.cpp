@@ -114,6 +114,9 @@ namespace matrix {
                 case LogLevel::Fatal:
                     fprintf(stdout, RED);
                     break;
+                default:
+                    fprintf(stdout, RESET);
+                    break;
 
             }
             printf("[%s] [%s] ", level_str.c_str(), time_str.c_str());

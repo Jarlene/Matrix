@@ -1,8 +1,9 @@
 //
 // Created by Jarlene on 2018/3/15.
 //
-
+#ifdef USE_ZMQ
 #include <zmq.h>
+#endif
 #include <cassert>
 #include <unistd.h>
 #include <iostream>
@@ -11,6 +12,7 @@
 using namespace std;
 
 void client() {
+#ifdef USE_ZMQ
     void *context = zmq_ctx_new();/// 创建一个新的环境
     assert(context != nullptr);
 
@@ -39,10 +41,12 @@ void client() {
     }
 
     zmq_ctx_destroy(context);
+#endif
 }
 
 
 void server() {
+#ifdef USE_ZMQ
     void *ctx = zmq_ctx_new();
     assert(ctx != nullptr);
 
@@ -65,6 +69,7 @@ void server() {
     }
 
     zmq_ctx_destroy(ctx);
+#endif
 }
 
 

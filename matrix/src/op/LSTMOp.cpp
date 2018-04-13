@@ -23,7 +23,7 @@ namespace matrix {
 
     /**
      * i_t & =\sigma(W_{ix}x_t+W_{ih}h_{t-1}+b_i)\\
-     * f_t & = \sigma(W_{fx}x_t+W_{fh}h_{t-1}+b_f+1)\\
+     * f_t & = \sigma(W_{fx}x_t+W_{fh}h_{t-1}+b_f)\\
      * o_t & = \sigma(W_{ox}x_t+W_{oh}h_{t-1}+b_o)\\
      * \tilde{c_t} & = \tanh(W_{cx}x_t+W_{ch}h_{t-1}+b_c)\\
      * c_t & = c_{t-1}\circ f_t + \tilde{c_t}\circ i_t\\

@@ -126,6 +126,6 @@ int main() {
     const int epochSize = 60000/batchSize * 10;
     const int classNum = 10;
     const int hideNum = 128;
-    Mnist(batchSize, hideNum, classNum, epochSize, false);
+    Mnist(batchSize, hideNum, classNum, epochSize, true);
     return 0;
 }

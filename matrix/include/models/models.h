@@ -606,6 +606,115 @@ namespace matrix {
     }
 
 
+    /**
+     * lstm op
+     * @param input
+     * @param hideNum
+     * @param with_bias
+     * @param is_forward
+     * @param name
+     * @return
+     */
+    Symbol Lstm(const Symbol &input,
+                const int hideNum,
+                const bool with_bias = true,
+                const bool is_forward = true,
+                const std::string &name = "lstm") {
+
+        auto lstm = Symbol("lstm")
+                .SetInput("data", input)
+                .SetParam("hide_num", hideNum)
+                .SetParam("with_bias", with_bias)
+                .SetParam("is_forward", is_forward)
+                .Build(name);
+
+        return lstm;
+    }
+
+
+    /**
+     *  gru op
+     * @param input
+     * @param hideNum
+     * @param with_bias
+     * @param is_forward
+     * @param name
+     * @return
+     */
+    Symbol Gru(const Symbol &input,
+                const int hideNum,
+                const bool with_bias = true,
+                const bool is_forward = true,
+                const std::string &name = "gru") {
+
+        auto gru = Symbol("gru")
+                .SetInput("data", input)
+                .SetParam("hide_num", hideNum)
+                .SetParam("with_bias", with_bias)
+                .SetParam("is_forward", is_forward)
+                .Build(name);
+
+        return gru;
+    }
+
+    /**
+     * rnn op
+     * @param input
+     * @param hideNum
+     * @param with_bias
+     * @param is_forward
+     * @param name
+     * @return
+     */
+    Symbol RNN(const Symbol &input,
+               const int hideNum,
+               const bool with_bias = true,
+               const bool is_forward = true,
+               const std::string &name = "rnn") {
+
+        auto rnn = Symbol("rnn")
+                .SetInput("data", input)
+                .SetParam("hide_num", hideNum)
+                .SetParam("with_bias", with_bias)
+                .SetParam("is_forward", is_forward)
+                .Build(name);
+
+        return rnn;
+    }
+
+
+
+    /**
+     * Bidirectional rnn
+     * @param input
+     * @param hideNum
+     * @param with_bias
+     * @param sym_name
+     * @param name
+     * @return
+     */
+    Symbol Bidirectional(const Symbol &input,
+                         const int hideNum,
+                         const bool with_bias = true,
+                         const std::string sym_name = "lstm",
+                         const std::string &name = "bi-rnn") {
+
+        Symbol forwardSymbol;
+        Symbol backwardSymbol;
+        if (sym_name == "lstm") {
+             forwardSymbol = Lstm(input, hideNum, with_bias);
+             backwardSymbol = Lstm(input, hideNum, with_bias, false);
+        } else if (sym_name == "gru") {
+            forwardSymbol = Gru(input, hideNum, with_bias);
+            backwardSymbol = Gru(input, hideNum, with_bias, false);
+        } else {
+            forwardSymbol = RNN(input, hideNum, with_bias);
+            backwardSymbol = RNN(input, hideNum, with_bias, false);
+        }
+        return Concat({forwardSymbol,backwardSymbol});
+    }
+
+
 }
 
 
