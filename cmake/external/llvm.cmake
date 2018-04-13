@@ -12,7 +12,7 @@ if(USE_LLVM)
 
     INCLUDE(ExternalProject)
     SET(LLVM_SOURCES_DIR ${THIRD_PARTY_PATH}/llvm)
-    SET(LLVM_INSTALL_DIR ${THIRD_PARTY_PATH}/install/llvm)
+    SET(LLVM_INSTALL_DIR ${INSTALL_LIB_PATH}/llvm)
     SET(LLVM_INCLUDE_DIR "${LLVM_INSTALL_DIR}/include" CACHE PATH "glog include directory." FORCE)
 
     IF(WIN32)
@@ -25,7 +25,13 @@ if(USE_LLVM)
 
     INCLUDE_DIRECTORIES(${LLVM_INCLUDE_DIR})
 
+    LIST(APPEND external_libs ${LLVM_LIBRARIES})
+    ADD_DEFINITIONS(-DUSE_LLVM)
 
+    if (EXISTS ${LLVM_INSTALL_DIR})
+        MESSAGE(STATUS "${LLVM_INSTALL_DIR} exists")
+        return()
+    endif ()
     ExternalProject_Add(
             llvm
             ${EXTERNAL_PROJECT_LOG_ARGS}
@@ -35,9 +41,7 @@ if(USE_LLVM)
 #            UPDATE_COMMAND  "git" "pull"
             CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${LLVM_INSTALL_DIR}
             CMAKE_ARGS      -DCMAKE_BUILD_TYPE=Release
-            CMAKE_ARGS      -DCMAKE_CXX_FLAGS="-O2"
+            CMAKE_ARGS      -DCMAKE_CXX_FLAGS=-O2
     )
     LIST(APPEND external_project_dependencies llvm)
-    LIST(APPEND external_libs ${LLVM_LIBRARIES})
-    ADD_DEFINITIONS(-DUSE_LLVM)
 endif(USE_LLVM)

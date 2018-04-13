@@ -1,7 +1,7 @@
 if(USE_OPENCV)
     INCLUDE(ExternalProject)
     SET(OPENCV_SOURCES_DIR ${THIRD_PARTY_PATH}/opencv)
-    SET(OPENCV_INSTALL_DIR ${THIRD_PARTY_PATH}/install/opencv)
+    SET(OPENCV_INSTALL_DIR ${INSTALL_LIB_PATH}/opencv)
     SET(OPENCV_INCLUDE_DIR "${OPENCV_INSTALL_DIR}/include" CACHE PATH "glog include directory." FORCE)
 
     IF(WIN32)
@@ -14,6 +14,13 @@ if(USE_OPENCV)
 
     INCLUDE_DIRECTORIES(${OPENCV_INCLUDE_DIR})
 
+    LIST(APPEND external_libs ${OPENCV_LIBRARIES})
+    ADD_DEFINITIONS(-DUSE_OPENCV)
+
+    if (EXISTS ${OPENCV_INSTALL_DIR})
+        MESSAGE(STATUS "${OPENCV_INSTALL_DIR} exists")
+        return()
+    endif ()
 
     ExternalProject_Add(
             opencv
@@ -28,9 +35,7 @@ if(USE_OPENCV)
             CMAKE_ARGS      -DWITH_CUBLAS=OFF
             CMAKE_ARGS      -DWITH_NVCUVID=OFF
             CMAKE_ARGS      -DCMAKE_BUILD_TYPE=Release
-            CMAKE_ARGS      -DCMAKE_CXX_FLAGS="-O2"
+            CMAKE_ARGS      -DCMAKE_CXX_FLAGS=-O2
     )
     LIST(APPEND external_project_dependencies opencv)
-    LIST(APPEND external_libs ${OPENCV_LIBRARIES})
-    ADD_DEFINITIONS(-DUSE_OPENCV)
 endif(USE_OPENCV)

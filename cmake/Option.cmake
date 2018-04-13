@@ -8,7 +8,7 @@ option(USE_EIGEN "use eigen" ON)
 option(USE_OPENCV "use opencv" OFF)
 option(USE_CUDA "use cuda" OFF)
 option(USE_LLVM "use llvm" OFF)
-option(USE_ZMQ "use zeromq" ON)
+option(USE_ZMQ "use zeromq" OFF)
 # speed up for different hardware
 option(USE_XBUILD "use xbuild" OFF)
 # platform

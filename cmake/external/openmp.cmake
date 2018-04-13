@@ -1,7 +1,7 @@
 if (USE_OPENMP)
     INCLUDE(ExternalProject)
     SET(OPENMP_SOURCES_DIR ${THIRD_PARTY_PATH}/openmp)
-    SET(OPENMP_INSTALL_DIR ${THIRD_PARTY_PATH}/install/openmp)
+    SET(OPENMP_INSTALL_DIR ${INSTALL_LIB_PATH}/openmp)
     SET(OPENMP_INCLUDE_DIR "${OPENMP_INSTALL_DIR}/include" CACHE PATH "glog include directory." FORCE)
 
     IF(WIN32)
@@ -12,7 +12,13 @@ if (USE_OPENMP)
 
     INCLUDE_DIRECTORIES(${OPENMP_INCLUDE_DIR})
 
+    LIST(APPEND external_libs ${OPENMP_LIBRARIES})
+    ADD_DEFINITIONS(-DUSE_MP)
 
+    if (EXISTS ${OPENMP_INSTALL_DIR})
+        MESSAGE(STATUS "${OPENMP_INSTALL_DIR} exists")
+        return()
+    endif ()
     ExternalProject_Add(
             openmp
             ${EXTERNAL_PROJECT_LOG_ARGS}
@@ -21,9 +27,7 @@ if (USE_OPENMP)
 #            UPDATE_COMMAND  "git" "pull"
             CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${OPENMP_INSTALL_DIR}
             CMAKE_ARGS      -DCMAKE_BUILD_TYPE=Release
-            CMAKE_ARGS      -DCMAKE_CXX_FLAGS="-O2"
+            CMAKE_ARGS      -DCMAKE_CXX_FLAGS=-O2
     )
     LIST(APPEND external_project_dependencies openmp)
-    LIST(APPEND external_libs ${OPENMP_LIBRARIES})
-    ADD_DEFINITIONS(-DUSE_MP)
 endif (USE_OPENMP)

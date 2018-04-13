@@ -2,7 +2,7 @@ if(USE_GFLAGS)
     INCLUDE(ExternalProject)
 
     SET(GFLAGS_SOURCES_DIR ${THIRD_PARTY_PATH}/gflags)
-    SET(GFLAGS_INSTALL_DIR ${THIRD_PARTY_PATH}/install/gflags)
+    SET(GFLAGS_INSTALL_DIR ${INSTALL_LIB_PATH}/gflags)
     SET(GFLAGS_INCLUDE_DIR "${GFLAGS_INSTALL_DIR}/include" CACHE PATH "gflags include directory." FORCE)
     IF(WIN32)
         set(GFLAGS_LIBRARIES "${GFLAGS_INSTALL_DIR}/lib/gflags.lib" CACHE FILEPATH "GFLAGS_LIBRARIES" FORCE)
@@ -11,6 +11,13 @@ if(USE_GFLAGS)
     ENDIF(WIN32)
 
     INCLUDE_DIRECTORIES(${GFLAGS_INCLUDE_DIR})
+
+    LIST(APPEND external_libs ${GFLAGS_LIBRARIES})
+
+    if (EXISTS ${GFLAGS_INSTALL_DIR})
+        MESSAGE(STATUS "${GFLAGS_INSTALL_DIR} exists")
+        return()
+    endif ()
 
     ExternalProject_Add(
             gflags
@@ -22,8 +29,7 @@ if(USE_GFLAGS)
             CMAKE_ARGS      -DCMAKE_POSITION_INDEPENDENT_CODE=ON
             CMAKE_ARGS      -DBUILD_TESTING=OFF
             CMAKE_ARGS      -DCMAKE_BUILD_TYPE=Release
-            CMAKE_ARGS      -DCMAKE_CXX_FLAGS="-O2"
+            CMAKE_ARGS      -DCMAKE_CXX_FLAGS=-O2
     )
     LIST(APPEND external_project_dependencies gflags)
-    LIST(APPEND external_libs ${GFLAGS_LIBRARIES})
 ENDIF(USE_GFLAGS)

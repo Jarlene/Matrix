@@ -2,7 +2,7 @@ if (USE_GLOG)
     INCLUDE(ExternalProject)
 
     SET(GLOG_SOURCES_DIR ${THIRD_PARTY_PATH}/glog)
-    SET(GLOG_INSTALL_DIR ${THIRD_PARTY_PATH}/install/glog)
+    SET(GLOG_INSTALL_DIR ${INSTALL_LIB_PATH}/glog)
     SET(GLOG_INCLUDE_DIR "${GLOG_INSTALL_DIR}/include" CACHE PATH "glog include directory." FORCE)
 
     IF(WIN32)
@@ -12,6 +12,14 @@ if (USE_GLOG)
     ENDIF(WIN32)
 
     INCLUDE_DIRECTORIES(${GLOG_INCLUDE_DIR})
+
+    LIST(APPEND external_libs ${GLOG_LIBRARIES})
+    ADD_DEFINITIONS(-DUSE_GLOG)
+
+    if (EXISTS ${GLOG_INSTALL_DIR})
+        MESSAGE(STATUS "${GLOG_INSTALL_DIR} exists")
+        return()
+    endif ()
 
     ExternalProject_Add(
             glog
@@ -26,9 +34,7 @@ if (USE_GLOG)
             CMAKE_ARGS      -Dgflags_DIR=${GFLAGS_INSTALL_DIR}/lib/cmake/gflags
             CMAKE_ARGS      -DBUILD_TESTING=OFF
             CMAKE_ARGS      -DCMAKE_BUILD_TYPE=Release
-            CMAKE_ARGS      -DCMAKE_CXX_FLAGS="-O2"
+            CMAKE_ARGS      -DCMAKE_CXX_FLAGS=-O2
     )
     LIST(APPEND external_project_dependencies glog)
-    LIST(APPEND external_libs ${GLOG_LIBRARIES})
-    ADD_DEFINITIONS(-DUSE_GLOG)
 endif (USE_GLOG)
