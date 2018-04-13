@@ -109,11 +109,9 @@ namespace matrix {
         int lda = (TransA == NoTrans) ? M : K; // A 的行
         int ldb = (TransB == NoTrans) ? N : K; // B 的列
         int aCol = (TransA == NoTrans) ? K : M; // A的列
-        float * a = const_cast<float*>(A);
-        float * b = const_cast<float*>(B);
-        EigenMatrix<float> aMatrix(a, lda,  aCol);
-        EigenMatrix<float> bMatrix(b, aCol, ldb) ;
-        EigenMatrix<float> cMatrix(C, lda, ldb);
+        auto aMatrix = create<float>(A, lda,  aCol);
+        auto bMatrix = create<float>(B, aCol, ldb);
+        auto cMatrix = create<float>(C, lda, ldb);
         cMatrix = alpha * aMatrix * bMatrix + beta * cMatrix;
 #endif
     }
@@ -155,11 +153,9 @@ namespace matrix {
         int lda = (TransA == NoTrans) ? M : K; // A 的行
         int ldb = (TransB == NoTrans) ? K : N; // B 的列
         int aCol = (TransA == NoTrans) ? K : M; // A的列
-        double * a = const_cast<double*>(A);
-        double * b = const_cast<double*>(B);
-        Mat<double> aMatrix(a, lda, aCol);
-        Mat<double> bMatrix(b, aCol, ldb) ;
-        Mat<double> cMatrix(C, lda, ldb);
+        auto aMatrix = create<double>(A, lda,  aCol);
+        auto bMatrix = create<double>(B, aCol, ldb);
+        auto cMatrix = create<double>(C, lda, ldb);
         cMatrix = alpha * aMatrix * bMatrix + beta * cMatrix;
 #endif
     }
@@ -173,11 +169,9 @@ namespace matrix {
         int lda = (TransA == NoTrans) ? M : K; // A 的行
         int ldb = (TransB == NoTrans) ? N : K; // B 的列
         int aCol = (TransA == NoTrans) ? K : M; // A的列
-        int * a = const_cast<int*>(A);
-        int * b = const_cast<int*>(B);
-        Mat<int> aMatrix(a, lda,  aCol);
-        Mat<int> bMatrix(b, aCol, ldb) ;
-        Mat<int> cMatrix(C, lda, ldb);
+        auto aMatrix = create<int>(A, lda,  aCol);
+        auto bMatrix = create<int>(B, aCol, ldb);
+        auto cMatrix = create<int>(C, lda, ldb);
         cMatrix = alpha * aMatrix * bMatrix + beta * cMatrix;
 #endif
     }
@@ -228,11 +222,9 @@ namespace matrix {
 #elif defined(USE_EIGEN)
         int lda = (TransA == NoTrans)? M : N;
         int cda = (TransA == NoTrans)? N : M;
-        float * a = const_cast<float*>(A);
-        float * xv = const_cast<float*>(x);
-        Mat<float> aMatrix(a, lda, cda);
-        Vec<float> xVector(xv, cda);
-        Vec<float> yVector(y, lda);
+        auto aMatrix = create<>(A, lda, cda);
+        auto xVector = create<>(x, cda);
+        auto yVector = create<>(y, lda);
         yVector = alpha * aMatrix * xVector + beta * yVector;
 #endif
     }
@@ -260,11 +252,9 @@ namespace matrix {
 #elif defined(USE_EIGEN)
         int lda = (TransA == NoTrans)? M : N;
         int cda = (TransA == NoTrans)? N : M;
-        double * a = const_cast<double*>(A);
-        double * xv = const_cast<double*>(x);
-        Mat<double> aMatrix(a, lda, cda);
-        Vec<double> xVector(xv, cda);
-        Vec<double> yVector(y, lda);
+        auto aMatrix = create<double>(A, lda, cda);
+        auto xVector = create<double>(x, cda);
+        auto yVector = create<double>(y, lda);
         yVector = alpha * aMatrix * xVector + beta * yVector;
 #endif
     }
@@ -277,11 +267,9 @@ namespace matrix {
 #ifdef USE_EIGEN
         int lda = (TransA == NoTrans)? M : N;
         int cda = (TransA == NoTrans)? N : M;
-        int * a = const_cast<int*>(A);
-        int * xv = const_cast<int*>(x);
-        Mat<int> aMatrix(a, lda, cda);
-        Vec<int> xVector(xv, cda);
-        Vec<int> yVector(y, lda);
+        auto aMatrix = create<int>(A, lda, cda);
+        auto xVector = create<int>(x, cda);
+        auto yVector = create<int>(y, lda);
         yVector = alpha * aMatrix * xVector + beta * yVector;
 #endif
     }
