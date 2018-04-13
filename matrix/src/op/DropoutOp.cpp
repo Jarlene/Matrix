@@ -17,7 +17,7 @@ namespace matrix {
         const T * data = Input<T>(DATA);
         T *out = Output<T>();
         if (isTrain) {
-            T * mask = InputNonConst<T>(MASK);
+            T * mask = Input<T>(MASK);
             Random<T>(outputShape->Size(), mask, T(0), T(1.0));
             float rate = GetArgValue<float>("rate", 0.5f);
             for (int i = 0; i < outputShape->Size(); ++i) {

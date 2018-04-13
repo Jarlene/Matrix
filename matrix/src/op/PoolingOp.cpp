@@ -34,7 +34,7 @@ namespace matrix {
         T* out = Output<T>();
 
         if (type == kMax) {
-            T * maxIndex = InputNonConst<T>(MAX_INDEX);
+            T * maxIndex = Input<T>(MAX_INDEX);
             Value(inputShapes->at(MAX_INDEX)->Size() ,maxIndex, T(0));
             pooling2D(input, batch_size, channel,
                       input_width, input_height,

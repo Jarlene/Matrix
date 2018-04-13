@@ -61,7 +61,7 @@ namespace matrix {
         const T *inputData = Input<T>(DATA);
         const T *kernelData = Input<T>(KERNEL);
         T *outputData = Output<T>();
-        T *colData = InputNonConst<T>(InputSize() - 1);
+        T *colData = Input<T>(InputSize() - 1);
         Value(inputShapes->at(InputSize() - 1)->Size(), colData, T(0));
         for (int i = 0; i < num; ++i) {
             for (int j = 0; j < group; ++j) {

@@ -177,11 +177,11 @@ namespace matrix {
 
         template <class T>
         inline const T* Input(int idx) const {
-            return static_cast<T*>(input->at(idx));
+            return static_cast<const T*>(input->at(idx));
         }
 
         template <class T>
-        inline T* InputNonConst(int idx) {
+        inline T* Input(int idx) {
             return static_cast<T*>(input->at(idx));
         }
 

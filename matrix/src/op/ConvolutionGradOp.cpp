@@ -49,12 +49,12 @@ namespace matrix {
         int outputOffset = filterNum / group * outSize;
         int filterOffset = kernel.Size() / group;
 
-        T *preGrad = InputNonConst<T>(PRE_GRAG);
+        T *preGrad = Input<T>(PRE_GRAG);
         const T *self_out = Input<T>(SELF_OUT);
         T *out = Output<T>();
         int index = GetArgValue<int>("input_idx", -1);
         Value(outputShape->Size(), out, T(0));
-        T *colData = InputNonConst<T>(InputSize() - 1);
+        T *colData = Input<T>(InputSize() - 1);
         if (HasArg("activation_type")) {
             auto actType = GetArgValue<ActType>("activation_type");
             switch (actType) {

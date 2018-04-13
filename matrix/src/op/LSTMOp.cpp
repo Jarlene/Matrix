@@ -37,8 +37,8 @@ namespace matrix {
         bool forward = GetArgValue<bool>("is_forward", true);
         int hide_num = GetArgValue<int>("hide_num");
 
-        T *c = InputNonConst<T>(C);
-        T *h = InputNonConst<T>(H);
+        T *c = Input<T>(C);
+        T *h = Input<T>(H);
 
         const T * data = Input<T>(INPUT);
         int batch = inputShapes->at(INPUT)->At(0);
