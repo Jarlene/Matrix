@@ -10,6 +10,6 @@ using namespace Eigen;
 template <class T = float>
 using Mat =  Map<Matrix<T, Dynamic, Dynamic, RowMajor>>;
 template <class T = float>
-using Vec =  Map<Matrix<T, Dynamic, 1, RowMajor>>;
+using Vec =  Map<Matrix<T, Dynamic, 1>>;
 #endif
 #endif //MATRIX_EIGEN_H
