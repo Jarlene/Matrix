@@ -9,6 +9,7 @@
 #include <matrix/include/models/models.h>
 #include <matrix/include/utils/Time.h>
 #include <matrix/include/optimizer/SGDOptimizer.h>
+#include <matrix/include/utils/Creator.h>
 #include "include/MnistDataSet.h"
 
 
@@ -85,7 +86,7 @@ void Mnist(int batchSize, int hideNum, int class_num, int epochSize, bool isConv
     auto opt = new MomentOptimizer;
     MnistDataSet trainSet(trainImagePath, trainLabelPath);
     MnistDataSet testSet(testImagePath, testLabelPath);
-    auto executor = std::make_shared<Executor>(loss, context, opt);
+    auto executor = create<Executor>(loss, context, opt);
     for (int i = 0; i < epochSize; ++i) {
         trainSet.getMiniBatch(batchSize, imageData, labelData);
         image.Fill(imageData);
