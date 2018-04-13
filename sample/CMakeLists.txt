@@ -1,4 +1,4 @@
-file(GLOB_RECURSE examples_srcs "${PROJECT_SOURCE_DIR}/sample/*.cpp")
+file(GLOB_RECURSE examples_srcs "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
 
 
 foreach(source_file ${examples_srcs})

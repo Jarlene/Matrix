@@ -30,6 +30,8 @@ if(USE_LLVM)
 
     if (EXISTS ${LLVM_INSTALL_DIR})
         MESSAGE(STATUS "${LLVM_INSTALL_DIR} exists")
+        add_custom_target(llvm)
+        LIST(APPEND external_project_dependencies llvm)
         return()
     endif ()
     ExternalProject_Add(

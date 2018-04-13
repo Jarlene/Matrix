@@ -16,6 +16,8 @@ if (USE_XBUILD)
 
     if (EXISTS ${XBUILD_INSTALL_DIR})
         MESSAGE(STATUS "${XBUILD_INSTALL_DIR} exists")
+        add_custom_target(xbuild)
+        LIST(APPEND external_project_dependencies xbuild)
         return()
     endif ()
 

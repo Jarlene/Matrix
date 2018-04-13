@@ -10,6 +10,8 @@ if (USE_EIGEN)
 
     if (EXISTS ${EIGEN_INSTALL_DIR})
         MESSAGE(STATUS "${EIGEN_INSTALL_DIR} exists")
+        add_custom_target(eigen)
+        LIST(APPEND external_project_dependencies eigen)
         return()
     endif ()
 
@@ -17,7 +19,6 @@ if (USE_EIGEN)
             eigen
             ${EXTERNAL_PROJECT_LOG_ARGS}
             GIT_REPOSITORY "https://github.com/eigenteam/eigen-git-mirror.git"
-#            UPDATE_COMMAND  git pull
             PREFIX          ${EIGEN_SOURCES_DIR}
             CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX:PATH=${EIGEN_INSTALL_DIR}
             CMAKE_ARGS      -DCMAKE_BUILD_TYPE=Release

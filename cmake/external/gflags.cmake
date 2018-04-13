@@ -16,6 +16,8 @@ if(USE_GFLAGS)
 
     if (EXISTS ${GFLAGS_INSTALL_DIR})
         MESSAGE(STATUS "${GFLAGS_INSTALL_DIR} exists")
+        add_custom_target(gflags)
+        LIST(APPEND external_project_dependencies gflags)
         return()
     endif ()
 

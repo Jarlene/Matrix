@@ -18,6 +18,8 @@ if (USE_GLOG)
 
     if (EXISTS ${GLOG_INSTALL_DIR})
         MESSAGE(STATUS "${GLOG_INSTALL_DIR} exists")
+        add_custom_target(glog)
+        LIST(APPEND external_project_dependencies glog)
         return()
     endif ()
 

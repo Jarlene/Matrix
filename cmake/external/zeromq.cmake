@@ -17,6 +17,8 @@ if (USE_ZMQ)
 
     if (EXISTS ${ZMQ_INSTALL_DIR})
         MESSAGE(STATUS "${ZMQ_INSTALL_DIR} exists")
+        add_custom_target(zmq)
+        LIST(APPEND external_project_dependencies zmq)
         return()
     endif ()
 

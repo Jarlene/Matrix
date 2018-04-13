@@ -19,6 +19,8 @@ if(USE_OPENCV)
 
     if (EXISTS ${OPENCV_INSTALL_DIR})
         MESSAGE(STATUS "${OPENCV_INSTALL_DIR} exists")
+        add_custom_target(opencv)
+        LIST(APPEND external_project_dependencies opencv)
         return()
     endif ()
 

@@ -38,6 +38,8 @@ IF(USE_TEST)
 
     if (EXISTS ${GTEST_INSTALL_DIR})
         MESSAGE(STATUS "${GTEST_INSTALL_DIR} exists")
+        add_custom_target(gtest)
+        LIST(APPEND external_project_dependencies gtest)
         return()
     endif ()
 

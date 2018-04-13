@@ -1,6 +1,6 @@
 set(THIRD_PARTY_PATH "${CMAKE_SOURCE_DIR}/third-party")
 set(INSTALL_LIB_PATH "${CMAKE_SOURCE_DIR}/libs")
-include(ExternalProject)
+#include(ExternalProject)
 include(external/gtest)
 include(external/gflags)
 include(external/glog)

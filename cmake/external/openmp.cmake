@@ -17,6 +17,8 @@ if (USE_OPENMP)
 
     if (EXISTS ${OPENMP_INSTALL_DIR})
         MESSAGE(STATUS "${OPENMP_INSTALL_DIR} exists")
+        add_custom_target(openmp)
+        LIST(APPEND external_project_dependencies openmp)
         return()
     endif ()
     ExternalProject_Add(
