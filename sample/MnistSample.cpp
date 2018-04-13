@@ -71,21 +71,15 @@ void Mnist(int batchSize, int hideNum, int class_num, int epochSize, bool isConv
     float* labelData = static_cast<float *>(malloc(sizeof(float) * labelShape.Size()));
     Symbol logistic;
     if (isConv) {
-        logistic = MnistTestConv(image, hideNum, class_num);
+        logistic = MnistConvolution(image, hideNum, class_num);
     } else {
-        logistic = MnistTestFullyConnected(image, hideNum, class_num);
+        logistic = MnistFullyConnected(image, hideNum, class_num);
     }
 
-    auto loss = Symbol("loss")
-            .SetInput("logistic", logistic)
-            .SetInput("y", label)
-            .SetParam("type", kCrossEntropy)
-            .Build("loss");
+    auto loss = Loss(logistic, label);
 
-    auto acc = Symbol("accuracy")
-            .SetInput("logistic", logistic)
-            .SetInput("y", label)
-            .Build("acc");
+    auto acc = Accuracy(logistic, label);
+
 
     Context context = Context::Default();
     auto opt = new MomentOptimizer;

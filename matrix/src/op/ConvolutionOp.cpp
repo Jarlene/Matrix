@@ -139,8 +139,9 @@ namespace matrix {
             if (!HasArg("filter")) {
                 Logger::Global()->Fatal("ConvolutionOp no filter for input");
             }
+            Shape kernel;
             Shape filter = GetArgValue<Shape>("filter");
-
+            kernel.reShape(filter);
             ImageOrder order = GetArgValue<ImageOrder>("order", NCHW);
             int channel = 0;
             if (order == NCHW) {
@@ -149,13 +150,13 @@ namespace matrix {
                 channel = inputShapes->at(DATA)->At(3);
             }
             int filter_num = GetArgValue<int>("filter_num", channel);
-            filter.reShape(ShapeN(filter_num, channel, filter[0], filter[1]));
+            kernel.reShape(ShapeN(filter_num, channel, filter[0], filter[1]));
             if (HasArg("with_bias") && GetArgValue<bool>("with_bias")) {
                 Shape bias;
                 bias.Append(filter_num);
-                func({&filter, &bias});
+                func({&kernel, &bias});
             } else {
-                func({&filter});
+                func({&kernel});
             }
             return true;
         }
