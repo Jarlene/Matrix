@@ -33,7 +33,7 @@ public: \
 
 #define INIT_PARAMS  \
     this->inputShapes = param.inputShapes;\
-    this->outputShape = param.outShape; \
+    this->outputShape = param.outputShape; \
     this->args = param.args; \
     this->context = param.context;\
 
@@ -120,10 +120,10 @@ private:                                                            \
         param->args = &args; \
         InferShape(*inShape, outShape); \
         param->inputShapes = inShape; \
-        param->outShape = outShape; \
+        param->outputShape = outShape; \
         CREATE_OPERATOR(context, param, name, { \
             if (memory) { \
-                memorySize = sizeof(DType) * param->outShape->Size(); \
+                memorySize = sizeof(DType) * param->outputShape->Size(); \
             } else { \
                 memorySize = 0; \
             }\
@@ -132,26 +132,12 @@ private:                                                            \
 
 namespace matrix {
 
-    class Operator {
+    class Base {
     public:
-
-        Operator() {
-
-        }
-
-        virtual ~Operator() {
-//            if (input != nullptr) {
-//                input->clear();
-//            }
-//
-//
-//
-//            if (inputShapes != nullptr) {
-//                inputShapes->clear();
-//            }
-
-
-        }
+        std::vector<Shape*> *inputShapes{nullptr};
+        Shape* outputShape{nullptr};
+        std::map<std::string, Any> *args{nullptr};
+        Context *context;
 
         inline bool HasArg(const std::string &name) {
             return args->count(name) > 0;
@@ -170,10 +156,22 @@ namespace matrix {
             if (args->count(name)) {
                 return get<T>(args->at(name));
             }
-
             Logger::Global()->Fatal("can not find arg name: %s", name.c_str());
             T t;
             return t;
+        }
+    };
+
+
+    class Operator : public Base {
+    public:
+
+        Operator() {
+
+        }
+
+        virtual ~Operator() {
+
         }
 
 
@@ -233,12 +231,8 @@ namespace matrix {
 
 
     protected:
-        std::map<std::string, Any> *args{nullptr};
         std::vector<void*> *input {nullptr};
         void* output{nullptr};
-        std::vector<Shape*> *inputShapes{nullptr};
-        Shape* outputShape{nullptr};
-        Context * context;
     };
 
     class State {
@@ -250,39 +244,15 @@ namespace matrix {
         virtual void clear();
     };
 
-    struct Parameter {
+
+
+    struct Parameter : public Base {
 
         MatrixType  type;
         Parameter(MatrixType matrixType): type(matrixType) {
 
         }
 
-        std::vector<Shape*> *inputShapes{nullptr};
-        Shape* outShape{nullptr};
-        std::map<std::string, Any> *args{nullptr};
-        Context *context;
-
-        inline bool HasArg(const std::string &name) {
-            return args->count(name) > 0;
-        }
-
-        template <class T>
-        inline T GetArgValue(const std::string & name, const T &default_value) {
-            if (args->count(name)) {
-                return get<T>(args->at(name));
-            }
-            return default_value;
-        }
-
-        template <class T>
-        inline T GetArgValue(const std::string & name) {
-            if (args->count(name)) {
-                return get<T>(args->at(name));
-            }
-            Logger::Global()->Fatal("can not find arg name: %s", name.c_str());
-            T t;
-            return t;
-        }
     };
 
 
