@@ -8,7 +8,7 @@
 #include <matrix/include/executor/Executor.h>
 #include <matrix/include/utils/Time.h>
 #include <matrix/include/optimizer/SGDOptimizer.h>
-#include <matrix/include/utils/Creator.h>
+#include <matrix/include/utils/Dispatcher.h>
 using namespace matrix;
 
 Symbol logistic(Symbol &input, int unit, int hideNum, int classNum) {
@@ -84,7 +84,7 @@ int main(int argc, char *argv[]) {
     auto opt = new SGDOptimizer(0.01f);
 
     // graph executor
-    auto executor = create<Executor>(loss, context, opt);
+    auto executor = make<Executor>(loss, context, opt);
 
     // training
     for (int i = 0; i < epochSize; ++i) {

@@ -13,7 +13,9 @@ namespace matrix {
 
     class BaseOptimizer {
     public:
-        BaseOptimizer() = default;
+        BaseOptimizer(float learning_rate) : learning_rate(learning_rate) {
+
+        };
 
         BaseOptimizer(const BaseOptimizer &) = default;
 
@@ -33,6 +35,7 @@ namespace matrix {
 
     protected:
         float decay = 0.0f;
+        float learning_rate;
     };
 
 }

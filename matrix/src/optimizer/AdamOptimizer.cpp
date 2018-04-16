@@ -6,4 +6,5 @@
 
 namespace matrix {
 
+    AdamOptimizer::AdamOptimizer(float learning_rate) : BaseOptimizer(learning_rate) {}
 }

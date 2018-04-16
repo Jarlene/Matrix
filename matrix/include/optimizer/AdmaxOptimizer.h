@@ -10,7 +10,10 @@
 namespace matrix {
 
     class AdmaxOptimizer : public BaseOptimizer {
+    public:
+        AdmaxOptimizer(float learning_rate);
 
+        virtual std::vector<NodePtr> GeneratorUpdate(const std::map<NodePtr, NodePtr> &variableNodes) override ;
     };
 }
 

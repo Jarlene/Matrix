@@ -7,5 +7,5 @@
 namespace matrix {
 
 
-
+    RMSpropOptimizer::RMSpropOptimizer(float learning_rate) : BaseOptimizer(learning_rate) {}
 }

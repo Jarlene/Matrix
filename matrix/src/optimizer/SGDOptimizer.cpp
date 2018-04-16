@@ -7,7 +7,7 @@
 namespace matrix {
 
 
-    SGDOptimizer::SGDOptimizer(float learning_rate) : learning_rate(learning_rate){
+    SGDOptimizer::SGDOptimizer(float learning_rate) : BaseOptimizer(learning_rate){
 
     }
 
@@ -16,7 +16,7 @@ namespace matrix {
         for(auto &it : variableNodes) {
             auto node = Node::Create();
             node->opName = "applyGrad";
-            node->params["learning_rate"] = learning_rate;
+            node->params["learning_rate"] = BaseOptimizer::learning_rate;
             node->params["type"] = kSGD;
             node->params["decay"] = decay;
             node->inputs.push_back(it.first);

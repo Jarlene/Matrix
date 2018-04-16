@@ -3,7 +3,7 @@
 //
 
 #include "matrix/include/api/Symbol.h"
-
+#include "matrix/include/utils/StringUtil.h"
 
 namespace matrix {
 
@@ -29,7 +29,7 @@ namespace matrix {
     }
 
     Symbol &Symbol::Build(const std::string &symbol_name) {
-        this->nodePtr->AddNodeName(symbol_name);
+        this->nodePtr->AddNodeName(symbol_name + toString(this->nodePtr->id_));
         this->nodePtr->Build();
         return *this;
     }

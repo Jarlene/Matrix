@@ -6,6 +6,7 @@
 #define MATRIX_EIGEN_H
 #ifdef USE_EIGEN
 
+#include "matrix/include/base/Tensor.h"
 #include <eigen3/Eigen/Eigen>
 
 using namespace Eigen;
@@ -26,6 +27,13 @@ Mat<T> create(T *data, int dim0, int dim1) {
     return Mat<T>(data, dim0, dim1);
 }
 
+template<class T = float>
+Mat<T> create(const matrix::Tensor<T> &tensor) {
+    auto data = tensor.Data();
+    return create<T>(data, tensor.GetShape()[0], tensor.GetShape()[1]);
+}
+
+
 
 template<class T = float>
 Vec<T> create(const T *data, int dim) {
@@ -38,6 +46,13 @@ Vec<T> create(T *data, int dim) {
     return Vec<T>(data, dim);
 }
 
+
+template<class T = float>
+Vec<T> create(const matrix::Tensor<T> &tensor) {
+    auto data = tensor.Data();
+    auto shape = tensor.GetShape();
+    return create<T>(data, shape[0]);
+}
 
 #endif
 #endif //MATRIX_EIGEN_H

@@ -8,7 +8,7 @@
 #include <matrix/include/optimizer/SGDOptimizer.h>
 #include <matrix/include/optimizer/MomentOptimizer.h>
 #include <matrix/include/utils/Time.h>
-#include <matrix/include/utils/Creator.h>
+#include <matrix/include/utils/Dispatcher.h>
 
 using namespace matrix;
 
@@ -24,7 +24,7 @@ int main() {
     auto es = ds * ds - bs;
     Context context = Context::Default();
     auto opt = new MomentOptimizer;
-    auto executor = create<Executor>(es, context, opt);
+    auto executor = make<Executor>(es, context, opt);
 
     for (int i = 0; i < 200; ++i) {
         long start = getCurrentTime();

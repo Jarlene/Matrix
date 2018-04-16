@@ -10,6 +10,8 @@
 namespace matrix {
 
     class NesterOptimizer : public BaseOptimizer {
+    public:
+        NesterOptimizer(float learning_rate);
 
     };
 }

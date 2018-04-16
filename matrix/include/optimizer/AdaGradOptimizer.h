@@ -10,6 +10,8 @@
 namespace matrix {
 
     class AdaGradOptimizer : public BaseOptimizer {
+    public:
+        AdaGradOptimizer(float learning_rate);
 
     };
 }

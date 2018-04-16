@@ -6,7 +6,7 @@
 
 namespace matrix {
 
-    MomentOptimizer::MomentOptimizer(float learning_rate, float mont) : learning_rate(learning_rate), momentum(mont) {
+    MomentOptimizer::MomentOptimizer(float learning_rate, float mont) : BaseOptimizer(learning_rate), momentum(mont) {
 
     }
 

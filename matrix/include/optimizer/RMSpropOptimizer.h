@@ -10,6 +10,8 @@
 namespace matrix {
 
     class RMSpropOptimizer : public BaseOptimizer {
+    public:
+        RMSpropOptimizer(float learning_rate);
 
     };
 }

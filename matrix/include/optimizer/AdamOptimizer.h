@@ -10,6 +10,8 @@
 namespace matrix {
 
     class AdamOptimizer : public BaseOptimizer {
+    public:
+        AdamOptimizer(float learning_rate);
 
     };
 }

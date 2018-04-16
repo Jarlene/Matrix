@@ -262,23 +262,25 @@ namespace matrix {
      * @param name
      * @return
      */
-    Symbol Convolution(const Symbol &input, Shape &filter, int filter_num,
+    Symbol Convolution(const Symbol &input,
+                       const Shape &filter,
+                       const int filter_num,
                        const Shape &padding = ShapeN(0, 0),
                        const Shape &stride = ShapeN(1, 1),
                        const Shape &dilate = ShapeN(1, 1),
                        const bool with_bias = true,
-                       const int group = 1,
                        const ActType &actType = kRelu,
+                       const int group = 1,
                        const std::string &name = "conv") {
         auto conv = Symbol("convolution")
                 .SetInput("data", input)
                 .SetParam("filter", filter)
-                .SetParam("with_bias", with_bias)
                 .SetParam("filter_num", filter_num)
                 .SetParam("padding", padding)
                 .SetParam("stride", stride)
                 .SetParam("dilate", dilate)
-                .SetParam("group", 1)
+                .SetParam("with_bias", with_bias)
+                .SetParam("group", group)
                 .SetParam("activation_type", actType)
                 .Build(name);
         return conv;
@@ -358,8 +360,8 @@ namespace matrix {
      */
     Symbol Pooling(const Symbol &input,
                    const Shape &filter,
-                   const Shape &stride=ShapeN(1, 1),
                    const Shape &padding=ShapeN(0, 0),
+                   const Shape &stride=ShapeN(1, 1),
                    const Shape &dilate = ShapeN(1, 1),
                    const PoolType &type=kMax,
                    const std::string &name = "pooling") {
@@ -390,7 +392,7 @@ namespace matrix {
         if (shape != nullptr) {
             flatten.SetParam("shape", *shape);
         }
-        flatten.Build("name");
+        flatten.Build(name);
         return flatten;
     }
 

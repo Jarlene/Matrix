@@ -5,4 +5,5 @@
 
 namespace matrix {
 
+    AdaGradOptimizer::AdaGradOptimizer(float learning_rate) : BaseOptimizer(learning_rate) {}
 }

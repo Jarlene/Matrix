@@ -6,4 +6,5 @@
 
 namespace matrix {
 
+    NesterOptimizer::NesterOptimizer(float learning_rate) : BaseOptimizer(learning_rate) {}
 }
