@@ -28,10 +28,10 @@ void client() {
     ret = zmq_setsockopt(subscriber, ZMQ_SUBSCRIBE, "", 0);/// 必须添加该语句对消息滤波，否则接受不到消息
     assert(ret == 0);
 
-    char buf[10];/// 消息缓冲区
+    char buf[16];/// 消息缓冲区
 
     for (int i = 0; i < 100; ++i) {
-        ret = zmq_recv(subscriber, buf, 10, ZMQ_DONTWAIT);/// 接收消息，非堵塞式
+        ret = zmq_recv(subscriber, buf, 16, ZMQ_DONTWAIT);/// 接收消息，非堵塞式
         if (ret != -1) {
             /// 打印消息
             buf[ret] = '\0';

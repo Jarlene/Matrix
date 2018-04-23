@@ -1,6 +1,6 @@
 option(USE_TEST "use gtest" ON)
 option(USE_GLOG "use glog" ON)
-option(USE_GFLAGS "use gflags" ON)
+option(USE_GFLAGS "use gflags" OFF)
 option(USE_OPENMP "use openmp" ON)
 option(USE_BLAS "use blas" OFF)
 option(USE_MKL "use mkl" ON)
@@ -8,7 +8,8 @@ option(USE_EIGEN "use eigen" ON)
 option(USE_OPENCV "use opencv" OFF)
 option(USE_CUDA "use cuda" OFF)
 option(USE_LLVM "use llvm" OFF)
-option(USE_ZMQ "use zeromq" OFF)
+option(USE_ZMQ "use zeromq" ON)
+option(USE_BOOST "use boost" ON)
 # speed up for different hardware
 option(USE_XBUILD "use xbuild" OFF)
 # platform

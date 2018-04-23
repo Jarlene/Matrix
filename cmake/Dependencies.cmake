@@ -24,6 +24,16 @@ if (USE_MKL)
 endif ()
 
 
+#Boost
+
+if (USE_BOOST)
+    find_package(BOOST COMPONENTS regex filesystem system)
+    if (BOOST_FOUND)
+        include_directories(${BOOST_INCLUDE_DIRS})
+        link_libraries(${BOOST_LIBRARIES})
+        ADD_DEFINITIONS(-DUSE_BOOST)
+    endif ()
+endif ()
 
 
 # JNI

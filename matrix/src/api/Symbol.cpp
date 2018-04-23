@@ -19,7 +19,7 @@ namespace matrix {
 
     Symbol &Symbol::SetInput(const std::string &name, const Symbol &symbol) {
         this->nodePtr->AddInput(symbol.nodePtr);
-        this->nodePtr->SwitchType(symbol.nodePtr->context);
+        this->nodePtr->On(symbol.nodePtr->context);
         return *this;
     }
 

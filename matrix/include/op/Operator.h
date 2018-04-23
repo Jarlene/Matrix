@@ -165,6 +165,10 @@ namespace matrix {
             T t;
             return t;
         }
+
+        virtual ~Base() {
+
+        }
     };
 
 
@@ -176,7 +180,7 @@ namespace matrix {
         }
 
         virtual ~Operator() {
-
+            Base::~Base();
         }
 
 

@@ -14,6 +14,20 @@
 #include "matrix/include/utils/Registry.h"
 
 namespace matrix {
+
+
+    /**
+     *   a&~b:   清除标志位b;
+     *    a|b:   添加标志位b;
+     *    a&b:   取出标志位b;
+     *    a^b:   取出a与b的不同部分;
+     */
+    const static int VARIABLE_FLAG = 0x00000001;
+    const static int PLACEHOLDER_FLAG = VARIABLE_FLAG << 1;
+    const static int SHARED_FLAG = PLACEHOLDER_FLAG << 1;
+    const static int BACKWARD_FLAG = SHARED_FLAG << 1;
+
+
     struct Node;
 
     typedef std::weak_ptr<Node> NodeWeakPtr;
@@ -41,17 +55,11 @@ namespace matrix {
 
         Shape outputShapes;
 
-        bool isVariable = false;
-
-        bool isShared = false;
+        int flags = 0;
 
         void *data_{nullptr};
 
         long memorySize;
-
-        bool isBackward = false;
-
-        bool isPlaceHolder = false;
 
         std::vector<NodePtr> inputs;
 
@@ -140,11 +148,23 @@ namespace matrix {
 
         void AddParam(const std::string &name, const Any &any);
 
+        void AddFlag(int flag);
+
+        void RemoveFlag(int flag);
+
+        bool HasVariable();
+
+        bool HasShared();
+
+        bool HasBackward();
+
+        bool HasPlaceHolder();
+
         void Run();
 
         void DirectRun();
 
-        void SwitchType(const Context &context);
+        void On(const Context &context);
 
         void Save(std::ofstream &ofs);
 

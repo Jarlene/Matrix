@@ -244,7 +244,7 @@ namespace matrix {
         std::vector<NodePtr> allUsefulNodeList; // 去除了正向传播所有输入， 还有不激活点
 
         for (auto &item : graphNodes) {
-            if (item ->op == nullptr || item->isVariable) { // 常量node， 变量node， 不激活node不需要内存规划
+            if (item ->op == nullptr || item->HasVariable()) { // 常量node， 变量node， 不激活node不需要内存规划
                 continue;
             }
             allUsefulNodeList.push_back(item);

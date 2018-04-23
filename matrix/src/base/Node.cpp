@@ -21,11 +21,11 @@ namespace matrix {
     }
 
     NodePtr Node::GetGradNode(int input_index, NodePtr &pre, NodePtr &preGrad) {
-        if(this->isShared) {
+        if(this->HasShared()) {
             return nullptr;
         }
         auto t = Node::Create();
-        t->isBackward = true;
+        t->AddFlag(BACKWARD_FLAG);
         t->opName = "grad_" + pre->opName;
         t->nodeName = "grad_" + pre->nodeName;
         t->params["input_idx"] = input_index;
@@ -41,11 +41,11 @@ namespace matrix {
         for (auto &it : pre->params) {
             t->params.insert(it);
         }
-        if (this->isVariable) {
-            t->isVariable = true;
+        if (this->HasVariable()) {
+            t->AddFlag(VARIABLE_FLAG);
         }
-        if (this->isPlaceHolder) {
-            t->isPlaceHolder = true;
+        if (this->HasPlaceHolder()) {
+            t->AddFlag(PLACEHOLDER_FLAG);
         }
         t->Build();
         return t;
@@ -72,7 +72,7 @@ namespace matrix {
                     var->opName = "variable";
                     var->nodeName = this->nodeName + "_variable_" + std::to_string(idx);
                     var->outputShapes.reShape(*shape);
-                    var->isVariable = this->context.phase == TRAIN;
+                    var->AddFlag(VARIABLE_FLAG);
                     var->context.type = this->context.type;
                     var->params["isTrain"] = this->context.phase == TRAIN;
                     var->outputs.push_back(std::weak_ptr<Node>(this->shared_from_this()));
@@ -90,8 +90,7 @@ namespace matrix {
                     var->opName = "variable";
                     var->nodeName = this->nodeName + "_shared_" + std::to_string(idx);
                     var->outputShapes.reShape(*shape);
-                    var->isVariable = false;
-                    var->isShared = true;
+                    var->AddFlag(SHARED_FLAG);
                     var->context.type = this->context.type;
                     var->outputs.push_back(std::weak_ptr<Node>(this->shared_from_this()));
                     var->Build();
@@ -166,8 +165,8 @@ namespace matrix {
 
     std::string Node::ToString() {
         std::stringstream stream;
-        stream << "name[" << nodeName << "]:id[" << id_ << "]:backward[" << isBackward << "]:placeHolder["
-               << isPlaceHolder << "]:shared[" << isShared << "]:variable[" << isVariable << "]";
+        stream << "name[" << nodeName << "]:id[" << id_ << "]:backward[" << HasBackward() << "]:placeHolder["
+               << HasPlaceHolder() << "]:shared[" << HasShared() << "]:variable[" << HasVariable() << "]";
         return stream.str();
     }
 
@@ -189,7 +188,7 @@ namespace matrix {
     }
 
     void Node::Run() {
-        if (this->op != nullptr && !isPlaceHolder && !isShared) {
+        if (this->op != nullptr && !HasPlaceHolder() && !HasShared()) {
             if (depenCount > 0) {
                 Await();
             }
@@ -217,7 +216,7 @@ namespace matrix {
         this->opName = op;
     }
 
-    void Node::SwitchType(const Context &context) {
+    void Node::On(const Context &context) {
         if (this->context.type == kInvalid) {
             this->context.type = context.type;
         }
@@ -228,7 +227,7 @@ namespace matrix {
     }
 
     void Node::DirectRun() {
-        if (this->op != nullptr && !isPlaceHolder && !isShared) {
+        if (this->op != nullptr && !HasPlaceHolder() && !HasShared()) {
             SetData();
             op->AsyncRun();
         }
@@ -254,4 +253,31 @@ namespace matrix {
     void Node::Save(std::ofstream &ofs) {
 
     }
+
+    void Node::AddFlag(int flag) {
+        this->flags |= flag;
+
+    }
+
+    void Node::RemoveFlag(int flag) {
+        this->flags &= ~flag;
+    }
+
+    bool Node::HasVariable() {
+        return (this->flags & VARIABLE_FLAG) > 0;
+    }
+
+    bool Node::HasShared() {
+        return (this->flags & SHARED_FLAG) > 0;
+    }
+
+    bool Node::HasBackward() {
+        return (this->flags & BACKWARD_FLAG) > 0;
+    }
+
+    bool Node::HasPlaceHolder() {
+        return (this->flags & PLACEHOLDER_FLAG) > 0;
+    }
+
+
 }

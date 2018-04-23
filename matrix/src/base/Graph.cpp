@@ -22,13 +22,13 @@ namespace matrix {
         auto res = Node::Create();
         res->opName = "add";
         res->nodeName = first->nodeName + "_add_" + second->nodeName;
-        res->isBackward = false;
+        res->AddFlag(BACKWARD_FLAG);
         res->inputs.push_back(first);
         res->inputs.push_back(second);
         first->outputs.push_back(std::weak_ptr<Node>(res));
         second->outputs.push_back(std::weak_ptr<Node>(res));
-        if (first->isPlaceHolder && second->isPlaceHolder) {
-            res->isPlaceHolder = true;
+        if (first->HasPlaceHolder() && second->HasPlaceHolder()) {
+            res->AddFlag(PLACEHOLDER_FLAG);
         }
         res->Build();
         return res;
@@ -71,7 +71,7 @@ namespace matrix {
     void Graph::AllocateGraph() {
         for(auto &node : nodes_) {
             if (node->op != nullptr && node->memorySize > 0
-                && node->data_ == nullptr && !node->isPlaceHolder) {
+                && node->data_ == nullptr && !node->HasPlaceHolder()) {
                 node->data_ = MemoryManager::Global()->GetCpuMemoryPool()->dynamicAllocate(node->memorySize);
                 memset(node->data_, 0, node->memorySize);
             }
@@ -162,7 +162,7 @@ namespace matrix {
         ones->nodeName = "ones";
         ones->outputShapes = out->outputShapes;
         ones->context = out->context;
-        ones->isBackward = true;
+        ones->AddFlag(BACKWARD_FLAG);
         ones->params["isTrain"] = true;
         ones->params["constant"] = 1.0f;
         ones->Build();
@@ -186,7 +186,7 @@ namespace matrix {
                     continue;
                 }
                 for (auto & n : grad_node->inputs) {
-                    if (n->isShared) {
+                    if (n->HasShared()) {
                         nodes_.push_back(n);
                     }
                 }
@@ -203,7 +203,7 @@ namespace matrix {
         }
         for (auto &it : gradMap) {
             nodes_.push_back(it.second);
-            if (it.first->isVariable) {
+            if (it.first->HasVariable()) {
                 variableNodes_[it.first] = it.second;
             }
         }
