@@ -29,7 +29,9 @@ public: \
    virtual void InferShape(std::vector<Shape*> &inShape, Shape *outShape); \
    virtual Operator* CreateOperator(Context *context,  \
                                  std::vector<Shape*> *inShape, Shape *outShape, \
-                                 std::map<std::string, Any> &args) ; \
+                                 std::map<std::string, Any> &args,\
+                                 std::vector<void *> *inputData = nullptr, \
+                                 void *outputData = nullptr) ; \
 
 #define INIT_PARAMS  \
     this->inputShapes = param.inputShapes;\
@@ -115,7 +117,9 @@ private:                                                            \
     }  \
     Operator *classname::CreateOperator(Context *context, \
                                     std::vector<Shape *> *inShape, Shape *outShape, \
-                                    std::map<std::string, Any> &args) { \
+                                    std::map<std::string, Any> &args, \
+                                    std::vector<void *> *inputData, \
+                                    void *outputData) { \
         param->context = context;\
         param->args = &args; \
         InferShape(*inShape, outShape); \
@@ -127,6 +131,7 @@ private:                                                            \
             } else { \
                 memorySize = 0; \
             }\
+            op->SetData(inputData, outputData); \
         }) \
     }\
 
@@ -263,7 +268,9 @@ namespace matrix {
         virtual void InferShape(std::vector<Shape*> &inShape, Shape *outShape)  = 0;
         virtual Operator* CreateOperator(Context *context,
                                          std::vector<Shape *> *inShape, Shape *outShape,
-                                         std::map<std::string, Any> &args) {
+                                         std::map<std::string, Any> &args,
+                                         std::vector<void *> *inputData = nullptr,
+                                         void *outputData = nullptr) {
             return nullptr;
         }
 
