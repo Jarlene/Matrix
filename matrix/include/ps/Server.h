@@ -5,7 +5,7 @@
 #ifndef MATRIX_SERVER_H
 #define MATRIX_SERVER_H
 
-#include "BaseZMQ.h"
+#include "zmq/BaseZMQ.h"
 
 
 
@@ -13,6 +13,10 @@ namespace matrix {
 
 
     class Server : public BaseZMQ {
+    public:
+        Server();
+        ~Server();
+
 
     };
 }

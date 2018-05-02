@@ -6,11 +6,15 @@
 #define MATRIX_MASTER_H
 
 
+#include "zmq/BaseZMQ.h"
+
 namespace matrix {
 
 
-    class Master {
-
+    class Master : public BaseZMQ{
+    public:
+        Master();
+        ~Master();
     };
 
 }

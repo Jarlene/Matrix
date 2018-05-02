@@ -6,11 +6,15 @@
 #define MATRIX_WORK_H
 
 
+#include "zmq/BaseZMQ.h"
+
 namespace matrix {
 
 
-    class Worker {
-
+    class Worker : public BaseZMQ{
+    public:
+        Worker();
+        ~Worker();
     };
 
 }
