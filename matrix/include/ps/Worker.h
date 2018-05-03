@@ -15,6 +15,11 @@ namespace matrix {
     public:
         Worker();
         ~Worker();
+
+        int SendTo() override;
+
+        int ReceiveFrom() override;
+
     };
 
 }

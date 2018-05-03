@@ -6,12 +6,20 @@
 #define MATRIX_PARAMSERVER_H
 
 
+#include <matrix/include/ps/zmq/BaseZMQ.h>
 
 namespace matrix {
 
 
-    class ParamServer {
+    class ParamServer : public BaseZMQ {
+    public:
+        ParamServer();
 
+        ~ParamServer() override;
+
+        int SendTo() override;
+
+        int ReceiveFrom() override;
     };
 
 }

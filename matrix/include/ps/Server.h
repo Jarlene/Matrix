@@ -17,6 +17,9 @@ namespace matrix {
         Server();
         ~Server();
 
+        int SendTo() override;
+
+        int ReceiveFrom() override;
 
     };
 }

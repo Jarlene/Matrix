@@ -15,4 +15,12 @@ namespace matrix {
     Server::~Server()  {
         BaseZMQ::~BaseZMQ();
     }
+
+    int Server::SendTo() {
+        return 0;
+    }
+
+    int Server::ReceiveFrom() {
+        return 0;
+    }
 }

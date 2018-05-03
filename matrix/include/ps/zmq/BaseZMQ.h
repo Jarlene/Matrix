@@ -29,7 +29,7 @@ namespace matrix {
 
         virtual int SendTo() = 0;
 
-        virtual int  RecvFrom() = 0;
+        virtual int  ReceiveFrom() = 0;
 
     protected:
         void * zmq_ctx;

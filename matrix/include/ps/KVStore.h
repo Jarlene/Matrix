@@ -8,6 +8,7 @@
 
 namespace matrix {
 
+    template <class K, class V>
     class KVStore {
 
     };

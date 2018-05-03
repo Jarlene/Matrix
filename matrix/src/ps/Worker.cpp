@@ -14,4 +14,12 @@ namespace matrix {
     Worker::~Worker() {
         BaseZMQ::~BaseZMQ();
     }
+
+    int Worker::SendTo() {
+        return 0;
+    }
+
+    int Worker::ReceiveFrom() {
+        return 0;
+    }
 }

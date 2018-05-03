@@ -14,4 +14,12 @@ namespace matrix {
     Master::~Master()  {
         BaseZMQ::~BaseZMQ();
     }
+
+    int Master::SendTo() {
+        return 0;
+    }
+
+    int Master::ReceiveFrom() {
+        return 0;
+    }
 }

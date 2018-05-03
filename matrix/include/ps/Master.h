@@ -11,10 +11,17 @@
 namespace matrix {
 
 
+    /**
+     * master monitor param servers and works, notify addresses to param servers and works
+     */
     class Master : public BaseZMQ{
     public:
         Master();
         ~Master();
+
+        int SendTo() override;
+
+        int ReceiveFrom() override;
     };
 
 }

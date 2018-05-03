@@ -7,6 +7,11 @@
 
 namespace matrix {
 
+    /**
+     * model adn data partition for parallel run
+     */
+
+    template <class T>
     class Partition {
 
 
