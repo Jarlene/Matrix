@@ -21,11 +21,11 @@ namespace matrix {
 
     template <class T>
     const T fromString(string &val) {
-        static_assert(std::is_arithmetic<T>::value, "T must is ");
+        static_assert(std::is_arithmetic<T>::value, "T must is number");
         istringstream is(val);
         T t(0);
-        is >> val;
-        return val;
+        is >> t;
+        return t;
     }
 
 }
