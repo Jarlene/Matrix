@@ -5,8 +5,11 @@
 #ifndef MATRIX_MASTER_H
 #define MATRIX_MASTER_H
 
-
+#include <vector>
 #include "zmq/BaseZMQ.h"
+#include "Worker.h"
+#include "ParamServer.h"
+
 
 namespace matrix {
 
@@ -17,11 +20,16 @@ namespace matrix {
     class Master : public BaseZMQ{
     public:
         Master();
+        Master(const std::string config);
         ~Master();
 
-        int SendTo() override;
+        int SendTo(const Addr &addr, Packet *p) override;
 
-        int ReceiveFrom() override;
+        int ReceiveFrom(const Addr &addr, Packet *p) override;
+
+    private:
+        std::vector<Worker> workers;
+        std::vector<ParamServer> pss;
     };
 
 }

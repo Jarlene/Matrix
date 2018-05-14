@@ -11,15 +11,63 @@ namespace matrix {
 
     }
 
+    Master::Master(const std::string config) : BaseZMQ(){
+
+    }
+
     Master::~Master()  {
         BaseZMQ::~BaseZMQ();
     }
 
-    int Master::SendTo() {
+    int Master::SendTo(const Addr &addr, Packet *p) {
+        int retry_count = 5;
+        int ret = -1;
+        while(retry_count--) {
+            ret = zmq_bind(zmq_skt, addr.toString().c_str());
+            if (ret == 0) {
+                break;
+            }
+        }
+        if(ret != 0) {
+            return -1;
+        }
+        ret = -1;
+        retry_count = 5;
+        while(retry_count--) {
+            ret = zmq_send(zmq_skt, p->data(), p->len(), 0);
+            if (ret == 0) {
+                break;
+            }
+        }
+        if(ret != 0) {
+            return -1;
+        }
         return 0;
     }
 
-    int Master::ReceiveFrom() {
+    int Master::ReceiveFrom(const Addr &addr, Packet *p) {
+        int retry_count = 5;
+        int ret = -1;
+        while(retry_count--) {
+            ret = zmq_bind(zmq_skt, addr.toString().c_str());
+            if (ret == 0) {
+                break;
+            }
+        }
+        if(ret != 0) {
+            return -1;
+        }
+        ret = -1;
+        retry_count = 5;
+        while(retry_count--) {
+            ret = zmq_recv(zmq_skt, p->data(), p->len(), 0);
+            if (ret == 0) {
+                break;
+            }
+        }
+        if(ret != 0) {
+            return -1;
+        }
         return 0;
     }
 }

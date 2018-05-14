@@ -110,6 +110,14 @@ namespace matrix {
 
 
     template <typename T>
+    void Var(const Tensor<T>& tensor, const Tensor<T>& mean, int dim, Tensor<T>& reduce) {
+
+    }
+
+
+
+
+    template <typename T>
     void ASum(const Tensor<T>& tensor, int dim, Tensor<T>& reduce) {
         const T* tensorData = tensor.Data();
         T* reduceData = reduce.MutableData();

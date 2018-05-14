@@ -17,9 +17,11 @@ namespace matrix {
 
         ~ParamServer() override;
 
-        int SendTo() override;
+        int SendTo(const Addr &addr, Packet *p) override;
 
-        int ReceiveFrom() override;
+        int ReceiveFrom(const Addr &addr, Packet *p) override;
+
+        int Notify() override;
     };
 
 }

@@ -15,11 +15,16 @@ namespace matrix {
         BaseZMQ::~BaseZMQ();
     }
 
-    int Worker::SendTo() {
+    int Worker::SendTo(const Addr &addr, Packet *p) {
+
         return 0;
     }
 
-    int Worker::ReceiveFrom() {
+    int Worker::ReceiveFrom(const Addr &addr, Packet *p) {
+        return 0;
+    }
+
+    int Worker::Notify() {
         return 0;
     }
 }

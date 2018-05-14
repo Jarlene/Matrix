@@ -9,6 +9,7 @@ if(USE_OPENCV)
     ELSE(WIN32)
         SET(OPENCV_LIBRARIES "")
         LIST(APPEND OPENCV_LIBRARIES   "${OPENCV_INSTALL_DIR}/lib/libopencv_core.dylib")
+        LIST(APPEND OPENCV_LIBRARIES   "${OPENCV_INSTALL_DIR}/lib/libopencv_core.4.0.dylib")
         LIST(APPEND OPENCV_LIBRARIES   "${OPENCV_INSTALL_DIR}/lib/libopencv_imgcodecs.dylib")
     ENDIF(WIN32)
 

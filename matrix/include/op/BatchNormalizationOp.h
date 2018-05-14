@@ -18,6 +18,7 @@ namespace matrix {
     SAME_FUNCTION(BatchNormalization);
         virtual bool ShareNodes(std::function<void(std::initializer_list<Shape *> shapes)> func) override;
     DISABLE_COPY_AND_ASSIGN(BatchNormalization);
+        INPUT_TAG(DATA, GAMMA, BETA, MEAN, VAR);
     };
 
     class BatchNormalizationOpProp : public OperatorProperty {

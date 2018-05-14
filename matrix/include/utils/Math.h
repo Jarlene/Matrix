@@ -631,6 +631,9 @@ namespace matrix {
     inline void Scale<float>(const int N, float* out, float val) {
 #ifdef BLAS
         cblas_sscal(N, val, out, 1);
+#elif define(USE_EIGEN)
+        auto v = create<float>(out, N);
+        v = v * val;
 #else
 #ifdef USE_MP
 #pragma omp parallel for
@@ -645,6 +648,10 @@ namespace matrix {
     inline void Scale<double>(const int N, double* out, double val) {
 #ifdef BLAS
         cblas_dscal(N, val, out, 1);
+
+#elif define(USE_EIGEN)
+        auto v = create<double>(out, N);
+        v = v*val;
 #else
         #ifdef USE_MP
 #pragma omp parallel for
