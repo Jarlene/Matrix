@@ -34,7 +34,9 @@ namespace matrix {
         ret = -1;
         retry_count = 5;
         while(retry_count--) {
-            ret = zmq_send(zmq_skt, p->data(), p->len(), 0);
+            ret = zmq_send(zmq_skt, p->header.data(), p->header.size(), ZMQ_SNDMORE);
+            assert(ret == p->header.size());
+            ret = zmq_send(zmq_skt, p->content.data(), p->content.size(), 0);
             if (ret == 0) {
                 break;
             }
@@ -60,7 +62,9 @@ namespace matrix {
         ret = -1;
         retry_count = 5;
         while(retry_count--) {
-            ret = zmq_recv(zmq_skt, p->data(), p->len(), 0);
+            ret = zmq_recv(zmq_skt, p->header.data(), p->header.size(), ZMQ_RCVMORE);
+            assert(ret == p->header.size());
+            ret = zmq_recv(zmq_skt, p->content.data(), p->content.size(), 0);
             if (ret == 0) {
                 break;
             }

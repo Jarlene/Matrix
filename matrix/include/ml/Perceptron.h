@@ -27,10 +27,10 @@ namespace matrix {
     template <class policy = LearnPolicy,  class T = float>
     class Perceptron : BaseMl<T> {
     public:
-        Perceptron(const Tensor<T> &data,
-                   const Tensor<T> &labels,
+        Perceptron(const Mat<T> &data,
+                   const Vec<T> &labels,
                    const size_t numClasses,
-                   const Tensor<T> &instanceWeights = Tensor<T>()) : data(data), labels(labels),
+                   const Mat<T> &instanceWeights) : data(data), labels(labels),
                                                                      numClasses(numClasses),
                                                                      instanceWeights(instanceWeights) {
 
@@ -41,16 +41,16 @@ namespace matrix {
 
         }
 
-        void Classify(const Tensor<T>& test, Tensor<T>& predictedLabels) {
+        void Classify(const Mat<T>& test, Vec<T>& predictedLabels) {
 
         }
 
 
     private:
-        const Tensor<T>& data;
-        const Tensor<T>& labels;
+        const Mat<T>& data;
+        const Vec <T>& labels;
         const size_t numClasses;
-        const Tensor<T>& instanceWeights;
+        const Mat<T>& instanceWeights;
     };
 
 

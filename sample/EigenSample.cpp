@@ -25,6 +25,16 @@ int main() {
     //输出
     std::cout << staMat << std::endl;
 
+    std::cout << staMat.row(0).sum() << std::endl;
+
+
+
+    Mat<> aaa = create<>(2, 3);
+    aaa.setRandom();
+    cout << "aaa:\n  " << aaa << endl;
+
+
+
     float a[] = {1, 2, 3,
                  4, 5, 6};
     float b[] = {2, 3,
@@ -32,17 +42,27 @@ int main() {
                  6, 7};
     float *c = new float[4];
 
+    float d[] = {1, 2};
+
 
     Mat<float> am(a, 2, 3);
     Mat<float> bm(b, 3, 2);
     Mat<float> cm(c, 2, 2);
+    Vec<float> dv(d, 2) ;
 
-    cout << am << endl;
-    cout << bm << endl;
+    cout << "am:\n  " << am << endl;
+    cout << "bm:\n  "<< bm << endl;
 
 
     cm = am * bm;
-    std::cout << cm << std::endl;
+    std::cout<<  "cm:\n  " << cm << std::endl;
+
+
+    auto dm = am.colwise() + dv;
+    cout<< "dm:\n  " << dm << endl;
+
+    cout<< "em:\n  " << am.array() * am.array() << endl;
+
 #endif
     return 0;
 

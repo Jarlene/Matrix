@@ -2,9 +2,7 @@
 // Created by Jarlene on 2017/7/24.
 //
 
-#ifdef USE_GLOG
-#include <glog/logging.h>
-#endif
+
 #include "matrix/include/utils/Logger.h"
 
 namespace matrix {
@@ -23,6 +21,7 @@ namespace matrix {
 
     Logger::~Logger() {
         CloseLogFile();
+        stream()<< std::endl;
     }
 
     int Logger::ResetLogFile(std::string filename) {
@@ -35,7 +34,7 @@ namespace matrix {
             file = fopen(filename.c_str(), "w");
 #endif
             if (file == nullptr) {
-                Write(LogLevel::Error, "Cannot create log file %s\n", filename.c_str());
+                Write(LogLevel::ERROR, "Cannot create log file %s\n", filename.c_str());
                 return -1;
             }
         }
@@ -66,7 +65,7 @@ namespace matrix {
         std::lock_guard<std::mutex> guard(mutex);
         va_list val;
         va_start(val, format);
-        WriteImpl(LogLevel::Info, format, &val);
+        WriteImpl(LogLevel::INFO, format, &val);
         va_end(val);
     }
 
@@ -74,7 +73,7 @@ namespace matrix {
         std::lock_guard<std::mutex> guard(mutex);
         va_list val;
         va_start(val, format);
-        WriteImpl(LogLevel::Debug, format, &val);
+        WriteImpl(LogLevel::INFO, format, &val);
         va_end(val);
     }
 
@@ -82,7 +81,7 @@ namespace matrix {
         std::lock_guard<std::mutex> guard(mutex);
         va_list val;
         va_start(val, format);
-        WriteImpl(LogLevel::Error, format, &val);
+        WriteImpl(LogLevel::ERROR, format, &val);
         va_end(val);
     }
 
@@ -90,7 +89,7 @@ namespace matrix {
         std::lock_guard<std::mutex> guard(mutex);
         va_list val;
         va_start(val, format);
-        WriteImpl(LogLevel::Fatal, format, &val);
+        WriteImpl(LogLevel::FATAL, format, &val);
         va_end(val);
     }
 
@@ -108,10 +107,10 @@ namespace matrix {
             // write to STDOUT
 
             switch (level) {
-                case LogLevel::Error:
+                case LogLevel::ERROR:
                     fprintf(stdout, RED);
                     break;
-                case LogLevel::Fatal:
+                case LogLevel::FATAL:
                     fprintf(stdout, RED);
                     break;
                 default:
@@ -141,7 +140,7 @@ namespace matrix {
 
 
 
-            if (isKill && level == LogLevel::Fatal) {
+            if (isKill && level == LogLevel::FATAL) {
                 CloseLogFile();
                 exit(1);
             }
@@ -175,10 +174,10 @@ namespace matrix {
 
     std::string Logger::GetLevelStr(LogLevel level) {
         switch (level) {
-            case LogLevel::Debug: return "DEBUG";
-            case LogLevel::Info: return "INFO";
-            case LogLevel::Error: return "ERROR";
-            case LogLevel::Fatal: return "FATAL";
+            case LogLevel::WARNING: return "WARNING";
+            case LogLevel::INFO: return "INFO";
+            case LogLevel::ERROR: return "ERROR";
+            case LogLevel::FATAL: return "FATAL";
             default: return "UNKNOW";
         }
     }
@@ -195,5 +194,16 @@ namespace matrix {
         return &logger;
     }
 
-
+    std::ostream& Logger::stream() {
+        switch(level) {
+            case LogLevel::INFO:
+                return std::cout;
+            case LogLevel::WARNING:
+            case LogLevel::ERROR:
+            case LogLevel::FATAL:
+                return std::cerr;
+            default :
+                return std::cout;
+        }
+    }
 }

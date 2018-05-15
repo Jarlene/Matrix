@@ -23,6 +23,8 @@ if (USE_EIGEN)
             CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX:PATH=${EIGEN_INSTALL_DIR}
             CMAKE_ARGS      -DCMAKE_BUILD_TYPE=Release
             CMAKE_ARGS      -DCMAKE_CXX_FLAGS=-O2
+            CMAKE_ARGS      -DEIGEN_DEFAULT_TO_ROW_MAJOR=ON
+            CMAKE_ARGS      -DBUILD_TESTING=OFF
     )
     LIST(APPEND external_project_dependencies eigen)
 endif (USE_EIGEN)

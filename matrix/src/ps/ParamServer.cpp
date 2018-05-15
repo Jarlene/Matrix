@@ -26,4 +26,13 @@ namespace matrix {
     int ParamServer::Notify() {
         return 0;
     }
+
+    int ParamServer::registerMaster() {
+//        Packet p;
+//        p.msg_type = REQUEST_HANDSHAKE;
+//        std::string local_addr = addr.toString();
+//        p.header = Message(local_addr.c_str(), local_addr.length());
+//        p.to_node_id = 0;
+        return 0;
+    }
 }

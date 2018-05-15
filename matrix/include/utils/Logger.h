@@ -20,10 +20,10 @@
 namespace matrix {
 
     enum class LogLevel : int {
-        Debug = 0,
-        Info = 1,
-        Error = 2,
-        Fatal = 3
+        INFO = 0,
+        WARNING = 1,
+        ERROR = 2,
+        FATAL = 3
     };
 
 
@@ -34,9 +34,9 @@ namespace matrix {
 
         static Logger* Global(const std::string &name);
 
-        explicit Logger(LogLevel level = LogLevel::Info);
+        explicit Logger(LogLevel level = LogLevel::INFO);
 
-        explicit Logger(std::string filename, LogLevel level = LogLevel::Info);
+        explicit Logger(std::string filename, LogLevel level = LogLevel::INFO);
 
         ~Logger();
 
@@ -51,6 +51,8 @@ namespace matrix {
         void Debug(const char* format, ...);
         void Error(const char* format, ...);
         void Fatal(const char* format, ...);
+
+        std::ostream& stream();
 
         template<class T>
         void static PrintMat(const T *mat, int x, int y, std::string comment = "unknown") {
@@ -80,5 +82,9 @@ namespace matrix {
 
 
 }
+
+#define LOG(level) matrix::Logger(matrix::LogLevel::level).stream()<< "[" << __FILE__<< ":" <<  __LINE__ <<"("<< __FUNCTION__<<")" << "] \n    " << std::flush
+
+
 
 #endif //MATRIX_LOGGING_H

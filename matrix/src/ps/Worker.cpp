@@ -27,4 +27,10 @@ namespace matrix {
     int Worker::Notify() {
         return 0;
     }
+
+    int Worker::registerMaster() {
+
+
+        return 0;
+    }
 }

@@ -10,22 +10,17 @@
 
 #include "BaseMl.h"
 #include "Perceptron.h"
-#include "matrix/include/utils/MathTensor.h"
-#include "matrix/include/op/ReduceOp.h"
-#include "matrix/include/utils/Init.h"
-
 namespace matrix {
 
 
     template<class WeakLearnerType = Perceptron<>, class T = float>
     class AdaBoost : public BaseMl<T>{
     public:
-        AdaBoost(const Tensor<T> &data,
-                 const Tensor<T> &labels,
+        AdaBoost(const Mat<T> &data,
+                 const Vec<T> &labels,
                  const size_t numClasses,
-                 const WeakLearnerType &wl,
                  const size_t iterations = 100,
-                 const double tolerance = 1e-6) : data(data), labels(labels), numClasses(numClasses), wl(wl),
+                 const double tolerance = 1e-6) : data(data), labels(labels), numClasses(numClasses),
                                                   tolerance(tolerance), iterations(iterations) {
 
         }
@@ -33,18 +28,17 @@ namespace matrix {
 
 
         void Train() override {
-            Train(data, labels, numClasses, wl, iterations, tolerance);
+            Train(data, labels, numClasses, iterations, tolerance);
         }
 
-        void Classify(const Tensor<T>& test, Tensor<T>& predictedLabels) override {
+        void Classify(const Mat<T>& test, Vec<T>& predictedLabels) override {
 
         }
 
     private:
-        void Train(const Tensor<T> &data,
-                   const Tensor<T> &labels,
+        void Train(const Mat<T> &data,
+                   const Vec<T> &labels,
                    const size_t numClasses,
-                   const WeakLearnerType &learner,
                    const size_t iterations = 100,
                    const double tolerance = 1e-6) {
 
@@ -53,60 +47,81 @@ namespace matrix {
             this->tolerance = tolerance;
             this->numClasses = numClasses;
 
-            Tensor<T> predictedLabels(labels.GetShape());
-            InitTensor(predictedLabels);
+            // predict labels
+            Vec<T> predictedLabels = create<T>(labels.rows());
+            Mat<T> tempData = data;
+            Mat<T> sumFinalH = create<T>(numClasses, predictedLabels.rows());
+            sumFinalH.Zero();
 
-            Tensor<T> tempData(data);
-
-            Tensor<T> sumFinalH(ShapeN(numClasses, data.GetShape()[0]));
-            InitTensor(sumFinalH);
-            Value(sumFinalH, T(0));
-            const double initWeight = 1.0 / (data.GetShape()[0] * numClasses);
-
-
-            Tensor<T> D(ShapeN(numClasses, data.GetShape()[0]));
-            InitTensor(D);
-            Value(D, T(initWeight));
+            const T initWeight = T(1.0f / (data.rows() * numClasses));
+            Mat<T> D = create<T>(numClasses, data.rows());
+            D.fill(initWeight);
 
 
-            Tensor<T> weights(labels.GetShape());
-            InitTensor(weights);
-
-            Tensor<T> finalH(labels.GetShape());
-            InitTensor(finalH);
+            Vec<T> weights = create<T>(labels.rows());
+            Vec<T> finalH = create<T>(labels.rows());
 
             double rt, crt = 0.0, alphat = 0.0, zt;
             for (int i = 0; i < iterations; ++i) {
                 rt = 0.0;
                 zt = 0.0;
-                Sum(D, 0, weights);
+                weights = D.sum();
                 WeakLearnerType w(tempData, labels, numClasses, weights);
                 w.Classify(tempData, predictedLabels);
 
-                for (int j = 0; j < D.GetShape()[0]; ++j) {
-                    if (predictedLabels.Data()[j] == labels.Data()[j]) {
-
+                for (int j = 0; j < D.cols(); ++j) {
+                    if (predictedLabels[j] == labels[j]) {
+                        rt += D.col(j).sum();
                     } else {
-
+                        rt -= D.col(j).sum();
                     }
                 }
-                
+                if ((i > 0) && (std::abs(rt - crt) < tolerance))
+                    break;
+
+                if (rt >= 1.0) {
+                    weight.push_back(1.0);
+                    learns.push_back(w);
+                    break;
+                }
+
+                crt = rt;
+                alphat = 0.5 * log((1 + rt) / (1 - rt));
+                weight.push_back(alphat);
+                learns.push_back(w);
+
+                for (int j = 0; j < D.cols(); ++j) {
+                    const double expo = exp(alphat);
+                    if (predictedLabels[j] == labels[j]) {
+                        for (int k = 0; k < D.rows(); ++k) {
+                            D(k, j) /= expo;
+                            zt += D(k, j);
+                            if (k == static_cast<int>(labels[j]))
+                                sumFinalH(k, j) += (alphat);
+                            else
+                                sumFinalH(k, j) -= (alphat);
+                        }
+                    } else {
+                        for (int k = 0; k < D.rows(); ++k) {
+                            D(k, j) *= expo;
+                            zt += D(k, j);
+                            if (k == static_cast<int>(labels[j]))
+                                sumFinalH(k, j) += (alphat);
+                            else
+                                sumFinalH(k, j) -= (alphat);
+                        }
+                    }
+                }
+
+                D /= zt;
             }
 
-
-            DestoryTensor(predictedLabels);
-            DestoryTensor(sumFinalH);
-            DestoryTensor(D);
-            DestoryTensor(weights);
-            DestoryTensor(finalH);
         }
 
 
     private:
-        const Tensor<T> &data;
-        const Tensor<T> &labels;
-        const WeakLearnerType &wl;
-
+        const Mat<T> &data;
+        const Vec<T> &labels;
         size_t numClasses;
         double tolerance;
         size_t iterations;

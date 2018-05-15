@@ -17,10 +17,12 @@ namespace matrix {
     /**
      * master monitor param servers and works, notify addresses to param servers and works
      */
-    class Master : public BaseZMQ{
+    class Master : public BaseZMQ {
     public:
         Master();
+
         Master(const std::string config);
+
         ~Master();
 
         int SendTo(const Addr &addr, Packet *p) override;

@@ -22,43 +22,24 @@ namespace matrix {
     };
 
 
-    class Packet {
-    public:
-        void* data() {
-            // todo::has a good method for this?
-            void * result = malloc(len());
-            memcpy(result, header.data(), header.size());
-            memcpy(result + header.size(), content.data(), content.size());
-            return result;
-        }
-        size_t len() {
-            return header.size() + content.size();
+    struct Packet {
+        Packet() {
+
         }
 
-
-        void *headData() {
-            header.data();
+        Packet(Packet &p) {
+            this->header = std::move(p.header);
+            this->content = std::move(p.content);
         }
 
-        size_t headLen() {
-            header.size();
-        }
+        Packet &operator=(const Packet &) = delete;
+        Packet(const Packet &) = delete;
 
-        void *contentData() {
-            content.data();
-        }
 
-        size_t contentLen() {
-            content.size();
-        }
-
-    private:
         MsgType msg_type;
-
         size_t node_id;
         size_t to_node_id;
         size_t message_id;
-
         Message header;
         Message content;
     };

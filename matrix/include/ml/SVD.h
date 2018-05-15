@@ -14,16 +14,16 @@ namespace matrix {
     class SVD  : public BaseMl<T>{
     public:
 
-        SVD(const Tensor<T> & dataset,
-            Tensor<T>& u,
-            Tensor<T>& v,
-            Tensor<T>& sigma,
+        SVD(const Mat<T> & dataset,
+            Mat<T>& u,
+            Mat<T>& v,
+            Mat<T>& sigma,
             const double epsilon = 0.03,
             const double delta = 0.1) : dataset(&dataset) {
 
         }
 
-        void ExtractSVD(Tensor<T>& u, Tensor<T>& v, Tensor<T>& sigma) {
+        void ExtractSVD(Mat<T>& u, Mat<T>& v, Mat<T>& sigma) {
 
         }
 
@@ -31,13 +31,13 @@ namespace matrix {
 
         }
 
-        void Classify(const Tensor<T> &test, Tensor<T> &predictedLabels) override {
+        void Classify(const Mat<T>& test, Vec<T>& predictedLabels) override {
 
         }
 
     private:
-        const Tensor<T> *dataset;
-        Tensor<T> basis;
+        const Mat<T> *dataset;
+        Mat<T> basis;
     };
 
 }

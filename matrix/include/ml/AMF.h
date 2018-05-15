@@ -20,7 +20,7 @@ namespace matrix {
 
         }
 
-        void Classify(const Tensor<T> &test, Tensor<T> &predictedLabels) override {
+        void Classify(const Mat<T>& test, Vec<T>& predictedLabels) override {
 
         }
     };

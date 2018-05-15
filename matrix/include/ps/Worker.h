@@ -22,6 +22,8 @@ namespace matrix {
 
         int Notify() override;
 
+        int registerMaster();
+
     };
 
 }

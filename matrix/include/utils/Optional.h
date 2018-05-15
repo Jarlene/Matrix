@@ -7,7 +7,7 @@
 
 #include <typeinfo>
 #include <type_traits>
-
+#include <stdexcept>
 namespace matrix {
 
 

@@ -26,14 +26,12 @@ if (USE_GLOG)
     ExternalProject_Add(
             glog
             ${EXTERNAL_PROJECT_LOG_ARGS}
-            DEPENDS gflags
             GIT_REPOSITORY  "https://github.com/google/glog.git"
             PREFIX          ${GLOG_SOURCES_DIR}
 #            UPDATE_COMMAND  "git" "pull"
             CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${GLOG_INSTALL_DIR}
             CMAKE_ARGS      -DCMAKE_POSITION_INDEPENDENT_CODE=ON
             CMAKE_ARGS      -DWITH_GFLAGS=ON
-            CMAKE_ARGS      -Dgflags_DIR=${GFLAGS_INSTALL_DIR}/lib/cmake/gflags
             CMAKE_ARGS      -DBUILD_TESTING=OFF
             CMAKE_ARGS      -DCMAKE_BUILD_TYPE=Release
             CMAKE_ARGS      -DCMAKE_CXX_FLAGS=-O2

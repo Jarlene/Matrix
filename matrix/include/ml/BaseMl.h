@@ -6,7 +6,7 @@
 #define MATRIX_BASEML_H
 
 
-#include "matrix/include/base/Tensor.h"
+#include "matrix/include/utils/Eigen.h"
 
 namespace matrix {
 
@@ -15,7 +15,7 @@ namespace matrix {
     public:
         virtual void Train() = 0;
 
-        virtual void Classify(const Tensor<T>& test, Tensor<T>& predictedLabels) = 0;
+        virtual void Classify(const Mat<T>& test, Vec<T>& predictedLabels) = 0;
 
     };
 

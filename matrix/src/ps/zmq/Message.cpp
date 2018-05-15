@@ -25,8 +25,8 @@ namespace matrix {
         return zmq_msg_size(&msg);
     }
 
-    void *Message::data() {
-        return zmq_msg_data(&msg);
+    char *Message::data() {
+        return (char *)zmq_msg_data(&msg);
     }
 
     Message &Message::operator=(Message &&msg) {

@@ -25,7 +25,7 @@ namespace matrix {
 
         size_t size();
 
-        void *data();
+        char *data();
 
     private:
         zmq_msg_t msg;

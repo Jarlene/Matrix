@@ -26,11 +26,11 @@ namespace matrix {
 
         void Append(int idx);
 
-        bool isConstant();
+        const bool isConstant() const ;
 
-        bool isVector();
+        const bool isVector() const ;
 
-        bool isMatrix();
+        const bool isMatrix() const;
 
         const bool operator==(const Shape& shape) const;
 

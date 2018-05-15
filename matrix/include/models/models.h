@@ -581,6 +581,19 @@ namespace matrix {
     }
 
 
+
+    Symbol convolution(const Symbol &input, int hide, int classNum) {
+        auto conv1 = Convolution(input, ShapeN(5, 5), 32);
+        auto pool1 = Pooling(conv1, ShapeN(2, 2));
+        auto conv2 = Convolution(pool1, ShapeN(3, 3), 64);
+        auto pool2 = Pooling(conv2, ShapeN(2, 2));
+        auto flatten = Flatten(pool2);
+        auto fc1 = FullyConnected(flatten, hide);
+        auto fc2 = FullyConnected(fc1, classNum);
+        auto out = Output(fc2);
+        return out;
+    }
+
 }
 
 

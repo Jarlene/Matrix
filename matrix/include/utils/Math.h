@@ -616,12 +616,18 @@ namespace matrix {
             memset(out, 0, sizeof(T) * N);
             return;
         }
+
+#ifdef USE_EIGEN
+        Vec<T> vec = create<T>(out, N);
+        vec.fill(val);
+#else
 #ifdef USE_MP
 #pragma omp parallel for
 #endif
         for (int i = 0; i < N; ++i) {
             out[i] = val;
         }
+#endif
     }
 
     template <class T>
@@ -664,12 +670,17 @@ namespace matrix {
 
     template <>
     inline void Scale<int>(const int N, int* out, int val) {
+#ifdef USE_EIGEN
+        auto v = create<int>(out, N);
+        v *= val;
+#else
 #ifdef USE_MP
 #pragma omp parallel for
 #endif
         for (int i = 0; i < N; ++i) {
             out[i] *= val;
         }
+#endif
     }
 
     template <>
@@ -698,6 +709,13 @@ namespace matrix {
 
     template <class T>
     inline void Add(const int N, const int M, const T *a,  const T *b, T *y) {
+#ifdef USE_EIGEN
+        auto av = create<T>(a, N, M);
+        auto bv = create<T>(b, N);
+        auto yv = create<T>(y, N, M);
+        yv = av.colwise() + bv;
+
+#else
 #ifdef USE_MP
 #pragma omp parallel for
 #endif
@@ -706,69 +724,108 @@ namespace matrix {
                 y[i * M +j] = a[i * M +j] + b[i];
             }
         }
+#endif
     }
 
     template <class T>
     inline void Add(const int N, const T *a, const T *b, T *y) {
+#ifdef USE_EIGEN
+        auto av = create<T>(a, N);
+        auto bv = create<T>(b, N);
+        auto yv = create<T>(y, N);
+        yv = (av + bv);
+#else
 #ifdef USE_MP
 #pragma omp parallel for
 #endif
         for (int i=0; i < N; ++i) {
             y[i] = a[i] + b[i];
         }
+#endif
     }
 
 
     template <class T>
     inline void Sub(const int N, const T *a, const T *b, T *y) {
+#ifdef USE_EIGEN
+        auto av = create<T>(a, N);
+        auto bv = create<T>(b, N);
+        auto yv = create<T>(y, N);
+        yv = av - bv;
+#else
 #ifdef USE_MP
 #pragma omp parallel for
 #endif
         for (int i=0; i < N; ++i) {
             y[i] = a[i] - b[i];
         }
+#endif
     }
 
 
     template <class T>
     inline void Mul(const int N, const T *a, const T *b, T *y) {
+#ifdef USE_EIGEN
+        auto av = create<T>(a, N);
+        auto bv = create<T>(b, N);
+        auto yv = create<T>(y, N);
+        yv = av.array() * bv.array();
+#else
 #ifdef USE_MP
 #pragma omp parallel for
 #endif
         for (int i=0; i < N; ++i) {
             y[i] = a[i] * b[i];
         }
+#endif
     }
 
 
     template <class T>
     inline void Div(const int N, const T *a, const T *b, T *y) {
+#ifdef USE_EIGEN
+        auto av = create<T>(a, N);
+        auto bv = create<T>(b, N);
+        auto yv = create<T>(y, N);
+        yv = av.array() / bv.array();
+#else
 #ifdef USE_MP
 #pragma omp parallel for
 #endif
         for (int i=0; i < N; ++i) {
             y[i] = a[i] / b[i];
         }
+#endif
     }
 
     template <class T>
     inline void Reciprocal(const int N,  T *x) {
+#ifdef USE_EIGEN
+        auto xv = create<T>(x, N);
+        xv /= T(1.0);
+#else
 #ifdef USE_MP
 #pragma omp parallel for
 #endif
         for (int i=0; i < N; ++i) {
             x[i] = T(1.0) / x[i];
         }
+#endif
     }
 
     template <class T>
     inline void Negative(const int N,  T *x) {
+#ifdef USE_EIGEN
+        auto xv = create<T>(x, N);
+        xv = (T(0) - xv);
+#else
 #ifdef USE_MP
 #pragma omp parallel for
 #endif
         for (int i=0; i < N; ++i) {
             x[i] = -x[i];
         }
+#endif
     }
 
 

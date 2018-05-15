@@ -88,15 +88,15 @@ namespace matrix {
         return shape_;
     }
 
-    bool Shape::isConstant() {
+    const bool Shape::isConstant() const {
         return Rank() == 1 && Size() == 1;
     }
 
-    bool Shape::isVector() {
+    const bool Shape::isVector() const {
         return Rank() == 1;
     }
 
-    bool Shape::isMatrix() {
+    const bool Shape::isMatrix() const{
         return Rank() == 2;
     }
 

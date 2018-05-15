@@ -22,6 +22,8 @@ namespace matrix {
         int ReceiveFrom(const Addr &addr, Packet *p) override;
 
         int Notify() override;
+
+        int registerMaster();
     };
 
 }

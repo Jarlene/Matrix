@@ -48,10 +48,17 @@ namespace matrix {
         virtual int ReceiveFrom(const Addr &addr, Packet *p) = 0;
 
         virtual int Notify() = 0;
+
+    protected:
+        int registerRouter(size_t node_id, Addr &&addr) {
+            return 0;
+        }
+
+
     protected:
         void * zmq_ctx;
         void * zmq_skt;
-
+        Addr addr;
 
     };
 }
