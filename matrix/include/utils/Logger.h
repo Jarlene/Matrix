@@ -83,7 +83,7 @@ namespace matrix {
 
 }
 
-#define LOG(level) matrix::Logger(matrix::LogLevel::level).stream()<< "[" << __FILE__<< ":" <<  __LINE__ <<"("<< __FUNCTION__<<")" << "] \n    " << std::flush
+#define LOG(level) matrix::Logger(matrix::LogLevel::level).stream()<< "[" << __FILE__<< ":" <<  __LINE__ <<"("<< __FUNCTION__<<")" << "]:" << std::flush
 
 
 

@@ -11,5 +11,6 @@ int main(int argc, char *argv[]) {
 
     auto *amf = new AMF<>;
 //    auto *adaBoost = new AdaBoost<>();
+        amf->Train();
     return 0;
 }
