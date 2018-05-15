@@ -7,7 +7,7 @@
 
 
 #include "matrix/include/utils/Eigen.h"
-
+#include "matrix/include/utils/Logger.h"
 namespace matrix {
 
     template <class T>
