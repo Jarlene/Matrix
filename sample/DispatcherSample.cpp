@@ -17,8 +17,7 @@ int print(const std::string &name) {
 }
 
 void success(int res) {
-    LOG(INFO) << "the success param " << res;
-    cout << "the success param "<< res << endl;
+    MLOG(INFO) << "MLOG the success param " << res ;
 }
 
 void fail(std::exception &e) {
@@ -29,9 +28,10 @@ void complete() {
     cout << "complete " << endl;
 }
 
-int main() {
-    auto x = dispatch(print, "sss");
-    cout << x << endl;
+int main(int argc, char *argv[]) {
+    google::InitGoogleLogging(argv[0]);
+    FLAGS_stderrthreshold = google::INFO;
+    FLAGS_colorlogtostderr = true;
     dispatch(print, success, fail, complete, "hahndes");
 
 }

@@ -25,6 +25,7 @@ if (USE_GLOG)
 
     ExternalProject_Add(
             glog
+            DEPENDS gflags
             ${EXTERNAL_PROJECT_LOG_ARGS}
             GIT_REPOSITORY  "https://github.com/google/glog.git"
             PREFIX          ${GLOG_SOURCES_DIR}
@@ -35,6 +36,7 @@ if (USE_GLOG)
             CMAKE_ARGS      -DBUILD_TESTING=OFF
             CMAKE_ARGS      -DCMAKE_BUILD_TYPE=Release
             CMAKE_ARGS      -DCMAKE_CXX_FLAGS=-O2
+            CMAKE_ARGS      -Dgflags_DIR=${GFLAGS_INSTALL_DIR}/lib/cmake/gflags
     )
     LIST(APPEND external_project_dependencies glog)
 endif (USE_GLOG)
