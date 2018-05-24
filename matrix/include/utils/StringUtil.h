@@ -7,6 +7,7 @@
 
 #include <string>
 #include <sstream>
+#include <vector>
 
 using namespace std;
 
@@ -14,13 +15,13 @@ using namespace std;
 namespace matrix {
 
     template <class T>
-    const string toString(T &val) {
+    const static string toString(T &val) {
         return std::to_string(val);
     }
 
 
     template <class T>
-    const T fromString(string &val) {
+    const static T fromString(string &val) {
         static_assert(std::is_arithmetic<T>::value, "T must is number");
         istringstream is(val);
         T t(0);
@@ -28,7 +29,7 @@ namespace matrix {
         return t;
     }
 
-    bool startWith(const string &src, const string &prefix) {
+    bool static startWith(const string &src, const string &prefix) {
         if (src.size() < prefix.size()) return false;
         for (size_t i = 0; i < prefix.size(); i++) {
             if (src[i] != prefix[i]) return false;
@@ -38,7 +39,7 @@ namespace matrix {
     }
 
 
-    bool endWith(const string &src, const string &suffix) {
+    bool static endWith(const string &src, const string &suffix) {
         if (src.size() < suffix.size()) return false;
         size_t off = src.size() - suffix.size();
         for (size_t i = 0; i < suffix.size(); i++) {
@@ -48,7 +49,7 @@ namespace matrix {
     }
 
 
-    string replace(const string &str, const string &find, const string &replace, const int c = -1) {
+    string static replace(const string &str, const string &find, const string &replace, const int c = -1) {
         size_t pos = 0;
         string result = str;
         int count = 0;
@@ -63,7 +64,7 @@ namespace matrix {
         return result;
     }
 
-    vector<string> split(const std::string &source, const std::string &sep) {
+    vector<string> static split(const std::string &source, const std::string &sep) {
         vector<string> elements;
         size_t start = 0;
         size_t found = 0;
@@ -80,7 +81,7 @@ namespace matrix {
 
 
 
-    string getEnv(const char * name) {
+    string static getEnv(const char * name) {
         if (!name) return "";
         char *lvl = getenv(name);
         if (lvl) return string(lvl);

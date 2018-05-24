@@ -1,5 +1,5 @@
 option(USE_TEST "use gtest" ON)
-option(USE_GLOG "use glog" ON)
+option(USE_GLOG "use glog" OFF)
 option(USE_GFLAGS "use gflags" OFF)
 option(USE_OPENMP "use openmp" ON)
 option(USE_BLAS "use blas" OFF)
