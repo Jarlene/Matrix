@@ -22,9 +22,10 @@ int main() {
     auto bs = VariableSymbol::Create("bs", ShapeN(1,1));
     auto ds = as + bs;
     auto es = ds * ds - bs;
+    auto fs = es - ds;
     Context context = Context::Default();
     auto opt = new MomentOptimizer;
-    auto executor = make<Executor>(es, context, opt);
+    auto executor = make<Executor>(fs, context, opt);
 
     for (int i = 0; i < 200; ++i) {
         long start = getCurrentTime();

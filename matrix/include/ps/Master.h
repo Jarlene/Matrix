@@ -25,9 +25,13 @@ namespace matrix {
 
         ~Master();
 
-        int SendTo(const Addr &addr, Packet *p) override;
+    private:
 
-        int ReceiveFrom(const Addr &addr, Packet *p) override;
+        /**
+         * 启动master监听ps和worker上报机器地址和端口。
+         * @return
+         */
+        int init();
 
     private:
         std::vector<Worker> workers;

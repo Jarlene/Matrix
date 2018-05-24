@@ -8,28 +8,21 @@ namespace matrix {
 
 
     Worker::Worker() : BaseZMQ() {
-
+        init();
     }
 
     Worker::~Worker() {
         BaseZMQ::~BaseZMQ();
     }
 
-    int Worker::SendTo(const Addr &addr, Packet *p) {
-
-        return 0;
-    }
-
-    int Worker::ReceiveFrom(const Addr &addr, Packet *p) {
-        return 0;
-    }
-
-    int Worker::Notify() {
-        return 0;
-    }
 
     int Worker::registerMaster() {
 
+
+        return 0;
+    }
+
+    int Worker::init() {
 
         return 0;
     }

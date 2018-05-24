@@ -117,10 +117,10 @@ void Mnist(int batchSize, int hideNum, int class_num, int epochSize, bool isConv
 }
 
 int main() {
-    const int batchSize = 300;
+    const int batchSize = 128;
     const int epochSize = 60000/batchSize * 10;
     const int classNum = 10;
     const int hideNum = 128;
-    Mnist(batchSize, hideNum, classNum, epochSize, true);
+    Mnist(batchSize, hideNum, classNum, epochSize, false);
     return 0;
 }

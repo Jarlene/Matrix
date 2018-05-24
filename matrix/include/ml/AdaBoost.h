@@ -58,14 +58,14 @@ namespace matrix {
             D.fill(initWeight);
 
 
-            Vec<T> weights = create<T>(labels.rows());
+            Mat<T> weights = create<T>(labels.rows(), 1);
             Vec<T> finalH = create<T>(labels.rows());
 
             double rt, crt = 0.0, alphat = 0.0, zt;
             for (int i = 0; i < iterations; ++i) {
                 rt = 0.0;
                 zt = 0.0;
-                weights = D.sum();
+                weights.fill(D.sum());
                 WeakLearnerType w(tempData, labels, numClasses, weights);
                 w.Classify(tempData, predictedLabels);
 

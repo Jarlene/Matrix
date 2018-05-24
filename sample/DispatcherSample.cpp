@@ -29,9 +29,6 @@ void complete() {
 }
 
 int main(int argc, char *argv[]) {
-    google::InitGoogleLogging(argv[0]);
-    FLAGS_stderrthreshold = google::INFO;
-    FLAGS_colorlogtostderr = true;
     dispatch(print, success, fail, complete, "hahndes");
 
 }

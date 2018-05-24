@@ -8,7 +8,7 @@
 namespace matrix {
 
     void LoShape::Append(int idx, int val) {
-        shape_.at(idx).push_back(val);
+        shape_.at(idx).Append(val);
     }
 
     void LoShape::Append(int val) {
@@ -22,27 +22,25 @@ namespace matrix {
     const size_t LoShape::Size() const {
         size_t  t = 1;
         for(auto it : shape_) {
-           for (auto subit : it) {
-               t *= subit;
-           }
+            t *= it.Size();
         }
         return t;
     }
 
     const Shape LoShape::At(int level) const {
         assert(Rank() > level);
-        return Shape(shape_[level].data(), shape_[level].size());
+        return shape_[level];
     }
 
     void LoShape::ReShape(const std::vector<Shape *> &shapes) {
         for (auto s : shapes) {
-            shape_.push_back(s->Array());
+            shape_.push_back(*s);
         }
     }
 
     void LoShape::ReShape(const std::vector<Shape> &shapes) {
         for (auto s : shapes) {
-            shape_.push_back(s.Array());
+            shape_.push_back(s);
         }
     }
 
@@ -50,11 +48,11 @@ namespace matrix {
         if(idx > shape_.size() || idx < 0) {
             return -1;
         }
-        int size = shape_.at(idx).size();
+        int size = shape_.at(idx).Rank();
         if (val > size || val < 0) {
             return -1;
         }
-        return shape_.at(idx).at(val);
+        return shape_.at(idx)[val];
     }
 
     LoShape &LoShape::operator=(const LoShape &other) {
@@ -70,11 +68,8 @@ namespace matrix {
     }
 
     LoShape &LoShape::operator=(const Shape &other) {
-        if (other == *this) {
-            return *this;
-        }
-        this->shape_.clear();
-        shape_.push_back(other.Array());
+        shape_.clear();
+        shape_.push_back(other);
         return *this;
     }
 
@@ -112,7 +107,17 @@ namespace matrix {
 
     const Shape LoShape::operator[](int level) const {
         assert(Rank() > level);
-        return Shape(shape_[level].data(), shape_[level].size());
+        return shape_[level];
+    }
+
+    LoShape::LoShape(const Shape &shape) {
+        shape_.push_back(shape);
+    }
+
+    const int LoShape::operator()(int level, int idx) const {
+        assert(Rank() > level);
+        assert(shape_[level].Rank() > idx);
+        return shape_[level][idx];
     }
 
 

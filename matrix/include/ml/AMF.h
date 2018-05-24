@@ -18,11 +18,11 @@ namespace matrix {
         }
 
         void Train() override {
-            LOG(FATAL) << "not implement";
+            MLOG(FATAL) << "not implement";
         }
 
         void Classify(const Mat<T>& test, Vec<T>& predictedLabels) override {
-            LOG(FATAL) << "not implement";
+            MLOG(FATAL) << "not implement";
         }
 
         void Apply(const Mat<T>& data, const size_t rank, Mat<T>& W, Mat<T>& H) {

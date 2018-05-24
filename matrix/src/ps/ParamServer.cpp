@@ -15,17 +15,7 @@ namespace matrix {
         BaseZMQ::~BaseZMQ();
     }
 
-    int ParamServer::SendTo(const Addr &addr, Packet *p) {
-        return 0;
-    }
 
-    int ParamServer::ReceiveFrom(const Addr &addr, Packet *p) {
-        return 0;
-    }
-
-    int ParamServer::Notify() {
-        return 0;
-    }
 
     int ParamServer::registerMaster() {
 //        Packet p;

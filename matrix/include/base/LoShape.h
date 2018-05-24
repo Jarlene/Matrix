@@ -15,6 +15,8 @@ namespace matrix {
 
         LoShape() = default;
 
+        explicit LoShape(const Shape &shape);
+
         void ReShape(const std::vector<Shape*> &shapes);
 
         void ReShape(const std::vector<Shape> &shapes);
@@ -29,6 +31,8 @@ namespace matrix {
 
         const Shape operator[](int level) const ;
 
+        const int operator()(int level, int idx) const ;
+
         void Append(int level, int idx);
 
         void Append(int idx);
@@ -42,8 +46,16 @@ namespace matrix {
         const int At(int level, int idx) const ;
 
     private:
-        std::vector<std::vector<int>> shape_;
+        std::vector<Shape> shape_;
     };
+
+
+    template <typename... T>
+    inline LoShape ShapeN(T... args) {
+        LoShape shape;
+        shape.ReShape({args...});
+        return shape;
+    }
 }
 
 

@@ -7,9 +7,9 @@
 #include <matrix/include/utils/Math.h>
 #include <matrix/include/utils/Time.h>
 #include <matrix/include/utils/Eigen.h>
+
 using namespace matrix;
 using namespace std;
-
 
 
 int main() {
@@ -28,11 +28,9 @@ int main() {
     std::cout << staMat.row(0).sum() << std::endl;
 
 
-
-    Mat<> aaa = create<>(2, 3);
+    Mat<float> aaa = create<float>(2, 3);
     aaa.setRandom();
     cout << "aaa:\n  " << aaa << endl;
-
 
 
     float a[] = {1, 2, 3,
@@ -48,20 +46,20 @@ int main() {
     Mat<float> am(a, 2, 3);
     Mat<float> bm(b, 3, 2);
     Mat<float> cm(c, 2, 2);
-    Vec<float> dv(d, 2) ;
+    Vec<float> dv(d, 2);
 
     cout << "am:\n  " << am << endl;
-    cout << "bm:\n  "<< bm << endl;
+    cout << "bm:\n  " << bm << endl;
 
 
     cm = am * bm;
-    std::cout<<  "cm:\n  " << cm << std::endl;
+    std::cout << "cm:\n  " << cm << std::endl;
 
 
     auto dm = am.colwise() + dv;
-    cout<< "dm:\n  " << dm << endl;
+    cout << "dm:\n  " << dm << endl;
 
-    cout<< "em:\n  " << am.array() * am.array() << endl;
+    cout << "em:\n  " << am.array() * am.array() << endl;
 
 #endif
     return 0;

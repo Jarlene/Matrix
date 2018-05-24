@@ -13,7 +13,7 @@ using namespace std;
 
 int main() {
 #ifdef USE_OPENCV
-    const std::string name = "/Users/jarlene/Desktop/ev.jpg";
+    const std::string name = "/Users/jarlene/Desktop/ev.png";
 
     Mat mat = cv::imread(name);
     Mat mv[3];
@@ -23,7 +23,7 @@ int main() {
 
     imwrite("/Users/jarlene/Desktop/out.jpg", InputArray(result));
 
-    Logger::Global()->Info("the image size is %d X %d channel is %d \n", mat.cols, mat.rows, mat.channels());
+    MLOG(INFO) << "the image size is " << mat.cols << " X " << mat.rows << " channel is " << mat.channels();
 #endif
     return 0;
 }
